@@ -1,19 +1,54 @@
 <html>
 
-<audio id="player" controls></audio>
+<!-- <audio id="player" controls></audio> -->
+
+
+<title>Convercode</title>
+<h1>Convercode</h1>
+<p>
+    <button id=startRecord>Start Recording</button>
+    <button id=stopRecord disabled>Stop</button>
+</p>
+<p>
+    <audio id=recordedAudio></audio>
+
+</p>
+
 <script>
-  const player = document.getElementById('player');
+	navigator.mediaDevices.getUserMedia({audio:true})
+      .then(stream => {handlerFunction(stream)})
 
-  const handleSuccess = function(stream) {
-    if (window.URL) {
-      player.srcObject = stream;
-    } else {
-      player.src = stream;
-    }
-  };
 
-  navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-      .then(handleSuccess);
+            function handlerFunction(stream) {
+            rec = new MediaRecorder(stream);
+            rec.ondataavailable = e => {
+              audioChunks.push(e.data);
+              if (rec.state == "inactive"){
+                let blob = new Blob(audioChunks,{type:'audio/x-mpeg-3'});
+                // blob.name = "recording.mp3"
+                recordedAudio.src = URL.createObjectURL(blob);
+                recordedAudio.controls=true;
+                recordedAudio.autoplay=true;
+                sendData(blob)
+              }
+            }
+          }
+        function sendData(data) {}
+
+        startRecord.onclick = e => {
+          console.log('I was clicked')
+          startRecord.disabled = true;
+          stopRecord.disabled=false;
+          audioChunks = [];
+          rec.start();
+        }
+
+        stopRecord.onclick = e => {
+          console.log("I was clicked")
+          startRecord.disabled = false;
+          stopRecord.disabled=true;
+          rec.stop();
+        }
 </script>
 
 </html>
