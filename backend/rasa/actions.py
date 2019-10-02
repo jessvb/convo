@@ -17,6 +17,7 @@ class ActionStoryTime(Action):
 
     def run(self, dispatcher, tracker, domain):
         time = tracker.get_slot("time")
+        print(time);
         if time is None:
             dispatcher.utter_template("utter_ask_time", tracker)
         elif time == "bedtime":
@@ -25,31 +26,3 @@ class ActionStoryTime(Action):
             dispatcher.utter_template("utter_read_story", tracker)
 
         return [SlotSet("time", None)]
-
-# class StoryForm(FormAction):
-#     def name(self):
-#         return "story_form"
-
-#     @staticmethod
-#     def required_slots(tracker):
-#         return ["time"]
-
-#     def slot_mappings(self):
-#         return {
-#             "time": [
-#                 self.from_entity(entity="time", intent=["request_story", "give_time"])
-#             ]
-#         }
-
-#     def validate_time(self, value, dispatcher, tracker, domain):
-#         if value is None:
-#             dispatcher.utter_template("utter_ask_time", tracker)
-#             return {"time": None}
-#         elif value == "bedtime":
-#             dispatcher.utter_template("utter_clarify_time", tracker)
-#             return {"time": value}
-#         else:
-#             return {"time": value}
-
-#     def submit(self, dispatcher, tracker, domain):
-#         return []

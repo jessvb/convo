@@ -3,14 +3,11 @@
 - [10pm](time)
 - it's at [midnight](time)
 - at [midnight](time)
-- [10pm](time)
-- [10pm](time)
+- [10 p.m.](time)
+- [10 oclock](time)
 - [10pm](time)
 - at [night](time)
-- [10pm](time)
-- [10pm](time)
 - [bedtime](time)
-- [10pm](time)
 
 ## intent:request_story
 - can you read me a story

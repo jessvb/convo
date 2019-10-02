@@ -7,6 +7,7 @@ const app = express();
 const port = 8080;
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
+const rasaSocket = require('socket.io-client')('http://localhost:5005');
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
@@ -29,6 +30,14 @@ const request = {
     },
     interimResults: false
 };
+
+rasaSocket.on('connect', () => {
+    console.log("Connected to Rasa server.");
+});
+
+rasaSocket.on('rasaResponse', data => {
+    io.emit("response", data["text"]);
+})
 
 io.on('connection', (client) => {
     let recognizeStream = null;
@@ -62,6 +71,7 @@ io.on('connection', (client) => {
                     let transcript = data.results[0].alternatives[0].transcript;
                     console.log(data.results[0].alternatives[0].transcript);
                     client.emit('transcript', transcript);
+                    rasaSocket.emit('rasaInput', { "message": transcript });
                 } else {
                     console.log('Reached transcription time limit, press Ctrl+C');
                 }
