@@ -2,17 +2,24 @@
 <head>
     <title>Convercode</title>
     <link rel="shortcut icon" href="">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tachyons/4.11.1/tachyons.css" integrity="sha256-A7VA5VRIGuWNdMLr/ydUEmYKKoBYqoRVF+Bwxup4KRg=" crossorigin="anonymous" />
 </head>
-<body>
+<body class="pa5">
     <!-- <audio id="player" controls></audio> -->
-    <h1>Convercode</h1>
-    <p>
-        <button id="start-record-btn">Start Recording</button>
-        <button id="stop-record-btn">Stop</button>
-    </p>
-    <p>
-        <audio id=recordedAudio></audio>
-    </p>
+    <div class="f1 fw6">Convercode</div>
+    <div class="pt4">
+        <button id="start-record-btn"
+                class="pointer bg-white pa2 b--black ba br2">
+            Start Recording
+        </button>
+        <button id="stop-record-btn"
+                class="pointer bg-white pa2 b--black ba br2">
+            Stop
+        </button>
+    </div>
+    <div class="pt3">
+        Output: <span id="output"></span>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js" integrity="sha256-bQmrZe4yPnQrLTY+1gYylfNMBuGfnT/HKsCGX+9Xuqo=" crossorigin="anonymous"></script>
     <script src="public/js/client.js"></script>

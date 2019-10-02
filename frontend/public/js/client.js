@@ -15,8 +15,9 @@ socket.on('message', (data) => {
 	console.log(data);
 });
 
-socket.on('transcript', function (data) {
-	console.log(data);
+socket.on('transcript', (transcript) => {
+	console.log(transcript);
+	document.getElementById("output").innerHTML = transcript;
 });
 
 let isRecording = false;
