@@ -1,0 +1,19 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "The frontend of *convercode* includes a click-and-hold recording button, and an output text box, such that users can talk with the agent and see the current user-program (text box is temporary - for debugging). In future iterations, (when the agent provides sufficient information about the user-program through conversation) we will remove the output text box.",
+  "main": "app.js",
+  "dependencies": {
+    "@google-cloud/speech": "^3.3.0",
+    "dotenv": "^8.1.0",
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "author": "",
+  "license": "MIT"
+}

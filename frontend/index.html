@@ -1,54 +1,20 @@
 <html>
+<head>
+    <title>Convercode</title>
+    <link rel="shortcut icon" href="">
+</head>
+<body>
+    <!-- <audio id="player" controls></audio> -->
+    <h1>Convercode</h1>
+    <p>
+        <button id="start-record-btn">Start Recording</button>
+        <button id="stop-record-btn">Stop</button>
+    </p>
+    <p>
+        <audio id=recordedAudio></audio>
+    </p>
 
-<!-- <audio id="player" controls></audio> -->
-
-
-<title>Convercode</title>
-<h1>Convercode</h1>
-<p>
-    <button id=startRecord>Start Recording</button>
-    <button id=stopRecord disabled>Stop</button>
-</p>
-<p>
-    <audio id=recordedAudio></audio>
-
-</p>
-
-<script>
-	// Actions to record + save recording
-	navigator.mediaDevices.getUserMedia({audio:true})
-      .then(stream => {handlerFunction(stream)})
-
-
-            function handlerFunction(stream) {
-	            rec = new MediaRecorder(stream);
-	            rec.ondataavailable = e => {
-	              audioChunks.push(e.data);
-	              if (rec.state == "inactive"){
-	                let blob = new Blob(audioChunks,{type:'audio/x-mpeg-3'});
-	                recordedAudio.src = URL.createObjectURL(blob);
-	                recordedAudio.controls=true;
-	                recordedAudio.autoplay=true;
-	                sendData(blob)
-	              }
-	            }
-          }
-        function sendData(data) {}
-
-        startRecord.onclick = e => {
-          console.log('I was clicked')
-          startRecord.disabled = true;
-          stopRecord.disabled=false;
-          audioChunks = [];
-          rec.start();
-        }
-
-        stopRecord.onclick = e => {
-          console.log("I was clicked")
-          startRecord.disabled = false;
-          stopRecord.disabled=true;
-          rec.stop();
-        }
-</script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js" integrity="sha256-bQmrZe4yPnQrLTY+1gYylfNMBuGfnT/HKsCGX+9Xuqo=" crossorigin="anonymous"></script>
+    <script src="public/js/client.js"></script>
+</body>
 </html>
