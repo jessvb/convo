@@ -35,13 +35,9 @@ socket.on('response', (response) => {
 let isRecording = false;
 let isStreaming = false;
 
-var startButton = document.getElementById("start-record-btn");
-startButton.onclick = e => startRecording();
-startButton.disabled = false;
-
-var stopButton = document.getElementById("stop-record-btn");
-stopButton.onclick = e => stopRecording();
-stopButton.disabled = true;
+var recordButton = document.getElementById("record-btn");
+recordButton.onmousedown = () => startRecording();
+recordButton.onmouseup = () => stopRecording();
 
 let startRecording = () => {
 	if (isRecording){
@@ -50,8 +46,6 @@ let startRecording = () => {
 
 	console.log("Starting recording.");
 	isRecording = true;
-	startButton.disabled = true;
-	stopButton.disabled = false;
 
 	socket.emit('startStream');
 	isStreaming = true;
@@ -66,7 +60,7 @@ let startRecording = () => {
 		globalStream = stream;
 		input = context.createMediaStreamSource(stream);
 		input.connect(processor);
-		processor.onaudioprocess = (e) => microphoneProcess(e);
+		processor.onaudioprocess = (e) => socket.emit('audio', convertFloat32ToInt16(e.inputBuffer.getChannelData(0)));
 	};
 
 	if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -78,15 +72,8 @@ let startRecording = () => {
 	}
 }
 
-let microphoneProcess = (e) => {
-	var left = e.inputBuffer.getChannelData(0);
-	let left16 = convertFloat32ToInt16(left);
-	socket.emit('audio', left16);
-}
-
 let stopRecording = () => {
 	console.log("Stopping recording.");
-	stopButton.disabled = true;
 	socket.emit('endStream');
 	isStreaming = false;
 
@@ -100,7 +87,6 @@ let stopRecording = () => {
 		processor = null;
 		context = null;
 		AudioContext = null;
-		startButton.disabled = false;
 		isRecording = false;
 	});
 }

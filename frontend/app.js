@@ -35,6 +35,10 @@ rasaSocket.on('connect', () => {
     console.log("Connected to Rasa server.");
 });
 
+rasaSocket.on('disconnect', () => {
+    console.log("Disconnected from Rasa server.");
+});
+
 rasaSocket.on('rasaResponse', data => {
     io.emit("response", data["text"]);
 })
