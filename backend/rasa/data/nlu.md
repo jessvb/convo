@@ -1,0 +1,40 @@
+## intent:give_time
+- it is at [9pm](time)
+- [10pm](time)
+- it's at [midnight](time)
+- at [midnight](time)
+- [10pm](time)
+- [10pm](time)
+- [10pm](time)
+- at [night](time)
+- [10pm](time)
+- [10pm](time)
+- [bedtime](time)
+- [10pm](time)
+
+## intent:request_story
+- can you read me a story
+- read me a story
+- can you tell me a story
+- storytime
+- story time
+- story please
+- when it's [bedtime](time), read me a story
+- read story when it's [8pm](time)
+- read story when it's [bedtime](time)
+- storytime is at [midnight](time)
+- tell me a story at [bedtime](time)
+- tell me a story
+- tell me a story at [10pm](time)
+- when it's [10pm](time), read me a story
+- read me a story
+- [bedtime](time)
+- when it's [bedtime](time), tell me a story
+- read me a story
+- tell me a story
+- read me a story
+- [bedtime](time)
+- when it's [10pm](time), read me a story
+- can you read me a story at [10pm](time)
+- when it is [morning](time) can you read a story
+- tell you a story
