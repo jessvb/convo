@@ -11,15 +11,15 @@ There are two ways to run the system
 1. Local
 2. Docker (recommended)
 
-### Local
-#### Setup
+## Local
+### Setup
 To setup locally, you must setup the frontend and backend separately and install the necessary components. For the frontend and backend setup, read the `README.md` files in their respective directories `frontend` and `backend`.
 
-#### Running
+### Running
 Once you successfully start the Node server and the Rasa servers, head to `http://localhost:8080`.
 
-### Docker
-#### Setup
+## Docker
+### Setup
 The easiest way to run the whole system is through Docker and Docker Compose.
 
 Install [Docker for Mac](https://docs.docker.com/docker-for-mac/install/) or [Docker for Windows](https://docs.docker.com/docker-for-windows/install/) and Docker Compose should be included. You should be able to run
@@ -47,7 +47,7 @@ rasa train
 ```
 This trains a model and outputs the model into `backend/rasa/models`.
 
-#### Running
+### Running
 To run the system, run in the project root
 ```bash
 docker-compose up
