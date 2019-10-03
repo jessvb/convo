@@ -11,6 +11,6 @@ The backend setup is explained in `backend/README.md`. Once this is set up, you 
 
 ## TODO
 - [ ] Choose a good name (convercode's just a temp name :wink: cocoder? convercoder? coprogrammer? something totally different? feel free to add ideas!)
-- [ ] Add website/GUI to subfolder, "frontend"
-- [ ] Add Rasa to subfolder, "backend"
 - [X] Initialize repo :sunglasses:
+- [X] Add website/GUI to subfolder, "frontend"
+- [X] Add Rasa to subfolder, "backend"
