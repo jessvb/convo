@@ -5,8 +5,6 @@
 - at [midnight](time)
 - [10 p.m.](time)
 - [10 oclock](time)
-- [10pm](time)
-- at [night](time)
 - [bedtime](time)
 
 ## intent:request_story
@@ -28,10 +26,7 @@
 - [bedtime](time)
 - when it's [bedtime](time), tell me a story
 - read me a story
-- tell me a story
-- read me a story
 - [bedtime](time)
 - when it's [10pm](time), read me a story
 - can you read me a story at [10pm](time)
 - when it is [morning](time) can you read a story
-- tell you a story
