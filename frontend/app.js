@@ -5,9 +5,11 @@ const vars = require('dotenv').config();
 const express = require('express');
 const app = express();
 const port = 8080;
+const host = '0.0.0.0';
+const rasa_host = process.env.RASA_HOSTNAME || "localhost";
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
-const rasaSocket = require('socket.io-client')('http://localhost:5005');
+const rasaSocket = require('socket.io-client')(`http://${rasa_host}:5005`);
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
@@ -92,6 +94,6 @@ io.on('connection', (client) => {
     }
 });
 
-server.listen(port, () => {
-    console.log(`Server started on port ${port}.`)
+server.listen(port, host, () => {
+    console.log(`Server started at ${host}:${port}.`)
 });

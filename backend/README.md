@@ -22,13 +22,13 @@ which starts at server at `http://localhost:5005`.
 
 Because we use custom actions with our Rasa model, you have to run the Rasa actions server in a separate terminal as well, with
 ```bash
-rasa run actions
+rasa run actions --actions actions.actions
 ```
 
 You can view the full list of possible CLI commands [here](https://rasa.com/docs/rasa/user-guide/command-line-interface/).
 
 ## Connecting with Frontend
-If you have the frontend server running, the Node.js server should automatically connect to the Rasa server through sockets. You should see a set of messages like the ones below to confirm that your client has connected to the Rasa server.
+If you have the frontend server running, the Node server should automatically connect to the Rasa server through sockets. You should see a set of messages like the ones below to confirm that your client has connected to the Rasa server.
 ```bash
 2019-10-03 11:35:27 INFO     engineio.server  - 2a568fc901e14f39911be81f461e7a31: Sending packet OPEN data {'sid': '2a568fc901e14f39911be81f461e7a31', 'upgrades': ['websocket'], 'pingTimeout': 60000, 'pingInterval': 25000}
 2019-10-03 11:35:27 INFO     engineio.server  - 2a568fc901e14f39911be81f461e7a31: Sending packet MESSAGE data 0

@@ -1,0 +1,28 @@
+version: '3.0'
+services:
+  action_server:
+    image: rasa/rasa-sdk:latest
+    volumes:
+      - ./backend/rasa/actions:/app/actions
+    ports:
+      - 5055:5055
+  rasa:
+    image: rasa/rasa:1.3.3
+    ports:
+      - 5005:5005
+    volumes:
+      - ./backend/rasa:/app
+    command: run --endpoints docker.endpoints.yml
+    depends_on:
+      - action_server
+  web:
+    build: ./frontend
+    environment:
+      - RASA_HOSTNAME=rasa
+    volumes:
+      - ./frontend:/app
+    ports:
+      - 8080:8080
+    depends_on:
+      - rasa
+    command: npm start
