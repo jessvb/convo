@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-from utils import *
 from agent import Agent
 
 app = Flask(__name__)
@@ -17,5 +16,18 @@ def message():
         if not message:
             return
 
-        response = agent.process_message(message)
-        return jsonify({ "response": response.message })
+        response, action = agent.parse_message(message)
+        return jsonify({
+            "response": response,
+            "debug": action
+        })
+
+@app.route('/actions', methods=['GET'])
+def actions():
+    if request.method == "GET":
+        return jsonify({ "actions": agent.actions })
+
+@app.route('/agent', methods=['GET'])
+def info():
+    if request.method == "GET":
+        return jsonify(agent.get_info())
