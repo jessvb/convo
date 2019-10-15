@@ -18,9 +18,7 @@ def get_incomplete_input_response(action_name, input_name):
 class Agent(AgentParser):
     def __init__(self):
         AgentParser.__init__(self, nlp)
-        self.actions = []
         self.state = "edit"
-        self.incomplete_inputs = []
 
     def parse_message(self, message):
         try:
@@ -39,7 +37,7 @@ class Agent(AgentParser):
             else:
                 self.state = "edit"
                 return "Success!", action
-        except VariableExistsError as e:
+        except Error as e:
             return e.message, {}
 
     def ask_for_input(self):
