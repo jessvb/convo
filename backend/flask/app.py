@@ -31,3 +31,8 @@ def actions():
 def info():
     if request.method == "GET":
         return jsonify(agent.get_info())
+
+@app.route('/code', methods=['GET'])
+def code():
+    if request.method == "GET":
+        return agent.to_code()

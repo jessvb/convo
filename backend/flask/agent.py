@@ -57,3 +57,12 @@ class Agent(AgentParser):
             "state": self.state,
             "incomplete_inputs": self.incomplete_inputs
         }
+
+    def to_code(self):
+        lines = []
+        for action in self.actions:
+            if action["type"] in ["make_variable", "set_variable"]:
+                name = action["inputs"]["name"]["value"]
+                value = action["inputs"]["value"]["value"]
+                lines.append(f"{name} = {value}" if value else f"{name} = None")
+        return "/n".join(lines)
