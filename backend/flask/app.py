@@ -36,3 +36,24 @@ def info():
 def code():
     if request.method == "GET":
         return agent.to_code()
+
+from dm import DialogManager
+tracker = DialogManager()
+
+@app.route('/debug', methods=['POST'])
+def debug():
+    if request.method == "POST":
+        req_data = request.get_json()
+        message = req_data.get("message")
+        if not message:
+            return
+
+        response = tracker.add(message)
+
+        return jsonify({
+            "response": response,
+            "_editor": tracker.editor._info(),
+            "_stack": [action._json() for action in tracker.stack],
+            "_variables": list(tracker.editor.variables),
+            "_messages": tracker.conversation
+        })
