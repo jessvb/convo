@@ -63,7 +63,7 @@ class AgentParser(object):
     def action_create_variable(self):
         create_variable = {
             "type": "make_variable",
-            "inputs" : {
+            "inputs": {
                 "name": {
                     "value": None,
                     "required": True
@@ -110,6 +110,17 @@ class AgentParser(object):
                 }
             }
         }
+
+        def action_create_procedure(self):
+            create_procedure = {
+                "type": "create_procedure",
+                "inputs": {
+                    "name": None,
+                    "steps": []
+                }
+            }
+
+            return create_procedure
 
 def check_if_incomplete(action):
     return [(action["type"], k)
