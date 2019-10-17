@@ -1,4 +1,4 @@
-from variable import VariableAction, SetVariableAction
+from actions.variable import VariableAction, SetVariableAction
 
 class DebugNLU(object):
     def __init__(self):
@@ -13,6 +13,8 @@ class DebugNLU(object):
             return VariableAction(**params)
         elif action == "set_variable":
             return SetVariableAction(**params)
+        elif action == "procedure":
+            return ProcedureAction(**params)
 
         raise Exception("No action found.")
 
@@ -30,6 +32,8 @@ class DebugNLU(object):
         if action == "variable" or action == "set_variable":
             params["name"] = args[1]
             params["value"] = args[2]
+        elif action == "procedure":
+            params["name"] = args[1]
 
         return {
             "action": action,

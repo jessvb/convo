@@ -1,5 +1,6 @@
-class Action(object):
+class BaseAction(object):
     def __init__(self):
+        self.allow_nesting = False
         self.required = []
         self.params = {}
         self.responses = {}
@@ -21,14 +22,14 @@ class Action(object):
     def _js(self):
         raise NotImplementedError
 
-class ProcedureAction(Action):
+class ProcedureAction(BaseAction):
     def __init__(self):
         pass
 
-class ListAction(Action):
+class ListAction(BaseAction):
     def __init__(self):
         pass
 
-class AddListAction(Action):
+class AddListAction(BaseAction):
     def __init__(self):
         pass

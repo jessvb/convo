@@ -1,7 +1,7 @@
-from action import Action
 import json
+from actions.base import BaseAction
 
-class VariableAction(Action):
+class VariableAction(BaseAction):
     id = "variable"
     responses = {
         "_ask_name": "What do you want to call the variable?",
@@ -9,6 +9,7 @@ class VariableAction(Action):
     }
 
     def __init__(self, name, value):
+        self.allow_nesting = False
         self.required = ["name"]
         self.params = {
             "name": name,
@@ -39,6 +40,7 @@ class SetVariableAction(VariableAction):
     }
 
     def __init__(self, name, value):
+        self.allow_nesting = False
         self.required = ["name", "value"]
         self.params = {
             "name": name,
