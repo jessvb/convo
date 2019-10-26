@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="A wizard-of-oz user study framework for Convercode.">
+  <meta name="author" content="jessvb">
+
+  <title>Convercode</title>
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/convercode.css">
+
+  <!-- Class for getting/setting sentences (req'd for recording-utils) -->
+  <script src="js/SentenceManager.js"></script>
+
+  <!-- Recording -->
+  <script src="js/recording-utils.js"></script>
+  <script src="js/send-server-utils.js"></script>
+
+  <!-- Agent's voice -->
+  <script src="js/voice-utils.js"></script>
+
+  <!-- Text on screen -->
+  <script src="js/text-manager.js"></script>
+
+</head>
+
+<body id="page-top">
+
+  <!-- Header -->
+  <header>
+    <h1 class="centertext">Convercode</h1>
+  </header>
+
+  <!-- Recording info -->
+  <div id="info">
+    <p id="info_start" hidden="true">Click on the microphone icon and begin speaking.</p>
+    <p id="info_speak_now" hidden="true">Speak now.</p>
+    <p id="info_no_speech" hidden="true">No speech was detected. You may need to adjust your
+      <a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">
+        microphone settings</a>.</p>
+    <p id="info_no_microphone" style="display:none" hidden="true">
+      No microphone was found. Ensure that a microphone is installed and that
+      <a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">
+        microphone settings</a> are configured correctly.</p>
+    <p id="info_allow" hidden="true">Click the "Allow" button above to enable your microphone.</p>
+    <p id="info_denied" hidden="true">Permission to use microphone was denied.</p>
+    <p id="info_blocked" hidden="true">Permission to use microphone is blocked. To change,
+      go to chrome://settings/contentExceptions#media-stream</p>
+    <p id="info_upgrade" hidden="true">Web Speech API is not supported by this browser.
+      Upgrade to <a href="//www.google.com/chrome">Chrome</a>
+      version 25 or later.</p>
+  </div>
+
+  <!-- Info label (e.g., "Teach Zhorai about ecosystems") -->
+  <div class="centertext">
+    <h3 class="font-weight-light mb-0" id="z_info_label"></h3>
+  </div>
+
+  <!-- Record button -->
+  <div class="centertext">
+    <button id="record_button">
+      <img id="start_img" src="img/mic.svg" alt="Start"></button>
+  </div>
+
+  <!-- Loading icon -->
+  <div class="centertext">
+    <img src="img/loading.svg" id="loadingImg" alt="loading..." height="80" hidden="true">
+  </div>
+
+  <!-- Blank image for spacing when loading icon isn't there -->
+  <div class="centertext">
+    <img src="img/notLoading.svg" id="blankLoadingImg" alt="not loading" height="80">
+  </div>
+
+    <!-- Textbox for speech results -->
+    <div class="centertext">
+      <div id="results">
+        <span id="final_span" class="final usertext"></span>
+        <span id="interim_span" class="interim usertext"></span>
+        <p>
+      </div>
+    </div>
+  
+
+  <!-- Textbox for previous dialog -->
+  <div class="centertext">
+      <div id="dialog"> 
+        <p class="agenttext">sentence 4</p>
+        <p class="usertext">sentence 3</p>
+        <p class="agenttext">sentence 2</p>
+        <p class="usertext">sentence 1</p>
+      </div>
+  </div>
+
+</body>
+
+</html>
