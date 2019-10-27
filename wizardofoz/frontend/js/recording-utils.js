@@ -68,6 +68,7 @@ function recordButtonClick(event) {
 
 function showInfo(s) {
     if (s) {
+        // loop through info_start, info_speak_now, etc. until you find 's':
         for (var child = info.firstChild; child; child = child.nextSibling) {
             if (child.style) {
                 child.style.display = child.id == s ? 'inline' : 'none';
@@ -213,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 showInfo('info_start');
                 return;
             }
-            showInfo('');
+            showInfo('info_default');
             if (window.getSelection) {
                 window.getSelection().removeAllRanges();
                 var range = document.createRange();
@@ -256,4 +257,5 @@ document.addEventListener('DOMContentLoaded', function () {
             return m.toUpperCase();
         });
     }
+    showInfo('info_start'); // creates the info div right away
 }, false);

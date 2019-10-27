@@ -1,5 +1,4 @@
 /* -------------- Initialize variables -------------- */
-var infoLabel;
 var recordButton;
 var agentSpeechBox;
 var loadingImg;
@@ -7,6 +6,7 @@ var blankLoadingImg;
 var currBtnIsMic = true;
 var inputTextbox; // for testing without speech
 var sentencesDiv; // where the list of sentences appear
+var devMode = true; // set to true if you want to see the input text box
 
 /* -------------- Initialize functions -------------- */
 function showAgentSpeech(text) {
@@ -78,10 +78,6 @@ function afterRecording(recordedText) {
     speakText(agentSpeech, null,
         function () {
             switchButtonTo('micBtn');
-            // TODO: hide currtext before it's added to page
-            // agentSpeechBox.style.visibility = "hidden";
-            // agentSpeechBox.style.backgroundColor = "blue";
-            console.log("TODO del: hide agentSpeechBox?");
             document.getElementById('curr_text').style.visibility = "hidden";
             addSentenceToPage(agentSpeech, true);
         });
@@ -112,20 +108,39 @@ function addSentenceToPage(text, isAgentText) {
 document.addEventListener('DOMContentLoaded', function () {
     // Initialize variables:
     currStage = 0;
-    infoLabel = document.getElementById('z_info_label');
     recordButton = document.getElementById('record_button');
     agentSpeechBox = document.getElementById('final_span');
     loadingImg = document.getElementById('loadingImg');
     blankLoadingImg = document.getElementById('blankLoadingImg');
-    inputTextbox = document.getElementById('inputTextbox');
     sentencesDiv = document.getElementById('dialog');
 
     // Add click handlers
-    setUpRecordingHandlers(recordButton, function () {
-        recordButtonClick({
-            callback: afterRecording,
-            onClickStop: switchButtonTo,
-            onClickStopParam: 'loading'
+    if (!devMode) {
+        setUpRecordingHandlers(recordButton, function () {
+            recordButtonClick({
+                callback: afterRecording,
+                onClickStop: switchButtonTo,
+                onClickStopParam: 'loading'
+            });
         });
-    });
+    } else {
+        // show input text box
+        inputTextbox = document.getElementById('inputTextbox');
+        inputSubmitbtn = document.getElementById('submitBtn');
+        inputTextbox.hidden = false;
+        inputSubmitbtn.hidden = false;
+        // click/enter handlers
+        inputSubmitbtn.addEventListener('click', function () {
+            console.log(inputTextbox.value);
+            afterRecording(inputTextbox.value);
+            inputTextbox.value = "";
+        });
+        inputTextbox.addEventListener('keyup', function (event) {
+            // 13 is enter
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                inputSubmitbtn.click();
+            }
+        });
+    }
 });
