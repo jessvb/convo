@@ -57,8 +57,8 @@ function recordButtonClick(event) {
         final_transcript = '';
         recognition.start();
         ignore_onend = false;
-        final_span.innerHTML = '';
-        interim_span.innerHTML = '';
+        // final_span.innerHTML = ''; // commented to remove a spacing issue
+        // interim_span.innerHTML = ''; // commented to remove a spacing issue
         start_img.src = imgDir + 'mic-slash.svg';
         showInfo('info_allow');
         showButtons('none');

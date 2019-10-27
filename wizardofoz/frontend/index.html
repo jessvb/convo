@@ -32,6 +32,7 @@
   <!-- Header -->
   <header>
     <h1 class="centertext">Convercode</h1>
+    <p class="subtitle centertext">Hold the spacebar to talk to the agent.</p>
   </header>
 
   <!-- Recording info -->
@@ -75,24 +76,30 @@
     <img src="img/notLoading.svg" id="blankLoadingImg" alt="not loading" height="80">
   </div>
 
-    <!-- Textbox for speech results -->
-    <div class="centertext">
-      <div id="results">
-        <span id="final_span" class="final usertext"></span>
-        <span id="interim_span" class="interim usertext"></span>
-        <p>
-      </div>
+  <!-- Input box for testing sans speech TODO: remove this for study -->
+  <div class="centertext">
+    <div>
+      <input type="text" name="inputText" id="inputTextbox" autofocus>
+      <input type="submit"></input>
+      <p>
     </div>
-  
+  </div>
+
+  <!-- Textbox for speech results -->
+  <div class="centertext">
+    <div id="results">
+      <span id="final_span" class="final usertext"></span>
+      <span id="interim_span" class="interim usertext"></span>
+      <p>
+    </div>
+  </div>
+
 
   <!-- Textbox for previous dialog -->
   <div class="centertext">
-      <div id="dialog"> 
-        <p class="agenttext">sentence 4</p>
-        <p class="usertext">sentence 3</p>
-        <p class="agenttext">sentence 2</p>
-        <p class="usertext">sentence 1</p>
-      </div>
+    <div id="dialog">
+      <!-- dialog sentences go here -->
+    </div>
   </div>
 
 </body>

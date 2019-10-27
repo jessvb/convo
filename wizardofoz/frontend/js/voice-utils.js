@@ -1,17 +1,17 @@
-var zhoraiVoice;
+var agentVoice;
 var msg; // this is global because of a strange bug: https://stackoverflow.com/a/35935851
 
 /**
- * Speaks with the voice set by zhoraiVoice
- * @param {*} text: the text zhorai says
- * @param {*} onSpeak: a function that's called when zhorai starts speaking
- * @param {*} callback: a function that's called when zhorai is done speaking
+ * Speaks with the voice set by agentVoice
+ * @param {*} text: the text the agent says
+ * @param {*} onSpeak: a function that's called when the agent starts speaking
+ * @param {*} callback: a function that's called when the agent is done speaking
  */
 function speakText(text, onSpeak, callback) {
     // FROM https://developers.google.com/web/updates/2014/01/Web-apps-that-talk-Introduction-to-the-Speech-Synthesis-API
     msg = new SpeechSynthesisUtterance(text);
 
-    msg.voice = zhoraiVoice; // Note: some voices don't support altering params
+    msg.voice = agentVoice; // Note: some voices don't support altering params
     msg.volume = 1; // 0 to 1
     msg.rate = 1.1; // 0.1 to 10
     msg.pitch = 1.5; // 0 to 2
@@ -23,7 +23,6 @@ function speakText(text, onSpeak, callback) {
     }
 
     if (callback) {
-        // msg.onend = callback;
         msg.onend = function () {
             callback();
         };
@@ -34,10 +33,10 @@ function speakText(text, onSpeak, callback) {
 
 /* -------------- Once the page has loaded -------------- */
 document.addEventListener('DOMContentLoaded', function () {
-    // Prepare Zhorai's voice:
+    // Prepare the agent's voice:
     window.speechSynthesis.onvoiceschanged = function () {
         // good voices: Alex pitch 2, Google US English 1.5, Google UK English Female 1.5, Google UK English Male 2
-        zhoraiVoice = window.speechSynthesis.getVoices().filter(function (voice) {
+        agentVoice = window.speechSynthesis.getVoices().filter(function (voice) {
             return voice.name == 'Google US English';
             // return voice.name == 'Google UK English Female';
             // return voice.name == 'Google UK English Male';

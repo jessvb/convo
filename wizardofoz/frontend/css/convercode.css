@@ -16,13 +16,16 @@ body {
 }
 
 .agenttext {
-    /* color: lightskyblue; */
     color: #006bb3;
 }
 
 .usertext {
-    /* color: lightgreen; */
     color: #00b32d;
+}
+
+.subtitle {
+    font-size: 115%;
+    color: dimgrey;
 }
 
 /* ID Specifics */
