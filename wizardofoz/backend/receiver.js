@@ -22,6 +22,11 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
+/* to choose a random response */
+function chooseRandomPhrase(phrases) {
+    return phrases[Math.floor(Math.random() * phrases.length)];
+}
+
 
 // Create secure websocket server
 const wss = new WebSocket.Server({
@@ -30,13 +35,30 @@ const wss = new WebSocket.Server({
 
 // Define websocket handlers
 wss.on('connection', function (connection) {
+    console.log("TODO DEL: on cxn");
     connection.on('message', function incoming(message) {
         // process WebSocket message
         console.log('received message: ' + message);
         var sendEnd = false;
         var jsonMsg = JSON.parse(message);
-        if (jsonMsg.command == 'parse') {
+        if (jsonMsg.command == 'user_input') {
+            console.log("TODO DEL: received user_input");
+            if (jsonMsg.text) {
+                rl.question('Incoming input: ' + jsonMsg.text + "\nHow do you respond?\n", (wizardResponse) => {
+                    // TODO: Log the answer in a database
+                    console.log("Okay, I'll send: " + wizardResponse +
+                        ", to the frontend. (TODO)");
 
+                    rl.close();
+
+                    returnTextToClient(wizardResponse, connection);
+                });
+            } else {
+                console.log("jsonMsg contained no 'text'. Returning 'pardon'.");
+                var phrases = ["Sorry, what was that?", "Oh, pardon?", "I didn't quite understand that. Pardon?"];
+                agentSpeech = chooseRandomPhrase(phrases);
+                returnTextToClient(agentSpeech, connection);
+            }
         } else {
             console.log("Error: Command, '" + jsonMsg.command + "', not recognized. Closing connection.");
             sendEnd = true;
@@ -55,15 +77,13 @@ wss.on('connection', function (connection) {
 
 });
 
-function returnTextToClient(text, stage, connection) {
+function returnTextToClient(text, connection) {
     console.log("Returning text to client: " + JSON.stringify({
-        'filedata': text,
-        'stage': stage
+        'text': text
     }));
     connection.send(
         JSON.stringify({
-            'filedata': text,
-            'stage': stage
+            'text': text
         }));
     sendDone(connection);
 }
@@ -78,10 +98,3 @@ function sendDone(connection) {
 server.listen(port);
 
 console.log("Wizard is all set!");
-
-rl.question('Say something: ', (answer) => {
-    // TODO: Log the answer in a database
-    console.log(`Okay, I'll send: ${answer}, to the frontend. (TODO)`);
-
-    rl.close();
-});

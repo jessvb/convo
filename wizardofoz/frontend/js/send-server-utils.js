@@ -24,9 +24,19 @@ function sendFromSession(key) {
 
 function onReceive(event, socket) {
     var jsonMsg = JSON.parse(event.data);
-    if (jsonMsg.filedata) {
-        console.log("received message in stage, " + jsonMsg.stage + ": " + jsonMsg.filedata);
-        console.log("TODO: add some stuff here");
+    if (jsonMsg.text) {
+        console.log("received message: " + jsonMsg.text);
+        var agentSpeech = jsonMsg.text;
+        showAgentSpeech(agentSpeech);
+
+        speakText(agentSpeech, null,
+            function () {
+                switchButtonTo('micBtn');
+                document.getElementById('curr_text').style.visibility = "hidden";
+                addSentenceToPage(agentSpeech, true);
+            });
+    } else {
+        console.log("received message with no text.");
     }
 
     if (jsonMsg.done == true) {

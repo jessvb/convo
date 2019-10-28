@@ -6,7 +6,7 @@ var blankLoadingImg;
 var currBtnIsMic = true;
 var inputTextbox; // for testing without speech
 var sentencesDiv; // where the list of sentences appear
-var devMode = true; // set to true if you want to see the input text box
+var devMode = false; // set to true if you want to see the input text box
 
 /* -------------- Initialize functions -------------- */
 function showAgentSpeech(text) {
@@ -68,19 +68,25 @@ function afterRecording(recordedText) {
     // Add the recorded speech to the dialog, as user text:
     addSentenceToPage(recordedText, false);
 
+    // Send the user input to the wizard server:
+    sendJson({
+        command: 'user_input',
+        text: recordedText
+    });
 
-    var agentSpeech = '';
-    var phrases = ["Sorry, what was that?", "Oh, pardon?", "I didn't quite understand that. Pardon?"];
+    // TODO: DEL
+    // var agentSpeech = '';
+    // var phrases = ["Sorry, what was that?", "Oh, pardon?", "I didn't quite understand that. Pardon?"];
 
-    agentSpeech = chooseRandomPhrase(phrases);
-    showAgentSpeech(agentSpeech);
+    // agentSpeech = chooseRandomPhrase(phrases);
+    // showAgentSpeech(agentSpeech);
 
-    speakText(agentSpeech, null,
-        function () {
-            switchButtonTo('micBtn');
-            document.getElementById('curr_text').style.visibility = "hidden";
-            addSentenceToPage(agentSpeech, true);
-        });
+    // speakText(agentSpeech, null,
+    //     function () {
+    //         switchButtonTo('micBtn');
+    //         document.getElementById('curr_text').style.visibility = "hidden";
+    //         addSentenceToPage(agentSpeech, true);
+    //     });
 }
 
 /**
@@ -131,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
         inputSubmitbtn.hidden = false;
         // click/enter handlers
         inputSubmitbtn.addEventListener('click', function () {
-            console.log(inputTextbox.value);
+            console.log('User message:' + inputTextbox.value);
             afterRecording(inputTextbox.value);
             inputTextbox.value = "";
         });
