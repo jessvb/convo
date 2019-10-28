@@ -35,22 +35,17 @@ const wss = new WebSocket.Server({
 
 // Define websocket handlers
 wss.on('connection', function (connection) {
-    console.log("TODO DEL: on cxn");
     connection.on('message', function incoming(message) {
         // process WebSocket message
         console.log('received message: ' + message);
         var sendEnd = false;
         var jsonMsg = JSON.parse(message);
         if (jsonMsg.command == 'user_input') {
-            console.log("TODO DEL: received user_input");
             if (jsonMsg.text) {
                 rl.question('Incoming input: ' + jsonMsg.text + "\nHow do you respond?\n", (wizardResponse) => {
-                    // TODO: Log the answer in a database
+                    // TODO: Save the conversation in a database
                     console.log("Okay, I'll send: " + wizardResponse +
-                        ", to the frontend. (TODO)");
-
-                    rl.close();
-
+                        ", to the frontend.\n");
                     returnTextToClient(wizardResponse, connection);
                 });
             } else {

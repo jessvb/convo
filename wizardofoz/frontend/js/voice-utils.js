@@ -14,7 +14,8 @@ function speakText(text, onSpeak, callback) {
     msg.voice = agentVoice; // Note: some voices don't support altering params
     msg.volume = 1; // 0 to 1
     msg.rate = 1.1; // 0.1 to 10
-    msg.pitch = 1.5; // 0 to 2
+    // msg.pitch = 1.5; // 0 to 2 -- Zhorai's voice is at 1.5
+    msg.pitch = 1;
     msg.lang = 'en-US';
 
     // onSpeak e.g., set the button to the "hear again" button

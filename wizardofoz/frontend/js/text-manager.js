@@ -14,19 +14,6 @@ function showAgentSpeech(text) {
 }
 
 /**
- * Returns list of english voices:
- */
-function getEnglishVoices() {
-    englishVoices = [];
-    speechSynthesis.getVoices().forEach(function (voice) {
-        if (voice.lang.includes("en")) {
-            englishVoices.push(voice);
-        }
-    });
-    return englishVoices;
-}
-
-/**
  * Switches the button to the specified button (either 'micBtn' or 'speakBtn')
  * @param {*} toButton
  */
@@ -65,6 +52,9 @@ function switchButtonTo(toButton) {
 }
 
 function afterRecording(recordedText) {
+    // hide recorded speech
+    agentSpeechBox.hidden = true;
+
     // Add the recorded speech to the dialog, as user text:
     addSentenceToPage(recordedText, false);
 
@@ -73,20 +63,6 @@ function afterRecording(recordedText) {
         command: 'user_input',
         text: recordedText
     });
-
-    // TODO: DEL
-    // var agentSpeech = '';
-    // var phrases = ["Sorry, what was that?", "Oh, pardon?", "I didn't quite understand that. Pardon?"];
-
-    // agentSpeech = chooseRandomPhrase(phrases);
-    // showAgentSpeech(agentSpeech);
-
-    // speakText(agentSpeech, null,
-    //     function () {
-    //         switchButtonTo('micBtn');
-    //         document.getElementById('curr_text').style.visibility = "hidden";
-    //         addSentenceToPage(agentSpeech, true);
-    //     });
 }
 
 /**
