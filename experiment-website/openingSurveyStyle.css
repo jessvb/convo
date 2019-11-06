@@ -19,6 +19,16 @@
     width: 150%;
 }
 
+p {
+	max-width: 100%
+}
+
+select {
+    border:1px solid #ccc;
+    vertical-align:top;
+    height:20px;
+}
+
 #programmingLanguagesTextBox {
 	display: none;
 }

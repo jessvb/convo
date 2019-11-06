@@ -11,10 +11,13 @@
     <!-- Load style sheets -->
     <link rel="stylesheet" href="generalStyle.css">
     <link rel="stylesheet" href="openingSurveyStyle.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 
     <!-- JavaScript -->
     <script src="survey.js"></script>
     <script src="openingSurvey.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 </head>
 
 <body>
@@ -66,7 +69,7 @@
                     - Novice: no programming experience, or have experience in blocks-based programming (e.g., Scratch, App Inventor) <br>
                     - Advanced: have experience in object-oriented programming or completed a course or project in a text-based language (e.g., Java, Python, C++)
                 </div>
-                <select class="ans" id='level'>
+                <select class="ans" id='level' height="1">
                     <option value="select">Select...</option>
                     <option value="novice">Novice</option>
                     <option value="advanced">Advanced</option>
@@ -109,11 +112,21 @@
         </div>
 
         <div id="buttonArea">
-            <input type="button" class="button submit" value="Start Experiment">
+             <!-- <input type="button" class="button submit" value="Start Experiment">  -->
+             <button type="button" class="btn btn-primary" value="Start Experiment">Start Experiment</button>
         </div>
 
-        <div class="progressBar">
+        <!-- <div class="progressBar">
             Progress: 0%
+        </div> -->
+
+        <div class="progress">
+
+            <div class="progress-bar" role="progressbar" aria-valuenow="5"
+            aria-valuemin="0" aria-valuemax="100" style="width:5%">
+            5%
+            </div>
+            <p align="center">Progress</p>
         </div>
 
     </div>
