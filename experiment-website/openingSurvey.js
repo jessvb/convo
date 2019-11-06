@@ -62,3 +62,21 @@ function sendOpeningSurvey(
   (new Image).src = "https://docs.google.com/forms/d/" + formid +
     "/formResponse?" + params.join("&");
 }
+
+// This function creates an Other text box if Other is clicked in a "Select Multiple" question
+function showOtherTextBox(sel, id) {
+    var opts = [], opt;
+    var len = sel.options.length;
+    for (var i = 0; i < len; i++) {
+      opt = sel.options[i];
+
+      if (opt.value === "other" && opt.selected) {
+        opts.push(opt);
+        // alert(opt.value);
+        document.getElementById(id).style.display = 'block';
+      }
+      else {
+        document.getElementById(id).style.display = 'none'; 
+      }
+    }
+}

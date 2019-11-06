@@ -18,7 +18,10 @@
     display: flex;
     width: 150%;
 }
-.item {
-	white-space: nowrap;
-	display: inline;
+
+#programmingLanguagesTextBox {
+	display: none;
+}
+#convAgentsTextBox {
+	display: none;
 }

@@ -73,29 +73,35 @@
                 </select>
 
                 <div class="ques">7) What programming languages and/or softwares have you used before? (Select as many as applies) </div>
-                <select multiple class="ans" id='programmingLanguages'>
-                  <option value="none">None</option>
-                  <option value="scratch">Scratch</option>
-                  <option value="appinventor">App Inventor</option>
-                  <option value="python">Python</option>
-                  <option value="java">Java</option>
-                  <option value="c">C</option>
-                  <option value="cpp">C++</option>
-                  <option value="swift">Swift</option>
-                  <option value="javascript">JavaScript</option>
-                  <option value="other">Other</option>
-                </select>
+                <div class="row">
+                    <select class="ans" id='programmingLanguages' onchange="showOtherTextBox(this, 'programmingLanguagesTextBox')" multiple>
+                      <option value="none">None</option>
+                      <option value="scratch">Scratch</option>
+                      <option value="appinventor">App Inventor</option>
+                      <option value="python">Python</option>
+                      <option value="java">Java</option>
+                      <option value="c">C</option>
+                      <option value="cpp">C++</option>
+                      <option value="swift">Swift</option>
+                      <option value="javascript">JavaScript</option>
+                      <option value="other">Other</option>
+                    </select>
+                    <input class="ans" id='programmingLanguagesTextBox' type="text" placeholder="Other:">
+                </div>
 
                 <div class="ques">8) What type of conversational agents have you interacted with before? (Select as many as applies) </div>
-                <select multiple class="ans" id='programmingLanguages'>
-                  <option value="none">None</option>
-                  <option value="alexa">Amazon Alexa</option>                  
-                  <option value="siri">Apple Siri</option>
-                  <option value="googlehome">Google Home</option>
-                  <option value="cortana">Microsoft Cortana</option>
-                  <option value="bixby">Samsung Bixby</option>
-                  <option value="other">Other</option>
-                </select>
+                <div class="row">
+                    <select multiple class="ans" id='convAgents' onchange="showOtherTextBox(this, 'convAgentsTextBox')">
+                      <option value="none">None</option>
+                      <option value="alexa">Amazon Alexa</option>                  
+                      <option value="siri">Apple Siri</option>
+                      <option value="googlehome">Google Home</option>
+                      <option value="cortana">Microsoft Cortana</option>
+                      <option value="bixby">Samsung Bixby</option>
+                      <option value="other">Other</option>
+                    </select>
+                    <input class="ans" id='convAgentsTextBox' type="text" placeholder="Other:">
+                </div>
 
                 
                 
