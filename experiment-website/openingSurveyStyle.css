@@ -5,7 +5,7 @@
     grid-template-columns: auto 8em;
     grid-column-gap: 2em;
     grid-row-gap: 0.3em;
-    max-width: 450px;
+    max-width: 550px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -17,4 +17,8 @@
 .ans {
     display: flex;
     width: 150%;
+}
+.item {
+	white-space: nowrap;
+	display: inline;
 }

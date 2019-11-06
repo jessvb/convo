@@ -26,13 +26,13 @@
         <div id="infoArea">
             <h2>Demographic Survey</h2>
             <div class="survey">
-                <div class="ques">What is your full name?</div>
+                <div class="ques">1) What is your full name?</div>
                 <input class="ans" id='name' type="text" placeholder="ex: Harry Potter">
 
-                <div class="ques">How old are you?</div>
+                <div class="ques">2) How old are you?</div>
                 <input class="ans" id='age' type="number" min="10" max="99" placeholder="ex: 17">
 
-                <div class="ques">What is your gender?</div>
+                <div class="ques">3) What is your gender?</div>
                 <select class="ans" id='sex'>
                     <option value="select">Select...</option>
                     <option value="male">Male</option>
@@ -41,7 +41,7 @@
                     <option value="na">Prefer not to answer</option>
                 </select>
 
-                <div class="ques">What is your race and ethnicity? [To select multiple, hold down the Ctrl button (Cmd button on Mac) + click] </div>
+                <div class="ques">4) What is your race and ethnicity? <br> - To select multiple, hold down the Ctrl button (Cmd button on Mac) + click </div>
                 <select multiple class="ans" id='race'> 
                     <option value="AI/AN"> American Indian or Alaska Native</option>
                     <option value="asian"> Asian</option>
@@ -53,14 +53,51 @@
                     <option value="na">Prefer not to answer</option>
                 </select>
                 
-                <div class="ques">Is English your first language?</div>
+                <div class="ques">5) Is English your first language?</div>
                 <select class="ans" id='firstLanguage'>
                     <option value="select">Select...</option>
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
                     <option value="multiple">It is my first language along with another language</option>
                 </select>
+                
+                <div class="ques">
+                    6) Would you classify yourself as Novice or Advanced? <br>
+                    - Novice: no programming experience, or have experience in blocks-based programming (e.g., Scratch, App Inventor) <br>
+                    - Advanced: have experience in object-oriented programming or completed a course or project in a text-based language (e.g., Java, Python, C++)
+                </div>
+                <select class="ans" id='level'>
+                    <option value="select">Select...</option>
+                    <option value="novice">Novice</option>
+                    <option value="advanced">Advanced</option>
+                </select>
 
+                <div class="ques">7) What programming languages and/or softwares have you used before? (Select as many as applies) </div>
+                <select multiple class="ans" id='programmingLanguages'>
+                  <option value="none">None</option>
+                  <option value="scratch">Scratch</option>
+                  <option value="appinventor">App Inventor</option>
+                  <option value="python">Python</option>
+                  <option value="java">Java</option>
+                  <option value="c">C</option>
+                  <option value="cpp">C++</option>
+                  <option value="swift">Swift</option>
+                  <option value="javascript">JavaScript</option>
+                  <option value="other">Other</option>
+                </select>
+
+                <div class="ques">8) What type of conversational agents have you interacted with before? (Select as many as applies) </div>
+                <select multiple class="ans" id='programmingLanguages'>
+                  <option value="none">None</option>
+                  <option value="alexa">Amazon Alexa</option>                  
+                  <option value="siri">Apple Siri</option>
+                  <option value="googlehome">Google Home</option>
+                  <option value="cortana">Microsoft Cortana</option>
+                  <option value="bixby">Samsung Bixby</option>
+                  <option value="other">Other</option>
+                </select>
+
+                
                 
             </div>
         </div>
