@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!-- Use mobile-aware viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Opening Survey</title>
+
+    <!-- Load style sheets -->
+    <link rel="stylesheet" href="generalStyle.css">
+    <link rel="stylesheet" href="openingSurveyStyle.css">
+
+    <!-- JavaScript -->
+    <script src="survey.js"></script>
+    <script src="openingSurvey.js"></script>
+</head>
+
+<body>
+    <div id="wholeSiteWrap">
+        <div id="titleArea">
+            <h1>Conversational Programming Experiment</h1>
+        </div>
+
+        <div id="infoArea">
+            <h2>Demographic Survey</h2>
+            <div class="survey">
+                <div class="ques">What is your full name?</div>
+                <input class="ans" id='name' type="text" placeholder="ex: Harry Potter">
+
+                <div class="ques">How old are you?</div>
+                <input class="ans" id='age' type="number" min="10" max="99" placeholder="ex: 17">
+
+                <div class="ques">What is your gender?</div>
+                <select class="ans" id='sex'>
+                    <option value="select">Select...</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                    <option value="na">Prefer not to answer</option>
+                </select>
+
+                <div class="ques">What is your race and ethnicity? [To select multiple, hold down the Ctrl button (Cmd button on Mac) + click] </div>
+                <select multiple class="ans" id='race'> 
+                    <option value="AI/AN"> American Indian or Alaska Native</option>
+                    <option value="asian"> Asian</option>
+                    <option value="black"> Black or African-American</option>
+                    <option value="latinx"> Hispanic, Latinx, or Spanish</option>
+                    <option value="NH/PI"> Native Hawaiian or Other Pacific Islander</option>
+                    <option value="white"> White</option>
+                    <option value="other">Other</option>
+                    <option value="na">Prefer not to answer</option>
+                </select>
+                
+                <div class="ques">Is English your first language?</div>
+                <select class="ans" id='firstLanguage'>
+                    <option value="select">Select...</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                    <option value="multiple">It is my first language along with another language</option>
+                </select>
+
+                
+            </div>
+        </div>
+
+        <div id="buttonArea">
+            <input type="button" class="button submit" value="Start Experiment">
+        </div>
+
+        <div class="progressBar">
+            Progress: 0%
+        </div>
+
+    </div>
+
+</body>
+
+</html>
