@@ -46,7 +46,7 @@ h2 {
 }
 
 p {
-    max-width: var(--max-par-width);
+    /*max-width: var(--max-par-width);*/
     margin-left: auto;
     margin-right: auto;
     line-height: var(--line-height);
