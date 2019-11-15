@@ -1,0 +1,115 @@
+/* Style for experiment. */
+
+:root {
+    
+    --colour-background: #f1f1f1;
+    --colour-outer-outline: #5a5a5a;
+    --colour-menu-background: #cecece;
+    --colour-menu-outline: #c0c0c0;
+    --colour-menu-selected: #3aa5b1;
+    --colour-menu-font: #1f1f1f;
+
+    --margin-size: 1em;
+    --padding-size: 1em;
+    --thin-border-size: 1px;
+    --row-gap: 0.5rem;
+    
+    --anim-onset-delay: 500; 
+}
+
+#experimentwrap {
+    margin: var(--margin-size);
+    color: var(--colour-menu-font);
+    /* Grid */
+    display: grid;
+    grid-row-gap: var(--row-gap);
+   grid-template-columns: repeat(2, 1fr);
+   grid-template-rows: repeat(2, 100px);
+}
+
+#voicearea {
+    border: thick solid var(--colour-outer-outline);
+    background-color: var(--colour-background);
+    padding: var(--padding-size);
+    display: grid;
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    grid-template-rows: fit-content(100%) 80vh;
+    grid-template-columns: fit-content(50%) 50vh;
+}
+
+#sidebararea {
+    border: thick solid var(--colour-outer-outline);
+    background-color: var(--colour-background);
+    padding: var(--padding-size);
+    margin-left: 10%;
+    display: grid;
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 3;
+    grid-template-rows: fit-content(100%) 80vh;
+}
+
+#programarea {
+    border: thick solid var(--colour-outer-outline);
+    background-color: var(--colour-background);
+    padding: var(--padding-size);
+    /* Grid */
+    display: grid;
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 2;
+    grid-row-end: 3;
+    grid-template-rows: fit-content(100%) 80vh;
+}
+
+#taskbar {
+    background-color: var(--colour-menu-background);
+    /* Grid */
+    display: grid;
+    grid-template-columns: repeat(3, fit-content(100%)) auto;
+}
+
+/*.menutitle {
+    background-color: var(--colour-menu-background);
+    padding: calc(1 / 2 * var(--padding-size)) var(--padding-size);
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+}*/
+
+/* this selector is for when an element is BOTH menutitle AND menuselected */
+/*.menutitle.menuselected {
+    background-color: var(--colour-menu-selected);
+}*/
+
+/*.menudropdown {
+    display: none;
+    box-shadow: 0px calc(1 / 2 * var(--padding-size)) var(--padding-size) 0px rgba(0,0,0,0.2);
+    position: absolute;
+    min-width: 10em;
+    background-color: var(--colour-menu-background);
+    border: var(--thin-border-size) solid var(--colour-menu-outline);
+    top: calc(var(--padding-size) + 1em + var(--thin-border-size) * 2);
+    left: 0;
+}*/
+
+/*.showmenu {
+    display: grid;
+    grid-template-rows: repeat(4, auto);
+}*/
+
+/*.menublock {
+    border: var(--thin-border-size) solid var(--colour-menu-outline);
+}*/
+
+/*.menuitem {
+    padding: calc(1 / 2 * var(--padding-size)) var(--padding-size);
+}*/
+
+.hideexperiment {
+    display: none;
+}
