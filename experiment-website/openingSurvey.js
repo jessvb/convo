@@ -11,21 +11,28 @@ function submitAndGo() {
   let userID = localStorage.getItem('userID');
   let uid = localStorage.getItem('uid');
 
-  let age, sex, computerUsage, email;
+  let age, sex, race, firstLanguage, level, programmingLanguages, programmingLanguagesTextBox, convAgents, convAgentsTextBox;
   // get user input
   age = document.getElementById('age').value;
   sex = document.getElementById('sex').value;
-  computerUsage = document.getElementById('compUsage').value;
-  pointingDevice = document.getElementById('pointingDevice').value;
+  race = document.getElementById('race').value;
+  firstLanguage = document.getElementById('firstLanguage').value;
+  level = document.getElementById('level').value;
+  programmingLanguages = document.getElementById('programmingLanguages').value;
+  programmingLanguagesTextBox = document.getElementById('programmingLanguagesTextBox').value;
+  convAgents = document.getElementById('convAgents').value;
+  convAgentsTextBox = document.getElementById('convAgentsTextBox').value;
+
   if (
-    userID == null || uid == null || age == null || sex == null ||
-    computerUsage == null || pointingDevice == null) {
+    userID == null || uid == null || age == null || sex == null || 
+    race == null || firstLanguage == null || level == null ||
+    programmingLanguages == null || convAgents == null) {
     console.error(
       'There is an unanswered question. Please report this error to the experimenter.');
-    console.error('Collected answers:', userID, age, sex, computerUsage, pointingDevice);
+    console.error('Collected answers:', userID, age, sex, race, firstLanguage, level, programmingLanguages, programmingLanguagesTextBox, convAgents, convAgentsTextBox);
   } else {
     // send input
-    sendOpeningSurvey(userID, uid, age, sex, computerUsage, pointingDevice);
+    sendOpeningSurvey(userID, uid, age, sex, race, firstLanguage, level, programmingLanguages, programmingLanguagesTextBox, convAgents, convAgentsTextBox);
 
     // go to next page (experiment page)
     window.location.href = 'gradualOnsetExperiment.html';
