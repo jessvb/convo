@@ -24,27 +24,27 @@
     display: grid;
     grid-row-gap: var(--row-gap);
    grid-template-columns: repeat(2, 1fr);
-   grid-template-rows: repeat(2, 100px);
+   grid-template-rows: repeat(2, 300px);
 }
 
 #voicearea {
     border: thick solid var(--colour-outer-outline);
     background-color: var(--colour-background);
     padding: var(--padding-size);
+    /* Grid */
     display: grid;
     grid-column-start: 1;
     grid-column-end: 2;
     grid-row-start: 1;
     grid-row-end: 2;
     grid-template-rows: fit-content(100%) 80vh;
-    grid-template-columns: fit-content(50%) 50vh;
 }
 
 #sidebararea {
     border: thick solid var(--colour-outer-outline);
     background-color: var(--colour-background);
     padding: var(--padding-size);
-    margin-left: 10%;
+    margin-left: 5%;
     display: grid;
     grid-column-start: 2;
     grid-column-end: 3;

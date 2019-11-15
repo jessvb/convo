@@ -38,20 +38,51 @@
     <h2>Learning How to Program Conversationally</h2>
     <div id="experimentwrap">
         <div class="" id="voicearea">
-            Voice Area
+            <h4 align="center">Voice Area</h4>
         </div>
         <div class="" id="programarea">
-            Program Area 
+            <h4 align="center">Your Program</h4>
+            <p align="center">
+                Line 1: <i>Say "Hello world"</i>
+            </p>
         </div>
         <div class="" id="sidebararea">
-            Sidebar
+            <h4 align="center">Example Utterances</h4>
+
+            <p align="">
+                To create a variable: <br>
+                - User: "Make a variable called <i>count</i>."<br>
+                - Agent: "Okay. What would you like to store in <i>count</i>?"<br>
+                - User: “Set count to 0.” <br><br>
+
+                To create a variable: <br>
+                - User: "Make a variable called <i>count</i>."<br>
+                - Agent: "Okay. What would you like to store in <i>count</i>?"<br>
+                - User: “Set count to 0.”<br><br>
+
+                To create a variable: <br>
+                - User: "Make a variable called <i>count</i>."<br>
+                - Agent: "Okay. What would you like to store in <i>count</i>?"<br>
+                - User: “Set count to 0.”<br><br>
+
+                To create a variable: <br>
+                - User: "Make a variable called <i>count</i>."<br>
+                - Agent: "Okay. What would you like to store in <i>count</i>?"<br>
+                - User: “Set count to 0.”<br><br>
+            </p>
+            
         </div>
     </div>
 
     <div id="notificationwrap">
         <!-- <div id="msgarea">hello world!</div> -->
-        <div id="buttonarea">
+        <!-- <div id="buttonarea">
             <input type="button" class="button next" value="Next">
+        </div> -->
+
+        <div id="buttonArea">
+             <!-- <input type="button" class="button submit" value="Start Experiment">  -->
+             <button type="button" class="btn btn-primary" value="Next">Next</button>
         </div>
     </div>
 
@@ -115,9 +146,20 @@
         </div>
     </div> -->
 
-    <div class="progressBar">
-        Progress: #%
-    </div>
+    
+
+        <!-- <div class="progressBar">
+            Progress: 0%
+        </div> -->
+
+        <div class="progress">
+
+            <div class="progress-bar" role="progressbar" aria-valuenow="25"
+            aria-valuemin="0" aria-valuemax="100" style="width:25%">
+            25%
+            </div>
+            <p align="center">Progress</p>
+        </div>
 
 </body>
 
