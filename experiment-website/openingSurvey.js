@@ -35,7 +35,8 @@ function submitAndGo() {
     sendOpeningSurvey(userID, uid, age, sex, race, firstLanguage, level, programmingLanguages, programmingLanguagesTextBox, convAgents, convAgentsTextBox);
 
     // go to next page (experiment page)
-    window.location.href = 'gradualOnsetExperiment.html';
+    // window.location.href = 'gradualOnsetExperiment.html';
+    window.location.href = 'PracticeInfoPage.html';
   }
 }
 

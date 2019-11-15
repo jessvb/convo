@@ -41,6 +41,7 @@ h2 {
     font-size: var(--h2-size);
     font-weight: normal;
     margin-top: var(--site-padding-size);
+    text-align: center;
 }
 
 p {
