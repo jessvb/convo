@@ -23,6 +23,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
     <!-- The experiment javascript -->
+    <script src="practiceTextSystem.js"></script>
     <script src="experimentSetup.js"></script>
     <script src="experimentProcess.js"></script>
     <script src="listOfThings.js"></script>
@@ -41,7 +42,14 @@
     <div id="experimentwrap">
         <div id="textarea">
             <!-- <h4 align="center">Text Area</h4> -->
-            <input class="ans" id="textbox" type="text" placeholder="Type here">
+            <row>
+                <input class="ans" id="textbox" type="text" placeholder="Type here and press Enter">
+                <div id="buttonArea">
+                    <button id="" onclick="enterText()">Enter</button>
+                    <button id="" onclick="reset()">Reset</button>
+                </div>
+            </row>
+            <p id="transcript" align="center"></p>
         </div>
 
         <div id="programarea">
