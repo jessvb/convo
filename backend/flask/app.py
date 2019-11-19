@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify
 from dialog import DialogManager
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 dm = DialogManager()
 
 @app.route('/message', methods=['POST'])
