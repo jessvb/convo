@@ -105,6 +105,13 @@
     height: 50px;
 }
 
+.red {
+    color: red;
+}
+.blue {
+    color: blue;
+}
+
 p {
     /* overflow-x: scroll; */
     overflow-y: scroll;

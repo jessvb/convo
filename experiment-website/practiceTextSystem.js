@@ -21,7 +21,7 @@ function enterText() {
     // document.getElementById("transcript").innerHTML = typedStr + "<br>" + transcript;
     // Shows agent response
     agentResponse = "Insert agent response"
-    document.getElementById("transcript").innerHTML = agentResponse + "<br>" + typedStr + "<br>" + transcript;
+    document.getElementById("transcript").innerHTML = '<span class="red">' + agentResponse + "</span>" + "<br>" + "<span class='blue'>" + typedStr  + "</span>" + "<br>" + transcript;
 
     // Side Bar 
     var instruction = document.getElementById('sidebarinfo').innerHTML;
