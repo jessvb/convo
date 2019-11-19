@@ -1,3 +1,3 @@
 function submit() {
-  window.location.href = 'gradualOnsetExperiment.html';
+  window.location.href = 'PracticeTextSystem.html';
 }

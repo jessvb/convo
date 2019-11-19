@@ -23,7 +23,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
     <!-- The experiment javascript -->
-    <script src="practiceTextSystem.js"></script>
+    <script src="practiceVoiceSystem.js"></script>
     <script src="experimentSetup.js"></script>
     <script src="experimentProcess.js"></script>
     <script src="listOfThings.js"></script>
@@ -37,33 +37,22 @@
 
 <body>
     <div id="titleArea">
-        <h2>Learning How to Program Conversationally: Text System</h2>
+        <h2>Learning How to Program Conversationally: Voice System</h2>
     </div>
     <div id="experimentwrap">
-        <div id="textarea">
-            <!-- <h4 align="center">Text Area</h4> -->
-            <row>
-                <input class="ans" id="textbox" type="text" placeholder="Type here and press Enter">
-                <div id="buttonArea">
-                    <button id="" onclick="enterText()">Enter</button>
-                    <button id="" onclick="reset()">Reset</button>
-                </div>
-            </row>
+        <div id="voiceonlyarea">
+            <h4 align="center">[Voice Area]</h4>
+
             <p class="user_utterance" id="transcript" align="center"></p>
         </div>
 
-        <div id="programarea">
-            <h4 align="center">Your Program</h4>
-            <p align="center">
-                Line 1: <i>Say "Hello world"</i>
-            </p>
-        </div>
+        
 
         <div class="" id="sidebararea">
             <h4 align="center">You are in practice mode</h4>
 
             <p id="sidebarinfo" align="center">
-                Begin by typing 'Hello' in the text box.
+                Begin by pressing the Mic button and saying 'Hello!'
             </p>
             <p></p><p></p><p></p><p></p><p></p>
 
@@ -143,7 +132,7 @@
     
 
         <div class="progressBar">
-            Progress: 15%
+            Progress: 20%
         </div>
 
         <!-- <div class="progress">

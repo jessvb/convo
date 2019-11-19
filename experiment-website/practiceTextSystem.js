@@ -8,16 +8,23 @@ INSTRUCTIONS = [
     "Congratulations, you just made a program with a conversational agent! Feel free to practice more with the system and get comfortable using it before moving onto the next step."
 ]
 
-// This function stores and shows textbox input after Enter is pressed
-// and populates sidebar instructions
+// This function does the following after Enter is pressed:
+// - stores and shows textbox input 
+// - populates sidebar instructions
+// - returns agent output?
 function enterText() {
+    // Gets textbox input value
     var typedStr = document.getElementById("textbox").value;
     document.getElementById("textbox").value = "";
+    // Adds input value to user transcript
     var transcript = document.getElementById("transcript").innerHTML;
-    document.getElementById("transcript").innerHTML = typedStr + "<br>" + transcript;
+    // document.getElementById("transcript").innerHTML = typedStr + "<br>" + transcript;
+    // Shows agent response
+    agentResponse = "Insert agent response"
+    document.getElementById("transcript").innerHTML = agentResponse + "<br>" + typedStr + "<br>" + transcript;
 
+    // Side Bar 
     var instruction = document.getElementById('sidebarinfo').innerHTML;
-    // check if typed str matches instruction
     switch (STEP) {
         case 0:
             if (typedStr.includes("Hello")) {
@@ -51,10 +58,11 @@ function enterText() {
 // This function clears the transcript + restarts instructions when Reset is pressed
 function reset() {
     document.getElementById("transcript").innerHTML = "";
+    document.getElementById("agent").innerHTML = "";
     STEP = 0;
     document.getElementById("sidebarinfo").innerHTML = INSTRUCTIONS[0]
 }
 
-function getInstruction() {
-    
+function submit() {
+    window.location.href = 'PracticeVoiceSystem.html';
 }
