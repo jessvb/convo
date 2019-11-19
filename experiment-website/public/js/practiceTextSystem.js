@@ -1,5 +1,3 @@
-const axios = require('axios');
-
 STEP = 0
 INSTRUCTIONS = [
     "Begin by typing 'Hello' in the text box.", 
@@ -21,10 +19,9 @@ function enterText() {
     // Adds input value to user transcript
     var transcript = document.getElementById("transcript").innerHTML;
     // Shows agent response
-    agentResponse = "Insert agent response"
-    document.getElementById("transcript").innerHTML = '<span class="red">' + agentResponse + "</span>" + "<br>" + "<span class='blue'>" + typedStr  + "</span>" + "<br>" + transcript;
+    var agentResponse = "Insert agent response"
 
-    // Side Bar 
+    // Side Bar
     var instruction = document.getElementById('sidebarinfo').innerHTML;
     switch (STEP) {
         case 0:
@@ -54,12 +51,14 @@ function enterText() {
                 break;
             }
         default:
-            axios.post('/message', {
+            axios.post('http://127.0.0.1:5000/message', {
                 message: typedStr
             })
             .then(function (response) {
                 // handle success
-                console.log(response);
+                console.log(response.data.message);
+                agentResponse = response.data.message;
+                document.getElementById("transcript").innerHTML = '<span class="red">' + agentResponse + "</span>" + "<br>" + "<span class='blue'>" + typedStr  + "</span>" + "<br>" + transcript;
             })
             .catch(function (error) {
                 // handle error
