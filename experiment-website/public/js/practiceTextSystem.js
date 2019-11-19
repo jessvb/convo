@@ -1,3 +1,5 @@
+const axios = require('axios');
+
 STEP = 0
 INSTRUCTIONS = [
     "Begin by typing 'Hello' in the text box.", 
@@ -18,7 +20,6 @@ function enterText() {
     document.getElementById("textbox").value = "";
     // Adds input value to user transcript
     var transcript = document.getElementById("transcript").innerHTML;
-    // document.getElementById("transcript").innerHTML = typedStr + "<br>" + transcript;
     // Shows agent response
     agentResponse = "Insert agent response"
     document.getElementById("transcript").innerHTML = '<span class="red">' + agentResponse + "</span>" + "<br>" + "<span class='blue'>" + typedStr  + "</span>" + "<br>" + transcript;
@@ -52,6 +53,18 @@ function enterText() {
                 document.getElementById("exampleguide").style.display = "";
                 break;
             }
+        default:
+            axios.post('/message', {
+                message: typedStr
+            })
+            .then(function (response) {
+                // handle success
+                console.log(response);
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            })
     }
     document.getElementById("sidebarinfo").innerHTML = INSTRUCTIONS[STEP];
 }
