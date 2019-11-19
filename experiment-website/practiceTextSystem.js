@@ -5,7 +5,7 @@ INSTRUCTIONS = [
     "Type 'Hello world'.",
     "Type 'That's it'.",
     "Type 'Yes'.",
-    "Congratulations, you just made a program with a conversational agent! Feel free to practice more with the system and get comfortable using it before moving onto the next step."
+    "Congratulations, you just made a program with a conversational agent! Feel free to practice more with the system and get comfortable using it before moving onto the next step. Below are some example phrases you can reference."
 ]
 
 // This function does the following after Enter is pressed:
@@ -49,6 +49,7 @@ function enterText() {
         case 4:
             if (typedStr.includes("Yes")) {
                 STEP++;
+                document.getElementById("exampleguide").style.display = "";
                 break;
             }
     }
