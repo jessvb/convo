@@ -36,7 +36,6 @@ class CreateClassGoal(object):
 
         if self.is_complete:
             print("Completing CreateClass")
-            self.context.add_class(self.klass)
             self.context.goals.pop()
 
         return self.message

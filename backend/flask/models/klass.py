@@ -26,6 +26,7 @@ class Class(object):
 class Object(object):
     def __init__(self, klass):
         self.klass = klass
+        self.properties = {}
 
 class Property(object):
     def __init__(self, klass, name, typ):
