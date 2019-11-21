@@ -24,13 +24,14 @@ class DialogManager(object):
                 self.context.goals.pop()
             return "Canceled!"
 
-        goal = self.nlu.parse_message(message)
+        parsed = self.nlu.parse_message(message)
+        self.context.parsed = parsed
         if self.current_goal() is None:
-            if goal is None:
+            if parsed is None:
                 response = "I didn't understand what you were saying. Please try again."
             else:
-                self.context.add_goal(goal)
-                response = self.current_goal().try_complete() if goal.is_complete else self.current_goal().message
+                self.context.add_goal(parsed)
+                response = self.current_goal().try_complete() if parsed.is_complete else self.current_goal().message
         else:
             response = self.current_goal().try_complete()
 

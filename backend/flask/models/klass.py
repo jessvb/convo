@@ -5,7 +5,7 @@ class Class(object):
         self.procedures = procedures if procedures else {}
 
     def __str__(self):
-        return f"Class {self.name}: {[str(prop) for prop in self.properties.values()]} : {[str(proc) for proc in self.procedures.values()]}"
+        return f"Class {self.name}: {[str(p) for p in self.properties.values()]} : {[str(p) for p in self.procedures.values()]}"
 
     def json(self):
         return {
@@ -28,9 +28,9 @@ class Object(object):
         self.klass = klass
 
 class Property(object):
-    def __init__(self, klass, name, type):
+    def __init__(self, klass, name, typ):
         self.name = name
-        self.type = type
+        self.type = typ
         self.klass = klass
 
     def __str__(self):

@@ -10,10 +10,16 @@ class CreateLoopGoal(object):
         self.condition = condition
         self.procedure = None
 
-        if action is not None:
-            self.loop_actions[0].append(action)
-
         self.todos.append(GetLoopActionsGoal(self.context, self))
+        if action is not None:
+            goal = self.todos[-1]
+            goal.todos.append(action)
+            setattr(action, "procedure", self.context.current_goal.procedure)
+            setattr(action, "actions", self.loop_actions)
+            setattr(action, "goal", goal)
+            if action.is_complete:
+                action.try_complete()
+
         if condition is None:
             self.todos.append(GetConditionGoal(self.context, self))
 
@@ -27,7 +33,7 @@ class CreateLoopGoal(object):
             return self.error
 
         if self.is_complete:
-            return "Goal completed!"
+            return "CreateLoopGoal completed!"
 
         return self.todos[-1].message
 
@@ -68,11 +74,11 @@ class GetLoopActionsGoal(object):
             return self.error
 
         if self.is_complete:
-            return "Goal completed!"
+            return "GetLoopActionsGoal completed!"
 
         if len(self.todos) == 0:
             if len(self.goal.loop_actions) > 0:
-                return "Added action! What's next?"
+                return "Added action! Do you want to anything else in the loop? If yes, what's next? If no, say done."
             else:
                 return f"What do you want to do first in the loop?"
         else:
@@ -104,6 +110,8 @@ class GetLoopActionsGoal(object):
             setattr(goal, "actions", self.goal.loop_actions)
             setattr(goal, "goal", self)
             self.todos.append(goal)
+            if goal.is_complete:
+                goal.try_complete()
 
     def __str__(self):
         return "get_actions" + (f":{str(self.todos[-1])}" if self.todos else "")

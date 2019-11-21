@@ -16,7 +16,7 @@ class InitVariableGoal(object):
     @property
     def message(self):
         if self.is_complete:
-            return "Goal completed!"
+            return "InitVariableGoal completed!"
 
         return self.todos[-1].message
 
@@ -30,7 +30,7 @@ class InitVariableGoal(object):
                 setattr(self, attr, value)
         elif attr == "value":
             if value is None:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"What value do you want to set?"))
+                self.todos.append(GetInputGoal(self.context, self, attr, f"What should be the initial value?"))
             else:
                 setattr(self, attr, value)
         else:
@@ -69,7 +69,7 @@ class SetVariableValueGoal(object):
     @property
     def message(self):
         if self.is_complete:
-            return "Goal completed!"
+            return "SetVariableValueGoal completed!"
 
         return self.todos[-1].message
 
@@ -121,7 +121,7 @@ class IncrementVariableGoal(object):
     @property
     def message(self):
         if self.is_complete:
-            return "Goal completed!"
+            return "IncrementVariableGoal completed!"
 
         return self.todos[-1].message
 

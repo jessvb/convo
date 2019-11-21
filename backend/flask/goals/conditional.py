@@ -10,11 +10,16 @@ class CreateConditionalGoal(object):
         self.condition = condition
         self.procedure = None
 
-        if action is not None:
-            self.conditional_actions[0].append(action)
-
         self.todos.append(GetConditionalActionsGoal(self.context, self, 0))
         self.todos.append(GetConditionalActionsGoal(self.context, self, 1))
+        if action is not None:
+            goal = self.todos[-1]
+            goal.todos.append(action)
+            setattr(action, "procedure", self.context.current_goal.procedure)
+            setattr(action, "actions", self.conditional_actions[1])
+            setattr(action, "goal", goal)
+            if action.is_complete:
+                action.try_complete()
 
         if condition is None:
             self.todos.append(GetConditionGoal(self.context, self))
@@ -29,7 +34,7 @@ class CreateConditionalGoal(object):
             return self.error
 
         if self.is_complete:
-            return "Goal completed!"
+            return "CreateConditionalGoal completed!"
 
         return self.todos[-1].message
 
@@ -69,7 +74,7 @@ class GetConditionGoal(object):
             return self.error
 
         if self.is_complete:
-            return "Goal completed!"
+            return "GetConditionGoal completed!"
 
         return "What's the condition?"
 
@@ -116,13 +121,15 @@ class GetConditionalActionsGoal(object):
             return self.error
 
         if self.is_complete:
-            return "Goal completed!"
+            return "GetConditionalActionsGoal completed!"
 
         if len(self.todos) == 0:
             if len(self.goal.conditional_actions[self.condition_idx]) > 0:
                 return "Added action! What's next?"
+            elif self.condition_idx == 0:
+                return "Would you like to do anything if condition is false? If so, what would you like to do first?"
             else:
-                return f"What do you want to do first if the condition is {'not ' if self.condition_idx == 0 else ''}true?"
+                return f"What do you want to do first if the condition is true?"
         else:
             return self.todos[-1].message
 
@@ -152,6 +159,8 @@ class GetConditionalActionsGoal(object):
             setattr(goal, "actions", self.goal.conditional_actions[self.condition_idx])
             setattr(goal, "goal", self)
             self.todos.append(goal)
+            if goal.is_complete:
+                goal.try_complete()
 
     def __str__(self):
         return "get_actions" + (f":{str(self.todos[-1])}" if self.todos else "")

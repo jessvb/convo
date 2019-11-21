@@ -7,9 +7,6 @@ class AddClassProcedureGoal(object):
         self.context = context
         self.klass = self.context.cached if isinstance(self.context.cached, Class) else self.context.classes.get(klass)
         self.procedure = Procedure(name, klass=self.klass)
-        if self.klass:
-            self.klass.add_procedure(self.procedure)
-            self.procedure.properties = set(self.klass.properties.keys())
         self.todos = []
 
         self.todos.append(GetProcedureActionsGoal(self.context, self, self.procedure))
@@ -30,9 +27,8 @@ class AddClassProcedureGoal(object):
             if value not in self.context.classes:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"Class {value} does not exist. Try another class or say cancel."))
             else:
+                self.procedure.klass = self.context.classes[value]
                 self.klass = self.context.classes[value]
-                self.procedure.klass = self.klass
-                self.klass.add_procedure(self.procedure)
         elif (attr == "name"):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"What do you want to call the procedure?"))
@@ -49,6 +45,7 @@ class AddClassProcedureGoal(object):
 
         if self.is_complete:
             print("Completing AddClassProcedureGoal")
+            self.klass.add_procedure(self.procedure)
             self.context.goals.pop()
 
         return self.message
@@ -79,7 +76,7 @@ class GetProcedureActionsGoal(object):
             return self.error
 
         if self.is_complete:
-            return "Goal completed!"
+            return "GetProcedureActionsGoal completed!"
 
         if len(self.todos) == 0:
             if len(self.procedure.actions) > 0:
@@ -103,7 +100,7 @@ class GetProcedureActionsGoal(object):
         print("Pursuing GetProcedureActionsGoal")
         message = self.context.current_message
         self.error = None
-        if message == "done" and len(self.todos) == 0:
+        if message in ["done", "nothing"] and len(self.todos) == 0:
             self.no_more_actions = True
         elif len(self.todos) > 0:
             self.todos[-1].try_complete()
@@ -115,6 +112,8 @@ class GetProcedureActionsGoal(object):
             setattr(goal, "actions", self.procedure.actions)
             setattr(goal, "goal", self)
             self.todos.append(goal)
+            if goal.is_complete:
+                goal.try_complete()
 
     def __str__(self):
         return "get_actions" + (f":{str(self.todos[-1])}" if self.todos else "")
@@ -133,7 +132,7 @@ class SetClassPropertyValueGoal(object):
     @property
     def message(self):
         if self.is_complete:
-            return "Goal completed!"
+            return "SetClassPropertyValueGoal completed!"
 
         return self.todos[-1].message
 
@@ -141,8 +140,8 @@ class SetClassPropertyValueGoal(object):
         if attr == "name":
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"What property do you want to set?"))
-            elif value not in self.procedure.klass.properties:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"Property {value} doesn't exist. Try another name."))
+            # elif value not in self.procedure.klass.properties:
+            #     self.todos.append(GetInputGoal(self.context, self, attr, f"Property {value} doesn't exist. Try another name."))
             else:
                 setattr(self, attr, value)
         elif attr == "value":
@@ -159,7 +158,7 @@ class SetClassPropertyValueGoal(object):
 
         if self.is_complete:
             print("Completing SetClassPropertyValueGoal")
-            self.procedure.add_action(SetPropertyValueAction(self.procedure.klass, self.name, self.value))
+            self.actions.append(SetPropertyValueAction(self.procedure.klass, self.name, self.value))
             self.goal.todos.pop()
 
         return self.message

@@ -1,5 +1,6 @@
 from models import *
 from goals import *
+from goals.inpt import GetInputGoal
 
 class CreateClassGoal(object):
     def __init__(self, context, name=None):
@@ -61,7 +62,7 @@ class GetClassPropertiesGoal(object):
     @property
     def message(self):
         if self.is_complete:
-            return "Goal completed!"
+            return "GetClassPropertiesGoal completed!"
 
         if len(self.todos) == 0:
             if len(self.goal.klass.properties) > 0:
@@ -110,7 +111,7 @@ class GetClassPropertyGoal(object):
 
     @property
     def message(self):
-        return "Goal completed!" if self.is_complete else self.todos[-1].message
+        return "GetClassPropertyGoal completed!" if self.is_complete else self.todos[-1].message
 
     def setattr(self, attr, value):
         if (attr == "name") and (value == "" or value in self.klass.properties):
@@ -125,7 +126,7 @@ class GetClassPropertyGoal(object):
 
         if self.is_complete:
             print("Completing GetClassProperty")
-            self.klass.add_property(Property(self.name, self.type, self.klass))
+            self.klass.add_property(Property(self.klass, self.name, self.type))
             self.goal.todos.pop()
 
         return self.message
@@ -176,7 +177,7 @@ class AddClassPropertyGoal(object):
             self.pursue()
 
         if self.is_complete:
-            self.klass.add_property(Property(self.name, self.type))
+            self.klass.add_property(Property(self.klass, self.name, self.type))
             self.context.goals.pop()
 
         return self.message

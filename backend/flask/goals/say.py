@@ -1,5 +1,4 @@
 from models import *
-from utils import *
 from goals import *
 
 class SayGoal(object):
@@ -15,7 +14,7 @@ class SayGoal(object):
     @property
     def message(self):
         if self.is_complete:
-            return "Goal completed!"
+            return "SayGoal completed!"
 
         return self.todos[-1].message
 
@@ -24,7 +23,7 @@ class SayGoal(object):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"What do you want me to say?"))
             else:
-                setattr(self, attr, value)
+                self.phrase = value
         else:
             setattr(self, attr, value)
 
