@@ -35,6 +35,8 @@ def messages():
         response = {
             "conversation": dm.context.conversation,
             "classes": [c.json() for c in dm.context.classes.values()],
+            "current": dm.context.current.json() if dm.context.current else None,
+            "procedures": [p.json() for p in dm.context.procedures.values()],
             "goal": str(dm.current_goal())
         }
 

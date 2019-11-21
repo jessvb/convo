@@ -1,31 +1,40 @@
 from goals import *
 from models import *
 
-class CreateLoopGoal(object):
+class LoopActionGoal(BaseGoal):
     def __init__(self, context, condition=None, action=None):
-        self.context = context
-        self.todos = []
+        super().__init__(context)
         self.loop_actions = []
-        self.error = None
-        self.condition = condition
-        self.procedure = None
+        self.todos = [GetLoopActionsGoal(self.context, self.loop_actions)]
+        self.setattr("action", action)
+        self.setattr("condition", condition)
 
-        self.todos.append(GetLoopActionsGoal(self.context, self))
-        if action is not None:
-            goal = self.todos[-1]
-            goal.todos.append(action)
-            setattr(action, "procedure", self.context.current_goal.procedure)
-            setattr(action, "actions", self.loop_actions)
-            setattr(action, "goal", goal)
-            if action.is_complete:
-                action.try_complete()
+    def complete(self):
+        hasattr(self, "actions")
+        self.actions.append(LoopAction(self.condition, self.loop_actions))
+        return super().complete()
 
-        if condition is None:
+    def setattr(self, attr, value):
+        if (attr == "action") and value:
+            setattr(value, "actions", self.loop_actions)
+            if value.is_complete:
+                value.complete()
+            else:
+                self.todos[0].append(value)
+            return
+        elif (attr == "condition") and value is None:
             self.todos.append(GetConditionGoal(self.context, self))
+        setattr(self, attr, value)
+
+class GetLoopActionsGoal(BaseGoal):
+    def __init__(self, context, actions):
+        super().__init__(context)
+        self.done = False
+        self.actions = actions
 
     @property
     def is_complete(self):
-        return len(self.todos) == 0
+        return self.done and super().is_complete
 
     @property
     def message(self):
@@ -33,85 +42,32 @@ class CreateLoopGoal(object):
             return self.error
 
         if self.is_complete:
-            return "CreateLoopGoal completed!"
-
-        return self.todos[-1].message
-
-    def try_complete(self):
-        if not self.is_complete:
-            self.pursue()
-
-        if self.is_complete:
-            print("Completing CreateLoopGoal")
-            self.actions.append(LoopAction(self.condition, self.loop_actions))
-            self.goal.todos.pop()
-
-        return self.message
-
-    def pursue(self):
-        print("Pursuing CreateLoopGoal")
-        self.todos[-1].try_complete()
-
-    def __str__(self):
-        return "create_loop" + (f":{str(self.todos[-1])}" if self.todos else "")
-
-class GetLoopActionsGoal(object):
-    def __init__(self, context, goal):
-        self.todos = []
-        self.context = context
-        self.goal = goal
-        self.error = None
-        self.no_more_actions = False
-        self.procedure = None
-
-    @property
-    def is_complete(self):
-        return self.no_more_actions and len(self.todos) == 0
-
-    @property
-    def message(self):
-        if self.error is not None:
-            return self.error
-
-        if self.is_complete:
             return "GetLoopActionsGoal completed!"
 
         if len(self.todos) == 0:
-            if len(self.goal.loop_actions) > 0:
+            if len(self.actions) > 0:
                 return "Added action! Do you want to anything else in the loop? If yes, what's next? If no, say done."
             else:
                 return f"What do you want to do first in the loop?"
         else:
             return self.todos[-1].message
 
-    def try_complete(self):
-        if not self.is_complete:
-            self.pursue()
+    def advance(self):
+        if self.todos:
+            super().advance()
+            return
 
-        if self.is_complete:
-            print("Completing GetLoopActionsGoal")
-            self.goal.todos.pop()
-
-        return self.error if self.error else self.message
-
-    def pursue(self):
-        print("Pursuing GetLoopActionsGoal")
-        message = self.context.current_message
+        print(f"Advancing {self.__class__.__name__}...")
         self.error = None
-        if message in ["done", "nothing"] and len(self.todos) == 0:
-            self.no_more_actions = True
-        elif len(self.todos) > 0:
-            self.todos[-1].try_complete()
+
+        if self.context.current_message in ["done", "nothing"]:
+            self.done = True
         elif self.context.parsed is None:
             self.error = "Couldn't understand the action. Try again."
         else:
-            goal = self.context.parsed
-            setattr(goal, "procedure", self.goal.procedure)
-            setattr(goal, "actions", self.goal.loop_actions)
-            setattr(goal, "goal", self)
-            self.todos.append(goal)
-            if goal.is_complete:
-                goal.try_complete()
-
-    def __str__(self):
-        return "get_actions" + (f":{str(self.todos[-1])}" if self.todos else "")
+            action = self.context.parsed
+            setattr(action, "actions", self.actions)
+            if action.is_complete:
+                action.complete()
+            else:
+                self.todos.append(action)

@@ -24,16 +24,24 @@ class DialogManager(object):
                 self.context.goals.pop()
             return "Canceled!"
 
-        parsed = self.nlu.parse_message(message)
-        self.context.parsed = parsed
+        self.context.parsed = self.nlu.parse_message(message)
         if self.current_goal() is None:
-            if parsed is None:
+            goal = self.context.parsed
+            if goal is None:
                 response = "I didn't understand what you were saying. Please try again."
             else:
-                self.context.add_goal(parsed)
-                response = self.current_goal().try_complete() if parsed.is_complete else self.current_goal().message
+                if goal.is_complete:
+                    response = goal.complete()
+                else:
+                    response = goal.message
+                    self.context.add_goal(goal)
         else:
-            response = self.current_goal().try_complete()
+            self.current_goal().advance()
+            if self.current_goal().is_complete:
+                response = self.current_goal().complete()
+                self.context.goals.pop()
+            else:
+                response = self.current_goal().message
 
         self.context.add_message(response)
         return response
@@ -54,11 +62,11 @@ class DialogContext(object):
         self.state = "home"
         self.conversation = []
         self.goals = []
-        self.cached = None
         example = Class("example")
         example.add_property(Property(example, "count", "number"))
         self.classes = { "example": example }
-        self.parsed = None
+        self.procedures = {}
+        self.current = None
 
     def add_message(self, message):
         self.conversation.append(message)
@@ -68,7 +76,9 @@ class DialogContext(object):
 
     def add_class(self, klass):
         self.classes[klass.name] = klass
-        self.cached = klass
+
+    def add_procedure(self, procedure):
+        self.procedures[procedure.name] = procedure
 
     def get_class(self, name):
         return self.classes.get(name)

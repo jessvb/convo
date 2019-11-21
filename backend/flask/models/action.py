@@ -8,9 +8,8 @@ class Action(object):
     def json(self):
         raise NotImplementedError
 
-class SetPropertyValueAction(Action):
-    def __init__(self, klass, property, value):
-        self.klass = klass
+class SetPropertyAction(Action):
+    def __init__(self, property, value):
         self.property = property
         self.value = value
 
@@ -25,8 +24,7 @@ class SetPropertyValueAction(Action):
         }
 
 class InitVariableAction(Action):
-    def __init__(self, klass, name, value):
-        self.klass = klass
+    def __init__(self, name, value):
         self.name = name
         self.value = value
 
@@ -40,9 +38,8 @@ class InitVariableAction(Action):
             "value": self.value
         }
 
-class SetVariableValueAction(Action):
-    def __init__(self, klass, name, value):
-        self.klass = klass
+class SetVariableAction(Action):
+    def __init__(self, name, value):
         self.name = name
         self.value = value
 
@@ -57,8 +54,7 @@ class SetVariableValueAction(Action):
         }
 
 class IncrementVariableAction(Action):
-    def __init__(self, klass, name, value):
-        self.klass = klass
+    def __init__(self, name, value):
         self.name = name
         self.value = value
 
@@ -88,7 +84,7 @@ class SayAction(Action):
 class ConditionalAction(Action):
     def __init__(self, condition, actions):
         self.condition = condition
-        self.actionsFalse, self.actionsTrue = actions
+        self.actions = actions
 
     def __str__(self):
         return f"conditional"
@@ -97,8 +93,8 @@ class ConditionalAction(Action):
         return {
             "name": str(self),
             "condition": str(self.condition),
-            "actions_true": [a.json() for a in self.actionsTrue],
-            "actions_false": [a.json() for a in self.actionsFalse]
+            "actions_true": [a.json() for a in self.actions[1]],
+            "actions_false": [a.json() for a in self.actions[0]]
         }
 
 class LoopAction(Action):

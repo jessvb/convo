@@ -3,6 +3,7 @@ import re
 from goals import *
 
 create_class_regex = "(?:make|create)(?: a)? class(?: (?:called|named) (.+))?"
+create_procedure_regex = "(?:make|create)(?: a)? procedure(?: (?:called|named) (.+))?"
 add_property_regex = "add(?: a)?(?: (.+))? property(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
 add_procedure_regex = "add(?: an?)? (?:procedure|action)(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
 set_regex = "set(?: the)?(?: (.*))? (property|variable)(?:(?: (.+))? to (.+)| (.+))?"
@@ -34,15 +35,18 @@ class SemanticNLU(object):
             match = re.match(create_conditional_regex, message)
             condition = group(match, [1, 4])
             action = group(match, [2, 3])
-            return CreateConditionalGoal(self.context, condition=self.try_parse_condition(condition), action=self.try_parse_goal(action))
+            return ConditionalActionGoal(self.context, condition=self.try_parse_condition(condition), action=self.try_parse_goal(action))
         elif re.match(create_loop_regex, message):
             match = re.match(create_loop_regex, message)
             action = group(match, 1)
             condition = group(match, 2)
-            return CreateLoopGoal(self.context, condition=self.try_parse_condition(condition), action=self.try_parse_goal(action))
+            return LoopActionGoal(self.context, condition=self.try_parse_condition(condition), action=self.try_parse_goal(action))
         elif re.match(create_class_regex, message):
             match = re.match(create_class_regex, message)
             return CreateClassGoal(self.context, name=group(match, 1))
+        elif re.match(create_procedure_regex, message):
+            match = re.match(create_procedure_regex, message)
+            return CreateGeneralProcedureGoal(self.context, name=group(match, 1))
         elif re.match(add_property_regex, message):
             match = re.match(add_property_regex, message)
             return AddClassPropertyGoal(self.context, klass=group(match, 3), name=group(match, [2, 4]), type=group(match, 1))
@@ -52,18 +56,18 @@ class SemanticNLU(object):
         elif re.match(set_regex, message):
             match = re.match(set_regex, message)
             if group(match, 2) == "property":
-                return SetClassPropertyValueGoal(self.context, name=group(match, [1, 3, 5]), value=group(match, 4))
+                return SetClassPropertyActionGoal(self.context, name=group(match, [1, 3, 5]), value=group(match, 4))
             elif group(match, 2) == "variable":
-                return SetVariableValueGoal(self.context, name=group(match, [1, 3, 5]), value=group(match, 4))
+                return SetVariableActionGoal(self.context, name=group(match, [1, 3, 5]), value=group(match, 4))
         elif re.match(create_variable_regex, message):
             match = re.match(create_variable_regex, message)
-            return InitVariableGoal(self.context, name=group(match, [2, 4]), value=group(match, 3))
+            return InitVariableActionGoal(self.context, name=group(match, [2, 4]), value=group(match, 3))
         elif re.match(increment_variable_regex, message):
             match = re.match(increment_variable_regex, message)
-            return IncrementVariableGoal(self.context, name=group(match, [2, 3, 5]), value=group(match, [1, 4]))
+            return IncrementVariableActionGoal(self.context, name=group(match, [2, 3, 5]), value=group(match, [1, 4]))
         elif re.match(say_regex, message):
             match = re.match(say_regex, message)
-            return SayGoal(self.context, phrase=group(match, 1))
+            return SayActionGoal(self.context, phrase=group(match, 1))
         else:
             return None
 

@@ -1,74 +1,84 @@
 from goals import *
 from models import *
-from goals.inpt import GetInputGoal
 
-class AddClassProcedureGoal(object):
+class AddClassProcedureGoal(BaseGoal):
     def __init__(self, context, klass=None, name=None):
-        self.context = context
-        self.klass = self.context.cached if isinstance(self.context.cached, Class) else self.context.classes.get(klass)
-        self.procedure = Procedure(name, klass=self.klass)
-        self.todos = []
+        super().__init__(context)
+        self.procedure = Procedure(name, [])
+        self.context.current = self.procedure
 
-        self.todos.append(GetProcedureActionsGoal(self.context, self, self.procedure))
+        self.todos = [GetProcedureActionsGoal(self.context, self.procedure.actions)]
         self.setattr("name", name)
-        if self.klass is None:
-            self.todos.append(GetInputGoal(self.context, self, "klass", "Which class do you want to add the procedure to?"))
-
-    @property
-    def is_complete(self):
-        return len(self.todos) == 0
+        self.setattr("klass", klass)
 
     @property
     def message(self):
         return "Procedure added! Anything else?" if self.is_complete else self.todos[-1].message
 
+    def complete(self):
+        self.procedure.klass.add_procedure(self.procedure)
+        self.context.current = None
+        return super().complete()
+
     def setattr(self, attr, value):
         if (attr == "klass"):
-            if value not in self.context.classes:
+            if value is None:
+                self.todos.append(GetInputGoal(self.context, self, attr, "Which class do you want to add the procedure to?"))
+            elif value not in self.context.classes:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"Class {value} does not exist. Try another class or say cancel."))
             else:
                 self.procedure.klass = self.context.classes[value]
-                self.klass = self.context.classes[value]
+                if hasattr(self, "name") and self.name in self.klass.properties:
+                    self.todos.append(GetInputGoal(self.context, self, "name", f"Procedure {self.name} already exists. Try another name or say cancel."))
+            return
         elif (attr == "name"):
             if value is None:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"What do you want to call the procedure?"))
-            elif value in self.klass.procedures:
+                self.todos.append(GetInputGoal(self.context, self, attr, "What do you want to call the procedure?"))
+            elif hasattr(self, "klass") and value in self.klass.properties:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"Procedure {value} already exists. Try another name or say cancel."))
             else:
                 self.procedure.name = value
-        else:
-            setattr(self, attr, value)
+            return
+        setattr(self, attr, value)
 
-    def try_complete(self):
-        if not self.is_complete:
-            self.pursue()
+class CreateGeneralProcedureGoal(BaseGoal):
+    def __init__(self, context, name=None):
+        super().__init__(context)
+        self.procedure = Procedure(name, [])
+        self.context.current = self.procedure
 
-        if self.is_complete:
-            print("Completing AddClassProcedureGoal")
-            self.klass.add_procedure(self.procedure)
-            self.context.goals.pop()
+        self.todos.append(GetProcedureActionsGoal(self.context, self.procedure.actions))
+        self.setattr("name", name)
 
-        return self.message
+    @property
+    def message(self):
+        return "Procedure added! Anything else?" if self.is_complete else self.todos[-1].message
 
-    def pursue(self):
-        print("Pursuing AddClassProcedureGoal")
-        self.todos[-1].try_complete()
+    def complete(self):
+        self.context.add_procedure(self.procedure)
+        self.context.current = None
+        return super().complete()
 
-    def __str__(self):
-        return "add_class_procedure" + (f":{str(self.todos[-1])}" if self.todos else "")
+    def setattr(self, attr, value):
+        if (attr == "name"):
+            if value is None:
+                self.todos.append(GetInputGoal(self.context, self, attr, f"What do you want to call the procedure?"))
+            elif value in self.context.procedures:
+                self.todos.append(GetInputGoal(self.context, self, attr, f"Procedure {value} already exists. Try another name or say cancel."))
+            else:
+                self.procedure.name = value
+            return
+        setattr(self, attr, value)
 
-class GetProcedureActionsGoal(object):
-    def __init__(self, context, goal, procedure):
-        self.context = context
-        self.goal = goal
-        self.procedure = procedure
-        self.todos = []
-        self.no_more_actions = False
-        self.error = None
+class GetProcedureActionsGoal(BaseGoal):
+    def __init__(self, context, actions):
+        super().__init__(context)
+        self.actions = actions
+        self.done = False
 
     @property
     def is_complete(self):
-        return self.no_more_actions and len(self.todos) == 0
+        return self.done and super().is_complete
 
     @property
     def message(self):
@@ -79,92 +89,25 @@ class GetProcedureActionsGoal(object):
             return "GetProcedureActionsGoal completed!"
 
         if len(self.todos) == 0:
-            if len(self.procedure.actions) > 0:
-                return "Added action! What's next?"
-            else:
-                return "What do you want to do first?"
+            return "Added action to procedure! What's next?" if len(self.actions) > 0 else "What do you want to do first?"
         else:
             return self.todos[-1].message
 
-    def try_complete(self):
-        if not self.is_complete:
-            self.pursue()
+    def advance(self):
+        if self.todos:
+            super().advance()
+            return
 
-        if self.is_complete:
-            print("Completing GetProcedureActionsGoal")
-            self.goal.todos.pop()
-
-        return self.error if self.error else self.message
-
-    def pursue(self):
-        print("Pursuing GetProcedureActionsGoal")
-        message = self.context.current_message
+        print(f"Advancing {self.__class__.__name__}...")
         self.error = None
-        if message in ["done", "nothing"] and len(self.todos) == 0:
-            self.no_more_actions = True
-        elif len(self.todos) > 0:
-            self.todos[-1].try_complete()
+        if self.context.current_message in ["done", "nothing"]:
+            self.done = True
         elif self.context.parsed is None:
             self.error = "Couldn't understand the action. Try again."
         else:
-            goal = self.context.parsed
-            setattr(goal, "procedure", self.procedure)
-            setattr(goal, "actions", self.procedure.actions)
-            setattr(goal, "goal", self)
-            self.todos.append(goal)
-            if goal.is_complete:
-                goal.try_complete()
-
-    def __str__(self):
-        return "get_actions" + (f":{str(self.todos[-1])}" if self.todos else "")
-
-class SetClassPropertyValueGoal(object):
-    def __init__(self, context, name=None, value=None):
-        self.context = context
-        self.todos = []
-        self.setattr("value", value)
-        self.setattr("name", name)
-
-    @property
-    def is_complete(self):
-        return len(self.todos) == 0
-
-    @property
-    def message(self):
-        if self.is_complete:
-            return "SetClassPropertyValueGoal completed!"
-
-        return self.todos[-1].message
-
-    def setattr(self, attr, value):
-        if attr == "name":
-            if value is None:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"What property do you want to set?"))
-            # elif value not in self.procedure.klass.properties:
-            #     self.todos.append(GetInputGoal(self.context, self, attr, f"Property {value} doesn't exist. Try another name."))
+            action = self.context.parsed
+            setattr(action, "actions", self.actions)
+            if action.is_complete:
+                action.complete()
             else:
-                setattr(self, attr, value)
-        elif attr == "value":
-            if value is None:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"What value do you want to set?"))
-            else:
-                setattr(self, attr, value)
-        else:
-            setattr(self, attr, value)
-
-    def try_complete(self):
-        if not self.is_complete:
-            self.pursue()
-
-        if self.is_complete:
-            print("Completing SetClassPropertyValueGoal")
-            self.actions.append(SetPropertyValueAction(self.procedure.klass, self.name, self.value))
-            self.goal.todos.pop()
-
-        return self.message
-
-    def pursue(self):
-        self.todos[-1].try_complete()
-
-    def __str__(self):
-        return "set_property_value" + (f":{str(self.todos[-1])}" if self.todos else "")
+                self.todos.append(action)
