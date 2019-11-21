@@ -46,13 +46,13 @@ class SemanticNLU(object):
             return CreateClassGoal(self.context, name=group(match, 1))
         elif re.match(create_procedure_regex, message):
             match = re.match(create_procedure_regex, message)
-            return CreateGeneralProcedureGoal(self.context, name=group(match, 1))
+            return AddProcedureGoal(self.context, name=group(match, 1))
         elif re.match(add_property_regex, message):
             match = re.match(add_property_regex, message)
             return AddClassPropertyGoal(self.context, klass=group(match, 3), name=group(match, [2, 4]), type=group(match, 1))
         elif re.match(add_procedure_regex, message):
             match = re.match(add_procedure_regex, message)
-            return AddClassProcedureGoal(self.context, klass=group(match, 2), name=group(match, [1, 3]))
+            return AddClassProcedureGoal(self.context, name=group(match, [1, 3]), klass=group(match, 2))
         elif re.match(set_regex, message):
             match = re.match(set_regex, message)
             if group(match, 2) == "property":
