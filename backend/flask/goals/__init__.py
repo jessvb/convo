@@ -1,5 +1,6 @@
 from goals.base import *
 from goals.input import *
+from goals.action import *
 from goals.klass import *
 from goals.procedure import *
 from goals.variable import *

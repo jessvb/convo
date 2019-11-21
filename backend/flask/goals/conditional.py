@@ -57,16 +57,10 @@ class GetConditionGoal(BaseGoal):
         self.obj.setattr("condition", self.condition)
         return super().complete()
 
-class GetConditionalActionsGoal(BaseGoal):
+class GetConditionalActionsGoal(GetActionsGoal):
     def __init__(self, context, actions, condition):
-        super().__init__(context)
-        self.done = False
-        self.actions = actions
+        super().__init__(context, actions)
         self.condition = condition
-
-    @property
-    def is_complete(self):
-        return self.done and super().is_complete
 
     @property
     def message(self):
@@ -74,7 +68,7 @@ class GetConditionalActionsGoal(BaseGoal):
             return self.error
 
         if self.is_complete:
-            return "GetConditionalActionsGoal completed!"
+            return f"{self.__class__.__name__} completed!"
 
         if len(self.todos) == 0:
             if len(self.actions) > 0:
@@ -85,23 +79,3 @@ class GetConditionalActionsGoal(BaseGoal):
                 return "Would you like to do anything if condition is false? If so, what would you like to do first?"
         else:
             return self.todos[-1].message
-
-    def advance(self):
-        if self.todos:
-            super().advance()
-            return
-
-        print(f"Advancing {self.__class__.__name__}...")
-        self.error = None
-
-        if self.context.current_message in ["done", "nothing"]:
-            self.done = True
-        elif self.context.parsed is None:
-            self.error = "Couldn't understand the action. Try again."
-        else:
-            goal = self.context.parsed
-            setattr(goal, "actions", self.actions)
-            if goal.is_complete:
-                goal.complete()
-            else:
-                self.todos.append(goal)

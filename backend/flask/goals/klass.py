@@ -41,7 +41,7 @@ class GetClassPropertiesGoal(BaseGoal):
     @property
     def message(self):
         if self.is_complete:
-            return "GetClassPropertiesGoal completed!"
+            return f"{self.__class__.__name__} completed!"
 
         if len(self.todos) == 0:
             return "Any other properties?" if len(self.klass.properties) > 0 else "What properties does it have?"
