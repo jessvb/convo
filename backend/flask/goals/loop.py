@@ -25,20 +25,3 @@ class LoopActionGoal(BaseGoal):
         elif (attr == "condition") and value is None:
             self.todos.append(GetConditionGoal(self.context, self))
         setattr(self, attr, value)
-
-class GetLoopActionsGoal(GetActionsGoal):
-    @property
-    def message(self):
-        if self.error:
-            return self.error
-
-        if self.is_complete:
-            return f"{self.__class__.__name__} completed!"
-
-        if len(self.todos) == 0:
-            if len(self.actions) > 0:
-                return "Added action! Do you want to do anything else in the loop? If yes, what's next? If no, say done."
-            else:
-                return "What do you want to do first in the loop?"
-        else:
-            return self.todos[-1].message

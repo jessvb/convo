@@ -56,26 +56,3 @@ class GetConditionGoal(BaseGoal):
     def complete(self):
         self.obj.setattr("condition", self.condition)
         return super().complete()
-
-class GetConditionalActionsGoal(GetActionsGoal):
-    def __init__(self, context, actions, condition):
-        super().__init__(context, actions)
-        self.condition = condition
-
-    @property
-    def message(self):
-        if self.error:
-            return self.error
-
-        if self.is_complete:
-            return f"{self.__class__.__name__} completed!"
-
-        if len(self.todos) == 0:
-            if len(self.actions) > 0:
-                return "Added action to conditional! What's next?"
-            elif self.condition:
-                return f"What do you want to do first if the condition is true?"
-            else:
-                return "Would you like to do anything if condition is false? If so, what would you like to do first?"
-        else:
-            return self.todos[-1].message

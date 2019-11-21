@@ -56,17 +56,3 @@ class AddClassProcedureGoal(AddProcedureGoal):
                     self.todos.append(GetInputGoal(self.context, self, "name", f"Procedure {name} already exists. Try another name or say cancel."))
             return
         setattr(self, attr, value)
-
-class GetProcedureActionsGoal(GetActionsGoal):
-    @property
-    def message(self):
-        if self.error:
-            return self.error
-
-        if self.is_complete:
-            return f"{self.__class__.__name__} completed!"
-
-        if len(self.todos) == 0:
-            return "Added action to procedure! What's next?" if len(self.actions) > 0 else "What do you want to do first?"
-        else:
-            return self.todos[-1].message
