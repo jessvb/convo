@@ -1,8 +1,7 @@
 from models import *
-from utils import *
 from goals import *
 
-class InitVariableActionGoal(BaseGoal):
+class CreateVariableActionGoal(BaseGoal):
     def __init__(self, context, name=None, value=None):
         super().__init__(context)
         self.setattr("value", value)
@@ -10,7 +9,7 @@ class InitVariableActionGoal(BaseGoal):
 
     def complete(self):
         assert hasattr(self, "actions")
-        self.actions.append(InitVariableAction(self.name, self.value))
+        self.actions.append(CreateVariableAction(self.name, self.value))
         return super().complete()
 
     def setattr(self, attr, value):

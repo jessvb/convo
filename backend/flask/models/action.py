@@ -1,20 +1,20 @@
+from utils import to_snake_case
+
 class Action(object):
     def __init__(self):
         raise NotImplementedError
 
     def __str__(self):
-        raise NotImplementedError
+        name = self.__class__.__name__
+        return to_snake_case(name[:-len("Action")])
 
     def json(self):
-        raise NotImplementedError
+        return { "name": str(self) }
 
 class SetPropertyAction(Action):
     def __init__(self, property, value):
         self.property = property
         self.value = value
-
-    def __str__(self):
-        return f"set_property_value"
 
     def json(self):
         return {
@@ -23,13 +23,10 @@ class SetPropertyAction(Action):
             "value": self.value
         }
 
-class InitVariableAction(Action):
+class VariableAction(Action):
     def __init__(self, name, value):
         self.name = name
         self.value = value
-
-    def __str__(self):
-        return f"init_variable"
 
     def json(self):
         return {
@@ -38,42 +35,21 @@ class InitVariableAction(Action):
             "value": self.value
         }
 
-class SetVariableAction(Action):
+class CreateVariableAction(VariableAction):
     def __init__(self, name, value):
-        self.name = name
-        self.value = value
+        super().__init__(name, value)
 
-    def __str__(self):
-        return f"set_variable_value"
-
-    def json(self):
-        return {
-            "name": str(self),
-            "variable": self.name,
-            "value": self.value
-        }
+class SetVariableAction(VariableAction):
+    def __init__(self, name, value):
+        super().__init__(name, value)
 
 class IncrementVariableAction(Action):
     def __init__(self, name, value):
-        self.name = name
-        self.value = value
-
-    def __str__(self):
-        return f"increment_variable"
-
-    def json(self):
-        return {
-            "name": str(self),
-            "variable": self.name,
-            "value": self.value
-        }
+        super().__init__(name, value)
 
 class SayAction(Action):
     def __init__(self, phrase):
         self.phrase = phrase
-
-    def __str__(self):
-        return f"say"
 
     def json(self):
         return {
@@ -85,9 +61,6 @@ class ConditionalAction(Action):
     def __init__(self, condition, actions):
         self.condition = condition
         self.actions = actions
-
-    def __str__(self):
-        return f"conditional"
 
     def json(self):
         return {
@@ -102,12 +75,43 @@ class LoopAction(Action):
         self.condition = condition
         self.actions = actions
 
-    def __str__(self):
-        return f"loop"
-
     def json(self):
         return {
             "name": str(self),
             "condition": str(self.condition),
             "actions": [a.json() for a in self.actions]
+        }
+
+class CreateListAction(Action):
+    def __init__(self, name):
+        self.name = name
+
+    def json(self):
+        return {
+            "name": str(self),
+            "list": self.name
+        }
+
+class AddToListAction(Action):
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+    def json(self):
+        return {
+            "name": str(self),
+            "list": self.name,
+            "value": self.value
+        }
+
+class AddToListPropertyAction(Action):
+    def __init__(self, property, value):
+        self.property = name
+        self.value = value
+
+    def json(self):
+        return {
+            "name": str(self),
+            "property": self.property,
+            "value": self.value
         }

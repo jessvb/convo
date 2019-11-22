@@ -1,17 +1,19 @@
 import re
-
 from goals import *
 
 create_class_regex = "(?:make|create)(?: a)? class(?: (?:called|named) (.+))?"
+create_conditional_regex = "(?:create(?: a)? conditional)|(?:(if .+) then (.+))|(?:(.+) (if .+))"
+create_list_regex = "(?:make|create)(?: a)? list(?: (?:called|named) (.+)| (.+))?"
+create_loop_regex = "(?:(?:make|create)(?: a)? loop)|(?:(.+) (until .+))"
 create_procedure_regex = "(?:make|create)(?: a)? procedure(?: (?:called|named) (.+))?"
 add_property_regex = "add(?: a)?(?: (.+))? property(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
 add_procedure_regex = "add(?: an?)? (?:procedure|action)(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
+add_to_list_regex = "add(?: (.+))? to list(?: (.+))?"
+say_regex = "say(?: (.+))?"
 set_regex = "set(?: the)?(?: (.*))? (property|variable)(?:(?: (.+))? to (.+)| (.+))?"
 create_variable_regex = "(?:create|make)(?: a)?(?: (.+))? variable(?: called| named)?(?:(?: (.+))? and set(?: it)? to (.+)| (.+))?"
 increment_variable_regex = "(?:add(?: (.+))? to variable(?: (.+))?)|(?:increment variable(?:(?: (.+))? by (.+)| (.+))?)"
-say_regex = "say(?: (.+))?"
-create_conditional_regex = "(?:create(?: a)? conditional)|(?:(if .+) then (.+))|(?:(.+) (if .+))"
-create_loop_regex = "(?:create(?: a)? loop)|(?:(.+) (until .+))"
+
 say_condition_regex = "(?:until|if) i say (.+)"
 comparison_condition_regex = "(?:if|until) (.+) is ((?:(?:less|greater) than(?: or equal to)?)|equal to) (.+)"
 
@@ -49,25 +51,31 @@ class SemanticNLU(object):
             return AddProcedureGoal(self.context, name=group(match, 1))
         elif re.match(add_property_regex, message):
             match = re.match(add_property_regex, message)
-            return AddClassPropertyGoal(self.context, klass=group(match, 3), name=group(match, [2, 4]), type=group(match, 1))
+            return AddPropertyGoal(self.context, klass=group(match, 3), name=group(match, [2, 4]), type=group(match, 1))
         elif re.match(add_procedure_regex, message):
             match = re.match(add_procedure_regex, message)
             return AddClassProcedureGoal(self.context, name=group(match, [1, 3]), klass=group(match, 2))
         elif re.match(set_regex, message):
             match = re.match(set_regex, message)
             if group(match, 2) == "property":
-                return SetClassPropertyActionGoal(self.context, name=group(match, [1, 3, 5]), value=group(match, 4))
+                return SetPropertyActionGoal(self.context, name=group(match, [1, 3, 5]), value=group(match, 4))
             elif group(match, 2) == "variable":
                 return SetVariableActionGoal(self.context, name=group(match, [1, 3, 5]), value=group(match, 4))
         elif re.match(create_variable_regex, message):
             match = re.match(create_variable_regex, message)
-            return InitVariableActionGoal(self.context, name=group(match, [2, 4]), value=group(match, 3))
+            return CreateVariableActionGoal(self.context, name=group(match, [2, 4]), value=group(match, 3))
         elif re.match(increment_variable_regex, message):
             match = re.match(increment_variable_regex, message)
             return IncrementVariableActionGoal(self.context, name=group(match, [2, 3, 5]), value=group(match, [1, 4]))
         elif re.match(say_regex, message):
             match = re.match(say_regex, message)
             return SayActionGoal(self.context, phrase=group(match, 1))
+        elif re.match(create_list_regex, message):
+            match = re.match(create_list_regex, message)
+            return CreateListActionGoal(self.context, name=group(match, [1, 2]))
+        elif re.match(add_to_list_regex, message):
+            match = re.match(add_to_list_regex, message)
+            return AddToListActionGoal(self.context, name=group(match, 2), value=group(match, 1))
         else:
             return None
 

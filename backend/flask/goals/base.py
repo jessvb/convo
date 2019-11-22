@@ -1,4 +1,5 @@
 import re
+from utils import to_snake_case
 
 class BaseGoal(object):
     def __init__(self, context):
@@ -36,8 +37,4 @@ class BaseGoal(object):
 
     def __str__(self):
         name = self.__class__.__name__
-        return convert(name[:-4]) + (f":{str(self.todos[-1])}" if self.todos else "")
-
-def convert(name):
-    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
-    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+        return to_snake_case(name[:-len("Goal")]) + (f":{str(self.todos[-1])}" if self.todos else "")

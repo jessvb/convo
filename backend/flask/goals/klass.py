@@ -57,9 +57,9 @@ class GetClassPropertiesGoal(BaseGoal):
         if self.context.current_message == "no":
             self.done = True
         else:
-            self.todos.append(GetClassPropertyGoal(self.context, self.context.current_message, self.klass))
+            self.todos.append(GetPropertyGoal(self.context, self.context.current_message, self.klass))
 
-class GetClassPropertyGoal(BaseGoal):
+class GetPropertyGoal(BaseGoal):
     def __init__(self, context, name, klass):
         super().__init__(context)
         self.klass = klass
@@ -67,7 +67,8 @@ class GetClassPropertyGoal(BaseGoal):
         self.setattr("value", None)
 
     def complete(self):
-        self.klass.add_property(Property(self.klass, self.name, self.type))
+        property = Property(self.klass, self.name, self.type) if self.type != "list" else ListProperty(self.klass, self.name)
+        self.klass.add_property(property)
         return super().complete()
 
     def setattr(self, attr, value):
@@ -77,7 +78,7 @@ class GetClassPropertyGoal(BaseGoal):
             self.todos.append(GetInputGoal(self.context, self, "type", "What is the property type?"))
         setattr(self, attr, value)
 
-class AddClassPropertyGoal(BaseGoal):
+class AddPropertyGoal(BaseGoal):
     def __init__(self, context, klass=None, name=None, type=None):
         super().__init__(context)
         self.setattr("type", type)
@@ -113,7 +114,7 @@ class AddClassPropertyGoal(BaseGoal):
             self.todos.append(GetInputGoal(self.context, self, "type", "What is the property type?"))
         setattr(self, attr, value)
 
-class SetClassPropertyActionGoal(BaseGoal):
+class SetPropertyActionGoal(BaseGoal):
     def __init__(self, context, name=None, value=None):
         super().__init__(context)
         self.setattr("value", value)

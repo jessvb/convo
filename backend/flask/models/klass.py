@@ -29,9 +29,9 @@ class Object(object):
         self.properties = {}
 
 class Property(object):
-    def __init__(self, klass, name, typ):
+    def __init__(self, klass, name, type):
         self.name = name
-        self.type = typ
+        self.type = type
         self.klass = klass
 
     def __str__(self):
@@ -42,3 +42,7 @@ class Property(object):
             "name": self.name,
             "type": self.type
         }
+
+class ListProperty(Property):
+    def __init__(self, klass, name):
+        super().__init__(klass, name, "list")
