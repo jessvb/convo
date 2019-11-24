@@ -24,7 +24,7 @@ function submitAndGo() {
   convAgentsTextBox = document.getElementById('convAgentsTextBox').value;
 
   if (
-    userID == null || uid == null || age == null || sex == null || 
+    userID == null || uid == null || age == null || sex == null ||
     race == null || firstLanguage == null || level == null ||
     programmingLanguages == null || convAgents == null) {
     console.error(
@@ -36,7 +36,7 @@ function submitAndGo() {
 
     // go to next page (experiment page)
     // window.location.href = 'gradualOnsetExperiment.html';
-    window.location.href = 'PracticeInfoPage.html';
+    window.location.href = 'PracticeInfoPage';
   }
 }
 
@@ -84,7 +84,7 @@ function showOtherTextBox(sel, id) {
         document.getElementById(id).style.display = 'block';
       }
       else {
-        document.getElementById(id).style.display = 'none'; 
+        document.getElementById(id).style.display = 'none';
       }
     }
 }

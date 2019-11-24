@@ -1,6 +1,6 @@
 STEP = 0
 INSTRUCTIONS = [
-    "Begin by typing 'Hello' in the text box.", 
+    "Begin by typing 'Hello' in the text box.",
     "Then, type 'Start programming'.",
     "Type 'Hello world'.",
     "Type 'That's it'.",
@@ -9,7 +9,7 @@ INSTRUCTIONS = [
 ]
 
 // This function does the following after Enter is pressed:
-// - stores and shows textbox input 
+// - stores and shows textbox input
 // - populates sidebar instructions
 // - returns agent output?
 function enterText() {
@@ -77,5 +77,5 @@ function reset() {
 }
 
 function submit() {
-    window.location.href = 'PracticeVoiceSystem.html';
+    window.location.href = 'PracticeVoiceSystem';
 }

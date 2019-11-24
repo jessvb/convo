@@ -1,7 +1,3 @@
-// This file initializes variables in the first page of the experiment for use
-// later
-
-
 document.addEventListener('DOMContentLoaded', function(event) {
   // generate / store an id for the computer / browser in local storage
   getUniqueId();
@@ -18,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
   localStorage.setItem('surveyVal', 5);
 
   // set the button url
-  let url = 'openingSurvey.html?userID=' + userID;
+  let url = 'openingSurvey?userID=' + userID;
   let btn = document.getElementById('begin');
   btn.addEventListener('click', function() {
     window.location.href = url;

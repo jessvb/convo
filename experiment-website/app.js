@@ -9,16 +9,24 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/OpeningPage.html');
 });
 
-app.get('/OpeningSurvey.html', (req, res) => {
+app.get('/OpeningSurvey', (req, res) => {
     res.sendFile(__dirname + '/OpeningSurvey.html');
 });
 
-app.get('/PracticeInfoPage.html', (req, res) => {
+app.get('/PracticeInfoPage', (req, res) => {
     res.sendFile(__dirname + '/PracticeInfoPage.html');
 });
 
-app.get('/PracticeTextSystem.html', (req, res) => {
+app.get('/PracticeTextSystem', (req, res) => {
     res.sendFile(__dirname + '/PracticeTextSystem.html');
+});
+
+app.get('/PracticeVoiceSystem', (req, res) => {
+    res.sendFile(__dirname + '/PracticeVoiceSystem.html');
+});
+
+app.get('/PracticeBothSystems', (req, res) => {
+    res.sendFile(__dirname + '/PracticeBothSystems.html');
 });
 
 app.listen(3000, '127.0.0.1', () => console.log('Gator app listening on port 3000!'));
