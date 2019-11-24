@@ -1,10 +1,21 @@
 import re
-
 from goals import *
 
-create_class_regex = "(?:make|create)(?: a)? class ?(?:called|named)? ?(.+)?"
-add_property_regex = "(?:add)(?: a)? ?(.+)?(?: property) ?(?:called|named)? ?(?:(?:(.+)?(?: to )(.+))|(?:(.+)))?"
-add_procedure_regex = "(?:add)(?: a)? ?(.+)?(?: procedure) ?(?:called|named)? ?(?:(?:(.+)?(?: to )(.+))|(?:(.+)))?"
+create_class_regex = "(?:make|create)(?: a)? class(?: (?:called|named) (.+))?"
+create_conditional_regex = "(?:create(?: a)? conditional)|(?:(if .+) then (.+))|(?:(.+) (if .+))"
+create_list_regex = "(?:make|create)(?: a)? list(?: (?:called|named) (.+)| (.+))?"
+create_loop_regex = "(?:(?:make|create)(?: a)? loop)|(?:(.+) (until .+))"
+create_procedure_regex = "(?:make|create)(?: a)? procedure(?: (?:called|named) (.+))?"
+add_property_regex = "add(?: a)?(?: (.+))? property(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
+add_procedure_regex = "add(?: an?)? (?:procedure|action)(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
+add_to_list_regex = "add(?: (.+))? to list(?: (.+))?"
+say_regex = "say(?: (.+))?"
+set_regex = "set(?: the)?(?: (.*))? (property|variable)(?:(?: (.+))? to (.+)| (.+))?"
+create_variable_regex = "(?:create|make)(?: a)?(?: (.+))? variable(?: called| named)?(?:(?: (.+))? and set(?: it)? to (.+)| (.+))?"
+increment_variable_regex = "(?:add(?: (.+))? to variable(?: (.+))?)|(?:increment variable(?:(?: (.+))? by (.+)| (.+))?)"
+
+say_condition_regex = "(?:until|if) i say (.+)"
+comparison_condition_regex = "(?:if|until) (.+) is ((?:(?:less|greater) than(?: or equal to)?)|equal to) (.+)"
 
 class SemanticNLU(object):
     def __init__(self, context):
@@ -12,35 +23,80 @@ class SemanticNLU(object):
 
     def parse_message(self, message):
         message = message.lower()
+        for parse in [self.try_parse_goal, self.try_parse_condition]:
+            parsed = parse(message)
+            if parsed is not None:
+                return parsed
 
-        if re.match(create_class_regex, message):
+        return None
+
+    def try_parse_goal(self, message):
+        if message is None:
+            return None
+        elif re.match(create_conditional_regex, message):
+            match = re.match(create_conditional_regex, message)
+            condition = group(match, [1, 4])
+            action = group(match, [2, 3])
+            return ConditionalActionGoal(self.context, condition=self.try_parse_condition(condition), action=self.try_parse_goal(action))
+        elif re.match(create_loop_regex, message):
+            match = re.match(create_loop_regex, message)
+            action = group(match, 1)
+            condition = group(match, 2)
+            return LoopActionGoal(self.context, condition=self.try_parse_condition(condition), action=self.try_parse_goal(action))
+        elif re.match(create_class_regex, message):
             match = re.match(create_class_regex, message)
-            self.context.parsed = CreateClassGoal(self.context, match.group(1) if match.group(1) else None)
+            return CreateClassGoal(self.context, name=group(match, 1))
+        elif re.match(create_procedure_regex, message):
+            match = re.match(create_procedure_regex, message)
+            return AddProcedureGoal(self.context, name=group(match, 1))
         elif re.match(add_property_regex, message):
             match = re.match(add_property_regex, message)
-            name = match.group(2) if match.group(2) else (match.group(4) if match.group(4) else None)
-            type = match.group(1) if match.group(1) else None
-            klass = match.group(3) if match.group(3) else None
-            self.context.parsed = AddClassPropertyGoal(self.context, klass, name, type)
-        elif message in ["add a procedure", "add an action"]:
-            self.context.parsed = AddClassProcedureGoal(self.context)
-        elif message in ["set property value"]:
-            self.context.parsed = SetClassPropertyValueGoal(self.context)
-        elif message in ["create a variable", "make a variable"]:
-            self.context.parsed = InitVariableGoal(self.context)
-        elif message in ["set variable"]:
-            self.context.parsed = SetVariableValueGoal(self.context)
-        elif message in ["increment variable"]:
-            self.context.parsed = IncrementVariableGoal(self.context)
-        elif message == "say":
-            self.context.parsed = SayGoal(self.context)
-        elif message == "create a conditional":
-            self.context.parsed = CreateConditionalGoal(self.context)
-        elif message == "create a loop":
-            self.context.parsed = CreateLoopGoal(self.context)
-        elif message == "if count is less than 5":
-            self.context.parsed = ComparisonCondition(self.context, "count", "<", 5)
-        elif message == "until i say stop":
-            self.context.parsed = SayCondition(self.context, "stop")
+            return AddPropertyGoal(self.context, klass=group(match, 3), name=group(match, [2, 4]), type=group(match, 1))
+        elif re.match(add_procedure_regex, message):
+            match = re.match(add_procedure_regex, message)
+            return AddClassProcedureGoal(self.context, name=group(match, [1, 3]), klass=group(match, 2))
+        elif re.match(set_regex, message):
+            match = re.match(set_regex, message)
+            if group(match, 2) == "property":
+                return SetPropertyActionGoal(self.context, name=group(match, [1, 3, 5]), value=group(match, 4))
+            elif group(match, 2) == "variable":
+                return SetVariableActionGoal(self.context, name=group(match, [1, 3, 5]), value=group(match, 4))
+        elif re.match(create_variable_regex, message):
+            match = re.match(create_variable_regex, message)
+            return CreateVariableActionGoal(self.context, name=group(match, [2, 4]), value=group(match, 3))
+        elif re.match(increment_variable_regex, message):
+            match = re.match(increment_variable_regex, message)
+            return IncrementVariableActionGoal(self.context, name=group(match, [2, 3, 5]), value=group(match, [1, 4]))
+        elif re.match(say_regex, message):
+            match = re.match(say_regex, message)
+            return SayActionGoal(self.context, phrase=group(match, 1))
+        elif re.match(create_list_regex, message):
+            match = re.match(create_list_regex, message)
+            return CreateListActionGoal(self.context, name=group(match, [1, 2]))
+        elif re.match(add_to_list_regex, message):
+            match = re.match(add_to_list_regex, message)
+            return AddToListActionGoal(self.context, name=group(match, 2), value=group(match, 1))
+        else:
+            return None
 
-        return self.context.parsed
+    def try_parse_condition(self, message):
+        if message is None:
+            return None
+        elif re.match(comparison_condition_regex, message):
+            match = re.match(comparison_condition_regex, message)
+            return ComparisonCondition(self.context, group(match, 1), group(match, 2), group(match, 3))
+        elif re.match(say_condition_regex, message):
+            match = re.match(say_condition_regex, message)
+            return SayCondition(self.context, phrase=group(match, 1))
+        else:
+            return None
+
+def group(match, indices):
+    if isinstance(indices, int):
+        idx = indices
+        return match.group(idx) if match.group(idx) else None
+
+    for idx in indices:
+        if match.group(idx):
+            return match.group(idx)
+    return None

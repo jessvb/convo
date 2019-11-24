@@ -1,188 +1,133 @@
 from models import *
 from goals import *
 
-class CreateClassGoal(object):
+class CreateClassGoal(BaseGoal):
     def __init__(self, context, name=None):
-        self.context = context
+        super().__init__(context)
         self.klass = Class(name)
-        self.context.add_class(self.klass)
-        self.todos = []
-
-        self.todos.append(GetClassPropertiesGoal(context, self))
-        if self.klass.name is None or self.klass.name == "":
-            self.todos.append(GetInputGoal(self.context, self, "name", "What do you want to call the class?"))
-
-    @property
-    def is_complete(self):
-        return len(self.todos) == 0
+        self.context.current = self.klass
+        self.todos = [GetClassPropertiesGoal(context, self.klass)]
+        self.setattr("name", name)
 
     @property
     def message(self):
-        return "Class created!" if self.is_complete else self.todos[-1].message
+        return f"Created class {self.klass.name}!" if self.is_complete else self.todos[-1].message
+
+    def complete(self):
+        self.context.add_class(self.klass)
+        return super().complete()
 
     def setattr(self, attr, value):
         if (attr == "name"):
-            if value in self.context.classes:
+            if value is None:
+                self.todos.append(GetInputGoal(self.context, self, "name", "What do you want to call the class?"))
+            elif value in self.context.classes:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"Class {value} already exists. Try another name or say cancel."))
             else:
                 self.klass.name = value
-        else:
-            setattr(self, attr, value)
+            return
+        setattr(self, attr, value)
 
-    def try_complete(self):
-        if not self.is_complete:
-            self.pursue()
-
-        if self.is_complete:
-            print("Completing CreateClass")
-            self.context.add_class(self.klass)
-            self.context.goals.pop()
-
-        return self.message
-
-    def pursue(self):
-        print("Pursuing CreateClass")
-        self.todos[-1].try_complete()
-
-    def __str__(self):
-        return "create_class" + (f":{str(self.todos[-1])}" if self.todos else "")
-
-class GetClassPropertiesGoal(object):
-    def __init__(self, context, goal):
-        self.context = context
-        self.goal = goal
-        self.todos = []
-        self.complete = False
+class GetClassPropertiesGoal(BaseGoal):
+    def __init__(self, context, klass):
+        super().__init__(context)
+        self.klass = klass
+        self.done = False
 
     @property
     def is_complete(self):
-        return self.complete and len(self.todos) == 0
+        return self.done and super().is_complete
 
     @property
     def message(self):
         if self.is_complete:
-            return "Goal completed!"
+            return f"{self.__class__.__name__} completed!"
 
         if len(self.todos) == 0:
-            if len(self.goal.klass.properties) > 0:
-                return "Any other properties?"
-            else:
-                return "What properties does it have?"
+            return "Any other properties?" if len(self.klass.properties) > 0 else "What properties does it have?"
         else:
             return self.todos[-1].message
 
-    def try_complete(self):
-        if not self.is_complete:
-            self.pursue()
+    def advance(self):
+        if self.todos:
+            super().advance()
+            return
 
-        if self.is_complete:
-            print("Completing GetClassProperties")
-            self.goal.todos.pop()
-
-        return self.message
-
-    def pursue(self):
-        print("Pursuing GetClassProperties")
-        message = self.context.current_message
-        if message == "no" and len(self.todos) == 0:
-            self.complete = True
-        elif len(self.todos) > 0:
-            self.todos[-1].try_complete()
+        print(f"Advancing {self.__class__.__name__}...")
+        if self.context.current_message == "no":
+            self.done = True
         else:
-            self.todos.append(GetClassPropertyGoal(self.context, self, self.goal.klass, message))
+            self.todos.append(GetPropertyGoal(self.context, self.context.current_message, self.klass))
 
-    def __str__(self):
-        return "get_class_properties" + (f":{str(self.todos[-1])}" if self.todos else "")
-
-class GetClassPropertyGoal(object):
-    def __init__(self, context, goal, klass, name):
-        self.context = context
-        self.goal = goal
+class GetPropertyGoal(BaseGoal):
+    def __init__(self, context, name, klass):
+        super().__init__(context)
         self.klass = klass
-        self.type = None
-        self.todos = []
         self.setattr("name", name)
-        self.todos.append(GetInputGoal(context, self, "type", "What is the property type?"))
+        self.setattr("value", None)
 
-    @property
-    def is_complete(self):
-        return len(self.todos) == 0
-
-    @property
-    def message(self):
-        return "Goal completed!" if self.is_complete else self.todos[-1].message
+    def complete(self):
+        property = Property(self.klass, self.name, self.type) if self.type != "list" else ListProperty(self.klass, self.name)
+        self.klass.add_property(property)
+        return super().complete()
 
     def setattr(self, attr, value):
-        if (attr == "name") and (value == "" or value in self.klass.properties):
-            message = "Property name was an empty string. Try again." if value == "" else f"Property {value} already exists. Try another name."
-            self.todos.append(GetInputGoal(self.context, self, attr, message))
-        else:
-            setattr(self, attr, value)
-
-    def try_complete(self):
-        if not self.is_complete:
-            self.pursue()
-
-        if self.is_complete:
-            print("Completing GetClassProperty")
-            self.klass.add_property(Property(self.name, self.type, self.klass))
-            self.goal.todos.pop()
-
-        return self.message
-
-    def pursue(self):
-        print("Pursuing GetClassProperty")
-        self.todos[-1].try_complete()
-
-    def __str__(self):
-        return "get_class_property" + (f":{str(self.todos[-1])}" if self.todos else "")
-
-class AddClassPropertyGoal(object):
-    def __init__(self, context, klass=None, name=None, type=None):
-        self.context = context
-        self.klass = self.context.classes[klass] if klass is not None and klass in self.context.classes else (self.context.cached if isinstance(self.context.cached, Class) else None)
-        self.name = name
-        self.type = type
-        self.todos = []
-
-        if self.name is None or self.name == "":
-            self.todos.append(GetInputGoal(self.context, self, "name", "What do you want to call the property?"))
-        if self.type is None or self.type == "":
+        if (attr == "name") and value in self.klass.properties:
+            self.todos.append(GetInputGoal(self.context, self, attr, f"Property {value} already exists. Try another name."))
+        elif (attr == "value") and value is None:
             self.todos.append(GetInputGoal(self.context, self, "type", "What is the property type?"))
-        if self.klass is None:
-            self.todos.append(GetInputGoal(self.context, self, "klass", "Which class do you want to add the property to?"))
+        setattr(self, attr, value)
 
-    @property
-    def is_complete(self):
-        return len(self.todos) == 0
+class AddPropertyGoal(BaseGoal):
+    def __init__(self, context, klass=None, name=None, type=None):
+        super().__init__(context)
+        self.setattr("type", type)
+        self.setattr("name", name)
+        self.setattr("klass", klass)
 
     @property
     def message(self):
-        return "Property added to class! Anything else?" if self.is_complete else self.todos[-1].message
+        return f"Property {self.name} added to class {self.klass.name}! Anything else?" if self.is_complete else self.todos[-1].message
+
+    def complete(self):
+        self.klass.add_property(Property(self.klass, self.name, self.type))
+        return super().complete()
 
     def setattr(self, attr, value):
         if (attr == "klass"):
-            if value not in self.context.classes:
+            if value is None:
+                self.todos.append(GetInputGoal(self.context, self, attr, "Which class do you want to add the property to?"))
+            elif value not in self.context.classes:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"Class {value} does not exist. Try another class or say cancel."))
             else:
                 self.klass = self.context.classes[value]
-        elif (attr == "name") and value in self.klass.properties:
-            self.todos.append(GetInputGoal(self.context, self, attr, f"Property {value} already exists. Try another name or say cancel."))
-        else:
-            setattr(self, attr, value)
+                if hasattr(self, "name") and self.name in self.klass.properties:
+                    self.todos.append(GetInputGoal(self.context, self, "name", f"Property {self.name} already exists. Try another name or say cancel."))
+            return
+        elif (attr == "name"):
+            if value is None:
+                self.todos.append(GetInputGoal(self.context, self, attr, "What do you want to call the property?"))
+            elif hasattr(self, "klass") and value in self.klass.properties:
+                self.todos.append(GetInputGoal(self.context, self, attr, f"Property {value} already exists. Try another name or say cancel."))
+                return
+        elif (attr == "type") and value is None:
+            self.todos.append(GetInputGoal(self.context, self, "type", "What is the property type?"))
+        setattr(self, attr, value)
 
-    def try_complete(self):
-        if not self.is_complete:
-            self.pursue()
+class SetPropertyActionGoal(BaseGoal):
+    def __init__(self, context, name=None, value=None):
+        super().__init__(context)
+        self.setattr("value", value)
+        self.setattr("name", name)
 
-        if self.is_complete:
-            self.klass.add_property(Property(self.name, self.type))
-            self.context.goals.pop()
+    def complete(self):
+        assert hasattr(self, "actions")
+        self.actions.append(SetPropertyAction(self.name, self.value))
+        return super().complete()
 
-        return self.message
-
-    def pursue(self):
-        self.todos[-1].try_complete()
-
-    def __str__(self):
-        return "add_class_property" + (f":{str(self.todos[-1])}" if self.todos else "")
+    def setattr(self, attr, value):
+        if attr == "name" and value is None:
+            self.todos.append(GetInputGoal(self.context, self, attr, f"What property do you want to set?"))
+        elif attr == "value" and value is None:
+            self.todos.append(GetInputGoal(self.context, self, attr, f"What value do you want to set the property to?"))
+        setattr(self, attr, value)

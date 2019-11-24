@@ -3,6 +3,7 @@ class Procedure(object):
         self.name = name
         self.actions = [] if actions is None else actions
         self.variables = set()
+        self.lists = {}
         self.klass = klass
 
     def __str__(self):
