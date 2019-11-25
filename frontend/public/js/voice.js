@@ -17,20 +17,28 @@ socket.on('message', (data) => {
 });
 
 socket.on('transcript', (transcript) => {
-	console.log(transcript);
-	let div = document.createElement("div");
-	div.className = 'blue pb2';
-	div.innerHTML = `Client: ${transcript}`;
-	document.getElementById("chat-container").appendChild(div);
-});
+	document.getElementById("client").innerHTML = `Client: ${transcript}`;
+})
 
 socket.on('response', (response) => {
-	console.log(response);
-	let div = document.createElement("div");
-	div.className = 'purple pb2';
-	div.innerHTML = `Rasa: ${response}`;
-	document.getElementById("chat-container").appendChild(div);
+	document.getElementById("agent").innerHTML = `Agent: ${response}`;
 })
+
+// socket.on('transcript', (transcript) => {
+// 	console.log(transcript);
+// 	let div = document.createElement("div");
+// 	div.className = 'blue pb2';
+// 	div.innerHTML = `Client: ${transcript}`;
+// 	document.getElementById("chat-container").appendChild(div);
+// });
+
+// socket.on('response', (response) => {
+// 	console.log(response);
+// 	let div = document.createElement("div");
+// 	div.className = 'purple pb2';
+// 	div.innerHTML = `Rasa: ${response}`;
+// 	document.getElementById("chat-container").appendChild(div);
+// })
 
 let isRecording = false;
 let isStreaming = false;

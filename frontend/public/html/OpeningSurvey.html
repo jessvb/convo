@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!-- Use mobile-aware viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Opening Survey</title>
+
+    <!-- Load style sheets -->
+    <link rel="stylesheet" href="css/generalStyle.css">
+    <link rel="stylesheet" href="css/openingSurveyStyle.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+
+    <!-- JavaScript -->
+    <script src="js/openingSurvey.js"></script>
+    <script src="js/survey.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div id="wholeSiteWrap">
+        <div id="titleArea">
+            <h1>Conversational Programming Experiment</h1>
+        </div>
+
+        <div id="infoArea">
+            <h2>Demographic Survey</h2>
+            <div class="survey">
+
+                <div class="ques">1) How old are you?</div>
+                <input class="ans" id='age' type="number" min="8" max="99" placeholder="ex: 15">
+
+                <div class="ques">2) What is your gender?</div>
+                <select class="ans" id='sex'>
+                    <option value="select">Select...</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                    <option value="na">Prefer not to answer</option>
+                </select>
+
+                <div class="ques">3) What is your race and ethnicity? <br> - To select multiple, hold down the Ctrl button (Cmd button on Mac) + click </div>
+                <select multiple class="ans" id='race'>
+                    <option value="AI/AN"> American Indian or Alaska Native</option>
+                    <option value="asian"> Asian</option>
+                    <option value="black"> Black or African-American</option>
+                    <option value="latinx"> Hispanic, Latinx, or Spanish</option>
+                    <option value="NH/PI"> Native Hawaiian or Other Pacific Islander</option>
+                    <option value="white"> White</option>
+                    <option value="other">Other</option>
+                    <option value="na">Prefer not to answer</option>
+                </select>
+
+                <div class="ques">4) Is English your first language?</div>
+                <select class="ans" id='firstLanguage'>
+                    <option value="select">Select...</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                    <option value="multiple">It is my first language along with another language</option>
+                </select>
+
+                <div class="ques">
+                    5) Would you consider yourself a Novice or Advanced programmer? (See definitions below)<br>
+                    - <b>Novice</b>: no programming experience, or have experience in blocks-based programming (e.g., Scratch, App Inventor) <br>
+                    - <b>Advanced</b>: have experience in object-oriented programming or completed a course or project in a text-based language (e.g., Java, Python, C++)
+                </div>
+                <select class="ans" id='level' height="1">
+                    <option value="select">Select...</option>
+                    <option value="novice">Novice</option>
+                    <option value="advanced">Advanced</option>
+                </select>
+
+                <div class="ques">6) What programming languages and/or softwares have you used before? (Select as many as applies) </div>
+                <div class="row">
+                    <select class="ans" id='programmingLanguages' onchange="showOtherTextBox(this, 'programmingLanguagesTextBox')" multiple>
+                      <option value="none">None</option>
+                      <option value="scratch">Scratch</option>
+                      <option value="appinventor">App Inventor</option>
+                      <option value="python">Python</option>
+                      <option value="java">Java</option>
+                      <option value="c">C</option>
+                      <option value="cpp">C++</option>
+                      <option value="swift">Swift</option>
+                      <option value="javascript">JavaScript</option>
+                      <option value="other">Other</option>
+                    </select>
+                    <input class="ans" id='programmingLanguagesTextBox' type="text" placeholder="Other:">
+                </div>
+
+                <div class="ques">7) What type of conversational agents have you interacted with before? (Select as many as applies) </div>
+                <div class="row">
+                    <select multiple class="ans" id='convAgents' onchange="showOtherTextBox(this, 'convAgentsTextBox')">
+                      <option value="none">None</option>
+                      <option value="alexa">Amazon Alexa</option>
+                      <option value="siri">Apple Siri</option>
+                      <option value="googlehome">Google Home</option>
+                      <option value="cortana">Microsoft Cortana</option>
+                      <option value="bixby">Samsung Bixby</option>
+                      <option value="other">Other</option>
+                    </select>
+                    <input class="ans" id='convAgentsTextBox' type="text" placeholder="Other:">
+                </div>
+            </div>
+        </div>
+
+        <div id="buttonArea">
+             <!-- <input type="button" class="button submit" value="Start Experiment">  -->
+             <button type="button" class="button submit btn btn-primary" value="Start Experiment">Start Experiment</button>
+        </div>
+
+        <div class="progressBar">
+            Progress: 5%
+        </div>
+
+        <!-- <div class="progress">
+
+            <div class="progress-bar" role="progressbar" aria-valuenow="5"
+            aria-valuemin="0" aria-valuemax="100" style="width:5%">
+            5%
+            </div>
+            <p align="center">Progress</p>
+        </div> -->
+
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,157 @@
+<!-- This page contains the actual experiment -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Conversational Programming Experiment</title>
+
+    <!-- Use mobile-aware viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Load style sheets -->
+    <link rel="stylesheet" href="css/generalStyle.css">
+    <link rel="stylesheet" href="css/experimentStyle.css">
+    <!-- <link rel="stylesheet" href="conditionSurveyStyle.css">
+    <link rel="stylesheet" href="notificationStyle.css">
+    <link rel="stylesheet" href="animations.css"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+
+    <!-- Load any supplemental Javascript libraries here -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/2.4.2/seedrandom.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js" integrity="sha256-bQmrZe4yPnQrLTY+1gYylfNMBuGfnT/HKsCGX+9Xuqo=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+    <!-- The experiment javascript -->
+    <script src="js/practiceBothSystems.js"></script>
+</head>
+
+<body>
+    <div id="titleArea">
+        <h2>Learning How to Program Conversationally: Voice + Text System</h2>
+    </div>
+    <div id="experimentwrap">
+        <div id="textarea">
+            <h4 align="center">[Voice Area] </h4>
+            <row>
+                <input class="ans" id="textbox" type="text" placeholder="Type here and press Enter">
+                <div id="buttonArea">
+                    <button id="" onclick="enterText()">Enter</button>
+                    <button id="" onclick="reset()">Reset</button>
+                </div>
+                <button id="record-btn">
+                    Hold Down to Talk
+                </button>
+                <div id="client"></div>
+                <div id="agent"></div>
+            </row>
+            <p class="user_utterance" id="transcript" align="center"></p>
+        </div>
+        <div id="programarea">
+            <h4 align="center">Your Program</h4>
+            <p align="center">
+                Line 1: <i>Say "Hello world"</i>
+            </p>
+        </div>
+
+        <div class="" id="sidebararea">
+            <h4 align="center">You are in practice mode</h4>
+
+            <p id="sidebarinfo" align="center">
+                Press the button and say "Hello"!
+            </p>
+            <p></p><p></p><p></p><p></p><p></p>
+
+        </div>
+    </div>
+
+    <div id="notificationwrap">
+
+        <div id="buttonArea">
+             <!-- <input type="button" class="button submit" value="Start Experiment">  -->
+             <center>
+                <button type="button" class="button submit btn btn-primary" value="Next" onclick="submit()">Next</button>
+            </center>
+        </div>
+    </div>
+
+    <!-- <div id="basicsurveywrap">
+        <div id="titleArea">
+            <h1>Gradual Onset Menu Experiment</h1>
+        </div>
+        <div id="infoArea">
+            <h2>Short Survey</h2>
+
+            <p>Rank the following statements on how much you agree with them with regards to the menus in the most recent part
+                of the experiment (i.e., the
+                <strong>regular/non-fading menus</strong>).</p>
+            <div class="survey">
+                <div class="likertDef">
+                    <div>Completely disagree</div>
+                    <div>Neutral</div>
+                    <div>Completely agree</div>
+                </div>
+                <div class="ques margined">I found the menus difficult to use.</div>
+                <div class="ans likert basic" id='basiclikert1'></div>
+                <div class="ques margined">I am satisfied with how the menus worked.</div>
+                <div class="ans likert basic" id='basiclikert2'></div>
+                <div class="ques margined">I found the menus efficient to use.</div>
+                <div class="ans likert basic" id='basiclikert3'></div>
+                <div class="ques margined">I am frustrated with how the menus worked.</div>
+                <div class="ans likert basic" id='basiclikert4'></div>
+            </div>
+        </div>
+        <div id="buttonArea">
+            <input type="button" class="button submit" value="Submit">
+        </div>
+    </div> -->
+
+   <!--  <div id="gradualsurveywrap">
+        <div id="titleArea">
+            <h1>Gradual Onset Menu Experiment</h1>
+        </div>
+        <div id="infoArea">
+            <h2>Short Survey</h2>
+            <p>Rank the following statements with regards to the menus in the most recent part of the experiment (i.e., the
+                <strong>fading menus</strong>).</p>
+            <div class="survey">
+                <div class="likertDef">
+                    <div>Completely disagree</div>
+                    <div>Neutral</div>
+                    <div>Completely agree</div>
+                </div>
+                <div class="ques margined">I found the menus difficult to use.</div>
+                <div class="ans likert gradual" id='graduallikert1'></div>
+                <div class="ques margined">I am satisfied with how the menus worked.</div>
+                <div class="ans likert gradual" id='graduallikert2'></div>
+                <div class="ques margined">I found the menus efficient to use.</div>
+                <div class="ans likert gradual" id='graduallikert3'></div>
+                <div class="ques margined">I am frustrated with how the menus worked.</div>
+                <div class="ans likert gradual" id='graduallikert4'></div>
+            </div>
+        </div>
+        <div id="buttonArea">
+            <input type="button" class="button submit" value="Submit">
+        </div>
+    </div> -->
+
+
+
+        <div class="progressBar">
+            Progress: 20%
+        </div>
+
+        <!-- <div class="progress">
+
+            <div class="progress-bar" role="progressbar" aria-valuenow="25"
+            aria-valuemin="0" aria-valuemax="100" style="width:25%">
+            25%
+            </div>
+            <p align="center">Progress</p>
+        </div> -->
+        <script src="js/voice.js"></script>
+</body>
+
+</html>

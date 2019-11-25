@@ -1,20 +1,45 @@
 const fs = require('fs');
 const path = require('path');
 const vars = require('dotenv').config();
+const axios = require('axios');
 
 const express = require('express');
 const app = express();
 const port = 8080;
 const host = '0.0.0.0';
-const rasa_host = process.env.RASA_HOSTNAME || "localhost";
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
-const rasaSocket = require('socket.io-client')(`http://${rasa_host}:5005`);
 
-app.use('/public', express.static(path.join(__dirname, 'public')));
+// app.use('/public', express.static(path.join(__dirname, 'public')));
 
-app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
+// app.get('/', function (req, res) {
+//     res.sendFile(__dirname + '/index.html');
+// });
+
+app.use(express.static('public'));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.resolve('public/html/OpeningPage.html'));
+});
+
+app.get('/OpeningSurvey', (req, res) => {
+    res.sendFile(path.resolve('public/html/OpeningSurvey.html'));
+});
+
+app.get('/PracticeInfoPage', (req, res) => {
+    res.sendFile(path.resolve('public/html/PracticeInfoPage.html'));
+});
+
+app.get('/PracticeTextSystem', (req, res) => {
+    res.sendFile(path.resolve('public/html/PracticeTextSystem.html'));
+});
+
+app.get('/PracticeVoiceSystem', (req, res) => {
+    res.sendFile(path.resolve('public/html/PracticeVoiceSystem.html'));
+});
+
+app.get('/PracticeBothSystems', (req, res) => {
+    res.sendFile(path.resolve('public/html/PracticeBothSystems.html'));
 });
 
 const speech = require('@google-cloud/speech');
@@ -32,18 +57,6 @@ const request = {
     },
     interimResults: false
 };
-
-rasaSocket.on('connect', () => {
-    console.log("Connected to Rasa server.");
-});
-
-rasaSocket.on('disconnect', () => {
-    console.log("Disconnected from Rasa server.");
-});
-
-rasaSocket.on('rasaResponse', data => {
-    io.emit("response", data["text"]);
-})
 
 io.on('connection', (client) => {
     let recognizeStream = null;
@@ -77,7 +90,15 @@ io.on('connection', (client) => {
                     let transcript = data.results[0].alternatives[0].transcript;
                     console.log(data.results[0].alternatives[0].transcript);
                     client.emit('transcript', transcript);
-                    rasaSocket.emit('rasaInput', { "message": transcript });
+                    axios.post('http://127.0.0.1:5000/message', { "message": transcript })
+                        .then((res) => {
+                            console.log(res);
+                            client.emit('response', res.data.message);
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        })
+                    // rasaSocket.emit('rasaInput', { "message": transcript });
                 } else {
                     console.log('Reached transcription time limit, press Ctrl+C');
                 }
