@@ -56,7 +56,6 @@ function enterText() {
             })
             .then(function (response) {
                 // handle success
-                console.log(response.data.message);
                 agentResponse = response.data.message;
                 document.getElementById("transcript").innerHTML = '<span class="red">' + agentResponse + "</span>" + "<br>" + "<span class='blue'>" + typedStr  + "</span>" + "<br>" + transcript;
             })
