@@ -20,8 +20,12 @@ app.get('/survey', (req, res) => {
     res.sendFile(path.resolve('public/html/survey.html'));
 });
 
-app.get('/experiment', (req, res) => {
-    res.sendFile(path.resolve('public/html/experiment.html'));
+app.get('/practice', (req, res) => {
+    res.sendFile(path.resolve('public/html/practice.html'));
+});
+
+app.get('/experiments', (req, res) => {
+    res.sendFile(path.resolve('public/html/experiments/index.html'));
 });
 
 app.get('/voice-and-conversation', (req, res) => {
