@@ -39,10 +39,11 @@
                     </button>
                 </div>
                 <div class="textbox">
-                    <input type="text" placeholder="Type what you want to say..."/>
+                    <input type="text" id="textbox" placeholder="Type here..."/>
+                    <button type="button" onclick="submitMessage()" id="btn-textbox">Enter</button>
                 </div>
             </div>
-            <div class="conversation">
+            <div id="conversation">
                 <div class="agent-utter">
                     <div>What do you want to do?</div>
                 </div>
@@ -55,7 +56,7 @@
 </body>
 
 <tail>
-    <script src="js/voice.js"></script>
+    <script src="js/experiment.js"></script>
 </tail>
 
 </html>

@@ -24,28 +24,28 @@ app.get('/experiment', (req, res) => {
     res.sendFile(path.resolve('public/html/experiment.html'));
 });
 
-app.get('/experiment/voice-and-conversation', (req, res) => {
+app.get('/voice-and-conversation', (req, res) => {
     res.sendFile(path.resolve('public/html/experiments/voice-and-conversation.html'));
 })
 
-app.get('/experiment/text-and-conversation', (req, res) => {
+app.get('/text-and-conversation', (req, res) => {
     res.sendFile(path.resolve('public/html/experiments/text-and-conversation.html'));
 })
 
-app.get('/experiment/voice-and-program', (req, res) => {
+app.get('/voice-and-program', (req, res) => {
     res.sendFile(path.resolve('public/html/experiments/voice-and-program.html'));
 })
 
-app.get('/experiment/voice-and-text', (req, res) => {
+app.get('/voice-and-text', (req, res) => {
     res.sendFile(path.resolve('public/html/experiments/voice-and-text.html'));
 })
 
-app.get('/experiment/voice-only', (req, res) => {
+app.get('/voice-only', (req, res) => {
     res.sendFile(path.resolve('public/html/experiments/voice-only.html'));
 })
 
 app.get('/code', (req, res) => {
-    res.sendFile(path.resolve('public/html/Demo.html'));
+    res.sendFile(path.resolve('public/html/demo.html'));
 });
 
 const speech = require('@google-cloud/speech');

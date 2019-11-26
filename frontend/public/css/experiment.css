@@ -41,10 +41,12 @@
 
 #input-container {
     margin: auto;
+    display: flex;
+    align-items: center;
 }
 
 #input-container .microphone {
-    margin-bottom: 1rem;
+    margin-right: 2rem;
 }
 
 #program-container {
@@ -68,7 +70,7 @@
     background-color: var(--container-background-color);
 }
 
-.conversation {
+#conversation {
     grid-row-start: 2;
     grid-row-end: 6;
     padding: 1rem 20% 2rem 20%;
@@ -78,6 +80,10 @@
 .microphone,
 .textbox {
     margin: auto;
+}
+
+.textbox button {
+    padding: 5px 10px;
 }
 
 .microphone button {
