@@ -11,9 +11,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Load style sheets -->
-    <link rel="stylesheet" href="css/generalStyle.css">
-    <link rel="stylesheet" href="css/experimentStyle.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/experiment.css">
 
     <!-- Load any supplemental Javascript libraries here -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/2.4.2/seedrandom.js"></script>
@@ -31,7 +31,7 @@
             <!-- <h4 align="center">Text Area</h4> -->
             <row>
                 <input class="ans" id="textbox" type="text" placeholder="Type here and press Enter">
-                <div id="buttonArea">
+                <div id="button-container">
                     <button id="" onclick="enterText()">Enter</button>
                     <button id="" onclick="reset()">Reset</button>
                 </div>
@@ -75,19 +75,16 @@
     </div>
 
     <div id="notificationwrap">
-        <div id="buttonArea">
+        <div id="button-container">
              <center>
                 <button type="button" class="button submit btn btn-primary" value="Next" onclick="submit()">Next</button>
             </center>
         </div>
     </div>
-
-    <div class="progressBar">
-        Progress: 15%
-    </div>
-
-    <!-- The experiment javascript -->
-    <script src="js/practiceTextSystem.js"></script>
 </body>
+
+<tail>
+    <script src="js/practiceTextSystem.js"></script>
+</tail>
 
 </html>

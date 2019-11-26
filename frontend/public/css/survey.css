@@ -1,0 +1,33 @@
+p {
+	max-width: 100%
+}
+
+select {
+    border: 1px solid #ccc;
+    vertical-align: top;
+    height: 20px;
+}
+
+#languages-textbox,
+#agents-textbox {
+	display: none;
+}
+
+.survey {
+    display: grid;
+    grid-template-columns: auto 8em;
+    grid-column-gap: 2em;
+    grid-row-gap: 1em;
+    max-width: 550px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.question {
+    text-align: left;
+}
+
+.answer {
+    display: flex;
+    width: 150%;
+}

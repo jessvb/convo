@@ -9,13 +9,12 @@
     <title>General Information</title>
 
     <!-- Load style sheets -->
-    <link rel="stylesheet" href="css/generalStyle.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
 
     <!-- Load javascript -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-    <script src="js/openingPage.js"></script>
 </head>
 
 <body>
@@ -23,7 +22,7 @@
         <div id="title">
             <h1>Conversational Programming Experiment</h1>
         </div>
-        <div id="infoArea">
+        <div id="info">
             <h2>Experiment Information</h2>
             <ul>
                 <li>
@@ -35,20 +34,11 @@
                     The experiment consists of 1) a few short surveys, 2) several different goals you need to achieve through the three programming systems
                     (voice only, text only, voice and text).
                 </li>
-                <li>
-                    You should expect the experiment to last approximately 2 hours.
-                </li>
-                <li>
-                    You will be able to see your progress at the bottom of the screen on the following pages.
-                </li>
-                <li>
-                    You will be able to view examples/hints on a sidebar on the right side of the screen on the following pages.
-                </li>
-                <li>
-                    We are evaluating and comparing the different systems, not your abilities. All results are anonymized.
-                </li>
+                <li>You should expect the experiment to last approximately 2 hours.</li>
+                <li>You will be able to see your progress at the bottom of the screen on the following pages.</li>
+                <li>You will be able to view examples/hints on a sidebar on the right side of the screen on the following pages.</li>
+                <li>We are evaluating and comparing the different systems, not your abilities. All results are anonymized.</li>
             </ul>
-
 
             <h2>How the Experiment Works</h2>
             <ul>
@@ -66,10 +56,14 @@
             <p>If you agree to participate in this experiment, please proceed to the next page to complete a brief survey.</p>
         </div>
 
-        <div id="buttonArea">
-            <button type="button" class="btn btn-primary" id="begin" value="Begin Survey">Begin Survey</button>
+        <div id="button-container">
+            <button type="button" class="btn btn-primary" id="btn-begin">Begin Survey</button>
         </div>
     </div>
 </body>
+
+<tail>
+    <script src="js/openingPage.js"></script>
+</tail>
 
 </html>

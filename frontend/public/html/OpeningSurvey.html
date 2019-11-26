@@ -9,9 +9,9 @@
     <title>Opening Survey</title>
 
     <!-- Load style sheets -->
-    <link rel="stylesheet" href="css/generalStyle.css">
-    <link rel="stylesheet" href="css/openingSurveyStyle.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/survey.css">
 
     <!-- JavaScript -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -24,15 +24,14 @@
             <h1>Conversational Programming Experiment</h1>
         </div>
 
-        <div id="infoArea">
+        <div id="info">
             <h2>Demographic Survey</h2>
             <div class="survey">
+                <div class="question">1) How old are you?</div>
+                <input class="answer" id='age' type="number" min="8" max="99" placeholder="ex: 15">
 
-                <div class="ques">1) How old are you?</div>
-                <input class="ans" id='age' type="number" min="8" max="99" placeholder="ex: 15">
-
-                <div class="ques">2) What is your gender?</div>
-                <select class="ans" id='sex'>
+                <div class="question">2) What is your gender?</div>
+                <select class="answer" id='sex'>
                     <option value="select">Select...</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
@@ -40,8 +39,8 @@
                     <option value="na">Prefer not to answer</option>
                 </select>
 
-                <div class="ques">3) What is your race and ethnicity? <br> - To select multiple, hold down the Ctrl button (Cmd button on Mac) + click </div>
-                <select multiple class="ans" id='race'>
+                <div class="question">3) What is your race and ethnicity? <br> - To select multiple, hold down the Ctrl button (Cmd button on Mac) + click </div>
+                <select multiple class="answer" id='race'>
                     <option value="AI/AN"> American Indian or Alaska Native</option>
                     <option value="asian"> Asian</option>
                     <option value="black"> Black or African-American</option>
@@ -52,28 +51,28 @@
                     <option value="na">Prefer not to answer</option>
                 </select>
 
-                <div class="ques">4) Is English your first language?</div>
-                <select class="ans" id='firstLanguage'>
+                <div class="question">4) Is English your first language?</div>
+                <select class="answer" id='firstLanguage'>
                     <option value="select">Select...</option>
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
                     <option value="multiple">It is my first language along with another language</option>
                 </select>
 
-                <div class="ques">
+                <div class="question">
                     5) Would you consider yourself a Novice or Advanced programmer? (See definitions below)<br>
                     - <b>Novice</b>: no programming experience, or have experience in blocks-based programming (e.g., Scratch, App Inventor) <br>
                     - <b>Advanced</b>: have experience in object-oriented programming or completed a course or project in a text-based language (e.g., Java, Python, C++)
                 </div>
-                <select class="ans" id='level' height="1">
+                <select class="answer" id='level' height="1">
                     <option value="select">Select...</option>
                     <option value="novice">Novice</option>
                     <option value="advanced">Advanced</option>
                 </select>
 
-                <div class="ques">6) What programming languages and/or softwares have you used before? (Select as many as applies) </div>
-                <div class="row">
-                    <select class="ans" id='programmingLanguages' onchange="showOtherTextBox(this, 'programmingLanguagesTextBox')" multiple>
+                <div class="question">6) What programming languages and/or softwares have you used before? (Select as many as applies) </div>
+                <div>
+                    <select class="answer" id='languages-select' onchange="showOtherTextBox(this, 'languages-textbox')" multiple>
                       <option value="none">None</option>
                       <option value="scratch">Scratch</option>
                       <option value="appinventor">App Inventor</option>
@@ -85,12 +84,12 @@
                       <option value="javascript">JavaScript</option>
                       <option value="other">Other</option>
                     </select>
-                    <input class="ans" id='programmingLanguagesTextBox' type="text" placeholder="Other:">
+                    <input class="answer" id='languages-textbox' type="text" placeholder="Other">
                 </div>
 
-                <div class="ques">7) What type of conversational agents have you interacted with before? (Select as many as applies) </div>
-                <div class="row">
-                    <select multiple class="ans" id='convAgents' onchange="showOtherTextBox(this, 'convAgentsTextBox')">
+                <div class="question">7) What type of conversational agents have you interacted with before? (Select as many as applies) </div>
+                <div>
+                    <select multiple class="answer" id='agents-select' onchange="showOtherTextBox(this, 'agents-textbox')">
                       <option value="none">None</option>
                       <option value="alexa">Amazon Alexa</option>
                       <option value="siri">Apple Siri</option>
@@ -99,23 +98,20 @@
                       <option value="bixby">Samsung Bixby</option>
                       <option value="other">Other</option>
                     </select>
-                    <input class="ans" id='convAgentsTextBox' type="text" placeholder="Other:">
+                    <input class="answer" id='agents-textbox' type="text" placeholder="Other">
                 </div>
             </div>
         </div>
 
-        <div id="buttonArea">
-             <button type="button" class="button submit btn btn-primary" value="Start Experiment">Start Experiment</button>
-        </div>
-
-        <div class="progressBar">
-            Progress: 5%
+        <div id="button-container">
+             <button type="button" class="btn btn-primary submit" id="btn-start-experiment">Start Experiment</button>
         </div>
     </div>
-
-    <script src="js/openingSurvey.js"></script>
-    <script src="js/survey.js"></script>
-
 </body>
+
+<tail>
+    <script src="js/survey.js"></script>
+    <script src="js/openingSurvey.js"></script>
+</tail>
 
 </html>

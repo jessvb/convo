@@ -12,7 +12,7 @@ INSTRUCTIONS = [
 // - stores and shows textbox input
 // - populates sidebar instructions
 // - returns agent output?
-function enterText() {
+let enterText = () => {
     // Gets textbox input value
     var typedStr = document.getElementById("textbox").value;
     document.getElementById("textbox").value = "";
@@ -68,13 +68,13 @@ function enterText() {
 }
 
 // This function clears the transcript + restarts instructions when Reset is pressed
-function reset() {
+let reset = () => {
     document.getElementById("transcript").innerHTML = "";
     document.getElementById("agent").innerHTML = "";
     STEP = 0;
     document.getElementById("sidebarinfo").innerHTML = INSTRUCTIONS[0]
 }
 
-function submit() {
+let submit = () => {
     window.location.href = 'PracticeVoiceSystem';
 }
