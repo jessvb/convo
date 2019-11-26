@@ -59,7 +59,7 @@ li {
     padding: var(--bullet-spacing) 0px;
 }
 
-#wholeSiteWrap,
+#site-container,
 #basicsurveywrap,
 #gradualsurveywrap {
     box-sizing: border-box;
@@ -93,10 +93,4 @@ input.button.disabled {
 .progressBar {
     text-align: center;
     color: var(--colour-progress);
-}
-
-video {
-    padding-bottom: calc(var(--site-padding-size) / 2);
-    max-width: calc(100vw - var(--site-padding-size) * 2);
-    max-height: 75vh;
 }

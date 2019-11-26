@@ -10,12 +10,6 @@ const host = '0.0.0.0';
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
-// app.use('/public', express.static(path.join(__dirname, 'public')));
-
-// app.get('/', function (req, res) {
-//     res.sendFile(__dirname + '/index.html');
-// });
-
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
@@ -40,6 +34,10 @@ app.get('/PracticeVoiceSystem', (req, res) => {
 
 app.get('/PracticeBothSystems', (req, res) => {
     res.sendFile(path.resolve('public/html/PracticeBothSystems.html'));
+});
+
+app.get('/code', (req, res) => {
+    res.sendFile(path.resolve('public/html/Demo.html'));
 });
 
 const speech = require('@google-cloud/speech');
@@ -98,7 +96,6 @@ io.on('connection', (client) => {
                         .catch((err) => {
                             console.log(err);
                         })
-                    // rasaSocket.emit('rasaInput', { "message": transcript });
                 } else {
                     console.log('Reached transcription time limit, press Ctrl+C');
                 }

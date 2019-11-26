@@ -125,11 +125,11 @@ function setSubmitBtn(inputClassName) {
     if (formCompleted) {
       // enable the submit button:
       btn.disabled = false;
-      btn.setAttribute('class', 'button submit');
+      btn.setAttribute('class', 'btn btn-primary submit');
     } else {
       // disable the submit button:
       btn.disabled = true;
-      btn.setAttribute('class', 'button submit disabled');
+      btn.setAttribute('class', 'btn btn-primary submit disabled');
     }
   }
 }
