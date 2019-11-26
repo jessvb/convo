@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     localStorage.setItem('userID', userID);
 
     // set the button url
-    let url = 'OpeningSurvey?userID=' + userID;
+    let url = 'survey?userID=' + userID;
     let button = document.getElementById('btn-begin');
     button.onclick = () => window.location.href = url;
 });

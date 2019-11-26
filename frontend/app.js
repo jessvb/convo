@@ -13,34 +13,34 @@ const io = require('socket.io')(server);
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.resolve('public/html/OpeningPage.html'));
+    res.sendFile(path.resolve('public/html/home.html'));
 });
 
-app.get('/OpeningSurvey', (req, res) => {
-    res.sendFile(path.resolve('public/html/OpeningSurvey.html'));
+app.get('/survey', (req, res) => {
+    res.sendFile(path.resolve('public/html/survey.html'));
 });
 
-app.get('/PracticeInfoPage', (req, res) => {
-    res.sendFile(path.resolve('public/html/PracticeInfoPage.html'));
+app.get('/experiment', (req, res) => {
+    res.sendFile(path.resolve('public/html/experiment.html'));
 });
 
-app.get('/voice-and-conversation', (req, res) => {
+app.get('/experiment/voice-and-conversation', (req, res) => {
     res.sendFile(path.resolve('public/html/experiments/voice-and-conversation.html'));
 })
 
-app.get('/text-and-conversation', (req, res) => {
+app.get('/experiment/text-and-conversation', (req, res) => {
     res.sendFile(path.resolve('public/html/experiments/text-and-conversation.html'));
 })
 
-app.get('/voice-and-program', (req, res) => {
+app.get('/experiment/voice-and-program', (req, res) => {
     res.sendFile(path.resolve('public/html/experiments/voice-and-program.html'));
 })
 
-app.get('/voice-and-text', (req, res) => {
+app.get('/experiment/voice-and-text', (req, res) => {
     res.sendFile(path.resolve('public/html/experiments/voice-and-text.html'));
 })
 
-app.get('/voice-only', (req, res) => {
+app.get('/experiment/voice-only', (req, res) => {
     res.sendFile(path.resolve('public/html/experiments/voice-only.html'));
 })
 
