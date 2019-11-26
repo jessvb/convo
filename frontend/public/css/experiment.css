@@ -109,9 +109,14 @@
     margin-left: 10px;
 }
 
-.sidebar {
+#sidebar,
+#sidebar-tutorial {
     padding: 2rem;
     text-align: center;
+}
+
+#sidebar {
+    display: none;
 }
 
 .program {

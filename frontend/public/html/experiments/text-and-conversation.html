@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="css/experiment.css">
 
     <!-- Load any supplemental Javascript libraries here -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
@@ -25,9 +26,10 @@
     </div>
     <div id="experiment-container">
         <div id="sidebar-container" class="grid-container">
-            <div class="sidebar">
-                <div><b>You are in practice mode.</b></div>
-                <div>First, say Hello!</div>
+            <div id="sidebar-tutorial"></div>
+            <div id="sidebar">
+                <div><b>You are in sandbox mode.</b></div>
+                <div>Try other commands!</div>
             </div>
         </div>
         <div id="text-container" class="grid-container">
@@ -35,14 +37,7 @@
                 <input type="text" id="textbox" placeholder="Type here..."/>
                 <button type="button" onclick="submitMessage()" id="btn-textbox">Enter</button>
             </div>
-            <div id="conversation">
-                <div class="agent-utter">
-                    <div>What do you want to do?</div>
-                </div>
-                <div class="user-utter">
-                    <div>Hello</div>
-                </div>
-            </div>
+            <div id="conversation"></div>
         </div>
     </div>
 </body>
