@@ -24,17 +24,25 @@ app.get('/PracticeInfoPage', (req, res) => {
     res.sendFile(path.resolve('public/html/PracticeInfoPage.html'));
 });
 
-app.get('/PracticeTextSystem', (req, res) => {
-    res.sendFile(path.resolve('public/html/PracticeTextSystem.html'));
-});
+app.get('/voice-and-conversation', (req, res) => {
+    res.sendFile(path.resolve('public/html/experiments/voice-and-conversation.html'));
+})
 
-app.get('/PracticeVoiceSystem', (req, res) => {
-    res.sendFile(path.resolve('public/html/PracticeVoiceSystem.html'));
-});
+app.get('/text-and-conversation', (req, res) => {
+    res.sendFile(path.resolve('public/html/experiments/text-and-conversation.html'));
+})
 
-app.get('/PracticeBothSystems', (req, res) => {
-    res.sendFile(path.resolve('public/html/PracticeBothSystems.html'));
-});
+app.get('/voice-and-program', (req, res) => {
+    res.sendFile(path.resolve('public/html/experiments/voice-and-program.html'));
+})
+
+app.get('/voice-and-text', (req, res) => {
+    res.sendFile(path.resolve('public/html/experiments/voice-and-text.html'));
+})
+
+app.get('/voice-only', (req, res) => {
+    res.sendFile(path.resolve('public/html/experiments/voice-only.html'));
+})
 
 app.get('/code', (req, res) => {
     res.sendFile(path.resolve('public/html/Demo.html'));

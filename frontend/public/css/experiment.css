@@ -1,104 +1,148 @@
 :root {
-
-    --colour-background: #f1f1f1;
-    --colour-outer-outline: #5a5a5a;
-    --colour-menu-font: #1f1f1f;
-
-    --margin-size: 1em;
-    --padding-size: 1em;
-    --thin-border-size: 1px;
-    --row-gap: 0.5rem;
+    --container-background-color: #f1f1f1;
+    --container-border-color: #5a5a5a;
+    --padding: 4rem;
+    --grid-gap: 2rem;
 }
 
-#experimentwrap {
-    margin: var(--margin-size);
-    color: var(--colour-menu-font);
-    /* Grid */
-    display: grid;
-    grid-row-gap: var(--row-gap);
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 300px);
+#title {
+    padding: 0 var(--padding) 1rem var(--padding);
+    margin-top: 0;
 }
 
-#voicearea {
-    border: thick solid var(--colour-outer-outline);
-    background-color: var(--colour-background);
-    padding: var(--padding-size);
-    /* Grid */
+#experiment-container {
+    height: calc(100vh - 150px);
     display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 130px repeat(3, 1fr);
+    grid-column-gap: var(--grid-gap);
+    grid-row-gap: var(--grid-gap);
+    padding-left: var(--padding);
+    padding-right: var(--padding);
+}
+
+#sidebar-container {
     grid-column-start: 1;
     grid-column-end: 2;
     grid-row-start: 1;
-    grid-row-end: 2;
-    grid-template-rows: fit-content(100%) 80vh;
+    grid-row-end: 5;
 }
 
-#textarea {
-    border: thick solid var(--colour-outer-outline);
-    background-color: var(--colour-background);
-    padding: var(--padding-size);
-    /* Grid */
-    display: grid;
-    grid-column-start: 1;
-    grid-column-end: 2;
-    grid-row-start: 1;
-    grid-row-end: 2;
-    /* grid-template-rows: fit-content(100%) 80vh; */
-}
-
-#sidebararea {
-    border: thick solid var(--colour-outer-outline);
-    background-color: var(--colour-background);
-    padding: var(--padding-size);
-    margin-left: 5%;
-    display: grid;
+#voice-container,
+#text-container,
+#voice-text-container {
     grid-column-start: 2;
-    grid-column-end: 3;
+    grid-column-end: 4;
     grid-row-start: 1;
-    grid-row-end: 3;
-    /* grid-template-rows: fit-content(100%) 80vh; */
+    grid-row-end: 5;
+    display: grid;
+    grid-template-rows: 120px repeat(3, 1fr);
 }
 
-#programarea {
-    border: thick solid var(--colour-outer-outline);
-    background-color: var(--colour-background);
-    padding: var(--padding-size);
-    /* Grid */
-    display: grid;
-    grid-column-start: 1;
-    grid-column-end: 2;
+#input-container {
+    margin: auto;
+}
+
+#input-container .microphone {
+    margin-bottom: 1rem;
+}
+
+#program-container {
+    grid-column-start: 2;
+    grid-column-end: 4;
     grid-row-start: 2;
-    grid-row-end: 3;
-    /* grid-template-rows: fit-content(100%) 80vh; */
+    grid-row-end: 5;
 }
 
-#voiceonlyarea {
-    border: thick solid var(--colour-outer-outline);
-    background-color: var(--colour-background);
-    padding: var(--padding-size);
-    /* Grid */
-    display: grid;
-    grid-column-start: 1;
-    grid-column-end: 2;
+#mic-container {
+    grid-column-start: 2;
+    grid-column-end: 4;
     grid-row-start: 1;
-    grid-row-end: 3;
-    /* grid-template-rows: fit-content(100%) 80vh; */
+    grid-row-end: 2;
+    display: grid;
+    height: 100%;
 }
 
-.ans {
-    /*display: flex;*/
-    width: 100%;
-    height: 50px;
+.grid-container {
+    border: thick solid var(--container-border-color);
+    background-color: var(--container-background-color);
 }
 
-.red {
-    color: red;
-}
-.blue {
-    color: blue;
-}
-
-p {
-    /* overflow-x: scroll; */
+.conversation {
+    grid-row-start: 2;
+    grid-row-end: 6;
+    padding: 1rem 20% 2rem 20%;
     overflow-y: scroll;
+}
+
+.microphone,
+.textbox {
+    margin: auto;
+}
+
+.microphone button {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 1px solid black;
+    text-decoration: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.microphone button:focus {
+    outline: none;
+}
+
+.recording {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: radial-gradient(red, white);
+    margin-left: 10px;
+}
+
+.sidebar {
+    padding: 2rem;
+    text-align: center;
+}
+
+.program {
+    padding: 2rem;
+    text-align: center;
+}
+
+.textbox input {
+    width: 200px;
+    padding: 5px 10px;
+}
+
+.user-utter {
+    text-align: right;
+    width: 100%;
+    padding: 10px 0;
+}
+
+.agent-utter {
+    text-align: left;
+    width: 100%;
+    padding: 10px 0;
+}
+
+.user-utter > div {
+    display: inline;
+    border-radius: 20px;
+    background-color: #0084FF;
+    color: white;
+    padding: 10px;
+    margin-right: 10px;
+}
+
+.agent-utter > div {
+    display: inline;
+    border-radius: 20px;
+    background-color: white;
+    padding: 10px;
+    margin-left: 10px;
 }
