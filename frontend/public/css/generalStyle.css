@@ -1,10 +1,9 @@
 :root {
     /* Colour Variables */
-    /*--colour-dark-grey: hsl(0, 0%, 19%);*/
     --colour-white: white;
-    --colour-black: black;
     --colour-btn-disabled: rgb(136, 136, 136);
     --colour-progress: rgb(179, 179, 179);
+
     /* Sizes */
     --site-padding-size: 2em;
     --max-par-width: 50em;
