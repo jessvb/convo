@@ -11,7 +11,7 @@
 }
 
 #experiment-container {
-    height: calc(100vh - 150px);
+    height: calc(100vh - 10rem);
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: 130px repeat(3, 1fr);
@@ -101,12 +101,17 @@
     outline: none;
 }
 
-.recording {
+#recording-status {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: radial-gradient(red, white);
+    border: 1px solid black;
     margin-left: 10px;
+}
+
+#recording-status.recording {
+    background: red;
+    border: none;
 }
 
 #sidebar,

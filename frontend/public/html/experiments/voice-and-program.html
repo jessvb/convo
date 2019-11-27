@@ -15,6 +15,7 @@
     <!-- <link rel="stylesheet" href="css/old.css"> -->
 
     <!-- Load any supplemental Javascript libraries here -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
@@ -34,9 +35,9 @@
         </div>
         <div id="mic-container" class="grid-container">
             <div class="microphone">
-                <button>
+                <button type="button" id="btn-record">
                     <div>Hold to Talk</div>
-                    <div class="recording"></div>
+                    <div id="recording-status"></div>
                 </button>
             </div>
         </div>
@@ -50,6 +51,7 @@
 
 <tail>
     <script src="js/experiment.js"></script>
+    <script src="js/stream.js"></script>
 </tail>
 
 </html>

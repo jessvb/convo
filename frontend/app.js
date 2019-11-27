@@ -25,22 +25,23 @@ app.get('/demo', (req, res) => res.sendFile(path.resolve('public/html/demo.html'
 
 const speech = require('@google-cloud/speech');
 const speechClient = new speech.SpeechClient();
-
 const encoding = 'LINEAR16';
 const sampleRateHertz = 16000;
 const languageCode = 'en-US';
-
 const request = {
     config: {
         encoding: encoding,
         sampleRateHertz: sampleRateHertz,
         languageCode: languageCode,
+        speech_contexts: [
+            ["create", "make", "variable", "class", "property", "procedure", "conditional", "loop"]
+        ]
     },
     interimResults: false
 };
 
 io.on('connection', (client) => {
-    let recognizeStream = null;
+    let stream = null;
     console.log('Client connected to server.');
 
     client.on('join', (data) => {
@@ -49,36 +50,26 @@ io.on('connection', (client) => {
 
     client.on('startStream', () => {
         console.log('Starting stream.');
-        startRecognizeStream(client);
+        startStream(client);
     });
 
     client.on('endStream', () => {
         console.log('Ending stream.');
-        endRecognizeStream();
+        endStream();
     });
 
-    client.on('audio', function (data) {
-        if (recognizeStream !== null) {
-            recognizeStream.write(data);
-        }
+    client.on('audio', (data) => {
+        if (stream !== null)
+            stream.write(data);
     });
 
-    let startRecognizeStream = (client) => {
-        recognizeStream = speechClient.streamingRecognize(request)
+    let startStream = (client) => {
+        stream = speechClient.streamingRecognize(request)
             .on('error', console.error)
             .on('data', (data) => {
                 if (data.results[0] && data.results[0].alternatives[0]) {
                     let transcript = data.results[0].alternatives[0].transcript;
-                    console.log(data.results[0].alternatives[0].transcript);
-                    client.emit('transcript', transcript);
-                    axios.post('http://127.0.0.1:5000/message', { "message": transcript })
-                        .then((res) => {
-                            console.log(res);
-                            client.emit('response', res.data.message);
-                        })
-                        .catch((err) => {
-                            console.log(err);
-                        })
+                    client.emit('clientUtter', transcript);
                 } else {
                     console.log('Reached transcription time limit, press Ctrl+C');
                 }
@@ -86,12 +77,12 @@ io.on('connection', (client) => {
         );
     }
 
-    function endRecognizeStream() {
-        if (recognizeStream) {
-            recognizeStream.end();
+    let endStream = () => {
+        if (stream) {
+            stream.end();
         }
 
-        recognizeStream = null;
+        stream = null;
     }
 });
 

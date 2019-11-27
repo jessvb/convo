@@ -23,59 +23,62 @@ let checkQuery = (field, value) => {
     return false
 }
 
-let submitMessage = () => {
-    let text = document.getElementById("textbox").value;
-    if (text != "") {
-        let utter = document.createElement("div");
-        utter.className = "user-utter";
+let submitText = () => {
+    let textbox = document.getElementById("textbox");
+    let text = textbox.value
+    if (text != "")
+        submitMessage(text.toLowerCase());
 
-        let message = document.createElement("div");
-        message.innerHTML = text;
-
-        utter.append(message);
-        document.getElementById("conversation").prepend(utter);
-
-        if (tutorial)
-            handleTutorial(text.toLowerCase());
-        else
-            handleSubmit(text.toLowerCase());
-    }
-
-    document.getElementById("textbox").value = "";
+    textbox.value = "";
 }
 
-let handleTutorial = (text) => {
-    if (text === tutorial_required_messages[tutorial_step].toLowerCase())
+let submitMessage = (message) => {
+    let utter = document.createElement("div");
+    utter.className = "user-utter";
+
+    let text = document.createElement("div");
+    text.innerHTML = message;
+     utter.append(text);
+
+    let conversation = document.getElementById("conversation");
+    if (conversation != null)
+        conversation.prepend(utter);
+
+    if (tutorial)
+        handleTutorial(message);
+    else
+        handleSubmit(message);
+}
+
+let handleTutorial = (message) => {
+    if (tutorial_required_messages[tutorial_step].toLowerCase().includes(message))
         tutorial_step++;
 
     if (tutorial_step > instructions_text.length - 1) {
         document.getElementById("sidebar-tutorial").style.display = "none";
         document.getElementById("sidebar").style.display = "block";
         tutorial = false;
-    } else {
+    } else
         document.getElementById("sidebar-tutorial").innerHTML = `
             <div><b>You are currently in practice mode.</b></div>
             <div>${instructions_text[tutorial_step]}</div>
         `
-    }
-}
+};
 
-let handleSubmit = (text) => {
-    axios.post('http://127.0.0.1:5000/message', {
-        message: text
-    }).then((res) => {
-        let utter = document.createElement("div");
-        utter.className = "agent-utter";
+let handleSubmit = (message) => {
+    axios.post('http://127.0.0.1:5000/message', { message: message})
+        .then((res) => {
+            let utter = document.createElement("div");
+            utter.className = "agent-utter";
 
-        let message = document.createElement("div");
-        message.innerHTML = res.data.message;
+            let text = document.createElement("div");
+            text.innerHTML = res.data.message;
 
-        utter.append(message);
-        document.getElementById("conversation").prepend(utter);
-    }).catch((err) => {
-        console.log(err);
-    })
-}
+            utter.append(text);
+            document.getElementById("conversation").prepend(utter);
+        })
+        .catch(console.log);
+};
 
 if (checkQuery("tutorial", 0)) {
     document.getElementById("sidebar-tutorial").style.display = "none";
@@ -84,8 +87,7 @@ if (checkQuery("tutorial", 0)) {
 } else {
     document.getElementById("sidebar-tutorial").innerHTML = `
         <div><b>You are currently in practice mode.</b></div>
-        <div>${instructions_text[tutorial_step]}</div>
-    `
+        <div>${instructions_text[tutorial_step]}</div>`;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -94,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
         textbox.onkeyup = (e) => {
             e.preventDefault();
             if (e.keyCode === 13)
-                submitMessage();
+                submitText();
         }
     }
 });

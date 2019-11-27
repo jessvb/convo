@@ -8,7 +8,7 @@ class DialogManager(object):
 
     def reset(self):
         self.context.reset()
-        return "Reset"
+        return "Conversation has been reset. What do you want to do first?"
 
     def current_goal(self):
         return self.context.current_goal
