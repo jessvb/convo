@@ -6,6 +6,10 @@ app = Flask(__name__)
 CORS(app)
 dm = DialogManager()
 
+@app.route('/')
+def index():
+    return "Hello world!"
+
 @app.route('/message', methods=['POST'])
 def message():
     if request.method == "POST":
