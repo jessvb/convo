@@ -2,12 +2,16 @@ const fs = require('fs');
 const path = require('path');
 const vars = require('dotenv').config();
 const axios = require('axios');
-
 const express = require('express');
 const app = express();
 const port = 8080;
 const host = '0.0.0.0';
-const server = require('http').Server(app);
+const options = {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
+};
+const server = require('https').createServer(options, app);
+// const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
 app.use(express.static('public'));
@@ -87,5 +91,5 @@ io.on('connection', (client) => {
 });
 
 server.listen(port, host, () => {
-    console.log(`Server started at ${host}:${port}.`)
+    console.log(`Server started at https://${host}:${port}/.`)
 });

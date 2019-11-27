@@ -1,5 +1,7 @@
 # Custom
 gcpkey.json
+cert.pem
+key.pem
 
 ### Python ###
 

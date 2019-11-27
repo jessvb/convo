@@ -1,5 +1,6 @@
-let tutorial_step = 0;
-let tutorial = true;
+// const server = 'http://0.0.0.0:5000/message';
+const server = 'https://0.0.0.0:5000/message';
+// const server = 'https://3.87.219.25:5000/message';
 
 const instructions_text = [
     "Begin by typing 'Hello' in the text box.",
@@ -12,6 +13,9 @@ const tutorial_required_messages = [
     "Start programming",
     "Hello world!"
 ]
+
+let tutorial_step = 0;
+let tutorial = true;
 
 let checkQuery = (field, value) => {
     let url = window.location.href;
@@ -66,7 +70,7 @@ let handleTutorial = (message) => {
 };
 
 let handleSubmit = (message) => {
-    axios.post('https://0.0.0.0:5000/message', { message: message})
+    axios.post(server, { message: message})
         .then((res) => {
             let utter = document.createElement("div");
             utter.className = "agent-utter";
