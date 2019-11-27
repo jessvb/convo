@@ -1,7 +1,7 @@
-// const socket = io.connect("http://0.0.0.0:8080");
-const socket = io.connect("https://0.0.0.0:8080");
+const socket = io.connect("http://0.0.0.0:8080");
+// const socket = io.connect("http://3.87.219.25:8080");
+// const socket = io.connect("https://0.0.0.0:8080", { secure: true });
 // const socket = io.connect("https://3.87.219.25:8080", { secure: true });
-
 
 socket.on('connect', (data) => socket.emit('join', 'Connected to server.'));
 socket.on('message', console.log);

@@ -1,5 +1,6 @@
-// const server = 'http://0.0.0.0:5000/message';
-const server = 'https://0.0.0.0:5000/message';
+const server = 'http://0.0.0.0:5000/message';
+// const server = 'http://3.87.219.25:5000/message';
+// const server = 'https://0.0.0.0:5000/message';
 // const server = 'https://3.87.219.25:5000/message';
 
 const instructions_text = [
