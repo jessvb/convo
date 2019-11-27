@@ -12,45 +12,16 @@ const io = require('socket.io')(server);
 
 app.use(express.static('public'));
 
-app.get('/', (req, res) => {
-    res.sendFile(path.resolve('public/html/home.html'));
-});
-
-app.get('/survey', (req, res) => {
-    res.sendFile(path.resolve('public/html/survey.html'));
-});
-
-app.get('/practice', (req, res) => {
-    res.sendFile(path.resolve('public/html/practice.html'));
-});
-
-app.get('/experiments', (req, res) => {
-    res.sendFile(path.resolve('public/html/experiments/index.html'));
-});
-
-app.get('/voice-and-conversation', (req, res) => {
-    res.sendFile(path.resolve('public/html/experiments/voice-and-conversation.html'));
-})
-
-app.get('/text-and-conversation', (req, res) => {
-    res.sendFile(path.resolve('public/html/experiments/text-and-conversation.html'));
-})
-
-app.get('/voice-and-program', (req, res) => {
-    res.sendFile(path.resolve('public/html/experiments/voice-and-program.html'));
-})
-
-app.get('/voice-and-text', (req, res) => {
-    res.sendFile(path.resolve('public/html/experiments/voice-and-text.html'));
-})
-
-app.get('/voice-only', (req, res) => {
-    res.sendFile(path.resolve('public/html/experiments/voice-only.html'));
-})
-
-app.get('/code', (req, res) => {
-    res.sendFile(path.resolve('public/html/demo.html'));
-});
+app.get('/', (req, res) => res.sendFile(path.resolve('public/html/home.html')));
+app.get('/survey', (req, res) => res.sendFile(path.resolve('public/html/survey.html')));
+app.get('/practice', (req, res) => res.sendFile(path.resolve('public/html/practice.html')));
+app.get('/experiments', (req, res) => res.sendFile(path.resolve('public/html/experiments/index.html')));
+app.get('/voice-and-conversation', (req, res) => res.sendFile(path.resolve('public/html/experiments/voice-and-conversation.html')));
+app.get('/text-and-conversation', (req, res) => res.sendFile(path.resolve('public/html/experiments/text-and-conversation.html')));
+app.get('/voice-and-program', (req, res) => res.sendFile(path.resolve('public/html/experiments/voice-and-program.html')));
+app.get('/voice-and-text', (req, res) => res.sendFile(path.resolve('public/html/experiments/voice-and-text.html')));
+app.get('/voice-only', (req, res) => res.sendFile(path.resolve('public/html/experiments/voice-only.html')));
+app.get('/demo', (req, res) => res.sendFile(path.resolve('public/html/demo.html')));
 
 const speech = require('@google-cloud/speech');
 const speechClient = new speech.SpeechClient();
