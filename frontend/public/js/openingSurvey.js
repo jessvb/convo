@@ -17,8 +17,7 @@ let submitAndGo = () => {
     let convAgents = document.getElementById('agents-select').value;
     let convAgentsTextBox = document.getElementById('agents-textbox').value;
 
-    if (
-        userID == null || uid == null || age == null || sex == null ||
+    if (userID == null || uid == null || age == null || sex == null ||
         race == null || firstLanguage == null || level == null ||
         programmingLanguages == null || convAgents == null) {
         console.error('There is an unanswered question. Please report this error to the experimenter.');
