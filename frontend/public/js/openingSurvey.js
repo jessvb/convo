@@ -23,7 +23,7 @@ let submitAndGo = () => {
         console.error('There is an unanswered question. Please report this error to the experimenter.');
         console.error('Collected answers: ', userID, age, sex, race, firstLanguage, level, programmingLanguages, programmingLanguagesTextBox, convAgents, convAgentsTextBox);
     } else {
-        window.location.href = 'experiment';
+        window.location.href = 'experiments';
     }
 }
 

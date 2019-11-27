@@ -1,4 +1,4 @@
-const socket = io.connect("http://localhost:8080");
+const socket = io.connect("http://0.0.0.0:8080");
 
 socket.on('connect', (data) => socket.emit('join', 'Connected to server.'));
 socket.on('message', console.log);

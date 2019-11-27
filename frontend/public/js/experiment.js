@@ -66,7 +66,7 @@ let handleTutorial = (message) => {
 };
 
 let handleSubmit = (message) => {
-    axios.post('http://127.0.0.1:5000/message', { message: message})
+    axios.post('https://0.0.0.0:5000/message', { message: message})
         .then((res) => {
             let utter = document.createElement("div");
             utter.className = "agent-utter";
