@@ -41,8 +41,9 @@
                     <option value="other">Other</option>
                     <option value="na">Prefer not to answer</option>
                 </select>
+                <input class="ans" id='genderTextBox' type="text" placeholder="Other:">
 
-                <div class="ques">3) What is your race and ethnicity? <br> - To select multiple, hold down the Ctrl button (Cmd button on Mac) + click </div>
+                <!-- <div class="ques">3) What is your race and ethnicity? <br> - To select multiple, hold down the Ctrl button (Cmd button on Mac) + click </div>
                 <select multiple class="ans" id='race'>
                     <option value="AI/AN"> American Indian or Alaska Native</option>
                     <option value="asian"> Asian</option>
@@ -52,9 +53,9 @@
                     <option value="white"> White</option>
                     <option value="other">Other</option>
                     <option value="na">Prefer not to answer</option>
-                </select>
+                </select> -->
 
-                <div class="ques">4) Is English your first language?</div>
+                <div class="ques">3) Is English your first language?</div>
                 <select class="ans" id='firstLanguage'>
                     <option value="select">Select...</option>
                     <option value="yes">Yes</option>
@@ -63,7 +64,7 @@
                 </select>
 
                 <div class="ques">
-                    5) Would you consider yourself a Novice or Advanced programmer? (See definitions below)<br>
+                    4) Would you consider yourself a Novice or Advanced programmer? <b>(See definitions below)</b><br>
                     - <b>Novice</b>: no programming experience, or have experience in blocks-based programming (e.g., Scratch, App Inventor) <br>
                     - <b>Advanced</b>: have experience in object-oriented programming or completed a course or project in a text-based language (e.g., Java, Python, C++)
                 </div>
@@ -73,7 +74,7 @@
                     <option value="advanced">Advanced</option>
                 </select>
 
-                <div class="ques">6) What programming languages and/or softwares have you used before? (Select as many as applies) </div>
+                <div class="ques">5) What programming languages and/or softwares have you used before? (Select as many as applies) </div>
                 <div class="row">
                     <select class="ans" id='programmingLanguages' onchange="showOtherTextBox(this, 'programmingLanguagesTextBox')" multiple>
                       <option value="none">None</option>
@@ -85,12 +86,13 @@
                       <option value="cpp">C++</option>
                       <option value="swift">Swift</option>
                       <option value="javascript">JavaScript</option>
+                      <option value="matlab">MATLAB</option>
                       <option value="other">Other</option>
                     </select>
                     <input class="ans" id='programmingLanguagesTextBox' type="text" placeholder="Other:">
                 </div>
 
-                <div class="ques">7) What type of conversational agents have you interacted with before? (Select as many as applies) </div>
+                <div class="ques">6) What type of conversational agents have you interacted with before? (Select as many as applies) </div>
                 <div class="row">
                     <select multiple class="ans" id='convAgents' onchange="showOtherTextBox(this, 'convAgentsTextBox')">
                       <option value="none">None</option>
