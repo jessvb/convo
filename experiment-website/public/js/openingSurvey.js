@@ -15,6 +15,7 @@ function submitAndGo() {
   // get user input
   age = document.getElementById('age').value;
   sex = document.getElementById('sex').value;
+  genderTextBox = document.getElementById('genderTextBox').value;
   race = document.getElementById('race').value;
   firstLanguage = document.getElementById('firstLanguage').value;
   level = document.getElementById('level').value;
@@ -29,10 +30,10 @@ function submitAndGo() {
     programmingLanguages == null || convAgents == null) {
     console.error(
       'There is an unanswered question. Please report this error to the experimenter.');
-    console.error('Collected answers:', userID, age, sex, race, firstLanguage, level, programmingLanguages, programmingLanguagesTextBox, convAgents, convAgentsTextBox);
+    console.error('Collected answers:', userID, age, sex, genderTextBox, race, firstLanguage, level, programmingLanguages, programmingLanguagesTextBox, convAgents, convAgentsTextBox);
   } else {
     // send input
-    sendOpeningSurvey(userID, uid, age, sex, race, firstLanguage, level, programmingLanguages, programmingLanguagesTextBox, convAgents, convAgentsTextBox);
+    sendOpeningSurvey(userID, uid, age, sex, genderTextBox, race, firstLanguage, level, programmingLanguages, programmingLanguagesTextBox, convAgents, convAgentsTextBox);
 
     // go to next page (experiment page)
     // window.location.href = 'gradualOnsetExperiment.html';
