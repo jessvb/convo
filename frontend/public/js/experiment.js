@@ -1,9 +1,9 @@
 const server = 'http://0.0.0.0:5000';
 
 const instructions_text = [
-    "Begin by typing 'Hello' in the text box.",
-    "Then, type 'Start programming'.",
-    "Type 'Hello world!'.",
+    "Begin by typing or saying 'Hello'.",
+    "Then, type or say 'Start programming'.",
+    "Type or say 'Hello world!'.",
 ]
 
 const tutorial_required_messages = [
@@ -92,7 +92,7 @@ if (checkQuery("tutorial", 0)) {
         <div><b>You are currently in practice mode.</b></div>
         <div>${instructions_text[tutorial_step]}</div>`;
     addUtter("agent-utter", "Hi, please follow the instructions on the left.")
-    addUtter("agent-utter", "If you want to skip the tutorial at any time, type 'Skip'.")
+    addUtter("agent-utter", "If you want to skip the tutorial at any time, type or say 'Skip'.")
 }
 
 document.addEventListener("DOMContentLoaded", () => {

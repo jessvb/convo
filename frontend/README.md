@@ -1,5 +1,5 @@
 # Frontend
-The frontend of *convercode* includes a click-and-hold recording button, and an output text box, such that users can talk with the agent and see the current user-program (text box is temporary - for debugging). In future iterations, (when the agent provides sufficient information about the user-program through conversation) we will remove the output text box.
+The frontend of *convercode* currently contains the experiment site. Various experiments are performed to find the efficacy of different conversational programming setups. For a list of experiments, after successfully getting the server running, go to `/experiments`.
 
 ## Tech Overview
 The frontend uses an Express Node server and the Socket.IO library to stream audio from the microphone to Google's [Speech-to-Text API](https://cloud.google.com/speech-to-text/docs/streaming-recognize) in realtime. The audio is transcribed and the transcript is communicated back via sockets. The transcribed text is used to communicate with the Rasa NLU in the backend.
@@ -25,6 +25,3 @@ cd convercode/frontend
 npm start
 ```
 Once the server starts, head to `http://localhost:8080/`.
-
-## Communicating with Rasa
-To start recording and communicating with the Rasa NLU, click and hold the `Hold Down to Talk` button and speak into the microphone. Once you are done speaking, release the button. Any of your spoken commands or messages will be shown and prefixed with `Client`. Once your message is transcribed, the message will also be sent to the Rasa server. Responses by the Rasa server will be sent back to you and prefixed with `Rasa`.

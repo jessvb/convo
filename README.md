@@ -32,33 +32,14 @@ Docker version 19.03.2, build 6a30dfc
 docker-compose version 1.24.1, build 4667896b
 ```
 
-Docker Compose automatically runs three connected services that are defined in the `docker-compose.yml`.
-1. `rasa` - Rasa server
-2. `action_server` - Rasa actions server
-3. `web` - Frontend client that can be used to interface with the Rasa server
-
-To run using Docker, you must still train a Rasa model locally. To do this, install [Rasa](https://rasa.com/docs/rasa/user-guide/installation/), if not on machine.
-```bash
-pip3 install rasa-x --extra-index-url https://pypi.rasa.com/simple
-```
-After installing, go to directory `backend/rasa` and run
-```bash
-rasa train
-```
-This trains a model and outputs the model into `backend/rasa/models`.
+Docker Compose automatically runs the `web` and `server` services that are defined in the `docker-compose.yml`.
+1. `server` - Backend server
+3. `web` - Frontend server that allows clients to interface with the backend
 
 ### Running
 To run the system, run in the project root
 ```bash
-docker-compose up
-```
-You should see similar lines in the output as below
-```bash
-action_server_1  | 2019-10-03 21:47:05 INFO     rasa_sdk.endpoint  - Action endpoint is up and running on http ('0.0.0.0', 5055)
-...
-web_1            | Server started at 0.0.0.0:8080.
-...
-rasa_1           | 2019-10-03 21:47:13 INFO     root  - Starting Rasa server on http://localhost:5005
+docker-compose up --build
 ```
 
 Now, head to `http://localhost:8080`.
