@@ -14,6 +14,7 @@ const tutorial_required_messages = [
 
 let tutorial_step = 0;
 let tutorial = true;
+let voice;
 
 let checkQuery = (field, value) => {
     let url = window.location.href;
@@ -44,7 +45,9 @@ let submitMessage = (message) => {
 }
 
 let handleTutorial = (message) => {
-    if (tutorial_required_messages[tutorial_step].toLowerCase().includes(message))
+    let correct = tutorial_required_messages[tutorial_step].toLowerCase().includes(message);
+
+    if (correct)
         tutorial_step++;
 
     if (message === "skip" || tutorial_step > instructions_text.length - 1) {
@@ -54,7 +57,8 @@ let handleTutorial = (message) => {
         addUtter("agent-utter", "You have finished the tutorial!");
         addUtter("agent-utter", "What would you like to do now?");
     } else {
-        addUtter("agent-utter", "To advance, please follow the instructions on the left.");
+        if (!correct)
+            addUtter("agent-utter", "To advance, please follow the instructions on the left.");
         document.getElementById("sidebar-tutorial").innerHTML = `
             <div><b>You are currently in practice mode.</b></div>
             <div>${instructions_text[tutorial_step]}</div>
@@ -64,11 +68,26 @@ let handleTutorial = (message) => {
 
 let handleSubmit = (message) => {
     axios.post(`${server}/message`, { message: message, clientId: localStorage.getItem("clientId") })
-        .then((res) => addUtter("agent-utter", res.data.message))
+        .then((res) => {
+            addUtter("agent-utter", res.data.message);
+        })
         .catch(console.log);
 };
 
-let addUtter = (className, message) => {
+let speakUtter = (message) => {
+    let audio = new SpeechSynthesisUtterance(message);
+    audio.voice = voice;
+    audio.volume = 1;
+    audio.rate = 0.9;
+    audio.pitch = 1.0;
+    audio.lang = 'en-US';
+    window.speechSynthesis.speak(audio);
+}
+
+let addUtter = (className, message, speak=true) => {
+    if (speak && className === "agent-utter")
+        speakUtter(message);
+
     let utter = document.createElement("div");
     utter.className = className;
 
@@ -82,19 +101,6 @@ let addUtter = (className, message) => {
         conversation.prepend(utter);
 };
 
-if (checkQuery("tutorial", 0)) {
-    document.getElementById("sidebar-tutorial").style.display = "none";
-    document.getElementById("sidebar").style.display = "block";
-    tutorial = false;
-    addUtter("agent-utter", "Hi, what would you like to do?");
-} else {
-    document.getElementById("sidebar-tutorial").innerHTML = `
-        <div><b>You are currently in practice mode.</b></div>
-        <div>${instructions_text[tutorial_step]}</div>`;
-    addUtter("agent-utter", "Hi, please follow the instructions on the left.")
-    addUtter("agent-utter", "If you want to skip the tutorial at any time, type or say 'Skip'.")
-}
-
 document.addEventListener("DOMContentLoaded", () => {
     let textbox = document.getElementById("textbox");
     if (textbox != null) {
@@ -105,6 +111,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    window.speechSynthesis.onvoiceschanged = () => {
+        voice = window.speechSynthesis.getVoices().filter((voice) => {
+            return voice.name == 'Google US English';
+        })[0];
+    };
+
     axios.post(`${server}/reset`, { clientId: localStorage.getItem("clientId") })
         .catch(console.log);
 });
+
+if (checkQuery("tutorial", 0)) {
+    document.getElementById("sidebar-tutorial").style.display = "none";
+    document.getElementById("sidebar").style.display = "block";
+    tutorial = false;
+    addUtter("agent-utter", "Hi, what would you like to do?", false);
+} else {
+    document.getElementById("sidebar-tutorial").innerHTML = `
+        <div><b>You are currently in practice mode.</b></div>
+        <div>${instructions_text[tutorial_step]}</div>`;
+    addUtter("agent-utter", "Hi, please follow the instructions on the left.", false);
+    addUtter("agent-utter", "If you want to skip the tutorial at any time, type or say 'Skip'.", false);
+}
