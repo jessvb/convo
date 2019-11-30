@@ -5,11 +5,6 @@ const axios = require('axios');
 const express = require('express');
 const app = express();
 const host = '0.0.0.0';
-// const options = {
-//     key: fs.readFileSync('key.pem'),
-//     cert: fs.readFileSync('cert.pem')
-// };
-// const httpsServer = require('https').createServer(options, app);
 const httpServer = require('http').Server(app);
 const io = require('socket.io')(httpServer);
 
@@ -48,7 +43,7 @@ io.on('connection', (client) => {
     console.log('Client connected to server.');
 
     client.on('join', (data) => {
-        client.emit('message', 'Socket connected to server.');
+        client.emit('joined', data == null ? client.id : data);
     });
 
     client.on('startStream', () => {

@@ -1,7 +1,4 @@
-const server = 'http://0.0.0.0:5000/message';
-// const server = 'http://3.87.219.25:5000/message';
-// const server = 'https://0.0.0.0:5000/message';
-// const server = 'https://3.87.219.25:5000/message';
+const server = 'http://0.0.0.0:5000';
 
 const instructions_text = [
     "Begin by typing 'Hello' in the text box.",
@@ -38,16 +35,7 @@ let submitText = () => {
 }
 
 let submitMessage = (message) => {
-    let utter = document.createElement("div");
-    utter.className = "user-utter";
-
-    let text = document.createElement("div");
-    text.innerHTML = message;
-     utter.append(text);
-
-    let conversation = document.getElementById("conversation");
-    if (conversation != null)
-        conversation.prepend(utter);
+    addUtter("user-utter", message)
 
     if (tutorial)
         handleTutorial(message);
@@ -59,40 +47,52 @@ let handleTutorial = (message) => {
     if (tutorial_required_messages[tutorial_step].toLowerCase().includes(message))
         tutorial_step++;
 
-    if (tutorial_step > instructions_text.length - 1) {
+    if (message === "skip" || tutorial_step > instructions_text.length - 1) {
         document.getElementById("sidebar-tutorial").style.display = "none";
         document.getElementById("sidebar").style.display = "block";
         tutorial = false;
-    } else
+        addUtter("agent-utter", "You have finished the tutorial!");
+        addUtter("agent-utter", "What would you like to do now?");
+    } else {
+        addUtter("agent-utter", "To advance, please follow the instructions on the left.");
         document.getElementById("sidebar-tutorial").innerHTML = `
             <div><b>You are currently in practice mode.</b></div>
             <div>${instructions_text[tutorial_step]}</div>
         `
+    }
 };
 
 let handleSubmit = (message) => {
-    axios.post(server, { message: message})
-        .then((res) => {
-            let utter = document.createElement("div");
-            utter.className = "agent-utter";
-
-            let text = document.createElement("div");
-            text.innerHTML = res.data.message;
-
-            utter.append(text);
-            document.getElementById("conversation").prepend(utter);
-        })
+    axios.post(`${server}/message`, { message: message, clientId: localStorage.getItem("clientId") })
+        .then((res) => addUtter("agent-utter", res.data.message))
         .catch(console.log);
+};
+
+let addUtter = (className, message) => {
+    let utter = document.createElement("div");
+    utter.className = className;
+
+    let text = document.createElement("div");
+    text.innerHTML = message;
+
+    utter.append(text);
+
+    let conversation = document.getElementById("conversation");
+    if (conversation != null)
+        conversation.prepend(utter);
 };
 
 if (checkQuery("tutorial", 0)) {
     document.getElementById("sidebar-tutorial").style.display = "none";
     document.getElementById("sidebar").style.display = "block";
     tutorial = false;
+    addUtter("agent-utter", "Hi, what would you like to do?");
 } else {
     document.getElementById("sidebar-tutorial").innerHTML = `
         <div><b>You are currently in practice mode.</b></div>
         <div>${instructions_text[tutorial_step]}</div>`;
+    addUtter("agent-utter", "Hi, please follow the instructions on the left.")
+    addUtter("agent-utter", "If you want to skip the tutorial at any time, type 'Skip'.")
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -104,4 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 submitText();
         }
     }
+
+    axios.post(`${server}/reset`, { clientId: localStorage.getItem("clientId") })
+        .catch(console.log);
 });

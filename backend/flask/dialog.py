@@ -1,5 +1,25 @@
 from nlu import SemanticNLU
 from models import *
+from goals import *
+from error import *
+
+transitions = {
+    "home": {
+        "edit_class": "class",
+        "create_class": "class",
+        "create_procedure": "actions",
+        "create_class_procedure": "class_actions"
+    },
+    "class_actions": {
+        "complete": "home"
+    },
+    "actions": {
+        "complete": "home"
+    },
+    "class": {
+        "complete": "home"
+    }
+}
 
 class DialogManager(object):
     def __init__(self):
@@ -22,9 +42,20 @@ class DialogManager(object):
         elif (message == "cancel"):
             if self.context.goals:
                 self.context.goals.pop()
-            return "Canceled!"
+            self.context.state = "home"
+            return "Canceled! What do you want to do?"
 
         self.context.parsed = self.nlu.parse_message(message)
+
+        try:
+            if isinstance(self.context.parsed, BaseGoal):
+                self.context.validate_goal(self.context.parsed)
+        except InvalidStateError as e:
+            base = "I cannot do this right now."
+            if (self.context.state == "home"):
+                return base + " Try 'create a procedure' or 'create a class'."
+            return base + (f" {self.current_goal().message}" if self.current_goal() else "")
+
         if self.current_goal() is None:
             goal = self.context.parsed
             if goal is None:
@@ -48,6 +79,10 @@ class DialogManager(object):
 
 class DialogContext(object):
     def __init__(self):
+        example = Class("example")
+        example.add_property(Property(example, "count", "number"))
+        self.classes = { "example": example }
+        self.procedures = {}
         self.reset()
 
     @property
@@ -62,10 +97,6 @@ class DialogContext(object):
         self.state = "home"
         self.conversation = []
         self.goals = []
-        example = Class("example")
-        example.add_property(Property(example, "count", "number"))
-        self.classes = { "example": example }
-        self.procedures = {}
         self.current = None
 
     def add_message(self, message):
@@ -82,3 +113,31 @@ class DialogContext(object):
 
     def get_class(self, name):
         return self.classes.get(name)
+
+    def validate_goal(self, goal):
+        if self.state == "home":
+            if isinstance(goal, CreateClassGoal):
+                self.transition("create_class")
+            elif isinstance(goal, AddClassProcedureGoal):
+                self.transition("create_class_procedure")
+            elif isinstance(goal, AddProcedureGoal):
+                self.transition("create_procedure")
+            elif isinstance(goal, AddPropertyGoal):
+                self.transition("edit_class")
+            else:
+                raise InvalidStateError()
+        elif self.state in ["actions", "class_actions"]:
+            if isinstance(goal, CreateClassGoal) \
+                or isinstance(goal, AddClassProcedureGoal) \
+                or isinstance(goal, AddProcedureGoal) \
+                or isinstance(goal, AddPropertyGoal):
+                raise InvalidStateError()
+        elif self.state == "class":
+            raise InvalidStateError()
+
+    def transition(self, action):
+        actions = transitions[self.state]
+        if action not in actions:
+            raise InvalidStateError()
+
+        self.state = actions[action]

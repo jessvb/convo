@@ -17,6 +17,7 @@ class AddProcedureGoal(BaseGoal):
 
     def complete(self):
         self.procedures[self.procedure.name] = self.procedure
+        self.context.transition("complete")
         self.context.current = None
         return super().complete()
 
