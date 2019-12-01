@@ -9,7 +9,6 @@ let submitAndGo = () => {
 
     let age = document.getElementById('age').value;
     let sex = document.getElementById('sex').value;
-    let race = document.getElementById('race').value;
     let firstLanguage = document.getElementById('firstLanguage').value;
     let level = document.getElementById('level').value;
     let programmingLanguages = document.getElementById('languages-select').value;
@@ -17,11 +16,11 @@ let submitAndGo = () => {
     let convAgents = document.getElementById('agents-select').value;
     let convAgentsTextBox = document.getElementById('agents-textbox').value;
 
-    if (userID == null || uid == null || age == null || sex == null ||
-        race == null || firstLanguage == null || level == null ||
+    if (userID == null || uid == null || age == null || sex == null
+        || firstLanguage == null || level == null ||
         programmingLanguages == null || convAgents == null) {
         console.error('There is an unanswered question. Please report this error to the experimenter.');
-        console.error('Collected answers: ', userID, age, sex, race, firstLanguage, level, programmingLanguages, programmingLanguagesTextBox, convAgents, convAgentsTextBox);
+        console.error('Collected answers: ', userID, age, sex, firstLanguage, level, programmingLanguages, programmingLanguagesTextBox, convAgents, convAgentsTextBox);
     } else {
         window.location.href = 'experiments';
     }
