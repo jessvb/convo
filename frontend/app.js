@@ -40,10 +40,16 @@ const request = {
 
 io.on('connection', (client) => {
     let stream = null;
-    console.log(`Client ${client.id} connected to server.`);
+    let id = client.id;
 
     client.on('join', (data) => {
-        client.emit('joined', data == null ? client.id : data);
+        id = data == null ? client.id : data;
+        console.log(`Client ${id} connected to server.`);
+        client.emit('joined', id);
+    });
+
+    client.on('disconnect', () => {
+        console.log(`Client ${id} disconnected.`);
     });
 
     client.on('startStream', () => {
@@ -76,14 +82,13 @@ io.on('connection', (client) => {
     }
 
     let endStream = () => {
-        if (stream) {
+        if (stream)
             stream.end();
-        }
 
         stream = null;
     }
 });
 
 httpServer.listen(8080, host, () => {
-    console.log(`HTTP server started at https://${host}:8080/.`)
+    console.log(`HTTP server started at http://${host}:8080/.`)
 });
