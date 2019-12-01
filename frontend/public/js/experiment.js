@@ -88,17 +88,17 @@ let addUtter = (className, message, speak=true) => {
     if (speak && className === "agent-utter")
         speakUtter(message);
 
-    let utter = document.createElement("div");
-    utter.className = className;
-
-    let text = document.createElement("div");
-    text.innerHTML = message;
-
-    utter.append(text);
-
     let conversation = document.getElementById("conversation");
-    if (conversation != null)
+    if (conversation != null) {
+        let utter = document.createElement("div");
+        utter.className = className;
+
+        let text = document.createElement("div");
+        text.innerHTML = message;
+
+        utter.append(text);
         conversation.prepend(utter);
+    }
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -129,7 +129,7 @@ if (checkQuery("tutorial", 0)) {
 } else {
     document.getElementById("sidebar-tutorial").innerHTML = `
         <div><b>You are currently in practice mode.</b></div>
-        <div>${instructions_text[tutorial_step]}</div>`;
+        <div>${instructions_text[tutorial_step]}</div>
+        <div>If you want to skip the tutorial at any time, type or say 'Skip'.</div>`;
     addUtter("agent-utter", "Hi, please follow the instructions on the left.", false);
-    addUtter("agent-utter", "If you want to skip the tutorial at any time, type or say 'Skip'.", false);
 }

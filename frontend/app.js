@@ -40,7 +40,7 @@ const request = {
 
 io.on('connection', (client) => {
     let stream = null;
-    console.log('Client connected to server.');
+    console.log(`Client ${client.id} connected to server.`);
 
     client.on('join', (data) => {
         client.emit('joined', data == null ? client.id : data);
@@ -87,7 +87,3 @@ io.on('connection', (client) => {
 httpServer.listen(8080, host, () => {
     console.log(`HTTP server started at https://${host}:8080/.`)
 });
-
-// httpsServer.listen(8443, host, () => {
-//     console.log(`HTTPS server started at https://${host}:8443/.`)
-// });
