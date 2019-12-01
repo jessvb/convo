@@ -61,7 +61,8 @@ let handleTutorial = (message) => {
             addUtter("agent-utter", "To advance, please follow the instructions on the left.");
         document.getElementById("sidebar-tutorial").innerHTML = `
             <div><b>You are currently in practice mode.</b></div>
-            <div>${instructions_text[tutorial_step]}</div>
+            <div>${instructions_text[tutorial_step]}</div><br>
+            <div>If you want to skip the tutorial at any time, type or say 'Skip'.</div>
         `
     }
 };
@@ -129,7 +130,7 @@ if (checkQuery("tutorial", 0)) {
 } else {
     document.getElementById("sidebar-tutorial").innerHTML = `
         <div><b>You are currently in practice mode.</b></div>
-        <div>${instructions_text[tutorial_step]}</div>
+        <div>${instructions_text[tutorial_step]}</div><br>
         <div>If you want to skip the tutorial at any time, type or say 'Skip'.</div>`;
     addUtter("agent-utter", "Hi, please follow the instructions on the left.", false);
 }
