@@ -28,23 +28,23 @@ let checkQuery = (field, value) => {
 
 let submitText = () => {
     let textbox = document.getElementById("textbox");
-    let text = textbox.value
+    let text = textbox.value;
     if (text != "")
-        submitMessage(text.toLowerCase());
+        submitMessage(text.toLowerCase(), false);
 
     textbox.value = "";
 }
 
-let submitMessage = (message) => {
+let submitMessage = (message, speak) => {
     addUtter("user-utter", message)
 
     if (tutorial)
-        handleTutorial(message);
+        handleTutorial(message, speak);
     else
-        handleSubmit(message);
+        handleSubmit(message, speak);
 }
 
-let handleTutorial = (message) => {
+let handleTutorial = (message, speak) => {
     let correct = tutorial_required_messages[tutorial_step].toLowerCase().includes(message);
 
     if (correct)
@@ -54,11 +54,11 @@ let handleTutorial = (message) => {
         document.getElementById("sidebar-tutorial").style.display = "none";
         document.getElementById("sidebar").style.display = "block";
         tutorial = false;
-        addUtter("agent-utter", "You have finished the tutorial!");
-        addUtter("agent-utter", "What would you like to do now?");
+        addUtter("agent-utter", "You have finished the tutorial!", speak);
+        addUtter("agent-utter", "What would you like to do now?", speak);
     } else {
         if (!correct)
-            addUtter("agent-utter", "To advance, please follow the instructions on the left.");
+            addUtter("agent-utter", "To advance, please follow the instructions on the left.", speak);
         document.getElementById("sidebar-tutorial").innerHTML = `
             <div><b>You are currently in practice mode.</b></div>
             <div>${instructions_text[tutorial_step]}</div><br>
@@ -67,10 +67,10 @@ let handleTutorial = (message) => {
     }
 };
 
-let handleSubmit = (message) => {
+let handleSubmit = (message, speak) => {
     axios.post(`${server}/message`, { message: message, clientId: localStorage.getItem("clientId") })
         .then((res) => {
-            addUtter("agent-utter", res.data.message);
+            addUtter("agent-utter", res.data.message, speak);
         })
         .catch(console.log);
 };

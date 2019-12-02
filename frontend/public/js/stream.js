@@ -1,5 +1,5 @@
 socket.on('clientUtter', (transcript) => {
-    submitMessage(transcript.toLowerCase());
+    submitMessage(transcript.toLowerCase(), true);
 })
 
 AudioContext = window.AudioContext || window.webkitAudioContext;
