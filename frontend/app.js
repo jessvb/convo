@@ -5,6 +5,7 @@ const axios = require('axios');
 const express = require('express');
 const app = express();
 const host = '0.0.0.0';
+const port = 80;
 const httpServer = require('http').Server(app);
 const io = require('socket.io')(httpServer);
 
@@ -89,6 +90,6 @@ io.on('connection', (client) => {
     }
 });
 
-httpServer.listen(8080, host, () => {
-    console.log(`HTTP server started at http://${host}:8080/.`)
+httpServer.listen(port, host, () => {
+    console.log(`HTTP server started at http://${host}:${port}/.`)
 });
