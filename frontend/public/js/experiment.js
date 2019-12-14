@@ -1,4 +1,4 @@
-const server = 'http://userstudy.appinventor.mit.edu:5000';
+const server = 'https://userstudy.appinventor.mit.edu/api';
 
 const instructions_text = [
     "Begin by typing or saying 'Hello'.",

@@ -2,6 +2,7 @@
 gcpkey.json
 cert.pem
 key.pem
+data/certbot
 
 ### Python ###
 

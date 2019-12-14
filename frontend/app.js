@@ -5,7 +5,7 @@ const axios = require('axios');
 const express = require('express');
 const app = express();
 const host = '0.0.0.0';
-const port = 80;
+const port = 8080;
 const httpServer = require('http').Server(app);
 const io = require('socket.io')(httpServer);
 
