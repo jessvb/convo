@@ -13,11 +13,12 @@ class Condition(object):
         return "condition"
 
 class SayCondition(Condition):
-    def __init__(self, context, phrase):
-        self.context = context
+    def __init__(self, phrase):
+        self.context = None
         self.phrase = phrase
 
     def eval(self):
+        self.context = context
         return self.op_func(self.context.current_message)
 
     @property
@@ -36,13 +37,14 @@ comparison_ops = {
 }
 
 class ComparisonCondition(Condition):
-    def __init__(self, context, variable, op, value):
-        self.context = context
+    def __init__(self, variable, op, value):
+        self.context = None
         self.variable = variable
         self.value = value
         self.op = op
 
-    def eval(self):
+    def eval(self, context):
+        self.context = context
         return self.op_func(self.value)
 
     @property

@@ -1,3 +1,6 @@
+from utils import to_snake_case
+tab = "    "
+
 class Class(object):
     def __init__(self, name, properties=None, procedures=None):
         self.name = name
@@ -13,6 +16,18 @@ class Class(object):
             "properties": [p.json() for p in self.properties.values()],
             "procedures": [p.json() for p in self.procedures.values()]
         }
+
+    def python(self):
+        properties = [p.name for p in self.properties.values()]
+        lines = [
+            f"class {to_snake_case(self.name)}(object):",
+            f"{tab}def __init__(self, {', '.join(properties)}):"
+        ]
+        lines.extend([f"{tab}{tab}self.{name} = {name}" for name in properties])
+        for procedure in self.procedures.values():
+            lines.append("")
+            lines.extend([f"{tab}{line}" for line in procedure.python()])
+        return lines
 
     def add_property(self, property):
         self.properties[property.name] = property
