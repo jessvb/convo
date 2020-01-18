@@ -23,8 +23,13 @@ class ConditionalActionGoal(BaseGoal):
             else:
                 self.todos[1].append(value)
             return
-        elif (attr == "condition") and value is None:
-            self.todos.append(GetConditionGoal(self.context, self))
+        elif (attr == "condition"):
+            if value is None:
+                self.todos.append(GetConditionGoal(self.context, self))
+            elif not value.value.isnumeric():
+                self.todos.append(GetConditionGoal(self.context, self))
+            else:
+                self.condition = value
         setattr(self, attr, value)
 
 class GetConditionGoal(BaseGoal):

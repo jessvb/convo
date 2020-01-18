@@ -3,12 +3,36 @@ from models import *
 from goals import *
 from error import *
 
+example_procedure = Procedure(name="example", actions=[
+    CreateVariableAction("foo", 5),
+    CreateListAction("groceries"),
+    SetVariableAction("foo", 5),
+    IncrementVariableAction("foo", 5),
+    SayAction("hello world!"),
+    ConditionalAction(
+        ComparisonCondition("foo", "greater than", 10),
+        actions=[
+            [SayAction("foo is not greater than 10"), CreateVariableAction("bar", 10)],
+            [SayAction("foo is greater than 10"), CreateVariableAction("bar", 4)]
+        ]
+    ),
+    LoopAction(
+        ComparisonCondition("bar", "less than", 15),
+        actions=[
+            SayAction("bar is less than 15"),
+            IncrementVariableAction("bar", 1)
+        ]
+    ),
+    AddToListAction("groceries", "\"apples\"")
+])
+
 transitions = {
     "home": {
         "edit_class": "class",
         "create_class": "class",
         "create_procedure": "actions",
-        "create_class_procedure": "class_actions"
+        "create_class_procedure": "class_actions",
+        "run": "home"
     },
     "class_actions": {
         "complete": "home"
@@ -51,6 +75,7 @@ class DialogManager(object):
             if isinstance(self.context.parsed, BaseGoal):
                 self.context.validate_goal(self.context.parsed)
         except InvalidStateError as e:
+            print(e.message)
             base = "I cannot do this right now."
             if (self.context.state == "home"):
                 return base + " Try 'create a procedure' or 'create a class'."
@@ -82,7 +107,7 @@ class DialogContext(object):
         example = Class("example")
         example.add_property(Property(example, "count", "number"))
         self.classes = { "example": example }
-        self.procedures = {}
+        self.procedures = { "example": example_procedure }
         self.reset()
 
     @property
@@ -124,20 +149,22 @@ class DialogContext(object):
                 self.transition("create_procedure")
             elif isinstance(goal, AddPropertyGoal):
                 self.transition("edit_class")
+            elif isinstance(goal, RunGoal):
+                self.transition("run")
             else:
-                raise InvalidStateError()
+                raise InvalidStateError(self.state, str(goal))
         elif self.state in ["actions", "class_actions"]:
             if isinstance(goal, CreateClassGoal) \
                 or isinstance(goal, AddClassProcedureGoal) \
                 or isinstance(goal, AddProcedureGoal) \
                 or isinstance(goal, AddPropertyGoal):
-                raise InvalidStateError()
+                raise InvalidStateError(self.state, str(goal))
         elif self.state == "class":
-            raise InvalidStateError()
+            raise InvalidStateError(self.state, str(goal))
 
     def transition(self, action):
         actions = transitions[self.state]
         if action not in actions:
-            raise InvalidStateError()
+            raise InvalidStateError(self.state, str(goal))
 
         self.state = actions[action]

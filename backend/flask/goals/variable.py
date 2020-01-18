@@ -13,10 +13,18 @@ class CreateVariableActionGoal(BaseGoal):
         return super().complete()
 
     def setattr(self, attr, value):
-        if attr == "name" and value is None:
-            self.todos.append(GetInputGoal(self.context, self, attr, f"What do you want to call the variable?"))
-        elif attr == "value" and value is None:
-            self.todos.append(GetInputGoal(self.context, self, attr, f"What should be the initial value?"))
+        if attr == "name":
+            if value is None:
+                self.todos.append(GetInputGoal(self.context, self, attr, f"What do you want to call the variable?"))
+            else:
+                self.name = value
+            return
+        elif attr == "value":
+            if value is None:
+                self.todos.append(GetInputGoal(self.context, self, attr, f"What should be the initial value?"))
+            else:
+                self.value = float(value) if value.isnumeric() else value
+            return
         setattr(self, attr, value)
 
 class SetVariableActionGoal(BaseGoal):
@@ -31,10 +39,18 @@ class SetVariableActionGoal(BaseGoal):
         return super().complete()
 
     def setattr(self, attr, value):
-        if attr == "name" and value is None:
-            self.todos.append(GetInputGoal(self.context, self, attr, f"What variable do you want to set?"))
-        elif attr == "value" and value is None:
-            self.todos.append(GetInputGoal(self.context, self, attr, f"What value do you want to set the variable to?"))
+        if attr == "name":
+            if value is None:
+                self.todos.append(GetInputGoal(self.context, self, attr, f"What variable do you want to set?"))
+            else:
+                self.name = value
+            return
+        elif attr == "value":
+            if value is None:
+                self.todos.append(GetInputGoal(self.context, self, attr, f"What value do you want to set the variable to?"))
+            else:
+                self.value = float(value) if value.isnumeric() else value
+            return
         setattr(self, attr, value)
 
 class IncrementVariableActionGoal(BaseGoal):
@@ -49,8 +65,17 @@ class IncrementVariableActionGoal(BaseGoal):
         return super().complete()
 
     def setattr(self, attr, value):
-        if attr == "name" and value is None:
-            self.todos.append(GetInputGoal(self.context, self, attr, f"What variable do you want to increment?"))
-        elif attr == "value" and value is None:
-            self.todos.append(GetInputGoal(self.context, self, attr, f"How much do you want to add?"))
-        setattr(self, attr, value)
+        if attr == "name":
+            if value is None:
+                self.todos.append(GetInputGoal(self.context, self, attr, f"What variable do you want to increment?"))
+            else:
+                self.name = value
+            return
+        elif attr == "value":
+            if value is None:
+                self.todos.append(GetInputGoal(self.context, self, attr, f"What value do you want to set the variable to?"))
+            elif not value.isnumeric():
+                self.todos.append(GetInputGoal(self.context, self, attr, f"Not a number. Try again."))
+            else:
+                self.value = float(value)
+            return

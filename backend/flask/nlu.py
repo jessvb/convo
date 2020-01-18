@@ -76,6 +76,8 @@ class SemanticNLU(object):
         elif re.match(add_to_list_regex, message):
             match = re.match(add_to_list_regex, message)
             return AddToListActionGoal(self.context, name=group(match, 2), value=group(match, 1))
+        elif message.startswith("run"):
+            return RunGoal(self.context, name=message.replace("run", "").strip())
         else:
             return None
 
