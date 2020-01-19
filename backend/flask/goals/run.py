@@ -9,40 +9,36 @@ class RunGoal(BaseGoal):
 
     @property
     def message(self):
-        return "Program finished running." if self.is_complete else "Advancing program."
+        return "Program finished running." if self.is_complete else None
 
     @property
     def is_complete(self):
-        return self.execution.done and super().is_complete
+        return self.context.execution and self.context.execution.done and super().is_complete
+
+    def complete(self):
+        message = super().complete()
+        self.context.execution = None
+        self.context.transition("complete")
+        return message
 
     def setattr(self, attr, value):
         if (attr == "name"):
             if value is None:
-                self.todos.append(GetInputGoal(self.context, self, attr, "What do want to run?"))
+                self.todos.append(GetInputGoal(self.context, self, attr, "What do you want to run?"))
             elif value not in self.context.procedures:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"Procedure {value} does not exist. Try another name or say cancel."))
             else:
                 print("Creating execution context...")
                 self.name = value
                 self.procedure = self.context.procedures[value]
-                self.execution = ExecutionContext(self.procedure.actions)
-
-                while not self.execution.done:
-                    todo = self.execution.advance()
-                    if todo:
-                        self.todos.append(todo)
-                        break
+                self.context.execution = ExecutionContext(self.context, self.procedure.actions)
+                self.execution = self.context.execution
             return
         setattr(self, attr, value)
 
     def advance(self):
-        print(f"Advancing {self.__class__.__name__}...")
+        print(f"[Info] Advancing {self.__class__.__name__}...")
         self.error = None
-        while not self.execution.done:
-            todo = self.execution.advance()
-            if todo:
-                self.todos.append(todo)
-                break
         if self.todos:
             todo = self.todos.pop()
             todo.advance()
@@ -51,8 +47,14 @@ class RunGoal(BaseGoal):
             else:
                 self.todos.append(todo)
 
+        if self.execution and not self.execution.done:
+            todo = self.execution.advance()
+            if todo:
+                self.todos.append(todo)
+
 class ExecutionContext(object):
-    def __init__(self, actions):
+    def __init__(self, context, actions):
+        self.context = context
         self.actions = actions
         self.variables = {}
         self.done = False
@@ -62,8 +64,10 @@ class ExecutionContext(object):
         print("Advancing program")
         while self.step < len(self.actions):
             action = self.actions[self.step]
-            self.evaluate_action(action)
+            goal = self.evaluate_action(action)
             self.step += 1
+            if goal:
+                return goal
         self.done = True
         return None
     
@@ -71,7 +75,11 @@ class ExecutionContext(object):
         print(f"==> Evaluating action {str(action)} on step {self.step}")
         if isinstance(action, SayAction):
             print("Saying", action.phrase)
-        if isinstance(action, CreateVariableAction):
+            self.context.add_message(action.phrase)
+        elif isinstance(action, GetUserInputAction):
+            print(f"Getting user input and setting as {action.variable}")
+            return GetUserInputGoal(self.context, action.variable)
+        elif isinstance(action, CreateVariableAction):
             self.variables[action.name] = action.value
             print(f"Created variable {action.name} with value {action.value}")
             print("Current variables:", self.variables)
@@ -105,3 +113,4 @@ class ExecutionContext(object):
             else:
                 self.actions[self.step:self.step + 1] = action.actions
             self.step -= 1
+        return None

@@ -152,3 +152,13 @@ class AddToListPropertyAction(Action):
 
     def python(self):
         return [f"{self.property}.append({self.value})"]
+
+class GetUserInputAction(Action):
+    def __init__(self, variable):
+        self.variable = variable
+    
+    def json(self):
+        return {
+            "name": str(self),
+            "variable": self.variable
+        }

@@ -42,7 +42,7 @@ class GetClassPropertiesGoal(BaseGoal):
     @property
     def message(self):
         if self.is_complete:
-            return f"{self.__class__.__name__} completed!"
+            return f"[Info] {self.__class__.__name__} completed!"
 
         if len(self.todos) == 0:
             return "Any other properties?" if len(self.klass.properties) > 0 else "What properties does it have?"
@@ -54,7 +54,7 @@ class GetClassPropertiesGoal(BaseGoal):
             super().advance()
             return
 
-        print(f"Advancing {self.__class__.__name__}...")
+        print(f"[Info] Advancing {self.__class__.__name__}...")
         if self.context.current_message == "no":
             self.done = True
         else:

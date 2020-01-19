@@ -4,7 +4,9 @@ from goals import *
 from error import *
 
 example_procedure = Procedure(name="example", actions=[
-    CreateVariableAction("foo", 5),
+    CreateVariableAction("foo", 4),
+    SayAction("I want to get your input."),
+    GetUserInputAction("input"),
     CreateListAction("groceries"),
     SetVariableAction("foo", 5),
     IncrementVariableAction("foo", 5),
@@ -32,7 +34,7 @@ transitions = {
         "create_class": "class",
         "create_procedure": "actions",
         "create_class_procedure": "class_actions",
-        "run": "home"
+        "run": "execution"
     },
     "class_actions": {
         "complete": "home"
@@ -41,6 +43,9 @@ transitions = {
         "complete": "home"
     },
     "class": {
+        "complete": "home"
+    },
+    "execution": {
         "complete": "home"
     }
 }
@@ -99,7 +104,8 @@ class DialogManager(object):
             else:
                 response = self.current_goal().message
 
-        self.context.add_message(response)
+        if response:
+            self.context.add_message(response)
         return response
 
 class DialogContext(object):
@@ -123,6 +129,7 @@ class DialogContext(object):
         self.conversation = []
         self.goals = []
         self.current = None
+        self.execution = None
 
     def add_message(self, message):
         self.conversation.append(message)
@@ -165,6 +172,6 @@ class DialogContext(object):
     def transition(self, action):
         actions = transitions[self.state]
         if action not in actions:
-            raise InvalidStateError(self.state, str(goal))
+            raise InvalidStateError(self.state, str(action))
 
         self.state = actions[action]

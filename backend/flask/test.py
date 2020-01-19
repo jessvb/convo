@@ -6,10 +6,12 @@ import subprocess
 client = Client("test")
 dm = client.dm
 messages = [
-    "run example procedure"
+    "run",
+    "example",
+    "my input"
 ]
 for i, message in enumerate(messages):
-    print("Message:", message)
+    # print("Message:", message)
     dm.handle_message(message)
     print(dm.context.conversation)
-    print(str(dm.current_goal()))
+    # print(str(dm.current_goal()))

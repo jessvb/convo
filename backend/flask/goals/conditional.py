@@ -47,10 +47,10 @@ class GetConditionGoal(BaseGoal):
         if self.error:
             return self.error
 
-        return "GetConditionGoal completed!" if self.is_complete else "What's the condition?"
+        return "[Info] GetConditionGoal completed!" if self.is_complete else "What's the condition?"
 
     def advance(self):
-        print(f"Advancing {self.__class__.__name__}...")
+        print(f"[Info] Advancing {self.__class__.__name__}...")
         parsed = self.context.parsed
         if parsed and isinstance(parsed, Condition):
             self.condition = parsed

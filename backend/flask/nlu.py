@@ -15,7 +15,7 @@ create_variable_regex = "(?:create|make)(?: a)?(?: (.+))? variable(?: called| na
 increment_variable_regex = "(?:add(?: (.+))? to variable(?: (.+))?)|(?:increment variable(?:(?: (.+))? by (.+)| (.+))?)"
 say_condition_regex = "(?:until|if) i say (.+)"
 comparison_condition_regex = "(?:if|until) (.+) is ((?:(?:less|greater) than(?: or equal to)?)|equal to) (.+)"
-play_project_regex = "play"
+run_regex = "run(?: (.+))?"
 
 class SemanticNLU(object):
     def __init__(self, context):
@@ -76,8 +76,9 @@ class SemanticNLU(object):
         elif re.match(add_to_list_regex, message):
             match = re.match(add_to_list_regex, message)
             return AddToListActionGoal(self.context, name=group(match, 2), value=group(match, 1))
-        elif message.startswith("run"):
-            return RunGoal(self.context, name=message.replace("run", "").strip())
+        elif re.match(run_regex, message):
+            match = re.match(run_regex, message)
+            return RunGoal(self.context, name=group(match, 1))
         else:
             return None
 

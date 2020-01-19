@@ -14,12 +14,35 @@ class GetInputGoal(BaseGoal):
 
     @property
     def message(self):
-        return "GetInputGoal completed!" if self.is_complete else self._message
+        return "[Info] GetInputGoal completed!" if self.is_complete else self._message
 
     def advance(self):
-        print(f"Advancing {self.__class__.__name__}...")
+        print(f"[Info] Advancing {self.__class__.__name__}...")
         self.value = self.context.current_message
 
     def complete(self):
         self.obj.setattr(self.input, self.value)
+        return super().complete()
+
+class GetUserInputGoal(BaseGoal):
+    def __init__(self, context, variable):
+        super().__init__(context)
+        self.variable = variable
+        self.value = None
+    
+    @property
+    def is_complete(self):
+        return self.value is not None
+
+    @property
+    def message(self):
+        return "[Info] GetUserInputGoal completed!" if self.is_complete else ""
+
+    def advance(self):
+        print(f"[Info] Advancing {self.__class__.__name__}...")
+        self.value = self.context.current_message
+
+    def complete(self):
+        self.context.execution.variables[self.variable] = self.value
+        print(self.context.execution.variables)
         return super().complete()
