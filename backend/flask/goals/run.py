@@ -34,7 +34,9 @@ class RunGoal(BaseGoal):
                 self.procedure = self.context.procedures[value]
                 self.context.execution = ExecutionContext(self.context, self.procedure.actions)
                 self.execution = self.context.execution
-                self.advance()
+                todo = self.execution.advance()
+                if todo:
+                    self.todos.append(todo)
             return
         setattr(self, attr, value)
 
@@ -46,7 +48,6 @@ class RunGoal(BaseGoal):
             todo.advance()
             if todo.is_complete:
                 todo.complete()
-                self.advance()
             else:
                 self.todos.append(todo)
 

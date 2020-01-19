@@ -12,14 +12,19 @@ messages = [
     "say got user input",
     "create a variable called copy",
     "the value of variable input",
+    "say getting input two",
+    "get user input and save it as input two",
+    "say got user input two",
     "create a variable called copy two",
     "the value of variable input",
     "add 2 to variable input",
     "say the value of copy",
     "set the variable copy two to the value of input",
+    "create a variable called copy three and set it to the value of input two",
     "done",
     "run test",
-    "5"
+    "5",
+    "111"
 ]
 
 for i, message in enumerate(messages):

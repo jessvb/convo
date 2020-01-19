@@ -89,7 +89,7 @@ class DialogManager(object):
 
         if self.current_goal() is None:
             goal = self.context.parsed
-            if goal is None:
+            if goal is None or not isinstance(goal, BaseGoal):
                 response = "I didn't understand what you were saying. Please try again."
             else:
                 if goal.is_complete:
