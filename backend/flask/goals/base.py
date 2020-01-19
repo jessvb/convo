@@ -1,6 +1,7 @@
 import re
 import logging
 from utils import to_snake_case
+from models import *
 
 class BaseGoal(object):
     def __init__(self, context):
@@ -40,3 +41,11 @@ class BaseGoal(object):
     def __str__(self):
         name = self.__class__.__name__
         return to_snake_case(name[:-len("Goal")]) + (f":{str(self.todos[-1])}" if self.todos else "")
+
+
+class ActionGoal(BaseGoal):
+    def __init__(self, context):
+        super().__init__(context)
+        assert isinstance(self.context.current, Procedure)
+        self.procedure = self.context.current
+        self.variables = self.procedure.variables

@@ -20,7 +20,10 @@ class GetInputGoal(BaseGoal):
 
     def advance(self):
         logging.debug(f"Advancing {self.__class__.__name__}...")
-        self.value = self.context.current_message
+        if isinstance(self.context.parsed, ValueOf):
+            self.value = self.context.parsed
+        else:
+            self.value = self.context.current_message
 
     def complete(self):
         self.obj.setattr(self.input, self.value)
@@ -42,25 +45,32 @@ class GetUserInputGoal(BaseGoal):
 
     def advance(self):
         logging.debug(f"Advancing {self.__class__.__name__}...")
-        message = self.context.current_message
-        if message.isnumeric():
-            num = float(message)
-            self.value = int(message) if num.is_integer() else num
+
+        if isinstance(self.context.parsed, ValueOf):
+            self.value = self.context.parsed
         else:
-            self.value = message
+            message = self.context.current_message
+            if message.isnumeric():
+                num = float(message)
+                self.value = int(message) if num.is_integer() else num
+            else:
+                self.value = message
 
     def complete(self):
-        self.context.execution.variables[self.variable] = self.value
+        variables = self.context.execution.variables
+        variables[self.variable] = variables[self.value.variable] if isinstance(self.value, ValueOf) else self.value
         return super().complete()
 
-class GetUserInputActionGoal(BaseGoal):
+class GetUserInputActionGoal(ActionGoal):
     def __init__(self, context, variable):
         super().__init__(context)
+        self.variables = self.procedure.variables
         self.setattr("variable", variable)
 
     def complete(self):
         assert hasattr(self, "actions")
         self.actions.append(GetUserInputAction(self.variable))
+        self.variables.add(self.variable)
         return super().complete()
 
     def setattr(self, attr, value):

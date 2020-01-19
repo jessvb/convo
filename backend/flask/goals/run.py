@@ -76,29 +76,36 @@ class ExecutionContext(object):
     def evaluate_action(self, action):
         logging.info(f"==> Evaluating action {str(action)} on step {self.step}")
         if isinstance(action, SayAction):
-            logging.info(f"Saying {action.phrase}")
+            phrase = action.phrase
+            if isinstance(action.phrase, ValueOf):
+                variable = action.phrase.variable
+                phrase = f"The value of {variable} is {self.variables[variable]}"
+            logging.info(f"Saying '{phrase}'")
             self.context.add_message(action.phrase)
         elif isinstance(action, GetUserInputAction):
             logging.info(f"Getting user input and setting as {action.variable}")
             return GetUserInputGoal(self.context, action.variable)
         elif isinstance(action, CreateVariableAction):
-            self.variables[action.name] = action.value
-            logging.info(f"Created variable {action.name} with value {action.value}")
+            self.variables[action.name] = self.variables[action.value.variable] if isinstance(action.value, ValueOf) else action.value
+            logging.info(f"Created variable {action.name} with value {self.variables[action.name]}")
             logging.info("Current variables:", self.variables)
         elif isinstance(action, SetVariableAction):
             if action.name in self.variables:
-                self.variables[action.name] = action.value
-                logging.info(f"Set variable {action.name} with value {action.value}")
+                self.variables[action.name] = self.variables[action.value.variable] if isinstance(action.value, ValueOf) else action.value
+                logging.info(f"Set variable {action.name} with value {self.variables[action.name]}")
                 logging.info("Current variables:", self.variables)
             else:
                 logging.warning("Variable not found.")
         elif isinstance(action, IncrementVariableAction):
             value = self.variables.get(action.name)
-            if action.name in self.variables and (isinstance(value, float) or isinstance(value, int)):
+            if action.name in self.variables:
                 old = self.variables[action.name]
-                self.variables[action.name] += action.value
+                if isinstance(value, float) or isinstance(value, int):
+                    self.variables[action.name] += action.value
+                elif isinstance(value, ValueOf):
+                    self.variables[action.name] += self.variables[action.value.variable]
                 new = self.variables[action.name]
-                logging.info(f"Incremented variable {action.name} with value {action.value} from {old} to {new}")
+                logging.info(f"Incremented variable {action.name} from {old} to {new}")
                 logging.info(f"Current variables: {str(self.variables)}")
             else:
                 logging.warning("Variable not found.")

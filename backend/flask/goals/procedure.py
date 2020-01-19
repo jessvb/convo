@@ -19,6 +19,7 @@ class AddProcedureGoal(BaseGoal):
         self.procedures[self.procedure.name] = self.procedure
         self.context.transition("complete")
         self.context.current = None
+        logging.debug(f"Procedure: {[str(a) for a in self.procedure.actions]}")
         return super().complete()
 
     def setattr(self, attr, value):
@@ -35,10 +36,15 @@ class AddProcedureGoal(BaseGoal):
 class AddClassProcedureGoal(AddProcedureGoal):
     def __init__(self, context, name=None, klass=None):
         super().__init__(context, name)
-        self.procedures = {}
+        self.procedures = None
         self.todos = [GetProcedureActionsGoal(self.context, self.procedure.actions)]
         self.setattr("name", name)
         self.setattr("klass", klass)
+
+    def complete(self):
+        complete = super().complete()
+        self.context.current = self.klass
+        return complete
 
     def setattr(self, attr, value):
         if (attr == "name"):
