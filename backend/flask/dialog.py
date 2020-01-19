@@ -103,7 +103,6 @@ class DialogManager(object):
                 response = self.current_goal().complete()
                 self.context.goals.pop()
             else:
-                print(self.current_goal().message)
                 response = self.current_goal().message
 
         if response:

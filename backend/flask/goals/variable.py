@@ -22,8 +22,11 @@ class CreateVariableActionGoal(BaseGoal):
         elif attr == "value":
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"What should be the initial value?"))
+            elif value.isnumeric():
+                num = float(value)
+                self.value = int(num) if num.is_integer() else num
             else:
-                self.value = float(value) if value.isnumeric() else value
+                self.value = value
             return
         setattr(self, attr, value)
 
@@ -48,8 +51,11 @@ class SetVariableActionGoal(BaseGoal):
         elif attr == "value":
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"What value do you want to set the variable to?"))
+            elif value.isnumeric():
+                num = float(value)
+                self.value = int(num) if num.is_integer() else num
             else:
-                self.value = float(value) if value.isnumeric() else value
+                self.value = value
             return
         setattr(self, attr, value)
 
@@ -77,5 +83,6 @@ class IncrementVariableActionGoal(BaseGoal):
             elif not value.isnumeric():
                 self.todos.append(GetInputGoal(self.context, self, attr, f"Not a number. Try again."))
             else:
-                self.value = float(value)
+                num = float(value)
+                self.value = int(num) if num.is_integer() else num
             return

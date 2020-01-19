@@ -10,7 +10,7 @@ class RunGoal(BaseGoal):
 
     @property
     def message(self):
-        return "Program finished running." if self.is_complete else self.todos[-1].message
+        return "Program finished running." if self.is_complete else (self.todos[-1].message if self.todos else None)
 
     @property
     def is_complete(self):
@@ -18,6 +18,7 @@ class RunGoal(BaseGoal):
 
     def complete(self):
         message = super().complete()
+        logging.debug(f"End of execution variables: {self.execution.variables}")
         self.context.execution = None
         self.context.transition("complete")
         return message
@@ -29,11 +30,11 @@ class RunGoal(BaseGoal):
             elif value not in self.context.procedures:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"Procedure {value} does not exist. Try another name or say cancel."))
             else:
-                logging.info("Creating execution context...")
                 self.name = value
                 self.procedure = self.context.procedures[value]
                 self.context.execution = ExecutionContext(self.context, self.procedure.actions)
                 self.execution = self.context.execution
+                self.advance()
             return
         setattr(self, attr, value)
 
@@ -45,6 +46,7 @@ class RunGoal(BaseGoal):
             todo.advance()
             if todo.is_complete:
                 todo.complete()
+                self.advance()
             else:
                 self.todos.append(todo)
 
@@ -57,12 +59,12 @@ class ExecutionContext(object):
     def __init__(self, context, actions):
         self.context = context
         self.actions = actions
+        logging.debug(f"Actions: {[str(a) for a in actions]}")
         self.variables = {}
         self.done = False
         self.step = 0
 
     def advance(self):
-        logging.info("Advancing program")
         while self.step < len(self.actions):
             action = self.actions[self.step]
             goal = self.evaluate_action(action)

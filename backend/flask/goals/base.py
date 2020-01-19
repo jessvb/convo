@@ -7,6 +7,7 @@ class BaseGoal(object):
         self.error = None
         self.context = context
         self.todos = []
+        logging.debug(f"Creating {self.__class__.__name__}...")
 
     @property
     def is_complete(self):

@@ -1,5 +1,6 @@
 import logging
 from goals import *
+from models import *
 
 class GetInputGoal(BaseGoal):
     def __init__(self, context, obj, attr, message):
@@ -41,8 +42,32 @@ class GetUserInputGoal(BaseGoal):
 
     def advance(self):
         logging.debug(f"Advancing {self.__class__.__name__}...")
-        self.value = self.context.current_message
+        message = self.context.current_message
+        if message.isnumeric():
+            num = float(message)
+            self.value = int(message) if num.is_integer() else num
+        else:
+            self.value = message
 
     def complete(self):
         self.context.execution.variables[self.variable] = self.value
         return super().complete()
+
+class GetUserInputActionGoal(BaseGoal):
+    def __init__(self, context, variable):
+        super().__init__(context)
+        self.setattr("variable", variable)
+
+    def complete(self):
+        assert hasattr(self, "actions")
+        self.actions.append(GetUserInputAction(self.variable))
+        return super().complete()
+
+    def setattr(self, attr, value):
+        if attr == "variable":
+            if value is None:
+                self.todos.append(GetInputGoal(self.context, self, attr, f"What name do you want to give this variable?"))
+            else:
+                self.variable = value
+            return
+        setattr(self, attr, value)

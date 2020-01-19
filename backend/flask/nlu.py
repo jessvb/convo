@@ -16,6 +16,7 @@ increment_variable_regex = "(?:add(?: (.+))? to variable(?: (.+))?)|(?:increment
 say_condition_regex = "(?:until|if) i say (.+)"
 comparison_condition_regex = "(?:if|until) (.+) is ((?:(?:less|greater) than(?: or equal to)?)|equal to) (.+)"
 run_regex = "run(?: (.+))?"
+get_user_input_regex = "get(?: user)? input(?: and (?:call it)?(?:name it)?(?:save it as)? (.+))?"
 
 class SemanticNLU(object):
     def __init__(self, context):
@@ -77,6 +78,9 @@ class SemanticNLU(object):
         elif re.match(run_regex, message):
             match = re.match(run_regex, message)
             return RunGoal(self.context, name=group(match, 1))
+        elif re.match(get_user_input_regex, message):
+            match = re.match(get_user_input_regex, message)
+            return GetUserInputActionGoal(self.context, variable=group(match, 1))
 
     def try_parse_condition(self, message):
         if message is None:
@@ -91,7 +95,7 @@ class SemanticNLU(object):
 def group(match, indices):
     if isinstance(indices, int):
         idx = indices
-        return match.group(idx) if match.group(idx) else None
+        return match.group(idx) if len(match.groups()) > 0 and match.group(idx) else None
 
     for idx in indices:
         if match.group(idx):
