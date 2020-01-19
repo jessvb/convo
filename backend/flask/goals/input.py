@@ -1,3 +1,4 @@
+import logging
 from goals import *
 
 class GetInputGoal(BaseGoal):
@@ -14,10 +15,10 @@ class GetInputGoal(BaseGoal):
 
     @property
     def message(self):
-        return "[Info] GetInputGoal completed!" if self.is_complete else self._message
+        return "GetInputGoal completed!" if self.is_complete else self._message
 
     def advance(self):
-        print(f"[Info] Advancing {self.__class__.__name__}...")
+        logging.debug(f"Advancing {self.__class__.__name__}...")
         self.value = self.context.current_message
 
     def complete(self):
@@ -36,13 +37,12 @@ class GetUserInputGoal(BaseGoal):
 
     @property
     def message(self):
-        return "[Info] GetUserInputGoal completed!" if self.is_complete else ""
+        return "GetUserInputGoal completed!" if self.is_complete else ""
 
     def advance(self):
-        print(f"[Info] Advancing {self.__class__.__name__}...")
+        logging.debug(f"Advancing {self.__class__.__name__}...")
         self.value = self.context.current_message
 
     def complete(self):
         self.context.execution.variables[self.variable] = self.value
-        print(self.context.execution.variables)
         return super().complete()

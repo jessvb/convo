@@ -28,11 +28,9 @@ class SemanticNLU(object):
             if parsed is not None:
                 return parsed
 
-        return None
-
     def try_parse_goal(self, message):
         if message is None:
-            return None
+            return message
         elif re.match(create_conditional_regex, message):
             match = re.match(create_conditional_regex, message)
             condition = group(match, [1, 4])
@@ -79,20 +77,16 @@ class SemanticNLU(object):
         elif re.match(run_regex, message):
             match = re.match(run_regex, message)
             return RunGoal(self.context, name=group(match, 1))
-        else:
-            return None
 
     def try_parse_condition(self, message):
         if message is None:
-            return None
+            return message
         elif re.match(comparison_condition_regex, message):
             match = re.match(comparison_condition_regex, message)
             return ComparisonCondition(group(match, 1), group(match, 2), group(match, 3))
         elif re.match(say_condition_regex, message):
             match = re.match(say_condition_regex, message)
             return SayCondition(phrase=group(match, 1))
-        else:
-            return None
 
 def group(match, indices):
     if isinstance(indices, int):
@@ -102,4 +96,3 @@ def group(match, indices):
     for idx in indices:
         if match.group(idx):
             return match.group(idx)
-    return None

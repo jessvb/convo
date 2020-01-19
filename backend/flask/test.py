@@ -1,8 +1,8 @@
-from utils import to_snake_case
+import logging
 from models import *
 from client import *
-import subprocess
 
+logging.basicConfig(level=logging.DEBUG)
 client = Client("test")
 dm = client.dm
 messages = [
@@ -11,7 +11,7 @@ messages = [
     "my input"
 ]
 for i, message in enumerate(messages):
-    # print("Message:", message)
     dm.handle_message(message)
-    print(dm.context.conversation)
-    # print(str(dm.current_goal()))
+    
+for m in dm.context.conversation:
+    print(m)

@@ -1,3 +1,4 @@
+import logging
 from nlu import SemanticNLU
 from models import *
 from goals import *
@@ -80,7 +81,7 @@ class DialogManager(object):
             if isinstance(self.context.parsed, BaseGoal):
                 self.context.validate_goal(self.context.parsed)
         except InvalidStateError as e:
-            print(e.message)
+            logging.warning(e.message)
             base = "I cannot do this right now."
             if (self.context.state == "home"):
                 return base + " Try 'create a procedure' or 'create a class'."
@@ -102,6 +103,7 @@ class DialogManager(object):
                 response = self.current_goal().complete()
                 self.context.goals.pop()
             else:
+                print(self.current_goal().message)
                 response = self.current_goal().message
 
         if response:

@@ -1,3 +1,4 @@
+import logging
 from goals import *
 from models import *
 
@@ -17,7 +18,7 @@ class GetActionsGoal(BaseGoal):
             return self.error
 
         if self.is_complete:
-            return f"[Info] {self.__class__.__name__} completed!"
+            return f"{self.__class__.__name__} completed!"
 
         if len(self.todos) == 0:
             return "Added action! Do you want to do anything else?" if len(self.actions) > 0 else "What do you want to do first?"
@@ -29,7 +30,7 @@ class GetActionsGoal(BaseGoal):
             super().advance()
             return
 
-        print(f"[Info] Advancing {self.__class__.__name__}...")
+        logging.debug(f"Advancing {self.__class__.__name__}...")
         self.error = None
         if self.context.current_message in ["done", "nothing"]:
             self.done = True
@@ -54,7 +55,7 @@ class GetConditionalActionsGoal(GetActionsGoal):
             return self.error
 
         if self.is_complete:
-            return f"[Info] {self.__class__.__name__} completed!"
+            return f"{self.__class__.__name__} completed!"
 
         if len(self.todos) == 0:
             if len(self.actions) > 0:
@@ -73,7 +74,7 @@ class GetLoopActionsGoal(GetActionsGoal):
             return self.error
 
         if self.is_complete:
-            return f"[Info] {self.__class__.__name__} completed!"
+            return f"{self.__class__.__name__} completed!"
 
         if len(self.todos) == 0:
             if len(self.actions) > 0:
@@ -90,7 +91,7 @@ class GetProcedureActionsGoal(GetActionsGoal):
             return self.error
 
         if self.is_complete:
-            return f"[Info] {self.__class__.__name__} completed!"
+            return f"{self.__class__.__name__} completed!"
 
         if len(self.todos) == 0:
             return "Added action to procedure! What's next?" if len(self.actions) > 0 else "What do you want to do first?"

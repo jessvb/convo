@@ -1,4 +1,5 @@
 import re
+import logging
 from utils import to_snake_case
 
 class BaseGoal(object):
@@ -15,10 +16,10 @@ class BaseGoal(object):
     def message(self):
         if self.error:
             return self.error
-        return f"[Info] {self.__class__.__name__} completed!" if self.is_complete else self.todos[-1].message
+        return f"{self.__class__.__name__} completed!" if self.is_complete else self.todos[-1].message
 
     def advance(self):
-        print(f"[Info] Advancing {self.__class__.__name__}...")
+        logging.debug(f"Advancing {self.__class__.__name__}...")
         self.error = None
         if self.todos:
             todo = self.todos.pop()
@@ -29,7 +30,7 @@ class BaseGoal(object):
                 self.todos.append(todo)
 
     def complete(self):
-        print(f"[Info] {self.__class__.__name__} completed!")
+        logging.debug(f"{self.__class__.__name__} completed!")
         return self.message
 
     def setattr(self, attr, value):

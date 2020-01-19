@@ -1,3 +1,4 @@
+import logging
 from goals import *
 from models import *
 
@@ -9,7 +10,7 @@ class RunGoal(BaseGoal):
 
     @property
     def message(self):
-        return "Program finished running." if self.is_complete else None
+        return "Program finished running." if self.is_complete else self.todos[-1].message
 
     @property
     def is_complete(self):
@@ -28,7 +29,7 @@ class RunGoal(BaseGoal):
             elif value not in self.context.procedures:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"Procedure {value} does not exist. Try another name or say cancel."))
             else:
-                print("Creating execution context...")
+                logging.info("Creating execution context...")
                 self.name = value
                 self.procedure = self.context.procedures[value]
                 self.context.execution = ExecutionContext(self.context, self.procedure.actions)
@@ -37,7 +38,7 @@ class RunGoal(BaseGoal):
         setattr(self, attr, value)
 
     def advance(self):
-        print(f"[Info] Advancing {self.__class__.__name__}...")
+        logging.debug(f"Advancing {self.__class__.__name__}...")
         self.error = None
         if self.todos:
             todo = self.todos.pop()
@@ -61,7 +62,7 @@ class ExecutionContext(object):
         self.step = 0
 
     def advance(self):
-        print("Advancing program")
+        logging.info("Advancing program")
         while self.step < len(self.actions):
             action = self.actions[self.step]
             goal = self.evaluate_action(action)
@@ -69,48 +70,46 @@ class ExecutionContext(object):
             if goal:
                 return goal
         self.done = True
-        return None
     
     def evaluate_action(self, action):
-        print(f"==> Evaluating action {str(action)} on step {self.step}")
+        logging.info(f"==> Evaluating action {str(action)} on step {self.step}")
         if isinstance(action, SayAction):
-            print("Saying", action.phrase)
+            logging.info(f"Saying {action.phrase}")
             self.context.add_message(action.phrase)
         elif isinstance(action, GetUserInputAction):
-            print(f"Getting user input and setting as {action.variable}")
+            logging.info(f"Getting user input and setting as {action.variable}")
             return GetUserInputGoal(self.context, action.variable)
         elif isinstance(action, CreateVariableAction):
             self.variables[action.name] = action.value
-            print(f"Created variable {action.name} with value {action.value}")
-            print("Current variables:", self.variables)
+            logging.info(f"Created variable {action.name} with value {action.value}")
+            logging.info("Current variables:", self.variables)
         elif isinstance(action, SetVariableAction):
             if action.name in self.variables:
                 self.variables[action.name] = action.value
-                print(f"Set variable {action.name} with value {action.value}")
-                print("Current variables:", self.variables)
+                logging.info(f"Set variable {action.name} with value {action.value}")
+                logging.info("Current variables:", self.variables)
             else:
-                print("Variable not found.")
+                logging.warning("Variable not found.")
         elif isinstance(action, IncrementVariableAction):
             value = self.variables.get(action.name)
             if action.name in self.variables and (isinstance(value, float) or isinstance(value, int)):
                 old = self.variables[action.name]
                 self.variables[action.name] += action.value
                 new = self.variables[action.name]
-                print(f"Incremented variable {action.name} with value {action.value} from {old} to {new}")
-                print("Current variables:", self.variables)
+                logging.info(f"Incremented variable {action.name} with value {action.value} from {old} to {new}")
+                logging.info(f"Current variables: {str(self.variables)}")
             else:
-                print("Variable not found.")
+                logging.warning("Variable not found.")
         elif isinstance(action, ConditionalAction):
             res = action.condition.eval(self.variables)
-            print("Condition for if statement is " + ("true" if res else "false"))
+            logging.info("Condition for if statement is " + ("true" if res else "false"))
             self.actions[self.step:self.step + 1] = action.actions[res]
             self.step -= 1
         elif isinstance(action, LoopAction):
             res = action.condition.eval(self.variables)
-            print("Condition for while loop is " + ("true" if res else "false"))
+            logging.info("Condition for while loop is " + ("true" if res else "false"))
             if res:
                 self.actions[self.step:self.step] = action.actions
             else:
                 self.actions[self.step:self.step + 1] = action.actions
             self.step -= 1
-        return None
