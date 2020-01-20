@@ -1,14 +1,41 @@
+import logging
 from nlu import SemanticNLU
 from models import *
 from goals import *
 from error import *
+
+example_procedure = Procedure(name="example", actions=[
+    CreateVariableAction("foo", 4),
+    SayAction("I want to get your input."),
+    GetUserInputAction("input"),
+    CreateListAction("groceries"),
+    SetVariableAction("foo", 6),
+    IncrementVariableAction("foo", 5),
+    SayAction("hello world!"),
+    ConditionalAction(
+        ComparisonCondition("foo", "greater than", 10),
+        actions=[
+            [SayAction("foo is not greater than 10"), CreateVariableAction("bar", 10)],
+            [SayAction("foo is greater than 10"), CreateVariableAction("bar", 4), SayAction("random")]
+        ]
+    ),
+    UntilLoopAction(
+        ComparisonCondition("bar", "less than", 15),
+        actions=[
+            SayAction("bar is less than 15"),
+            IncrementVariableAction("bar", 1)
+        ]
+    ),
+    AddToListAction("groceries", "\"apples\"")
+])
 
 transitions = {
     "home": {
         "edit_class": "class",
         "create_class": "class",
         "create_procedure": "actions",
-        "create_class_procedure": "class_actions"
+        "create_class_procedure": "class_actions",
+        "run": "execution"
     },
     "class_actions": {
         "complete": "home"
@@ -17,6 +44,9 @@ transitions = {
         "complete": "home"
     },
     "class": {
+        "complete": "home"
+    },
+    "execution": {
         "complete": "home"
     }
 }
@@ -51,6 +81,7 @@ class DialogManager(object):
             if isinstance(self.context.parsed, BaseGoal):
                 self.context.validate_goal(self.context.parsed)
         except InvalidStateError as e:
+            logging.warning(e.message)
             base = "I cannot do this right now."
             if (self.context.state == "home"):
                 return base + " Try 'create a procedure' or 'create a class'."
@@ -58,7 +89,7 @@ class DialogManager(object):
 
         if self.current_goal() is None:
             goal = self.context.parsed
-            if goal is None:
+            if goal is None or not isinstance(goal, BaseGoal):
                 response = "I didn't understand what you were saying. Please try again."
             else:
                 if goal.is_complete:
@@ -74,7 +105,8 @@ class DialogManager(object):
             else:
                 response = self.current_goal().message
 
-        self.context.add_message(response)
+        if response:
+            self.context.add_message(response)
         return response
 
 class DialogContext(object):
@@ -82,7 +114,7 @@ class DialogContext(object):
         example = Class("example")
         example.add_property(Property(example, "count", "number"))
         self.classes = { "example": example }
-        self.procedures = {}
+        self.procedures = { "example": example_procedure }
         self.reset()
 
     @property
@@ -98,6 +130,7 @@ class DialogContext(object):
         self.conversation = []
         self.goals = []
         self.current = None
+        self.execution = None
 
     def add_message(self, message):
         self.conversation.append(message)
@@ -124,20 +157,22 @@ class DialogContext(object):
                 self.transition("create_procedure")
             elif isinstance(goal, AddPropertyGoal):
                 self.transition("edit_class")
+            elif isinstance(goal, RunGoal):
+                self.transition("run")
             else:
-                raise InvalidStateError()
+                raise InvalidStateError(self.state, str(goal))
         elif self.state in ["actions", "class_actions"]:
             if isinstance(goal, CreateClassGoal) \
                 or isinstance(goal, AddClassProcedureGoal) \
                 or isinstance(goal, AddProcedureGoal) \
                 or isinstance(goal, AddPropertyGoal):
-                raise InvalidStateError()
+                raise InvalidStateError(self.state, str(goal))
         elif self.state == "class":
-            raise InvalidStateError()
+            raise InvalidStateError(self.state, str(goal))
 
     def transition(self, action):
         actions = transitions[self.state]
         if action not in actions:
-            raise InvalidStateError()
+            raise InvalidStateError(self.state, str(action))
 
         self.state = actions[action]

@@ -1,11 +1,14 @@
 import re
+import logging
 from utils import to_snake_case
+from models import *
 
 class BaseGoal(object):
     def __init__(self, context):
         self.error = None
         self.context = context
         self.todos = []
+        logging.debug(f"Creating {self.__class__.__name__}...")
 
     @property
     def is_complete(self):
@@ -18,7 +21,7 @@ class BaseGoal(object):
         return f"{self.__class__.__name__} completed!" if self.is_complete else self.todos[-1].message
 
     def advance(self):
-        print(f"Advancing {self.__class__.__name__}...")
+        logging.debug(f"Advancing {self.__class__.__name__}...")
         self.error = None
         if self.todos:
             todo = self.todos.pop()
@@ -29,7 +32,7 @@ class BaseGoal(object):
                 self.todos.append(todo)
 
     def complete(self):
-        print(f"{self.__class__.__name__} completed!")
+        logging.debug(f"{self.__class__.__name__} completed!")
         return self.message
 
     def setattr(self, attr, value):
@@ -38,3 +41,11 @@ class BaseGoal(object):
     def __str__(self):
         name = self.__class__.__name__
         return to_snake_case(name[:-len("Goal")]) + (f":{str(self.todos[-1])}" if self.todos else "")
+
+
+class ActionGoal(BaseGoal):
+    def __init__(self, context):
+        super().__init__(context)
+        assert isinstance(self.context.current, Procedure)
+        self.procedure = self.context.current
+        self.variables = self.procedure.variables

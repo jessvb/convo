@@ -1,3 +1,4 @@
+import logging
 from goals import *
 from models import *
 
@@ -23,15 +24,24 @@ class ConditionalActionGoal(BaseGoal):
             else:
                 self.todos[1].append(value)
             return
-        elif (attr == "condition") and value is None:
-            self.todos.append(GetConditionGoal(self.context, self))
+        elif (attr == "condition"):
+            if value is None:
+                self.todos.append(GetConditionGoal(self.context, self))
+            elif not value.value.isnumeric():
+                self.todos.append(GetConditionGoal(self.context, self, "The value is not a number. Try again."))
+            else:
+                num = float(value.value)
+                value.value = int(num) if num.is_integer() else num
+                self.condition = value
+            return
         setattr(self, attr, value)
 
 class GetConditionGoal(BaseGoal):
-    def __init__(self, context, obj):
+    def __init__(self, context, obj, message=None):
         super().__init__(context)
         self.obj = obj
         self.condition = None
+        self.error = message
 
     @property
     def is_complete(self):
@@ -45,7 +55,7 @@ class GetConditionGoal(BaseGoal):
         return "GetConditionGoal completed!" if self.is_complete else "What's the condition?"
 
     def advance(self):
-        print(f"Advancing {self.__class__.__name__}...")
+        logging.debug(f"Advancing {self.__class__.__name__}...")
         parsed = self.context.parsed
         if parsed and isinstance(parsed, Condition):
             self.condition = parsed

@@ -2,27 +2,15 @@ class Condition(object):
     def __init__(self):
         pass
 
-    def eval(self):
-        raise NotImplementedError()
-
-    @property
-    def op_func(self):
-        raise NotImplementedError()
-
     def __str__(self):
         return "condition"
 
 class SayCondition(Condition):
-    def __init__(self, context, phrase):
-        self.context = context
+    def __init__(self, phrase):
         self.phrase = phrase
 
-    def eval(self):
-        return self.op_func(self.context.current_message)
-
-    @property
-    def op_func(self):
-        return self.phrase.__eq__
+    def eval(self, phrase):
+        return self.phrase == phrase
 
     def __str__(self):
         return f"'{self.phrase}'"
@@ -36,28 +24,24 @@ comparison_ops = {
 }
 
 class ComparisonCondition(Condition):
-    def __init__(self, context, variable, op, value):
-        self.context = context
+    def __init__(self, variable, op, value):
         self.variable = variable
         self.value = value
         self.op = op
 
-    def eval(self):
-        return self.op_func(self.value)
-
-    @property
-    def op_func(self):
+    def eval(self, variables):
+        variable = variables[self.variable]
         if self.op == "greater than":
-            return self.context.variables[variable].value.__gt__
+            return variable > self.value
         elif self.op == "less than":
-            return self.context.variables[variable].value.__lt__
+            return variable < self.value
         elif self.op == "greater than or equal to":
-            return self.context.variables[variable].value.__ge__
+            return variable >= self.value
         elif self.op == "less than or equal to":
-            return self.context.variables[variable].value.__le__
+            return variable <= self.value
         elif self.op == "equal to":
-            return self.context.variables[variable].value.__eq__
-        return None
+            return variable == self.value
+        return False
 
     def __str__(self):
         return f"{self.variable} {comparison_ops.get(self.op)} {self.value}"

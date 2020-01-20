@@ -1,3 +1,4 @@
+import logging
 from goals import *
 from models import *
 
@@ -29,9 +30,9 @@ class GetActionsGoal(BaseGoal):
             super().advance()
             return
 
-        print(f"Advancing {self.__class__.__name__}...")
+        logging.debug(f"Advancing {self.__class__.__name__}...")
         self.error = None
-        if self.context.current_message in ["done", "nothing"]:
+        if self.context.current_message in ["done", "nothing", "no"]:
             self.done = True
         elif self.context.parsed is None:
             self.error = "Couldn't understand the action. Try again."
@@ -57,12 +58,16 @@ class GetConditionalActionsGoal(GetActionsGoal):
             return f"{self.__class__.__name__} completed!"
 
         if len(self.todos) == 0:
-            if len(self.actions) > 0:
-                return "Added action to conditional! What's next?"
-            elif self.condition:
-                return f"What do you want to do first if the condition is true?"
+            if self.condition:
+                if len(self.actions) > 0:
+                    return "Added action to when conditional is true. Anything else?"
+                else:
+                    return "What do you want to do first if the condition is true?"
             else:
-                return "Would you like to do anything if condition is false? If so, what would you like to do first?"
+                if len(self.actions) > 0:
+                    return "Added action to when conditional is false. Anything else?"
+                else:
+                    return "Would you like to do anything if condition is false? If so, what would you like to do first?"
         else:
             return self.todos[-1].message
 

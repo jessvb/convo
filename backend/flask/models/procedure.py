@@ -1,3 +1,6 @@
+from utils import to_snake_case
+tab = "    "
+
 class Procedure(object):
     def __init__(self, name, actions=None, klass=None):
         self.name = name
@@ -14,6 +17,11 @@ class Procedure(object):
             "name": self.name,
             "actions": [a.json() for a in self.actions]
         }
+
+    def python(self):
+        lines = [f"def {to_snake_case(self.name)}({'' if self.klass is None else 'self'}):"]
+        lines.extend([f"{tab}{line}" for action in self.actions for line in action.python()])
+        return lines
 
     def add_action(self, action):
         self.actions.append(action)
