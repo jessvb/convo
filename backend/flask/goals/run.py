@@ -89,12 +89,12 @@ class ExecutionContext(object):
         elif isinstance(action, CreateVariableAction):
             self.variables[action.name] = self.variables[action.value.variable] if isinstance(action.value, ValueOf) else action.value
             logging.info(f"Created variable {action.name} with value {self.variables[action.name]}")
-            logging.info("Current variables:", self.variables)
+            logging.info(f"Current variables: {str(self.variables)}")
         elif isinstance(action, SetVariableAction):
             if action.name in self.variables:
                 self.variables[action.name] = self.variables[action.value.variable] if isinstance(action.value, ValueOf) else action.value
                 logging.info(f"Set variable {action.name} with value {self.variables[action.name]}")
-                logging.info("Current variables:", self.variables)
+                logging.info(f"Current variables: {str(self.variables)}")
             else:
                 logging.warning("Variable not found.")
         elif isinstance(action, IncrementVariableAction):
@@ -112,14 +112,16 @@ class ExecutionContext(object):
                 logging.warning("Variable not found.")
         elif isinstance(action, ConditionalAction):
             res = action.condition.eval(self.variables)
-            logging.info("Condition for if statement is " + ("true" if res else "false"))
+            logging.info(f"Condition for if statement ({str(action.condition)}) is " + ("true" if res else "false"))
+            logging.info(f"Current variables: {str(self.variables)}")
+            print([str(a) for a in self.actions])
             self.actions[self.step:self.step + 1] = action.actions[res]
+            print([str(a) for a in self.actions])
             self.step -= 1
-        elif isinstance(action, LoopAction):
+        elif isinstance(action, UntilLoopAction):
             res = action.condition.eval(self.variables)
-            logging.info("Condition for while loop is " + ("true" if res else "false"))
-            if res:
+            logging.info(f"Condition for until loop ({str(action.condition)}) is " + ("true" if res else "false"))
+            logging.info(f"Current variables: {str(self.variables)}")
+            if not res:
                 self.actions[self.step:self.step] = action.actions
-            else:
-                self.actions[self.step:self.step + 1] = action.actions
-            self.step -= 1
+                self.step -= 1

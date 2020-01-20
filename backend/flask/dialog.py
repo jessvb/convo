@@ -9,17 +9,17 @@ example_procedure = Procedure(name="example", actions=[
     SayAction("I want to get your input."),
     GetUserInputAction("input"),
     CreateListAction("groceries"),
-    SetVariableAction("foo", 5),
+    SetVariableAction("foo", 6),
     IncrementVariableAction("foo", 5),
     SayAction("hello world!"),
     ConditionalAction(
         ComparisonCondition("foo", "greater than", 10),
         actions=[
             [SayAction("foo is not greater than 10"), CreateVariableAction("bar", 10)],
-            [SayAction("foo is greater than 10"), CreateVariableAction("bar", 4)]
+            [SayAction("foo is greater than 10"), CreateVariableAction("bar", 4), SayAction("random")]
         ]
     ),
-    LoopAction(
+    UntilLoopAction(
         ComparisonCondition("bar", "less than", 15),
         actions=[
             SayAction("bar is less than 15"),

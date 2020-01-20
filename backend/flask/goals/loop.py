@@ -1,7 +1,7 @@
 from goals import *
 from models import *
 
-class LoopActionGoal(BaseGoal):
+class UntilLoopActionGoal(BaseGoal):
     def __init__(self, context, condition=None, action=None):
         super().__init__(context)
         self.loop_actions = []
@@ -11,7 +11,7 @@ class LoopActionGoal(BaseGoal):
 
     def complete(self):
         hasattr(self, "actions")
-        self.actions.append(LoopAction(self.condition, self.loop_actions))
+        self.actions.append(UntilLoopAction(self.condition, self.loop_actions))
         return super().complete()
 
     def setattr(self, attr, value):
@@ -22,6 +22,14 @@ class LoopActionGoal(BaseGoal):
             else:
                 self.todos[0].append(value)
             return
-        elif (attr == "condition") and value is None:
-            self.todos.append(GetConditionGoal(self.context, self))
+        elif (attr == "condition"):
+            if value is None:
+                self.todos.append(GetConditionGoal(self.context, self))
+            elif not value.value.isnumeric():
+                self.todos.append(GetConditionGoal(self.context, self, "The value is not a number. Try again."))
+            else:
+                num = float(value.value)
+                value.value = int(num) if num.is_integer() else num
+                self.condition = value
+            return
         setattr(self, attr, value)

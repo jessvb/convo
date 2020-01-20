@@ -43,7 +43,7 @@ class SemanticNLU(object):
             match = re.match(create_loop_regex, message)
             action = group(match, 1)
             condition = group(match, 2)
-            return LoopActionGoal(self.context, condition=self.try_parse_condition(condition), action=self.try_parse_goal(action))
+            return UntilLoopActionGoal(self.context, condition=self.try_parse_condition(condition), action=self.try_parse_goal(action))
         elif re.match(create_class_regex, message):
             match = re.match(create_class_regex, message)
             return CreateClassGoal(self.context, name=group(match, 1))

@@ -93,7 +93,7 @@ class ConditionalAction(Action):
         lines.extend([f"{tab}{line}" for action in self.actions[0] for line in action.python()])
         return lines
 
-class LoopAction(Action):
+class UntilLoopAction(Action):
     def __init__(self, condition, actions):
         self.condition = condition
         self.actions = actions

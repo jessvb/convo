@@ -28,16 +28,20 @@ class ConditionalActionGoal(BaseGoal):
             if value is None:
                 self.todos.append(GetConditionGoal(self.context, self))
             elif not value.value.isnumeric():
-                self.todos.append(GetConditionGoal(self.context, self))
+                self.todos.append(GetConditionGoal(self.context, self, "The value is not a number. Try again."))
             else:
+                num = float(value.value)
+                value.value = int(num) if num.is_integer() else num
                 self.condition = value
+            return
         setattr(self, attr, value)
 
 class GetConditionGoal(BaseGoal):
-    def __init__(self, context, obj):
+    def __init__(self, context, obj, message=None):
         super().__init__(context)
         self.obj = obj
         self.condition = None
+        self.error = message
 
     @property
     def is_complete(self):
