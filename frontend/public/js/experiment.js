@@ -1,4 +1,5 @@
-const server = 'https://userstudy.appinventor.mit.edu/api';
+// const server = 'https://userstudy.appinventor.mit.edu/api';
+const server = 'http://localhost:8080';
 
 const instructions_text = [
     "Begin by typing or saying 'Hello'.",
@@ -11,6 +12,11 @@ const tutorial_required_messages = [
     "Start programming",
     "Hello world!"
 ]
+
+socketApi.on('response', (data) => {
+    console.log(data)
+    addUtter("agent-utter", data.message, data.speak);
+})
 
 let tutorial_step = 0;
 let tutorial = true;
@@ -68,11 +74,7 @@ let handleTutorial = (message, speak) => {
 };
 
 let handleSubmit = (message, speak) => {
-    axios.post(`${server}/message`, { message: message, clientId: localStorage.getItem("clientId") })
-        .then((res) => {
-            addUtter("agent-utter", res.data.message, speak);
-        })
-        .catch(console.log);
+    socketApi.emit('message', { message: message, sid: localStorage.getItem('sid'), speak: speak })
 };
 
 let speakUtter = (message) => {
@@ -117,9 +119,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return voice.name == 'Google US English';
         })[0];
     };
-
-    axios.post(`${server}/reset`, { clientId: localStorage.getItem("clientId") })
-        .catch(console.log);
 });
 
 if (checkQuery("tutorial", 0)) {
