@@ -125,3 +125,10 @@ class ExecutionContext(object):
             if not res:
                 self.actions[self.step:self.step] = action.actions
                 self.step -= 1
+        elif isinstance(action, WhileLoopAction):
+            res = action.condition.eval(self.variables)
+            logging.info(f"Condition for while loop ({str(action.condition)}) is " + ("true" if res else "false"))
+            logging.info(f"Current variables: {str(self.variables)}")
+            if res:
+                self.actions[self.step:self.step] = action.actions
+                self.step -= 1

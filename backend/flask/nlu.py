@@ -5,7 +5,8 @@ from models import *
 create_class_regex = "(?:make|create)(?: a)? class(?: (?:called|named) (.+))?"
 create_conditional_regex = "(?:create(?: a)? conditional)|(?:(if .+) then (.+))|(?:(.+) (if .+))"
 create_list_regex = "(?:make|create)(?: a)? list(?: (?:called|named) (.+)| (.+))?"
-create_loop_regex = "(?:(?:make|create)(?: a)? loop)|(?:(.+) (until .+))"
+create_until_loop_regex = "(?:(?:make|create)(?: a)? until loop)|(?:(.+) (until .+))"
+create_while_loop_regex = "(?:(?:make|create)(?: a)? while loop)|(?:(while .+) then (.+))"
 create_procedure_regex = "(?:make|create)(?: a)? procedure(?: (?:called|named) (.+))?"
 add_property_regex = "add(?: a)?(?: (.+))? property(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
 add_procedure_regex = "add(?: an?)? (?:procedure|action)(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
@@ -17,7 +18,7 @@ increment_variable_regex = "(?:add(?: (.+))? to variable(?: (.+))?)|(?:increment
 say_condition_regex = "(?:until|if) i say (.+)"
 comparison_condition_regex = "(?:if|until) (.+) is ((?:(?:less|greater) than(?: or equal to)?)|equal to) (.+)"
 run_regex = "run(?: (.+))?"
-get_user_input_regex = "get(?: user)? input(?: and (?:call it)?(?:name it)?(?:save it as)? (.+))?"
+get_user_input_regex = "get(?: user)? input(?: and (?:(?:call it)?|(?:name it)?|(?:save it as)?) (.+))?"
 value_of_regex = "(?:the )?value of (?:(?:the )?variable )?(.+)"
 
 class SemanticNLU(object):
@@ -39,11 +40,16 @@ class SemanticNLU(object):
             condition = group(match, [1, 4])
             action = group(match, [2, 3])
             return ConditionalActionGoal(self.context, condition=self.try_parse_condition(condition), action=self.try_parse_goal(action))
-        elif re.match(create_loop_regex, message):
-            match = re.match(create_loop_regex, message)
+        elif re.match(create_until_loop_regex, message):
+            match = re.match(create_until_loop_regex, message)
             action = group(match, 1)
             condition = group(match, 2)
             return UntilLoopActionGoal(self.context, condition=self.try_parse_condition(condition), action=self.try_parse_goal(action))
+        elif re.match(create_while_loop_regex, message):
+            match = re.match(create_while_loop_regex, message)
+            condition = group(match, 1)
+            action = group(match, 2)
+            return WhileLoopActionGoal(self.context, condition=self.try_parse_condition(condition), action=self.try_parse_goal(action))
         elif re.match(create_class_regex, message):
             match = re.match(create_class_regex, message)
             return CreateClassGoal(self.context, name=group(match, 1))

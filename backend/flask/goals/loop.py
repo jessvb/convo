@@ -1,7 +1,7 @@
 from goals import *
 from models import *
 
-class UntilLoopActionGoal(BaseGoal):
+class LoopActionGoal(BaseGoal):
     def __init__(self, context, condition=None, action=None):
         super().__init__(context)
         self.loop_actions = []
@@ -33,3 +33,11 @@ class UntilLoopActionGoal(BaseGoal):
                 self.condition = value
             return
         setattr(self, attr, value)
+
+class UntilLoopActionGoal(LoopActionGoal):
+    def __init__(self, context, condition=None, action=None):
+        super().__init__(context, condition, action)
+
+class WhileLoopActionGoal(LoopActionGoal):
+    def __init__(self, context, condition=None, action=None):
+        super().__init__(context, condition, action)

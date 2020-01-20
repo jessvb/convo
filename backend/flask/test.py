@@ -37,7 +37,7 @@ messages2 = [
     "hi"
 ]
 
-for i, message in enumerate(messages2):
+for i, message in enumerate(messages):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

@@ -93,7 +93,7 @@ class ConditionalAction(Action):
         lines.extend([f"{tab}{line}" for action in self.actions[0] for line in action.python()])
         return lines
 
-class UntilLoopAction(Action):
+class LoopAction(Action):
     def __init__(self, condition, actions):
         self.condition = condition
         self.actions = actions
@@ -104,6 +104,17 @@ class UntilLoopAction(Action):
             "condition": str(self.condition),
             "actions": [a.json() for a in self.actions]
         }
+
+    def python(self):
+        raise NotImplementedError
+        
+class UntilLoopAction(LoopAction):
+    def __init__(self, condition, actions):
+        super().__init__(condition, actions)
+
+class WhileLoopAction(LoopAction):
+    def __init__(self, condition, actions):
+        super().__init__(condition, actions)
 
     def python(self):
         lines = [f"while {str(self.condition)}:"]
