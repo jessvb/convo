@@ -6,8 +6,36 @@ AudioContext = window.AudioContext || window.webkitAudioContext;
 
 let btnRecord = document.getElementById("btn-record");
 let status = document.getElementById("recording-status");
-btnRecord.onmousedown = () => startRecording();
-btnRecord.onmouseup = () => stopRecording();
+let experimentDiv = document.getElementById("experiment-container");
+
+let handleKeyDown = (event) => {
+    btnRecord.onmousedown = null;
+    btnRecord.onmouseup = null;
+    let tag = event.target.tagName.toLowerCase();
+    if (event.code == 'Space' && tag != 'input' && tag != 'textarea') { startRecording(); }
+}
+
+let handleKeyUp = (event) => {
+    btnRecord.onmousedown = startRecording;
+    btnRecord.onmouseup = stopRecording;
+    let tag = event.target.tagName.toLowerCase();
+    if (event.code == 'Space' && tag != 'input' && tag != 'textarea') { stopRecording(); }
+}
+
+btnRecord.onmousedown = () => {
+    document.onkeydown = null;
+    document.onkeyup = null;
+    startRecording();
+}
+
+btnRecord.onmouseup = () => {
+    document.onkeydown = handleKeyDown;
+    document.onkeyup = handleKeyUp;
+    stopRecording();
+}
+
+document.onkeydown = handleKeyDown;
+document.onkeyup = handleKeyUp;
 
 let isRecording = false;
 let isStreaming = false;
