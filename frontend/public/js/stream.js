@@ -6,8 +6,20 @@ AudioContext = window.AudioContext || window.webkitAudioContext;
 
 let btnRecord = document.getElementById("btn-record");
 let status = document.getElementById("recording-status");
-btnRecord.onmousedown = () => startRecording();
-btnRecord.onmouseup = () => stopRecording();
+let experimentDiv = document.getElementById("experiment-container");
+
+btnRecord.onmousedown = () => {
+    experimentDiv.onkeydown = null;
+    startRecording();
+}
+
+btnRecord.onmouseup = () => { 
+    experimentDiv.onkeydown = handleKeyDown;
+    stopRecording();
+}
+
+experimentDiv.onkeydown = handleKeyDown;
+experimentDiv.onkeyup = handleKeyUp;
 
 let isRecording = false;
 let isStreaming = false;
@@ -16,6 +28,16 @@ let context;
 let processor;
 let input;
 let stream;
+
+let handleKeyDown = (event) => {
+    btnRecord.onmousedown = null;
+    if (event.code == 'Space') { startRecording(); }
+}
+
+let handleKeyUp = (event) => {
+    btnRecord.onmousedown = startRecording;
+    if (event.code == 'Space') { stopRecording(); }
+}
 
 let startRecording = () => {
     if (isRecording)
