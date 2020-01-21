@@ -52,8 +52,9 @@ transitions = {
 }
 
 class DialogManager(object):
-    def __init__(self):
-        self.context = DialogContext()
+    def __init__(self, sid):
+        self.sid = sid
+        self.context = DialogContext(sid)
         self.nlu = SemanticNLU(self.context)
 
     def reset(self):
@@ -110,9 +111,10 @@ class DialogManager(object):
         return response
 
 class DialogContext(object):
-    def __init__(self):
+    def __init__(self, sid):
         example = Class("example")
         example.add_property(Property(example, "count", "number"))
+        self.sid = sid
         self.classes = { "example": example }
         self.procedures = { "example": example_procedure }
         self.reset()

@@ -1,4 +1,5 @@
 import logging
+import flask_socketio
 from goals import *
 from models import *
 
@@ -73,7 +74,7 @@ class ExecutionContext(object):
             if goal:
                 return goal
         self.done = True
-    
+
     def evaluate_action(self, action):
         logging.info(f"==> Evaluating action {str(action)} on step {self.step}")
         if isinstance(action, SayAction):
@@ -82,6 +83,7 @@ class ExecutionContext(object):
                 variable = action.phrase.variable
                 phrase = f"The value of {variable} is {self.variables[variable]}"
             logging.info(f"Saying '{phrase}'")
+            flask_socketio.emit("response", { "message": phrase }, room=self.context.sid)
             self.context.add_message(action.phrase)
         elif isinstance(action, GetUserInputAction):
             logging.info(f"Getting user input and setting as {action.variable}")

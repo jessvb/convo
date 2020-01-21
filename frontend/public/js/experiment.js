@@ -12,6 +12,10 @@ const tutorial_required_messages = [
     "Hello world!"
 ]
 
+socketApi.on('response', (data) => {
+    addUtter("agent-utter", data.message, data.speak);
+})
+
 let tutorial_step = 0;
 let tutorial = true;
 let voice;
@@ -68,11 +72,7 @@ let handleTutorial = (message, speak) => {
 };
 
 let handleSubmit = (message, speak) => {
-    axios.post(`${server}/message`, { message: message, clientId: localStorage.getItem("clientId") })
-        .then((res) => {
-            addUtter("agent-utter", res.data.message, speak);
-        })
-        .catch(console.log);
+    socketApi.emit('message', { message: message, sid: localStorage.getItem('sid'), speak: speak })
 };
 
 let speakUtter = (message) => {
@@ -117,9 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return voice.name == 'Google US English';
         })[0];
     };
-
-    axios.post(`${server}/reset`, { clientId: localStorage.getItem("clientId") })
-        .catch(console.log);
 });
 
 if (checkQuery("tutorial", 0)) {
