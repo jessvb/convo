@@ -13,7 +13,6 @@ const tutorial_required_messages = [
 ]
 
 socketApi.on('response', (data) => {
-    console.log(data)
     addUtter("agent-utter", data.message, data.speak);
 })
 
