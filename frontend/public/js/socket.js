@@ -1,6 +1,5 @@
-// const socket = io.connect("https://userstudy.appinventor.mit.edu");
-const socketApi = io.connect("http://localhost:5000");
-const socket = io.connect("http://localhost:8080");
+const socket = io.connect("https://userstudy.appinventor.mit.edu");
+const socketApi = io.connect("https://userstudy.appinventor.mit.edu", { path: '/api/socket.io' })
 
 socketApi.on('connect', (data) => {
     socketApi.emit('join', localStorage.getItem("sid"));
