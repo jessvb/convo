@@ -12,7 +12,7 @@ class BaseGoal(object):
 
     @property
     def is_complete(self):
-        return len(self.todos) == 0
+        return len(self.todos) == 0 and self.error is None
 
     @property
     def message(self):

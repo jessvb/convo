@@ -13,7 +13,7 @@ messages = [
     "create a variable called copy",
     "the value of variable input",
     "say the value of copy",
-    "if copy is greater than 3 then add 10 to variable copy",
+    "if copy is greater than three then add ten to variable copy",
     "done",
     "no",
     "say getting input two",
@@ -21,23 +21,37 @@ messages = [
     "say got user input two",
     "create a variable called copy two",
     "the value of variable input",
-    "add 2 to variable input",
+    "add two to variable input",
     "say the value of copy",
     "set the variable copy two to the value of input",
-    "add 2 to variable copy two until copy two is greater than 12",
+    "add two to variable copy two until copy two is greater than twelve",
     "done",
     "create a variable called copy three and set it to the value of input two",
     "done",
     "run test",
-    "5",
+    "five",
     "10"
 ]
 messages2 = [
     "run example",
     "hi"
 ]
+messages3 = [
+    "create a procedure",
+    "text",
+    "say hello world",
+    "create a variable",
+    "input",
+    "5",
+    "say the value of imports",
+    "say the value of input",
+    "done",
+    "run test",
+    "run test",
+    "run text"
+]
 
-for i, message in enumerate(messages):
+for i, message in enumerate(messages3):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

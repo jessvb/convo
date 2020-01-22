@@ -92,6 +92,8 @@ class DialogManager(object):
             goal = self.context.parsed
             if goal is None or not isinstance(goal, BaseGoal):
                 response = "I didn't understand what you were saying. Please try again."
+            elif goal.error is not None:
+                response = goal.error
             else:
                 if goal.is_complete:
                     response = goal.complete()

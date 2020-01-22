@@ -1,5 +1,6 @@
 from models import *
 from goals import *
+from word2number import w2n
 
 class CreateVariableActionGoal(ActionGoal):
     def __init__(self, context, name=None, value=None):
@@ -34,7 +35,10 @@ class CreateVariableActionGoal(ActionGoal):
                 num = float(value)
                 self.value = int(num) if num.is_integer() else num
             else:
-                self.value = value
+                try:
+                    self.value = w2n.word_to_num(value)
+                except ValueError as e:
+                    self.value = value
             return
         setattr(self, attr, value)
 
@@ -70,7 +74,10 @@ class SetVariableActionGoal(ActionGoal):
                 num = float(value)
                 self.value = int(num) if num.is_integer() else num
             else:
-                self.value = value
+                try:
+                    self.value = w2n.word_to_num(value)
+                except ValueError as e:
+                    self.value = value
             return
         setattr(self, attr, value)
 
@@ -102,9 +109,12 @@ class IncrementVariableActionGoal(ActionGoal):
                     self.todos.append(GetInputGoal(self.context, self, attr, f"Variable {value.variable} does not exist. Try another variable or value."))
                 else:
                     self.value = value
-            elif not value.isnumeric():
-                self.todos.append(GetInputGoal(self.context, self, attr, f"Not a number. Try again."))
-            else:
+            elif value.isnumeric():
                 num = float(value)
                 self.value = int(num) if num.is_integer() else num
+            else:
+                try:
+                    self.value = w2n.word_to_num(value)
+                except ValueError as e:
+                    self.todos.append(GetInputGoal(self.context, self, attr, f"Not a number. Try again."))
             return

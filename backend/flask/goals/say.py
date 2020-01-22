@@ -17,5 +17,10 @@ class SayActionGoal(ActionGoal):
                 self.todos.append(GetInputGoal(self.context, self, attr, f"What do you want me to say?"))
             elif isinstance(value, ValueOf):
                 if value.variable not in self.variables:
-                    self.todos.append(GetInputGoal(self.context, self, attr, f"Variable {value.variable} does not exist. Try another variable or phrase."))
+                    self.error = f"Variable {value.variable} does not exist."
+                    return
+                self.phrase = value
+            else:
+                self.phrase = value
+            return
         setattr(self, attr, value)

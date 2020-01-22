@@ -33,7 +33,20 @@ const request = {
         sampleRateHertz: sampleRateHertz,
         languageCode: languageCode,
         speech_contexts: [
-            ["create", "make", "variable", "class", "property", "procedure", "conditional", "loop"]
+            [
+                "create a procedure",
+                "create",
+                "make",
+                "variable",
+                "class",
+                "property",
+                "procedure",
+                "conditional",
+                "loop",
+                "run",
+                "list",
+                "add"
+            ]
         ]
     },
     interimResults: false
