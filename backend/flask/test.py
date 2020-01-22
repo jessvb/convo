@@ -2,7 +2,7 @@ import logging
 from models import *
 from client import *
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 client = Client("test")
 dm = client.dm
 messages = [
@@ -13,7 +13,7 @@ messages = [
     "create a variable called copy",
     "the value of variable input",
     "say the value of copy",
-    "if copy is greater than 3 then add 10 to variable copy",
+    "if copy is greater than three then add ten to variable copy",
     "done",
     "no",
     "say getting input two",
@@ -21,15 +21,15 @@ messages = [
     "say got user input two",
     "create a variable called copy two",
     "the value of variable input",
-    "add 2 to variable input",
+    "add two to variable input",
     "say the value of copy",
     "set the variable copy two to the value of input",
-    "add 2 to variable copy two until copy two is greater than 12",
+    "add two to variable copy two until copy two is greater than twelve",
     "done",
     "create a variable called copy three and set it to the value of input two",
     "done",
     "run test",
-    "5",
+    "five",
     "10"
 ]
 messages2 = [
@@ -37,7 +37,7 @@ messages2 = [
     "hi"
 ]
 
-for i, message in enumerate(messages):
+for i, message in enumerate(messages3):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

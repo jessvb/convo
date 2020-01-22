@@ -83,7 +83,11 @@ class ExecutionContext(object):
                 variable = action.phrase.variable
                 phrase = f"The value of {variable} is {self.variables[variable]}"
             logging.info(f"Saying '{phrase}'")
-            flask_socketio.emit("response", { "message": phrase }, room=self.context.sid)
+            try:
+                flask_socketio.emit("response", { "message": phrase }, room=self.context.sid)
+            except RuntimeError as e:
+                if not str(e).startswith("Working outside of request context."):
+                    raise e
             self.context.add_message(action.phrase)
         elif isinstance(action, GetUserInputAction):
             logging.info(f"Getting user input and setting as {action.variable}")

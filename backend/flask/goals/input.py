@@ -1,6 +1,7 @@
 import logging
 from goals import *
 from models import *
+from word2number import w2n
 
 class GetInputGoal(BaseGoal):
     def __init__(self, context, obj, attr, message):
@@ -34,7 +35,7 @@ class GetUserInputGoal(BaseGoal):
         super().__init__(context)
         self.variable = variable
         self.value = None
-    
+
     @property
     def is_complete(self):
         return self.value is not None
@@ -54,7 +55,10 @@ class GetUserInputGoal(BaseGoal):
                 num = float(message)
                 self.value = int(message) if num.is_integer() else num
             else:
-                self.value = message
+                try:
+                    self.value = w2n.word_to_num(message)
+                except ValueError as e:
+                    self.value = message
 
     def complete(self):
         variables = self.context.execution.variables

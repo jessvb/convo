@@ -1,5 +1,6 @@
 from goals import *
 from models import *
+from word2number import w2n
 
 class LoopActionGoal(BaseGoal):
     def __init__(self, context, condition=None, action=None):
@@ -25,12 +26,16 @@ class LoopActionGoal(BaseGoal):
         elif (attr == "condition"):
             if value is None:
                 self.todos.append(GetConditionGoal(self.context, self))
-            elif not value.value.isnumeric():
-                self.todos.append(GetConditionGoal(self.context, self, "The value is not a number. Try again."))
-            else:
+            elif value.value.isnumeric():
                 num = float(value.value)
                 value.value = int(num) if num.is_integer() else num
                 self.condition = value
+            else:
+                try:
+                    value.value = w2n.word_to_num(value.value)
+                    self.condition = value
+                except ValueError as e:
+                    self.todos.append(GetConditionGoal(self.context, self, "The value is not a number. Try again."))
             return
         setattr(self, attr, value)
 

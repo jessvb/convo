@@ -11,6 +11,7 @@ services:
     command: gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:5000 app:app
   web:
     build: ./frontend
+    restart: on-failure
     volumes:
       - ./frontend:/app
     ports:
