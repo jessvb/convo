@@ -29,7 +29,7 @@ class RunGoal(BaseGoal):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, "What do you want to run?"))
             elif value not in self.context.procedures:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"Procedure {value} does not exist. Try another name or say cancel."))
+                self.error = f"Procedure {value} does not exist."
             else:
                 self.name = value
                 self.procedure = self.context.procedures[value]
@@ -81,7 +81,7 @@ class ExecutionContext(object):
             phrase = action.phrase
             if isinstance(action.phrase, ValueOf):
                 variable = action.phrase.variable
-                phrase = f"The value of {variable} is {self.variables[variable]}"
+                phrase = f"The value of {variable} is {self.variables[variable]}."
             logging.info(f"Saying '{phrase}'")
             try:
                 flask_socketio.emit("response", { "message": phrase }, room=self.context.sid)
@@ -120,9 +120,7 @@ class ExecutionContext(object):
             res = action.condition.eval(self.variables)
             logging.info(f"Condition for if statement ({str(action.condition)}) is " + ("true" if res else "false"))
             logging.info(f"Current variables: {str(self.variables)}")
-            print([str(a) for a in self.actions])
             self.actions[self.step:self.step + 1] = action.actions[res]
-            print([str(a) for a in self.actions])
             self.step -= 1
         elif isinstance(action, UntilLoopAction):
             res = action.condition.eval(self.variables)

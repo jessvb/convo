@@ -34,8 +34,10 @@ class GetActionsGoal(BaseGoal):
         self.error = None
         if self.context.current_message in ["done", "nothing", "no"]:
             self.done = True
-        elif self.context.parsed is None:
+        elif not isinstance(self.context.parsed, BaseGoal):
             self.error = "Couldn't understand the action. Try again."
+        elif self.context.parsed.error is not None:
+            self.error = self.context.parsed.error
         else:
             action = self.context.parsed
             setattr(action, "actions", self.actions)

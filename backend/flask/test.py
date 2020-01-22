@@ -2,7 +2,7 @@ import logging
 from models import *
 from client import *
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 client = Client("test")
 dm = client.dm
 messages = [
@@ -35,6 +35,20 @@ messages = [
 messages2 = [
     "run example",
     "hi"
+]
+messages3 = [
+    "create a procedure",
+    "text",
+    "say hello world",
+    "create a variable",
+    "input",
+    "5",
+    "say the value of imports",
+    "say the value of input",
+    "done",
+    "run test",
+    "run test",
+    "run text"
 ]
 
 for i, message in enumerate(messages3):
