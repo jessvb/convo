@@ -62,12 +62,12 @@ class GetConditionalActionsGoal(GetActionsGoal):
         if len(self.todos) == 0:
             if self.condition:
                 if len(self.actions) > 0:
-                    return "Added action to when conditional is true. Anything else?"
+                    return "Added action to when conditional is true. Anything else? (Say 'done' if you are finished)"
                 else:
                     return "What do you want to do first if the condition is true?"
             else:
                 if len(self.actions) > 0:
-                    return "Added action to when conditional is false. Anything else?"
+                    return "Added action to when conditional is false. Anything else? (Say 'done' if you are finished)"
                 else:
                     return "Would you like to do anything if condition is false? If so, what would you like to do first?"
         else:
@@ -100,6 +100,6 @@ class GetProcedureActionsGoal(GetActionsGoal):
             return f"{self.__class__.__name__} completed!"
 
         if len(self.todos) == 0:
-            return "Added action to procedure! What's next?" if len(self.actions) > 0 else "What do you want to do first?"
+            return "Added action to procedure! What's next? (Say 'done' if you are finished)" if len(self.actions) > 0 else "What do you want to do first?"
         else:
             return self.todos[-1].message

@@ -42,11 +42,11 @@ def message(data):
         return
 
     dm = client.dm
+    res = dm.handle_message(message)
+    state = dm.context.state
     response = {
-        "message": dm.handle_message(message),
-        "conversation": dm.context.conversation,
-        "classes": [str(v) for k, v in dm.context.classes.items()],
-        "goal": str(dm.current_goal()),
+        "message": res,
+        "state": dm.context.state,
         "speak": data.get("speak")
     }
 

@@ -76,9 +76,8 @@ class DialogManager(object):
             self.context.state = "home"
             return "Canceled! What do you want to do?"
 
-        self.context.parsed = self.nlu.parse_message(message)
-
         try:
+            self.context.parsed = self.nlu.parse_message(message)
             if isinstance(self.context.parsed, BaseGoal):
                 self.context.validate_goal(self.context.parsed)
         except InvalidStateError as e:
@@ -86,7 +85,10 @@ class DialogManager(object):
             base = "I cannot do this right now."
             if (self.context.state == "home"):
                 return base + " Try 'create a procedure' or 'create a class'."
-            return base + (f" {self.current_goal().message}" if self.current_goal() else "")
+            response = base + (f" {self.current_goal().message}" if self.current_goal() else "")
+            if response:
+                self.context.add_message(response)
+            return response
 
         if self.current_goal() is None:
             goal = self.context.parsed

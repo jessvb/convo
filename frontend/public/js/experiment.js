@@ -12,7 +12,99 @@ const tutorial_required_messages = [
     "Hello world!"
 ]
 
+const example_commands = {
+    "home": [
+        {
+            "title": "Create a Procedure or Program",
+            "examples": [
+                "create a procedure",
+                "make a procedure called test"
+            ]
+        },
+        {
+            "title": "Run a Procedure or Program",
+            "examples": [
+                "run test",
+                "play test"
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "title": "Create a Variable",
+            "examples": [
+                "create a variable called foo",
+                "make a variable"
+            ]
+        },
+        {
+            "title": "Set a Variable",
+            "examples": [
+                "set a variable",
+                "set the variable foo to 5"
+            ]
+        },
+        {
+            "title": "Add to a (Number) Variable",
+            "examples": [
+                "add to variable",
+                "add 5 to variable foo"
+            ]
+        },
+        {
+            "title": "Make Me Say Something",
+            "examples": [
+                "say 'Hello world!'",
+                "say the value of the variable foo"
+            ]
+        },
+        {
+            "title": "Make a Conditional",
+            "examples": [
+                "if foo is greater than 5 then say hooray",
+                "if bar is less than 10 then add 10 to variable bar"
+            ]
+        },
+        {
+            "title": "Make a While Loop",
+            "examples": [
+                "while foo is less than 2 then add 2 to variable foo"
+            ]
+        },
+        {
+            "title": "Make a Until Loop",
+            "examples": [
+                "add 2 to variable foo until foo is equal to 20"
+            ]
+        },
+        {
+            "title": "Get User Input",
+            "examples": [
+                "get user input",
+                "get user input and call it foo"
+            ]
+        }
+    ]
+}
+
+let changeSidebarText = (state) => {
+    let examples = document.getElementById('example-actions-list');
+    if (state != null && state in example_commands) {
+        example_commands[state].forEach(action => {
+            let node = document.createElement('div');
+            node.className = "example-action"
+            node.innerHTML = `<div class="action-title"><b>${action.title}</b></div>`;
+            action.examples.forEach(ex => {
+                node.innerHTML += `<div class="action-example"><em>${ex}</em></div>`;
+            })
+            examples.appendChild(node);
+        })
+    }
+}
+
 socketApi.on('response', (data) => {
+    changeSidebarText(data.state);
+    document.getElementById('example-actions-heading').click();
     addUtter("agent-utter", data.message, data.speak);
 })
 
@@ -56,13 +148,13 @@ let handleTutorial = (message, speak) => {
 
     if (message === "skip" || tutorial_step > instructions_text.length - 1) {
         document.getElementById("sidebar-tutorial").style.display = "none";
-        document.getElementById("sidebar").style.display = "block";
+        document.getElementById("sidebar").style.display = "flex";
         tutorial = false;
         addUtter("agent-utter", "You have finished the tutorial!", speak);
         addUtter("agent-utter", "What would you like to do now?", speak);
     } else {
         if (!correct)
-            addUtter("agent-utter", "To advance, please follow the instructions on the left.", speak);
+            addUtter('agent-utter', 'To advance, please follow the instructions on the left.', speak);
         document.getElementById("sidebar-tutorial").innerHTML = `
             <div><b>You are currently in practice mode.</b></div>
             <div>${instructions_text[tutorial_step]}</div><br>
@@ -102,6 +194,20 @@ let addUtter = (className, message, speak=true) => {
     }
 };
 
+let addExamplePrograms = () => {
+    let programs = document.getElementById('example-programs-list');
+    programs.innerHTML = `
+        <div class="example-program">
+            <div class="program-title"><b>Hello World!</b></div>
+            <ol class="program-instructions">
+                <li>Say <em>"Create a procedure called hello"</em></li>
+                <li>Say <em>"Say hello world"</em></li>
+                <li>Say <em>"Done"</em></li>
+                <li>Say <em>"Run hello"</em></li>
+            </ol>
+        <div>`;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     let textbox = document.getElementById("textbox");
     if (textbox != null) {
@@ -112,6 +218,35 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    document.getElementById('example-actions').innerHTML = `
+        <div id="example-actions-heading">
+            <div><b>Things You Can Say To...</b></div>
+            <div id="example-actions-direction">&#9650</div>
+        </div>
+        <div id="example-actions-list"></div>`;
+    document.getElementById('example-actions-heading').onclick = () => {
+        let actionsList = document.getElementById('example-actions-list');
+        let displ = actionsList.style.display === 'block' ? 'none' : 'block';
+        document.getElementById('example-actions-direction').innerHTML = displ === 'none' ? "&#9650" : "&#9660";
+        actionsList.style.display = displ;
+    }
+    changeSidebarText("home");
+
+    document.getElementById('example-programs').innerHTML = `
+        <div id="example-programs-heading">
+            <div><b>Example Programs</b></div>
+            <div id="example-programs-direction">&#9650</div>
+        </div>
+        <div id="example-programs-list"></div>`;
+
+    document.getElementById('example-programs-heading').onclick = () => {
+        let programsList = document.getElementById('example-programs-list');
+        let displ = programsList.style.display === 'block' ? 'none' : 'block';
+        document.getElementById('example-programs-direction').innerHTML = displ === 'none' ? "&#9650" : "&#9660";
+        programsList.style.display = displ;
+    }
+    addExamplePrograms();
+
     window.speechSynthesis.onvoiceschanged = () => {
         voice = window.speechSynthesis.getVoices().filter((voice) => {
             return voice.name == 'Google US English';
@@ -121,7 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 if (checkQuery("tutorial", 0)) {
     document.getElementById("sidebar-tutorial").style.display = "none";
-    document.getElementById("sidebar").style.display = "block";
+    document.getElementById("sidebar").style.display = "flex";
     tutorial = false;
     addUtter("agent-utter", "Hi, what would you like to do?", false);
 } else {
