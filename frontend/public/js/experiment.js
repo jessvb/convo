@@ -89,6 +89,7 @@ const example_commands = {
 
 let changeSidebarText = (state) => {
     let examples = document.getElementById('example-actions-list');
+    examples.innerHTML = "";
     if (state != null && state in example_commands) {
         example_commands[state].forEach(action => {
             let node = document.createElement('div');
@@ -104,7 +105,6 @@ let changeSidebarText = (state) => {
 
 socketApi.on('response', (data) => {
     changeSidebarText(data.state);
-    document.getElementById('example-actions-heading').click();
     addUtter("agent-utter", data.message, data.speak);
 })
 
