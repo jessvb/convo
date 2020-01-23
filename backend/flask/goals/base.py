@@ -46,6 +46,7 @@ class BaseGoal(object):
 class ActionGoal(BaseGoal):
     def __init__(self, context):
         super().__init__(context)
+        self.context.validate_goal(self)
         assert isinstance(self.context.current, Procedure)
         self.procedure = self.context.current
         self.variables = self.procedure.variables

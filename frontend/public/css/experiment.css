@@ -26,6 +26,7 @@
     grid-column-end: 2;
     grid-row-start: 1;
     grid-row-end: 5;
+    overflow: scroll;
 }
 
 #voice-container,
@@ -122,6 +123,7 @@
 
 #sidebar {
     display: none;
+    flex-direction: column;
 }
 
 .program {
@@ -161,4 +163,37 @@
     background-color: white;
     padding: 10px;
     margin-left: 10px;
+}
+
+#example-actions,
+#example-programs {
+    padding-top: 20px;
+    text-align: left;
+}
+
+#example-actions-heading,
+#example-programs-heading {
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: solid 1px black;
+    padding-bottom: 2px;
+}
+
+#example-actions-list,
+#example-programs-list {
+    display: none;
+}
+
+.example-action,
+.example-program {
+    padding-top: 10px;
+}
+
+#example-actions-direction,
+#example-programs-direction {
+    font-size: 12px;
 }
