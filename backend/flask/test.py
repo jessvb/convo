@@ -33,9 +33,6 @@ messages = [
     "10"
 ]
 messages2 = [
-    "create a variable"
-]
-messages3 = [
     "create a procedure",
     "text",
     "say hello world",
@@ -49,8 +46,17 @@ messages3 = [
     "run test",
     "run text"
 ]
+messages3 = [
+    "create a procedure called fire",
+    "create a variable called foo",
+    "5",
+    "set the variable bar",
+    "create a variable called foo",
+    "set the variable foo",
+    "10"
+]
 
-for i, message in enumerate(messages2):
+for i, message in enumerate(messages3):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

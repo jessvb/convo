@@ -17,6 +17,9 @@ class GetActionsGoal(BaseGoal):
         if self.error:
             return self.error
 
+        if self._message:
+            return self._message
+
         if self.is_complete:
             return f"{self.__class__.__name__} completed!"
 
@@ -33,13 +36,15 @@ class GetActionsGoal(BaseGoal):
             return
 
         logging.debug(f"Advancing {self.__class__.__name__}...")
-        self.error = None
+        self._message = None
         if self.context.current_message in ["done", "nothing", "no"]:
             self.done = True
         elif not isinstance(self.context.parsed, BaseGoal):
-            self.error = "I didn't quite catch that. What action did you want me to add?"
+            self._message = "I didn't quite catch that. What action did you want me to add?"
         elif self.context.parsed.error is not None:
-            self.error = self.context.parsed.error
+            self._message = self.context.parsed.error
+        elif self.context.parsed._message is not None:
+            self._message = self.context.parsed._message
         else:
             action = self.context.parsed
             setattr(action, "actions", self.actions)
@@ -57,6 +62,9 @@ class GetConditionalActionsGoal(GetActionsGoal):
     def message(self):
         if self.error:
             return self.error
+
+        if self._message:
+            return self._message
 
         if self.is_complete:
             return f"{self.__class__.__name__} completed!"
@@ -81,6 +89,9 @@ class GetLoopActionsGoal(GetActionsGoal):
         if self.error:
             return self.error
 
+        if self._message:
+            return self._message
+
         if self.is_complete:
             return f"{self.__class__.__name__} completed!"
 
@@ -97,6 +108,9 @@ class GetProcedureActionsGoal(GetActionsGoal):
     def message(self):
         if self.error:
             return self.error
+
+        if self._message:
+            return self._message
 
         if self.is_complete:
             return f"{self.__class__.__name__} completed!"

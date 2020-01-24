@@ -19,7 +19,7 @@ class CreateVariableActionGoal(ActionGoal):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"What do you want to call the variable?"))
             elif value in self.variables:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"Variable {value} already exists. Try another name or say cancel."))
+                self.error = f"Variable {value} already exists. Try creating a variable with another name."
             else:
                 self.name = value
             return
@@ -28,7 +28,7 @@ class CreateVariableActionGoal(ActionGoal):
                 self.todos.append(GetInputGoal(self.context, self, attr, f"What should be the initial value?"))
             elif isinstance(value, ValueOf):
                 if value.variable not in self.variables:
-                    self.todos.append(GetInputGoal(self.context, self, attr, f"Variable {value.variable} does not exist. Try another variable or value."))
+                    self.error = f"Variable {value} does not exist. Try setting it to the value of an existing variable."
                 else:
                     self.value = value
             elif value.isnumeric():
@@ -58,7 +58,7 @@ class SetVariableActionGoal(ActionGoal):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"What variable do you want to set?"))
             elif value not in self.variables:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"Variable {value} does not exist. Try another variable or say cancel."))
+                self.error = f"The variable, {value}, hasn't been created, so we can't set it yet. You can create it by saying, \"create a variable called {value}.\""
             else:
                 self.name = value
             return
@@ -67,7 +67,7 @@ class SetVariableActionGoal(ActionGoal):
                 self.todos.append(GetInputGoal(self.context, self, attr, f"What value do you want to set the variable to?"))
             elif isinstance(value, ValueOf):
                 if value.variable not in self.variables:
-                    self.todos.append(GetInputGoal(self.context, self, attr, f"Variable {value.variable} does not exist. Try another variable or value."))
+                    self.error = f"Variable {value} does not exist. Try setting it to the value of an existing variable."
                 else:
                     self.value = value
             elif value.isnumeric():
@@ -97,7 +97,7 @@ class IncrementVariableActionGoal(ActionGoal):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"What variable do you want to increment?"))
             elif value not in self.variables:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"Variable {value} does not exist. Create the variable first and try again or say cancel."))
+                self.error = f"The variable, {value}, hasn't been created, so we can't set it yet. You can create it by saying, \"create a variable called {value}.\""
             else:
                 self.name = value
             return
@@ -106,7 +106,7 @@ class IncrementVariableActionGoal(ActionGoal):
                 self.todos.append(GetInputGoal(self.context, self, attr, f"What value do you want to set the variable to?"))
             elif isinstance(value, ValueOf):
                 if value.variable not in self.variables:
-                    self.todos.append(GetInputGoal(self.context, self, attr, f"Variable {value.variable} does not exist. Try another variable or value."))
+                    self.error = f"Variable {value} does not exist. Try setting it to the value of an existing variable."
                 else:
                     self.value = value
             elif value.isnumeric():
