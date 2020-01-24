@@ -57,11 +57,11 @@ io.on('connection', (client) => {
     let id = client.id;
     let startStream = () => {
         stream = speechClient.streamingRecognize(request)
-            .on('error', console.error)
+            .on('error', (err) => console.log(err))
             .on('data', (data) => {
                 if (data.results[0] && data.results[0].alternatives[0]) {
                     let transcript = data.results[0].alternatives[0].transcript;
-                    client.emit('clientUtter', transcript);
+                    io.to(`${client.id}`).emit('clientUtter', transcript);
                 } else {
                     console.log('Reached transcription time limit, press Ctrl+C');
                 }
@@ -79,7 +79,7 @@ io.on('connection', (client) => {
     client.on('join', (data) => {
         id = data == null ? client.id : data;
         console.log(`Client ${id} connected to server.`);
-        client.emit('joined', id);
+        io.to(`${client.id}`).emit('joined', id);
     });
 
     client.on('disconnect', () => {

@@ -2,13 +2,14 @@ version: '3.0'
 services:
   server:
     build: ./backend/flask
+    restart: on-failure
     volumes:
       - ./backend/flask:/app
     environment:
       - FLASK_ENV=development
     ports:
       - 5000:5000
-    command: gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:5000 app:app
+    command: gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:5000 --capture-output app:app
   web:
     build: ./frontend
     restart: on-failure
