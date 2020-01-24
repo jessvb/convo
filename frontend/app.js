@@ -57,7 +57,11 @@ io.on('connection', (client) => {
     let id = client.id;
     let startStream = () => {
         stream = speechClient.streamingRecognize(request)
-            .on('error', (err) => console.log(err))
+            .on('error', (err) => {
+                console.log("Restarting stream.");
+                console.log(err);
+                startStream();
+            })
             .on('data', (data) => {
                 if (data.results[0] && data.results[0].alternatives[0]) {
                     let transcript = data.results[0].alternatives[0].transcript;
@@ -72,8 +76,6 @@ io.on('connection', (client) => {
     let endStream = () => {
         if (stream)
             stream.end();
-
-        stream = null;
     }
 
     client.on('join', (data) => {
@@ -97,7 +99,7 @@ io.on('connection', (client) => {
     });
 
     client.on('audio', (data) => {
-        if (stream !== null)
+        if (stream !== null && stream.writable)
             stream.write(data);
     });
 });
