@@ -122,6 +122,6 @@ let downsample = (buffer, sampleRate, outSampleRate) => {
 }
 
 window.onbeforeunload = () => {
-	if (isStreaming)
+	if (isStreaming || isRecording)
 		socket.emit('endStream');
 };

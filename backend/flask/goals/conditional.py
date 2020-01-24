@@ -46,7 +46,7 @@ class GetConditionGoal(BaseGoal):
         super().__init__(context)
         self.obj = obj
         self.condition = None
-        self.error = message
+        self._message = message
 
     @property
     def is_complete(self):
@@ -54,8 +54,8 @@ class GetConditionGoal(BaseGoal):
 
     @property
     def message(self):
-        if self.error:
-            return self.error
+        if self._message:
+            return self._message
 
         return "GetConditionGoal completed!" if self.is_complete else "What's the condition?"
 
@@ -64,9 +64,9 @@ class GetConditionGoal(BaseGoal):
         parsed = self.context.parsed
         if parsed and isinstance(parsed, Condition):
             self.condition = parsed
-            self.error = None
+            self._message = None
         else:
-            self.error = "Not a condition. Try again."
+            self._message = "Not a condition. Try again."
 
     def complete(self):
         self.obj.setattr("condition", self.condition)

@@ -8,23 +8,32 @@ class BaseGoal(object):
         self.error = None
         self.context = context
         self.todos = []
+        self._message = None
         logging.debug(f"Creating {self.__class__.__name__}...")
 
     @property
     def is_complete(self):
-        return len(self.todos) == 0 and self.error is None
+        return len(self.todos) == 0 and self._message is None and self.error is None
 
     @property
     def message(self):
         if self.error:
             return self.error
+
+        if self._message:
+            return self._message
+
         return f"{self.__class__.__name__} completed!" if self.is_complete else self.todos[-1].message
 
     def advance(self):
         logging.debug(f"Advancing {self.__class__.__name__}...")
-        self.error = None
+        self._message = None
         if self.todos:
             todo = self.todos.pop()
+            if todo.error:
+                self._message = todo.error
+                return
+
             todo.advance()
             if todo.is_complete:
                 todo.complete()

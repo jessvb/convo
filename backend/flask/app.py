@@ -17,14 +17,13 @@ def index():
 @socketio.on("join")
 def join(sid):
     sid = request.sid if sid is None else sid
-    print(f"Client {sid} connected.")
-    join_room(sid)
+    print(f"Client {sid} connected.", flush=True)
+    join_room(str(sid))
     client = clients.get(sid, Client(sid))
-    if sid not in clients:
-        clients[sid] = client
+    clients[sid] = client
     sessions[request.sid] = sid
     client.dm.reset()
-    socketio.emit("joined", sid)
+    socketio.emit("joined", sid, room=str(sid))
 
 @socketio.on("disconnect")
 def disconnect():
@@ -50,4 +49,4 @@ def message(data):
         "speak": data.get("speak")
     }
 
-    socketio.emit("response", response)
+    socketio.emit("response", response, room=str(sid))

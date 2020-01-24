@@ -55,39 +55,17 @@ const request = {
 io.on('connection', (client) => {
     let stream = null;
     let id = client.id;
-
-    client.on('join', (data) => {
-        id = data == null ? client.id : data;
-        console.log(`Client ${id} connected to server.`);
-        client.emit('joined', id);
-    });
-
-    client.on('disconnect', () => {
-        console.log(`Client ${id} disconnected.`);
-    });
-
-    client.on('startStream', () => {
-        console.log('Starting stream.');
-        startStream(client);
-    });
-
-    client.on('endStream', () => {
-        console.log('Ending stream.');
-        endStream();
-    });
-
-    client.on('audio', (data) => {
-        if (stream !== null)
-            stream.write(data);
-    });
-
-    let startStream = (client) => {
+    let startStream = () => {
         stream = speechClient.streamingRecognize(request)
-            .on('error', console.error)
+            .on('error', (err) => {
+                console.log("Restarting stream.");
+                console.log(err);
+                startStream();
+            })
             .on('data', (data) => {
                 if (data.results[0] && data.results[0].alternatives[0]) {
                     let transcript = data.results[0].alternatives[0].transcript;
-                    client.emit('clientUtter', transcript);
+                    io.to(`${client.id}`).emit('clientUtter', transcript);
                 } else {
                     console.log('Reached transcription time limit, press Ctrl+C');
                 }
@@ -98,9 +76,35 @@ io.on('connection', (client) => {
     let endStream = () => {
         if (stream)
             stream.end();
-
-        stream = null;
     }
+
+    client.on('join', (data) => {
+        id = data == null ? client.id : data;
+        console.log(`Client ${id} connected to server.`);
+        io.to(`${client.id}`).emit('joined', id);
+    });
+
+    client.on('disconnect', () => {
+        console.log(`Client ${id} disconnected.`);
+    });
+
+    client.on('startStream', () => {
+        console.log('Starting stream.');
+        startStream();
+    });
+
+    client.on('endStream', () => {
+        console.log('Ending stream.');
+        endStream();
+    });
+
+    client.on('audio', (data) => {
+        if (stream !== null && stream.writable)
+            stream.write(data);
+
+        if (stream.writable)
+            console.log("Stream became unwritable");
+    });
 });
 
 httpServer.listen(port, host, () => {

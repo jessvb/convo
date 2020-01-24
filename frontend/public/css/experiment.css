@@ -40,10 +40,12 @@
     grid-template-rows: 120px repeat(3, 1fr);
 }
 
-#input-container {
+#input-container,
+#voice-input-container {
     margin: auto;
     display: flex;
     align-items: center;
+    padding-bottom: 2rem;
 }
 
 #input-container .microphone {
@@ -72,10 +74,18 @@
 }
 
 #conversation {
-    grid-row-start: 2;
-    grid-row-end: 6;
-    padding: 1rem 20% 2rem 20%;
+    grid-row-start: 1;
+    grid-row-end: 5;
+    padding: 2rem 20% 2rem 20%;
     overflow-y: scroll;
+}
+
+/* fills the space above conversation bubbles and forces conversation downwards */
+.space-filler {
+    height: -moz-available;          /* WebKit-based browsers will ignore this. */
+    height: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
+    height: fill-available;
+    height: 100%;
 }
 
 .microphone,

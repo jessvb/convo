@@ -29,7 +29,7 @@ class RunGoal(BaseGoal):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, "What do you want to run?"))
             elif value not in self.context.procedures:
-                self.error = f"Procedure {value} does not exist."
+                self.error = f"The procedure, {value}, hasn't been created, so we can't run it. You can create it by saying, \"create a procedure called {value}.\""
             else:
                 self.name = value
                 self.procedure = self.context.procedures[value]
@@ -43,7 +43,7 @@ class RunGoal(BaseGoal):
 
     def advance(self):
         logging.debug(f"Advancing {self.__class__.__name__}...")
-        self.error = None
+        self._message = None
         if self.todos:
             todo = self.todos.pop()
             todo.advance()
@@ -84,7 +84,8 @@ class ExecutionContext(object):
                 phrase = f"The value of {variable} is {self.variables[variable]}."
             logging.info(f"Saying '{phrase}'")
             try:
-                flask_socketio.emit("response", { "message": phrase, "state": self.context.state }, room=self.context.sid)
+                print(f"Emitting to {self.context.sid}", flush=True)
+                flask_socketio.emit("response", { "message": phrase, "state": self.context.state }, room=str(self.context.sid))
             except RuntimeError as e:
                 if not str(e).startswith("Working outside of request context."):
                     raise e
