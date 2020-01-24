@@ -101,6 +101,9 @@ io.on('connection', (client) => {
     client.on('audio', (data) => {
         if (stream !== null && stream.writable)
             stream.write(data);
+
+        if (stream.writable)
+            console.log("Stream became unwritable");
     });
 });
 
