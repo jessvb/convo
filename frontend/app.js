@@ -55,33 +55,7 @@ const request = {
 io.on('connection', (client) => {
     let stream = null;
     let id = client.id;
-
-    client.on('join', (data) => {
-        id = data == null ? client.id : data;
-        console.log(`Client ${id} connected to server.`);
-        client.emit('joined', id);
-    });
-
-    client.on('disconnect', () => {
-        console.log(`Client ${id} disconnected.`);
-    });
-
-    client.on('startStream', () => {
-        console.log('Starting stream.');
-        startStream(client);
-    });
-
-    client.on('endStream', () => {
-        console.log('Ending stream.');
-        endStream();
-    });
-
-    client.on('audio', (data) => {
-        if (stream !== null)
-            stream.write(data);
-    });
-
-    let startStream = (client) => {
+    let startStream = () => {
         stream = speechClient.streamingRecognize(request)
             .on('error', console.error)
             .on('data', (data) => {
@@ -101,6 +75,31 @@ io.on('connection', (client) => {
 
         stream = null;
     }
+
+    client.on('join', (data) => {
+        id = data == null ? client.id : data;
+        console.log(`Client ${id} connected to server.`);
+        client.emit('joined', id);
+    });
+
+    client.on('disconnect', () => {
+        console.log(`Client ${id} disconnected.`);
+    });
+
+    client.on('startStream', () => {
+        console.log('Starting stream.');
+        startStream();
+    });
+
+    client.on('endStream', () => {
+        console.log('Ending stream.');
+        endStream();
+    });
+
+    client.on('audio', (data) => {
+        if (stream !== null)
+            stream.write(data);
+    });
 });
 
 httpServer.listen(port, host, () => {

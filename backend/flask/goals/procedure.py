@@ -13,7 +13,7 @@ class AddProcedureGoal(BaseGoal):
 
     @property
     def message(self):
-        return "Procedure added! Anything else?" if self.is_complete else self.todos[-1].message
+        return "I created the procedure. You can say, \"run hello\" to play it." if self.is_complete else self.todos[-1].message
 
     def complete(self):
         self.procedures[self.procedure.name] = self.procedure

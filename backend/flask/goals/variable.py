@@ -58,7 +58,7 @@ class SetVariableActionGoal(ActionGoal):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"What variable do you want to set?"))
             elif value not in self.variables:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"Variable {value} does not exist. Create the variable first or say cancel."))
+                self.todos.append(GetInputGoal(self.context, self, attr, f"Variable {value} does not exist. Try another variable or say cancel."))
             else:
                 self.name = value
             return

@@ -190,7 +190,8 @@ let addUtter = (className, message, speak=true) => {
         text.innerHTML = message;
 
         utter.append(text);
-        conversation.prepend(utter);
+        conversation.append(utter);
+        conversation.scrollTop = conversation.scrollHeight;
     }
 };
 
@@ -258,7 +259,7 @@ if (checkQuery("tutorial", 0)) {
     document.getElementById("sidebar-tutorial").style.display = "none";
     document.getElementById("sidebar").style.display = "flex";
     tutorial = false;
-    addUtter("agent-utter", "Hi, what would you like to do?", false);
+    addUtter("agent-utter", "Hi, what would you like to do? You can create a procedure or run one you have already created.", false);
 } else {
     document.getElementById("sidebar-tutorial").innerHTML = `
         <div><b>You are currently in practice mode.</b></div>

@@ -21,7 +21,9 @@ class GetActionsGoal(BaseGoal):
             return f"{self.__class__.__name__} completed!"
 
         if len(self.todos) == 0:
-            return "Added action! Do you want to do anything else?" if len(self.actions) > 0 else "What do you want to do first?"
+            return "Added action! Do you want to do anything else?" \
+                if len(self.actions) > 0 \
+                    else "What do you want to happen in the procedure first? You could make me say something. See the sidebar for more options."
         else:
             return self.todos[-1].message
 
@@ -35,7 +37,7 @@ class GetActionsGoal(BaseGoal):
         if self.context.current_message in ["done", "nothing", "no"]:
             self.done = True
         elif not isinstance(self.context.parsed, BaseGoal):
-            self.error = "Couldn't understand the action. Try again."
+            self.error = "I didn't quite catch that. What action did you want me to add?"
         elif self.context.parsed.error is not None:
             self.error = self.context.parsed.error
         else:
