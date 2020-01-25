@@ -55,8 +55,27 @@ messages3 = [
     "set the variable foo",
     "10"
 ]
+edit_test = [
+    "edit blah",
+    "edit example",
+    "previous step",
+    "next step",
+    "next step",
+    "next",
+    "next step",
+    "continue",
+    "next",
+    "continue",
+    "next",
+    "next step",
+    "continue",
+    "previous step",
+    "previous",
+    "go back",
+    "done"
+]
 
-for i, message in enumerate(messages3):
+for i, message in enumerate(edit_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

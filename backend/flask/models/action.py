@@ -1,4 +1,6 @@
 from utils import to_snake_case
+from models.valueof import ValueOf
+
 tab = "    "
 
 class Action(object):
@@ -15,6 +17,9 @@ class Action(object):
     def python(self):
         raise NotImplementedError
 
+    def to_nl(self):
+        raise NotImplementedError
+
 class SetPropertyAction(Action):
     def __init__(self, property, value):
         self.property = property
@@ -26,9 +31,12 @@ class SetPropertyAction(Action):
             "property": self.property,
             "value": self.value
         }
-    
+
     def python(self):
         return [f"{self.property} = {self.value}"]
+
+    def to_nl(self):
+        return f"setting property {self.property} to {self.value}"
 
 class VariableAction(Action):
     def __init__(self, name, value):
@@ -49,16 +57,28 @@ class CreateVariableAction(VariableAction):
     def __init__(self, name, value):
         super().__init__(name, value)
 
+    def to_nl(self):
+        value = value.to_nl() if isinstance(self.value, ValueOf) else self.value
+        return f"creating a variable called {self.name} and setting its value to {self.value}"
+
 class SetVariableAction(VariableAction):
     def __init__(self, name, value):
         super().__init__(name, value)
 
+    def to_nl(self):
+        value = value.to_nl() if isinstance(self.value, ValueOf) else self.value
+        return f"setting the value of variable {self.name} to {self.value}"
+
 class IncrementVariableAction(VariableAction):
     def __init__(self, name, value):
         super().__init__(name, value)
-    
+
     def python(self):
         return [f"{self.name} += {self.value}"]
+
+    def to_nl(self):
+        value = value.to_nl() if isinstance(self.value, ValueOf) else self.value
+        return f"adding {value} to variable {self.name}"
 
 class SayAction(Action):
     def __init__(self, phrase):
@@ -72,6 +92,9 @@ class SayAction(Action):
 
     def python(self):
         return [f"say(\"{self.phrase}\")"]
+
+    def to_nl(self):
+        return f"saying the phrase \"{self.phrase}\""
 
 class ConditionalAction(Action):
     def __init__(self, condition, actions):
@@ -93,6 +116,10 @@ class ConditionalAction(Action):
         lines.extend([f"{tab}{line}" for action in self.actions[0] for line in action.python()])
         return lines
 
+    def to_nl(self):
+        falses, trues = self.actions
+        return f"doing {len(falses) if len(falses) > 0 else 'no'} actions if {self.condition.to_nl()} and {len(trues) if len(trues) > 0 else 'no'} actions otherwise"
+
 class LoopAction(Action):
     def __init__(self, condition, actions):
         self.condition = condition
@@ -107,10 +134,13 @@ class LoopAction(Action):
 
     def python(self):
         raise NotImplementedError
-        
+
 class UntilLoopAction(LoopAction):
     def __init__(self, condition, actions):
         super().__init__(condition, actions)
+
+    def to_nl(self):
+        return f"doing {len(self.actions)} until {self.condition.to_nl()}"
 
 class WhileLoopAction(LoopAction):
     def __init__(self, condition, actions):
@@ -120,6 +150,9 @@ class WhileLoopAction(LoopAction):
         lines = [f"while {str(self.condition)}:"]
         lines.extend([f"{tab}{line}" for action in self.actions for line in action.python()])
         return lines
+
+    def to_nl(self):
+        return f"doing {len(self.actions)} while {self.condition.to_nl()}"
 
 class CreateListAction(Action):
     def __init__(self, name):
@@ -133,6 +166,9 @@ class CreateListAction(Action):
 
     def python(self):
         return [f"{self.name} = []"]
+
+    def to_nl(self):
+        return f"creating a list called {self.name}"
 
 class AddToListAction(Action):
     def __init__(self, name, value):
@@ -148,6 +184,9 @@ class AddToListAction(Action):
 
     def python(self):
         return [f"{self.name}.append({self.value})"]
+
+    def to_nl(self):
+        return f"adding {self.value} to list {self.name}"
 
 class AddToListPropertyAction(Action):
     def __init__(self, property, value):
@@ -167,9 +206,12 @@ class AddToListPropertyAction(Action):
 class GetUserInputAction(Action):
     def __init__(self, variable):
         self.variable = variable
-    
+
     def json(self):
         return {
             "name": str(self),
             "variable": self.variable
         }
+
+    def to_nl(self):
+        return f"getting input from user and saving it as variable {self.variable}"

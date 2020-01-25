@@ -51,7 +51,6 @@ class BaseGoal(object):
         name = self.__class__.__name__
         return to_snake_case(name[:-len("Goal")]) + (f":{str(self.todos[-1])}" if self.todos else "")
 
-
 class ActionGoal(BaseGoal):
     def __init__(self, context):
         super().__init__(context)

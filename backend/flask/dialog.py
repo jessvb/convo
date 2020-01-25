@@ -35,7 +35,8 @@ transitions = {
         "create_class": "class",
         "create_procedure": "actions",
         "create_class_procedure": "class_actions",
-        "run": "execution"
+        "run": "execution",
+        "edit": "editing"
     },
     "class_actions": {
         "complete": "home"
@@ -47,6 +48,9 @@ transitions = {
         "complete": "home"
     },
     "execution": {
+        "complete": "home"
+    },
+    "editing": {
         "complete": "home"
     }
 }
@@ -140,6 +144,7 @@ class DialogContext(object):
         self.goals = []
         self.current = None
         self.execution = None
+        self.edit = None
 
     def add_message(self, message):
         self.conversation.append(message)
@@ -168,6 +173,8 @@ class DialogContext(object):
                 self.transition("edit_class")
             elif isinstance(goal, RunGoal):
                 self.transition("run")
+            elif isinstance(goal, EditGoal):
+                self.transition("edit")
             else:
                 raise InvalidStateError(self.state, str(goal))
         elif self.state in ["actions", "class_actions"]:
