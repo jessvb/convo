@@ -100,10 +100,12 @@ io.on('connection', (client) => {
     });
 
     client.on('audio', (data) => {
-        if (stream !== null && stream.writable)
+        if (stream === null)
+            console.log("Stream is null.")
+        else if (!stream.writable)
+            console.log("Stream became unwritable.");
+        else
             stream.write(data);
-        else if (stream.writable)
-            console.log("Stream became unwritable");
     });
 });
 

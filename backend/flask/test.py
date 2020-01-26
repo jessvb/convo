@@ -74,11 +74,25 @@ edit_test = [
     "go to the last step",
     "done"
 ]
+edit_test2 = [
+    "edit example",
+    "next step",
+    "delete step",
+    "add step",
+    "say hello world",
+    "add step",
+    "remove step",
+    "add step",
+    "create a variable",
+    "nest",
+    "4",
+    "remove step"
+]
 
-for msgs in [messages, messages2, messages3, edit_test]:
-    for i, message in enumerate(edit_test):
-        logging.info(message)
-        res = dm.handle_message(message)
-        if res:
-            logging.info(res)
-    dm.reset()
+# for msgs in [messages, messages2, messages3, edit_test]:
+for i, message in enumerate(edit_test2):
+    logging.info(message)
+    res = dm.handle_message(message)
+    if res:
+        logging.info(res)
+# dm.reset()
