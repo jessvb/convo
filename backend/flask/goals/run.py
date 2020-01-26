@@ -84,8 +84,8 @@ class ExecutionContext(object):
                 phrase = f"The value of {variable} is {self.variables[variable]}."
             logging.info(f"Saying '{phrase}'")
             try:
-                print(f"Emitting to {self.context.sid}", flush=True)
                 flask_socketio.emit("response", { "message": phrase, "state": self.context.state }, room=str(self.context.sid))
+                print(f"Emitting to {self.context.sid}", flush=True)
             except RuntimeError as e:
                 if not str(e).startswith("Working outside of request context."):
                     raise e

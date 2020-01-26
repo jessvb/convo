@@ -60,7 +60,7 @@ io.on('connection', (client) => {
             .on('error', (err) => {
                 console.log("Restarting stream.");
                 console.log(err);
-                startStream();
+                io.to(`${client.id}`).emit('streamError', err);
             })
             .on('data', (data) => {
                 if (data.results[0] && data.results[0].alternatives[0]) {
@@ -74,8 +74,9 @@ io.on('connection', (client) => {
     }
 
     let endStream = () => {
-        if (stream)
+        if (stream !== null)
             stream.end();
+            stream = null;
     }
 
     client.on('join', (data) => {
@@ -101,8 +102,7 @@ io.on('connection', (client) => {
     client.on('audio', (data) => {
         if (stream !== null && stream.writable)
             stream.write(data);
-
-        if (stream.writable)
+        else if (stream.writable)
             console.log("Stream became unwritable");
     });
 });

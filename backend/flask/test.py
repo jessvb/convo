@@ -75,8 +75,10 @@ edit_test = [
     "done"
 ]
 
-for i, message in enumerate(edit_test):
-    logging.info(message)
-    res = dm.handle_message(message)
-    if res:
-        logging.info(res)
+for msgs in [messages, messages2, messages3, edit_test]:
+    for i, message in enumerate(edit_test):
+        logging.info(message)
+        res = dm.handle_message(message)
+        if res:
+            logging.info(res)
+    dm.reset()
