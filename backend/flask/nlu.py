@@ -21,6 +21,7 @@ run_regex = "(?:run|play)(?: (.+))?"
 get_user_input_regex = "get(?: user)? input(?: and (?:(?:call it)?|(?:name it)?|(?:save it as)?) (.+))?"
 value_of_regex = "(?:the )?value of (?:(?:the )?variable )?(.+)"
 edit_regex = "(?:open|edit)(?: (.+))?"
+go_to_step_regex = "(?:go to step(?: (.+))?|go to(?: the)? (.+) step)"
 
 class SemanticNLU(object):
     def __init__(self, context):
@@ -93,6 +94,9 @@ class SemanticNLU(object):
         elif re.match(edit_regex, message):
             match = re.match(edit_regex, message)
             return EditGoal(self.context, name=group(match, 1))
+        elif re.match(go_to_step_regex, message):
+            match = re.match(go_to_step_regex, message)
+            return GoToStepGoal(self.context, step=group(match, [1, 2]))
 
     def try_parse_condition(self, message):
         if message is None:

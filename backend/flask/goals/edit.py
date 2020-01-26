@@ -1,5 +1,6 @@
 from goals import *
 from models import *
+from word2number import w2n
 
 class EditGoal(BaseGoal):
     def __init__(self, context, name=None):
@@ -54,7 +55,6 @@ class EditGoal(BaseGoal):
             self._message = self.context.parsed._message
         else:
             action = self.context.parsed
-            setattr(action, "actions", self.actions)
             if action.is_complete:
                 action.complete()
             else:
@@ -113,3 +113,49 @@ class EditContext(object):
     def prev_step(self):
         if len(self.actions) != 0 and not self.at_first_step:
             self.step -= 1
+
+    def to_step(self, step):
+        assert isinstance(step, int) and step >= -1 and step <= len(self.actions) - 1
+        self.step = len(self.actions) - 1 if step == -1 else step
+
+class GoToStepGoal(BaseGoal):
+    def __init__(self, context, step=None):
+        super().__init__(context)
+        self.setattr("step", step)
+
+    def complete(self):
+        if self.step == "next":
+            self.context.edit.next_step()
+        elif self.step == "previous":
+            self.context.edit.prev_step()
+        elif self.step == "first":
+            self.context.edit.to_step(0)
+        elif self.step == "last":
+            self.context.edit.to_step(-1)
+        else:
+            self.context.edit.to_step(self.step)
+
+        step_message = f"the {self.step} step" if isinstance(self.step, str) else f"step {self.step}"
+        return f"Going to {step_message}."
+
+    def setattr(self, attr, value):
+        if (attr == "step"):
+            if value is None:
+                self.todos.append(GetInputGoal(self.context, self, attr, "Which step do you want to go to?"))
+            else:
+                step = value.replace("step", "").replace("the", "").strip()
+                try:
+                    step = w2n.word_to_num(step)
+                    if not isinstance(step, int):
+                        self.error = f"Step {step} is not a step."
+                    elif step >= len(self.context.edit.actions) - 1:
+                        self.error = f"I cannot go to step {step}. There are only {len(self.context.edit.actions)} steps."
+                    else:
+                        self.step = step
+                except ValueError as e:
+                    if step in ["last", "first", "next", "previous"]:
+                        self.step = step
+                    else:
+                        self.error = f"Step {step} is not a step."
+            return
+        setattr(self, attr, value)
