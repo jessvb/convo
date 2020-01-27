@@ -55,7 +55,8 @@ transitions = {
     },
     "editing": {
         "complete": "home",
-        "add_step": "edit_actions"
+        "add_step": "edit_actions",
+        "change_step": "edit_actions"
     }
 }
 
@@ -190,11 +191,14 @@ class DialogContext(object):
         elif self.state == "edit_actions":
             if isinstance(goal, AddStepGoal) \
                 or isinstance(goal, DeleteStepGoal) \
-                or isinstance(goal, GoToStepGoal):
+                or isinstance(goal, GoToStepGoal) \
+                or isinstance(goal, ChangeStepGoal):
                 raise InvalidStateError(self.state, str(goal))
         elif self.state in ["editing"]:
             if isinstance(goal, AddStepGoal):
                 self.transition("add_step")
+            elif isinstance(goal, ChangeStepGoal):
+                self.transition("change_step")
         elif self.state == "class":
             raise InvalidStateError(self.state, str(goal))
 

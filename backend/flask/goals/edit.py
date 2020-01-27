@@ -140,6 +140,9 @@ class EditContext(object):
         self.actions[self.step:self.step] = action
         self.step += 1
 
+    def change_step(self, action):
+        self.actions[self.step] = action
+
 class GoToStepGoal(BaseGoal):
     def __init__(self, context, step=None):
         super().__init__(context)
@@ -237,6 +240,54 @@ class AddStepGoal(BaseGoal):
         self._message = None
         if not isinstance(self.context.parsed, BaseGoal):
             self._message = "I didn't quite catch that. What action did you want me to add?"
+        elif self.context.parsed.error is not None:
+            self._message = self.context.parsed.error
+        elif self.context.parsed._message is not None:
+            self._message = self.context.parsed._message
+        else:
+            action = self.context.parsed
+            setattr(action, "actions", self.actions)
+            if action.is_complete:
+                action.complete()
+            else:
+                self.todos.append(action)
+
+class ChangeStepGoal(BaseGoal):
+    def __init__(self, context):
+        super().__init__(context)
+        self.edit = self.context.edit
+        self.actions = []
+
+    @property
+    def is_complete(self):
+        return len(self.actions) == 1 and super().is_complete
+
+    @property
+    def message(self):
+        if self.error:
+            return self.error
+
+        if self._message:
+            return self._message
+
+        if self.todos:
+            return self.todos[-1].message
+        else:
+            return "What action do you want to replace the current step with?"
+
+    def complete(self):
+        self.edit.change_step(self.actions[0])
+        return f"Changed step {self.edit.step}, where I am now {self.actions[0].to_nl()}."
+
+    def advance(self):
+        if self.todos:
+            super().advance()
+            return
+
+        logging.debug(f"Advancing {self.__class__.__name__}...")
+        self._message = None
+        if not isinstance(self.context.parsed, BaseGoal):
+            self._message = "I didn't quite catch that. What do you want to replace the current step with?"
         elif self.context.parsed.error is not None:
             self._message = self.context.parsed.error
         elif self.context.parsed._message is not None:

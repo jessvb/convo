@@ -86,7 +86,11 @@ edit_test2 = [
     "create a variable",
     "nest",
     "4",
-    "remove step"
+    "remove step",
+    "change step",
+    "say",
+    "hello world",
+    "previous step"
 ]
 
 # for msgs in [messages, messages2, messages3, edit_test]:
