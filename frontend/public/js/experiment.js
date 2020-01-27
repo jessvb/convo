@@ -118,6 +118,13 @@ const example_commands = {
                 "remove step",
                 "delete step"
             ]
+        },
+        {
+            "title": "Change or Replace Current Action",
+            "examples": [
+                "change step",
+                "replace step"
+            ]
         }
     ]
 }

@@ -93,9 +93,16 @@ edit_test2 = [
     "previous step",
     "done"
 ]
+edit_test3 = [
+    "edit example",
+    "delete step",
+    "done",
+    "run example",
+    "5"
+]
 
 # for msgs in [messages, messages2, messages3, edit_test]:
-for i, message in enumerate(edit_test2):
+for i, message in enumerate(edit_test3):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

@@ -119,6 +119,7 @@ class DialogManager(object):
                 self.context.goals.pop()
             elif goal.error:
                 response = goal.error
+                self.context.goals.pop()
             else:
                 response = goal.message
 
