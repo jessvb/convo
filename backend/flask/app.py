@@ -42,11 +42,12 @@ def message(data):
 
     dm = client.dm
     res = dm.handle_message(message)
-    state = dm.context.state
-    response = {
-        "message": res,
-        "state": dm.context.state,
-        "speak": data.get("speak")
-    }
+    if (res):
+        state = dm.context.state
+        response = {
+            "message": res,
+            "state": dm.context.state,
+            "speak": data.get("speak")
+        }
 
-    socketio.emit("response", response, room=str(sid))
+        socketio.emit("response", response, room=str(sid))

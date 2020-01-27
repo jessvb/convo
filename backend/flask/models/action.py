@@ -215,3 +215,16 @@ class GetUserInputAction(Action):
 
     def to_nl(self):
         return f"getting input from user and saving it as variable {self.variable}"
+
+class PlaySoundAction(Action):
+    def __init__(self, sound):
+        self.sound = sound
+
+    def json(self):
+        return {
+            "name": str(self),
+            "sound": self.sound
+        }
+
+    def to_nl(self):
+        return f"playing the sound file {self.sound}"

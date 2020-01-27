@@ -48,15 +48,16 @@ const request = {
                 "list",
                 "add",
                 "add step",
+                "delete step",
                 "remove step",
                 "change step",
                 "replace step",
                 "if",
-                "greater than",
-                "less than",
-                "equal to",
-                "greater than or equal to",
-                "less than or equal to"
+                "is greater than",
+                "is less than",
+                "is equal to",
+                "is greater than or equal to",
+                "is less than or equal to"
             ]
         ]
     },

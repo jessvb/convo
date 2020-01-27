@@ -16,8 +16,8 @@ set_regex = "set(?: the)?(?: (.*))? (property|variable)(?:(?: (.+))? to (.+)| (.
 create_variable_regex = "(?:create|make)(?: a)?(?: (.+))? variable(?: called| named)?(?:(?: (.+))? and set(?: it)? to (.+)| (.+))?"
 increment_variable_regex = "(?:add(?: (.+))? to variable(?: (.+))?)|(?:increment variable(?:(?: (.+))? by (.+)| (.+))?)"
 say_condition_regex = "(?:until|if) i say (.+)"
-comparison_condition_regex = "(?:if|until) (.+) is ((?:(?:less|greater) than(?: or equal to)?)|equal to) (.+)"
-run_regex = "(?:run|play)(?: (.+))?"
+comparison_condition_regex = "(?:if|until|while) (.+) is ((?:(?:less|greater) than(?: or equal to)?)|equal to) (.+)"
+run_regex = "run(?: (.+))?"
 get_user_input_regex = "get(?: user)? input(?: and (?:(?:call it)?|(?:name it)?|(?:save it as)?) (.+))?"
 value_of_regex = "(?:the )?value of (?:(?:the )?variable )?(.+)"
 edit_regex = "(?:open|edit)(?: (.+))?"
@@ -25,6 +25,7 @@ go_to_step_regex = "(?:go to step(?: (.+))?|go to(?: the)? (.+) step)"
 delete_step_regex = "(?:delete|remove) step"
 add_step_regex = "add step"
 change_step_regex = "(?:change|replace) step"
+play_sound_regex = "play(?: the)?(?: (.+))? sound"
 
 class SemanticNLU(object):
     def __init__(self, context):
@@ -88,6 +89,9 @@ class SemanticNLU(object):
         elif re.match(add_to_list_regex, message):
             match = re.match(add_to_list_regex, message)
             return AddToListActionGoal(self.context, name=group(match, 2), value=group(match, 1))
+        elif re.match(play_sound_regex, message):
+            match = re.match(play_sound_regex, message)
+            return PlaySoundActionGoal(self.context, sound=group(match, 1))
         elif re.match(run_regex, message):
             match = re.match(run_regex, message)
             return RunGoal(self.context, name=group(match, 1))

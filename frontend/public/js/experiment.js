@@ -146,10 +146,22 @@ let changeSidebarText = (state) => {
     }
 }
 
-socketApi.on('response', (data) => {
+let handleSocketApiResponse = (data) => {
+    let audioPlayer = document.getElementById('audio-player');
     changeSidebarText(data.state);
-    addUtter("agent-utter", data.message, data.speak);
-})
+    if (!audioPlayer.paused)
+        setTimeout(addUtter("agent-utter", data.message, data.speak), 1000);
+    else
+        addUtter("agent-utter", data.message, data.speak);
+}
+
+socketApi.on('response', handleSocketApiResponse);
+
+socketApi.on('playSound', (data) => {
+    let audioPlayer = document.getElementById('audio-player');
+    audioPlayer.src = `assets/${data.sound}.mp3`;
+    audioPlayer.play();
+});
 
 let tutorial_step = 0;
 let tutorial = true;
@@ -290,6 +302,12 @@ document.addEventListener("DOMContentLoaded", () => {
         programsList.style.display = displ;
     }
     addExamplePrograms();
+
+    let audioPlayer = document.createElement('audio');
+    audioPlayer.id = 'audio-player';
+    audioPlayer.preload = 'none';
+    audioPlayer.style = "display: none"
+    document.body.appendChild(audioPlayer);
 
     window.speechSynthesis.onvoiceschanged = () => {
         voice = window.speechSynthesis.getVoices().filter((voice) => {

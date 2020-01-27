@@ -29,6 +29,24 @@ example_procedure = Procedure(name="example", actions=[
     AddToListAction("groceries", "\"apples\"")
 ])
 
+sounds_procedure = Procedure(name="dog or cat", actions=[
+    SayAction("Do you want to hear a dog or a cat?"),
+    GetUserInputAction("input"),
+    ConditionalAction(
+        ComparisonCondition("input", "equal to", "dog"),
+        actions=[
+            [ConditionalAction(
+                ComparisonCondition("input", "equal to", "cat"),
+                actions=[
+                    [SayAction("You did not say a dog or a cat.")],
+                    [PlaySoundAction("meow")]
+                ]
+            )],
+            [PlaySoundAction("bark")]
+        ]
+    )
+])
+
 transitions = {
     "home": {
         "edit_class": "class",
@@ -133,7 +151,7 @@ class DialogContext(object):
         example.add_property(Property(example, "count", "number"))
         self.sid = sid
         self.classes = { "example": example }
-        self.procedures = { "example": example_procedure }
+        self.procedures = { "example": example_procedure, "dog or cat": sounds_procedure }
         self.reset()
 
     @property
@@ -187,7 +205,8 @@ class DialogContext(object):
             if isinstance(goal, CreateClassGoal) \
                 or isinstance(goal, AddClassProcedureGoal) \
                 or isinstance(goal, AddProcedureGoal) \
-                or isinstance(goal, AddPropertyGoal):
+                or isinstance(goal, AddPropertyGoal) \
+                or isinstance(goal, EditGoal):
                 raise InvalidStateError(self.state, str(goal))
         elif self.state == "edit_actions":
             if isinstance(goal, AddStepGoal) \

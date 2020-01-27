@@ -8,4 +8,4 @@ class InvalidStateError(Error):
 
 class ExecutionError(Error):
     def __init__(self, message):
-        self.message = f"Error: {message}"
+        self.message = message
