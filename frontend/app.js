@@ -42,21 +42,33 @@ const request = {
                 "property",
                 "procedure",
                 "conditional",
-                "loop",
+                "while loop",
+                "until loop",
                 "run",
                 "list",
-                "add"
+                "add",
+                "add step",
+                "remove step",
+                "change step",
+                "replace step",
+                "if",
+                "greater than",
+                "less than",
+                "equal to",
+                "greater than or equal to",
+                "less than or equal to"
             ]
         ]
     },
     interimResults: false
 };
 
+streams = {};
+
 io.on('connection', (client) => {
-    let stream = null;
     let id = client.id;
     let startStream = () => {
-        stream = speechClient.streamingRecognize(request)
+        streams[id] = speechClient.streamingRecognize(request)
             .on('error', (err) => {
                 console.log("Restarting stream.");
                 console.log(err);
@@ -74,9 +86,10 @@ io.on('connection', (client) => {
     }
 
     let endStream = () => {
-        if (stream !== null)
-            stream.end();
-            stream = null;
+        if (id in streams) {
+            streams[id].end();
+            delete streams[id];
+        }
     }
 
     client.on('join', (data) => {
@@ -100,12 +113,12 @@ io.on('connection', (client) => {
     });
 
     client.on('audio', (data) => {
-        if (stream === null)
+        if (!(id in streams))
             console.log("Stream is null.")
-        else if (!stream.writable)
+        else if (!streams[id].writable)
             console.log("Stream became unwritable.");
         else
-            stream.write(data);
+            streams[id].write(data);
     });
 });
 
