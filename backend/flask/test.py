@@ -90,7 +90,8 @@ edit_test2 = [
     "change step",
     "say",
     "hello world",
-    "previous step"
+    "previous step",
+    "done"
 ]
 
 # for msgs in [messages, messages2, messages3, edit_test]:

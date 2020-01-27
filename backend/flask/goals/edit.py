@@ -112,7 +112,7 @@ class EditContext(object):
             elif self.at_first_step:
                 step_message = "I am on the first step"
             else:
-                step_message = f"I am on step {self.step}"
+                step_message = f"I am on step {self.step + 1}"
             return f"{step_message}, where I am {self.current.to_nl()}. What do you want to do? You can say 'done' if you are finished editing."
         else:
             return f"There are currently no actions. What do you want to do?"
@@ -161,7 +161,7 @@ class GoToStepGoal(BaseGoal):
         else:
             self.edit.to_step(self.step)
 
-        step_message = f"the {self.step} step" if isinstance(self.step, str) else f"step {self.step}"
+        step_message = f"the {self.step} step" if isinstance(self.step, str) else f"step {self.step + 1}"
         return f"Going to {step_message}, where I am {self.edit.actions[self.edit.step].to_nl()}."
 
     def setattr(self, attr, value):
@@ -171,11 +171,11 @@ class GoToStepGoal(BaseGoal):
             else:
                 step = value.replace("step", "").replace("the", "").strip()
                 try:
-                    step = w2n.word_to_num(step)
+                    step = w2n.word_to_num(step) - 1
                     if not isinstance(step, int):
-                        self.error = f"Step {step} is not a step."
+                        self.error = f"Step {step + 1} is not a step."
                     elif step >= len(self.edit.actions) - 1:
-                        self.error = f"I cannot go to step {step}. There are only {len(self.edit.actions)} steps."
+                        self.error = f"I cannot go to step {step + 1}. There are only {len(self.edit.actions)} steps."
                     else:
                         self.step = step
                 except ValueError as e:
@@ -194,10 +194,10 @@ class DeleteStepGoal(BaseGoal):
             self.error = "There are no actions or steps that you can delete."
 
     def complete(self):
-        message = f"Deleted step {self.edit.step}, where I was {self.edit.actions[self.edit.step].to_nl()}. "
+        message = f"Deleted step {self.edit.step + 1}, where I was {self.edit.actions[self.edit.step].to_nl()}. "
         self.edit.remove_current_step()
         if self.edit.current:
-            message += f"Now step {self.edit.step} is where I am {self.edit.actions[self.edit.step].to_nl()}."
+            message += f"Now step {self.edit.step + 1} is where I am {self.edit.actions[self.edit.step].to_nl()}."
         else:
             message += f"Now there are no more actions in the procedure."
         return message
@@ -226,10 +226,10 @@ class AddStepGoal(BaseGoal):
             return "What action do you want to add?"
 
     def complete(self):
-        message = f"Added step after step {self.edit.step}."
+        message = f"Added action after step {self.edit.step + 1}."
         self.edit.add_step(self.actions)
         self.context.transition("complete")
-        return f"{message} Now I am at step {self.edit.step} where I am {self.actions[0].to_nl()}."
+        return f"{message} Now I am at step {self.edit.step + 1} where I am {self.actions[0].to_nl()}."
 
     def advance(self):
         if self.todos:
@@ -277,7 +277,7 @@ class ChangeStepGoal(BaseGoal):
 
     def complete(self):
         self.edit.change_step(self.actions[0])
-        return f"Changed step {self.edit.step}, where I am now {self.actions[0].to_nl()}."
+        return f"Changed step {self.edit.step + 1}, where I am now {self.actions[0].to_nl()}."
 
     def advance(self):
         if self.todos:
