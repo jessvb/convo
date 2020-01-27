@@ -149,7 +149,7 @@ let changeSidebarText = (state) => {
 let handleSocketApiResponse = (data) => {
     let audioPlayer = document.getElementById('audio-player');
     if (audioPlayer.src && !audioPlayer.ended) {
-        setTimeout(() => handleSocketApiResponse(data), 1000);
+        setTimeout(() => handleSocketApiResponse(data), 500);
     } else {
         changeSidebarText(data.state);
         addUtter("agent-utter", data.message, data.speak);
