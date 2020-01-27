@@ -148,11 +148,12 @@ let changeSidebarText = (state) => {
 
 let handleSocketApiResponse = (data) => {
     let audioPlayer = document.getElementById('audio-player');
-    changeSidebarText(data.state);
-    if (!audioPlayer.paused)
-        setTimeout(addUtter("agent-utter", data.message, data.speak), 1000);
-    else
+    if (audioPlayer.src && !audioPlayer.ended) {
+        setTimeout(() => handleSocketApiResponse(data), 1000);
+    } else {
+        changeSidebarText(data.state);
         addUtter("agent-utter", data.message, data.speak);
+    }
 }
 
 socketApi.on('response', handleSocketApiResponse);
@@ -306,7 +307,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let audioPlayer = document.createElement('audio');
     audioPlayer.id = 'audio-player';
     audioPlayer.preload = 'none';
-    audioPlayer.style = "display: none"
+    audioPlayer.style = "display: none";
     document.body.appendChild(audioPlayer);
 
     window.speechSynthesis.onvoiceschanged = () => {
