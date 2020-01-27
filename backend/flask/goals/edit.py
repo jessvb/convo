@@ -75,6 +75,7 @@ class EditGoal(BaseGoal):
                 self.todos.append(GetInputGoal(self.context, self, attr, "What do you want to edit?"))
             elif value not in self.context.procedures:
                 self.error = f"The procedure, {value}, hasn't been created, so there's nothing to edit. You can create it by saying, \"create a procedure called {value}.\""
+                self.context.transition("complete")
             else:
                 self.name = value
                 self.procedure = self.context.procedures[value]

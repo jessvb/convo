@@ -100,9 +100,28 @@ edit_test3 = [
     "run example",
     "5"
 ]
+sound_test = [
+    "create a procedure called bark",
+    "create a variable called foo and set it to 5",
+    "get user input",
+    "bar",
+    "if bar is equal to dog then play the bark sound",
+    "no",
+    "play the meow sound",
+    "no",
+    "done",
+    "run bark",
+    "cat"
+]
+sound_test2 = [
+    "run dog or cat",
+    "cat",
+    "run dog or cat",
+    "dog"
+]
 
 # for msgs in [messages, messages2, messages3, edit_test]:
-for i, message in enumerate(edit_test3):
+for i, message in enumerate(sound_test2):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

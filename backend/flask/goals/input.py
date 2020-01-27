@@ -80,7 +80,7 @@ class GetUserInputActionGoal(ActionGoal):
     def setattr(self, attr, value):
         if attr == "variable":
             if value is None:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"What name do you want to give this variable?"))
+                self.todos.append(GetInputGoal(self.context, self, attr, f"What variable name do you want to save the input as?"))
             else:
                 self.variable = value
             return

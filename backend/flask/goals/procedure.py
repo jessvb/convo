@@ -27,7 +27,8 @@ class AddProcedureGoal(BaseGoal):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, "What do you want to call the procedure?"))
             elif value in self.procedures:
-                self.error = f"Procedure {value} already exists. Try another name or say cancel."
+                self.error = f"Procedure {value} already exists. Try creating a procedure with another name."
+                self.context.transition("complete")
             else:
                 self.procedure.name = value
             return

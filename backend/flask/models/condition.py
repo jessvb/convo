@@ -1,3 +1,5 @@
+from error import ExecutionError
+
 class Condition(object):
     def __init__(self):
         pass
@@ -31,6 +33,9 @@ class ComparisonCondition(Condition):
 
     def eval(self, variables):
         variable = variables[self.variable]
+        if type(self.value) != type(variable):
+            raise ExecutionError(f"The values {self.value} and {variable} cannot be compared.")
+
         if self.op == "greater than":
             return variable > self.value
         elif self.op == "less than":

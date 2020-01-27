@@ -1,7 +1,9 @@
 import logging
 import flask_socketio
+import copy
 from goals import *
 from models import *
+from error import ExecutionError
 
 class RunGoal(BaseGoal):
     def __init__(self, context, name=None):
@@ -33,10 +35,11 @@ class RunGoal(BaseGoal):
                 self.todos.append(GetInputGoal(self.context, self, attr, "What do you want to run?"))
             elif value not in self.context.procedures:
                 self.error = f"The procedure, {value}, hasn't been created, so we can't run it. You can create it by saying, \"create a procedure called {value}.\""
+                self.context.transition("complete")
             else:
                 self.name = value
                 self.procedure = self.context.procedures[value]
-                self.context.execution = ExecutionContext(self.context, self.procedure.actions)
+                self.context.execution = ExecutionContext(self.context, [copy.copy(a) for a in self.procedure.actions])
                 self.execution = self.context.execution
                 todo = self.execution.advance()
                 if todo:
@@ -70,6 +73,8 @@ class ExecutionContext(object):
         self.variables = {}
         self.done = False
         self.step = 0
+        self.error = None
+        print(self.actions)
 
     def advance(self):
         while self.step < len(self.actions):
@@ -78,6 +83,9 @@ class ExecutionContext(object):
                 goal = self.evaluate_action(action)
             except KeyError as e:
                 self.error = f"Error occured while running. Variable {e.args[0]} did not exist when I was {action.to_nl()}."
+                break
+            except ExecutionError as e:
+                self.error = e.message
                 break
             self.step += 1
             if goal:
@@ -94,11 +102,19 @@ class ExecutionContext(object):
             logging.info(f"Saying '{phrase}'")
             try:
                 flask_socketio.emit("response", { "message": phrase, "state": self.context.state }, room=str(self.context.sid))
-                print(f"Emitting to {self.context.sid}", flush=True)
+                print(f"Emitting to {self.context.sid}")
             except RuntimeError as e:
                 if not str(e).startswith("Working outside of request context."):
                     raise e
             self.context.add_message(action.phrase)
+        elif isinstance(action, PlaySoundAction):
+            logging.info(f"Playing sound file {action.sound}.")
+            try:
+                flask_socketio.emit("playSound", { "sound": action.sound, "state": self.context.state }, room=str(self.context.sid))
+                print(f"Emitting to {self.context.sid}")
+            except RuntimeError as e:
+                if not str(e).startswith("Working outside of request context."):
+                    raise e
         elif isinstance(action, GetUserInputAction):
             logging.info(f"Getting user input and setting as {action.variable}")
             return GetUserInputGoal(self.context, action.variable)

@@ -37,7 +37,10 @@ class ConditionalActionGoal(BaseGoal):
                     value.value = w2n.word_to_num(value.value)
                     self.condition = value
                 except ValueError as e:
-                    self.todos.append(GetConditionGoal(self.context, self, f"The value {value} is not a number. Try again."))
+                    if value.op == "equal to":
+                        self.condition = value
+                    else:
+                        self.todos.append(GetConditionGoal(self.context, self, f"The value {value} is not a number. Try another condition."))
             return
         setattr(self, attr, value)
 
