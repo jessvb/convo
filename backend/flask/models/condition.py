@@ -45,3 +45,6 @@ class ComparisonCondition(Condition):
 
     def __str__(self):
         return f"{self.variable} {comparison_ops.get(self.op)} {self.value}"
+
+    def to_nl(self):
+        return f"variable {self.variable} is {self.op} {self.value}"

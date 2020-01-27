@@ -35,10 +35,14 @@ transitions = {
         "create_class": "class",
         "create_procedure": "actions",
         "create_class_procedure": "class_actions",
-        "run": "execution"
+        "run": "execution",
+        "edit": "editing"
     },
     "class_actions": {
         "complete": "home"
+    },
+    "edit_actions": {
+        "complete": "editing"
     },
     "actions": {
         "complete": "home"
@@ -48,6 +52,11 @@ transitions = {
     },
     "execution": {
         "complete": "home"
+    },
+    "editing": {
+        "complete": "home",
+        "add_step": "edit_actions",
+        "change_step": "edit_actions"
     }
 }
 
@@ -110,6 +119,7 @@ class DialogManager(object):
                 self.context.goals.pop()
             elif goal.error:
                 response = goal.error
+                self.context.goals.pop()
             else:
                 response = goal.message
 
@@ -140,6 +150,7 @@ class DialogContext(object):
         self.goals = []
         self.current = None
         self.execution = None
+        self.edit = None
 
     def add_message(self, message):
         self.conversation.append(message)
@@ -168,6 +179,8 @@ class DialogContext(object):
                 self.transition("edit_class")
             elif isinstance(goal, RunGoal):
                 self.transition("run")
+            elif isinstance(goal, EditGoal):
+                self.transition("edit")
             else:
                 raise InvalidStateError(self.state, str(goal))
         elif self.state in ["actions", "class_actions"]:
@@ -176,6 +189,17 @@ class DialogContext(object):
                 or isinstance(goal, AddProcedureGoal) \
                 or isinstance(goal, AddPropertyGoal):
                 raise InvalidStateError(self.state, str(goal))
+        elif self.state == "edit_actions":
+            if isinstance(goal, AddStepGoal) \
+                or isinstance(goal, DeleteStepGoal) \
+                or isinstance(goal, GoToStepGoal) \
+                or isinstance(goal, ChangeStepGoal):
+                raise InvalidStateError(self.state, str(goal))
+        elif self.state in ["editing"]:
+            if isinstance(goal, AddStepGoal):
+                self.transition("add_step")
+            elif isinstance(goal, ChangeStepGoal):
+                self.transition("change_step")
         elif self.state == "class":
             raise InvalidStateError(self.state, str(goal))
 

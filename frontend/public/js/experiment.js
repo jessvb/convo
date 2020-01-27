@@ -12,6 +12,63 @@ const tutorial_required_messages = [
     "Hello world!"
 ]
 
+const action_commands = [
+    {
+        "title": "Create a Variable",
+        "examples": [
+            "create a variable called foo",
+            "make a variable"
+        ]
+    },
+    {
+        "title": "Set a Variable",
+        "examples": [
+            "set a variable",
+            "set the variable foo to 5"
+        ]
+    },
+    {
+        "title": "Add to a (Number) Variable",
+        "examples": [
+            "add to variable",
+            "add 5 to variable foo"
+        ]
+    },
+    {
+        "title": "Make Me Say Something",
+        "examples": [
+            "say 'Hello world!'",
+            "say the value of the variable foo"
+        ]
+    },
+    {
+        "title": "Make a Conditional",
+        "examples": [
+            "if foo is greater than 5 then say hooray",
+            "if bar is less than 10 then add 10 to variable bar"
+        ]
+    },
+    {
+        "title": "Make a While Loop",
+        "examples": [
+            "while foo is less than 2 then add 2 to variable foo"
+        ]
+    },
+    {
+        "title": "Make a Until Loop",
+        "examples": [
+            "add 2 to variable foo until foo is equal to 20"
+        ]
+    },
+    {
+        "title": "Get User Input",
+        "examples": [
+            "get user input",
+            "get user input and call it foo"
+        ]
+    }
+]
+
 const example_commands = {
     "home": [
         {
@@ -27,61 +84,46 @@ const example_commands = {
                 "run test",
                 "play test"
             ]
+        },
+        {
+            "title": "Edit a Procedure or Program",
+            "examples": [
+                "edit test",
+                "open test"
+            ]
         }
     ],
-    "actions": [
+    "actions": action_commands,
+    "edit_actions": action_commands,
+    "editing": [
         {
-            "title": "Create a Variable",
+            "title": "Navigation",
             "examples": [
-                "create a variable called foo",
-                "make a variable"
+                "next step",
+                "previous step",
+                "go to step 5",
+                "go to the first step",
+                "go to the last step"
             ]
         },
         {
-            "title": "Set a Variable",
+            "title": "Add a New Action",
             "examples": [
-                "set a variable",
-                "set the variable foo to 5"
+                "add step"
             ]
         },
         {
-            "title": "Add to a (Number) Variable",
+            "title": "Delete Current Action",
             "examples": [
-                "add to variable",
-                "add 5 to variable foo"
+                "remove step",
+                "delete step"
             ]
         },
         {
-            "title": "Make Me Say Something",
+            "title": "Change or Replace Current Action",
             "examples": [
-                "say 'Hello world!'",
-                "say the value of the variable foo"
-            ]
-        },
-        {
-            "title": "Make a Conditional",
-            "examples": [
-                "if foo is greater than 5 then say hooray",
-                "if bar is less than 10 then add 10 to variable bar"
-            ]
-        },
-        {
-            "title": "Make a While Loop",
-            "examples": [
-                "while foo is less than 2 then add 2 to variable foo"
-            ]
-        },
-        {
-            "title": "Make a Until Loop",
-            "examples": [
-                "add 2 to variable foo until foo is equal to 20"
-            ]
-        },
-        {
-            "title": "Get User Input",
-            "examples": [
-                "get user input",
-                "get user input and call it foo"
+                "change step",
+                "replace step"
             ]
         }
     ]
@@ -91,7 +133,8 @@ let changeSidebarText = (state) => {
     let examples = document.getElementById('example-actions-list');
     examples.innerHTML = "";
     if (state != null && state in example_commands) {
-        example_commands[state].forEach(action => {
+        let commands = example_commands[state];
+        commands.forEach(action => {
             let node = document.createElement('div');
             node.className = "example-action"
             node.innerHTML = `<div class="action-title"><b>${action.title}</b></div>`;

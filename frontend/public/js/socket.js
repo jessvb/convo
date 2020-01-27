@@ -18,3 +18,7 @@ socket.on('joined', (data) => {
     localStorage.setItem("cid", data);
     console.log("Socket connected to server.");
 });
+
+socket.on('streamError', (err) => {
+    console.log(err);
+});

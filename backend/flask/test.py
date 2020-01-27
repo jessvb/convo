@@ -55,9 +55,56 @@ messages3 = [
     "set the variable foo",
     "10"
 ]
+edit_test = [
+    "edit blah",
+    "edit example",
+    "previous step",
+    "next step",
+    "go to previous step",
+    "continue",
+    "next",
+    "go to next step",
+    "continue",
+    "previous step",
+    "previous",
+    "go back",
+    "go to step 5",
+    "go to step 100",
+    "go to first step",
+    "go to the last step",
+    "done"
+]
+edit_test2 = [
+    "edit example",
+    "next step",
+    "delete step",
+    "add step",
+    "say hello world",
+    "add step",
+    "remove step",
+    "add step",
+    "create a variable",
+    "nest",
+    "4",
+    "remove step",
+    "change step",
+    "say",
+    "hello world",
+    "previous step",
+    "done"
+]
+edit_test3 = [
+    "edit example",
+    "delete step",
+    "done",
+    "run example",
+    "5"
+]
 
-for i, message in enumerate(messages3):
+# for msgs in [messages, messages2, messages3, edit_test]:
+for i, message in enumerate(edit_test3):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
         logging.info(res)
+# dm.reset()

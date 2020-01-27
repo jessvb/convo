@@ -4,3 +4,6 @@ class ValueOf(object):
 
     def eval(self, variables):
         return variables.get(self.variable, None)
+
+    def to_nl(self):
+        return f"the value of variable {self.variable}"

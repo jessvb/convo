@@ -11,6 +11,9 @@ class RunGoal(BaseGoal):
 
     @property
     def message(self):
+        if self.error:
+            return self.error
+
         return "Program finished running." if self.is_complete else (self.todos[-1].message if self.todos else None)
 
     @property
@@ -54,6 +57,8 @@ class RunGoal(BaseGoal):
 
         if self.execution and not self.execution.done:
             todo = self.execution.advance()
+            if self.execution.error:
+                self.error = self.execution.error
             if todo:
                 self.todos.append(todo)
 
@@ -69,7 +74,11 @@ class ExecutionContext(object):
     def advance(self):
         while self.step < len(self.actions):
             action = self.actions[self.step]
-            goal = self.evaluate_action(action)
+            try:
+                goal = self.evaluate_action(action)
+            except KeyError as e:
+                self.error = f"Error occured while running. Variable {e.args[0]} did not exist when I was {action.to_nl()}."
+                break
             self.step += 1
             if goal:
                 return goal
@@ -84,8 +93,8 @@ class ExecutionContext(object):
                 phrase = f"The value of {variable} is {self.variables[variable]}."
             logging.info(f"Saying '{phrase}'")
             try:
-                print(f"Emitting to {self.context.sid}", flush=True)
                 flask_socketio.emit("response", { "message": phrase, "state": self.context.state }, room=str(self.context.sid))
+                print(f"Emitting to {self.context.sid}", flush=True)
             except RuntimeError as e:
                 if not str(e).startswith("Working outside of request context."):
                     raise e
@@ -104,6 +113,7 @@ class ExecutionContext(object):
                 logging.info(f"Current variables: {str(self.variables)}")
             else:
                 logging.warning("Variable not found.")
+                raise KeyError(action.name)
         elif isinstance(action, IncrementVariableAction):
             value = self.variables.get(action.name)
             if action.name in self.variables:
@@ -117,6 +127,7 @@ class ExecutionContext(object):
                 logging.info(f"Current variables: {str(self.variables)}")
             else:
                 logging.warning("Variable not found.")
+                raise KeyError(action.name)
         elif isinstance(action, ConditionalAction):
             res = action.condition.eval(self.variables)
             logging.info(f"Condition for if statement ({str(action.condition)}) is " + ("true" if res else "false"))

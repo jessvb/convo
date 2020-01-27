@@ -42,25 +42,37 @@ const request = {
                 "property",
                 "procedure",
                 "conditional",
-                "loop",
+                "while loop",
+                "until loop",
                 "run",
                 "list",
-                "add"
+                "add",
+                "add step",
+                "remove step",
+                "change step",
+                "replace step",
+                "if",
+                "greater than",
+                "less than",
+                "equal to",
+                "greater than or equal to",
+                "less than or equal to"
             ]
         ]
     },
     interimResults: false
 };
 
+streams = {};
+
 io.on('connection', (client) => {
-    let stream = null;
     let id = client.id;
     let startStream = () => {
-        stream = speechClient.streamingRecognize(request)
+        streams[id] = speechClient.streamingRecognize(request)
             .on('error', (err) => {
                 console.log("Restarting stream.");
                 console.log(err);
-                startStream();
+                io.to(`${client.id}`).emit('streamError', err);
             })
             .on('data', (data) => {
                 if (data.results[0] && data.results[0].alternatives[0]) {
@@ -74,8 +86,10 @@ io.on('connection', (client) => {
     }
 
     let endStream = () => {
-        if (stream)
-            stream.end();
+        if (id in streams) {
+            streams[id].end();
+            delete streams[id];
+        }
     }
 
     client.on('join', (data) => {
@@ -99,11 +113,12 @@ io.on('connection', (client) => {
     });
 
     client.on('audio', (data) => {
-        if (stream !== null && stream.writable)
-            stream.write(data);
-
-        if (stream.writable)
-            console.log("Stream became unwritable");
+        if (!(id in streams))
+            console.log("Stream is null.")
+        else if (!streams[id].writable)
+            console.log("Stream became unwritable.");
+        else
+            streams[id].write(data);
     });
 });
 

@@ -20,6 +20,11 @@ comparison_condition_regex = "(?:if|until) (.+) is ((?:(?:less|greater) than(?: 
 run_regex = "(?:run|play)(?: (.+))?"
 get_user_input_regex = "get(?: user)? input(?: and (?:(?:call it)?|(?:name it)?|(?:save it as)?) (.+))?"
 value_of_regex = "(?:the )?value of (?:(?:the )?variable )?(.+)"
+edit_regex = "(?:open|edit)(?: (.+))?"
+go_to_step_regex = "(?:go to step(?: (.+))?|go to(?: the)? (.+) step)"
+delete_step_regex = "(?:delete|remove) step"
+add_step_regex = "add step"
+change_step_regex = "(?:change|replace) step"
 
 class SemanticNLU(object):
     def __init__(self, context):
@@ -89,6 +94,21 @@ class SemanticNLU(object):
         elif re.match(get_user_input_regex, message):
             match = re.match(get_user_input_regex, message)
             return GetUserInputActionGoal(self.context, variable=group(match, 1))
+        elif re.match(edit_regex, message):
+            match = re.match(edit_regex, message)
+            return EditGoal(self.context, name=group(match, 1))
+        elif re.match(go_to_step_regex, message):
+            match = re.match(go_to_step_regex, message)
+            return GoToStepGoal(self.context, step=group(match, [1, 2]))
+        elif re.match(delete_step_regex, message):
+            match = re.match(delete_step_regex, message)
+            return DeleteStepGoal(self.context)
+        elif re.match(add_step_regex, message):
+            match = re.match(add_step_regex, message)
+            return AddStepGoal(self.context)
+        elif re.match(change_step_regex, message):
+            match = re.match(change_step_regex, message)
+            return ChangeStepGoal(self.context)
 
     def try_parse_condition(self, message):
         if message is None:

@@ -13,7 +13,7 @@ class AddProcedureGoal(BaseGoal):
 
     @property
     def message(self):
-        return f"I created the procedure. You can say, \"run {self.name}\" to play it." if self.is_complete else self.todos[-1].message
+        return f"I created the procedure. You can say, \"run {self.procedure.name}\" to play it." if self.is_complete else self.todos[-1].message
 
     def complete(self):
         self.procedures[self.procedure.name] = self.procedure
@@ -27,7 +27,7 @@ class AddProcedureGoal(BaseGoal):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, "What do you want to call the procedure?"))
             elif value in self.procedures:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"Procedure {value} already exists. Try another name or say cancel."))
+                self.error = f"Procedure {value} already exists. Try another name or say cancel."
             else:
                 self.procedure.name = value
             return
