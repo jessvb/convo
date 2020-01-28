@@ -21,7 +21,7 @@ class LoopActionGoal(ActionGoal):
             if value.is_complete:
                 value.complete()
             else:
-                self.todos[0].append(value)
+                self.todos[0].actions.append(value)
             return
         elif (attr == "condition"):
             if value is None:

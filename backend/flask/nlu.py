@@ -5,21 +5,19 @@ from helpers import *
 
 # create_class_regex = "(?:make|create)(?: a)? class(?: (?:called|named) (.+))?"
 # add_property_regex = "add(?: a)?(?: (.+))? property(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
+# add_procedure_regex = "add(?: an?)? (?:procedure|action)(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
 create_conditional_regex = "(?:create(?: a)? conditional)|(?:(if .+) then (.+))|(?:(.+) (if .+))"
 create_list_regex = "(?:make|create)(?: a)? list(?: (?:called|named) (.+)| (.+))?"
 create_until_loop_regex = "(?:(?:make|create)(?: a)? until loop)|(?:(.+) (until .+))"
 create_while_loop_regex = "(?:(?:make|create)(?: a)? while loop)|(?:(while .+) then (.+))"
-create_procedure_regex = "(?:make|create)(?: a)? procedure(?: (?:called|named) (.+))?"
-add_procedure_regex = "add(?: an?)? (?:procedure|action)(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
+create_procedure_regex = "(?:make|create)(?: a)? (?:procedure|program)(?: (?:called|named) (.+))?$"
 add_to_list_regex = "add(?: (.+))? to list(?: (.+))?"
 say_regex = "say(?: (.+))?"
 set_variable_regex = "(?!change step)(?:set|change)(?:(?: (.+))? to (.+)| (.+))"
 create_variable_regex = "(?:create|make)(?: a)?(?: (.+))? variable(?: called| named)?(?:(?: (.+))? and set(?: it)? to (.+)| (.+))?"
 increment_variable_regex = "(?:add(?: (.+))? to(?: (.+))?)|(?:increment(?:(?: (.+))? by (.+)| (.+))?)"
-say_condition_regex = "(?:until|if) i say (.+)"
-comparison_condition_regex = "(?:if|until|while) (.+) is ((?:(?:less|greater) than(?: or equal to)?)|equal to) (.+)"
 run_regex = "run(?: (.+))?"
-get_user_input_regex = "get(?: user)? input(?: and (?:(?:call it)?|(?:name it)?|(?:save it as)?) (.+))?"
+get_user_input_regex = "(?:listen for|get)(?: user)? input(?: and (?:(?:call it)?|(?:name it)?|(?:save it as)?) (.+))?"
 value_of_regex = "(?:the )?value of (?:(?:the )?variable )?(.+)"
 edit_regex = "(?:open|edit)(?: (.+))?"
 go_to_step_regex = "(?:go to step(?: (.+))?|go to(?: the)? (.+) step)"
@@ -28,7 +26,8 @@ add_step_regex = "add step"
 change_step_regex = "(?:change|replace) step"
 play_sound_regex = "play(?: the)?(?: (.+))? sound"
 
-variable_regex = "(?:.*variable)(?: (.+))?"
+comparison_condition_regex = "(?:if|until|while) (.+) is ((?:(?:less|greater) than(?: or equal to)?)|equal to) (.+)"
+variable_regex = "(?:(?:a|the) variable)(?: (.+))?|variable (.+)"
 
 class SemanticNLU(object):
     def __init__(self, context):
@@ -36,6 +35,9 @@ class SemanticNLU(object):
 
     def parse_message(self, message):
         message = message.lower()
+        if message.startswith(("what")):
+            return self.try_parse_question(message)
+
         for parse in [self.try_parse_goal, self.try_parse_value_of, self.try_parse_condition]:
             parsed = parse(message)
             if parsed is not None:
@@ -113,9 +115,6 @@ class SemanticNLU(object):
         elif re.match(comparison_condition_regex, message):
             match = re.match(comparison_condition_regex, message)
             return ComparisonCondition(variable=group(match, 1), op=group(match, 2), value=group(match, 3))
-        elif re.match(say_condition_regex, message):
-            match = re.match(say_condition_regex, message)
-            return SayCondition(phrase=group(match, 1))
 
     def try_parse_value_of(self, message):
         if message is None:
@@ -131,7 +130,7 @@ class SemanticNLU(object):
             return message
         elif re.match(variable_regex, message):
             match = re.match(variable_regex, message)
-            return match.group(1)
+            return match.group(1) if match.group(1) else match.group(2)
         else:
             return message
 

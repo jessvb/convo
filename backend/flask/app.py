@@ -41,8 +41,9 @@ def message(data):
         return
 
     dm = client.dm
-    res = dm.handle_message(message)
+    res = dm.handle_message(message.lower())
     if (res):
+        dm.context.add_message(res)
         state = dm.context.state
         response = {
             "message": res,

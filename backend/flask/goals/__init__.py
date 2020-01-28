@@ -2,7 +2,7 @@ from goals.base import *
 from goals.input import *
 from goals.action import *
 from goals.variable import *
-from goals.list import *
+from goals.lists import *
 from goals.klass import *
 from goals.procedure import *
 from goals.say import *

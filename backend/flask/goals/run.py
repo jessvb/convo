@@ -91,7 +91,9 @@ class ExecutionContext(object):
             except ExecutionError as e:
                 self.error = e.message
                 break
-
+            except RuntimeError as e:
+                if not str(e).startswith("Working outside of request context."):
+                    raise e
             self.step += 1
             if goal:
                 return goal
@@ -103,25 +105,19 @@ class ExecutionContext(object):
             phrase = action.phrase
             if isinstance(action.phrase, ValueOf):
                 variable = action.phrase.variable
-                phrase = f"The value of {variable} is {self.variables[variable]}."
+                phrase = f"The value of {variable} is \"{self.variables[variable]}\"."
             logging.info(f"Saying '{phrase}'")
-            try:
-                flask_socketio.emit("response", { "message": phrase, "state": self.context.state }, room=str(self.context.sid))
-                print(f"Emitting to {self.context.sid}")
-            except RuntimeError as e:
-                if not str(e).startswith("Working outside of request context."):
-                    raise e
+            flask_socketio.emit("response", { "message": phrase, "state": self.context.state }, room=str(self.context.sid))
+            print(f"Emitting to {self.context.sid}")
             self.context.add_message(action.phrase)
         elif isinstance(action, PlaySoundAction):
             logging.info(f"Playing sound file {action.sound}.")
-            try:
-                flask_socketio.emit("playSound", { "sound": action.sound, "state": self.context.state }, room=str(self.context.sid))
-                print(f"Emitting to {self.context.sid}")
-            except RuntimeError as e:
-                if not str(e).startswith("Working outside of request context."):
-                    raise e
+            flask_socketio.emit("playSound", { "sound": action.sound, "state": self.context.state }, room=str(self.context.sid))
+            print(f"Emitting to {self.context.sid}")
         elif isinstance(action, GetUserInputAction):
             logging.info(f"Getting user input and setting as {action.variable}")
+            flask_socketio.emit("response", { "message": "Listening for user input...", "state": self.context.state }, room=str(self.context.sid))
+            print(f"Emitting to {self.context.sid}")
             return GetUserInputGoal(self.context, action.variable)
         elif isinstance(action, CreateVariableAction):
             self.variables[action.name] = self.variables[action.value.variable] if isinstance(action.value, ValueOf) else action.value

@@ -78,6 +78,8 @@ allowed_goals = {
     "executing": [GetUserInputGoal, GetInputGoal]
 }
 
+ask_procedures_regex = "what (.+)?procedures"
+
 class DialogManager(object):
     def __init__(self, sid):
         self.sid = sid
@@ -95,13 +97,24 @@ class DialogManager(object):
         self.context.add_message(message)
 
         # Check for interrupts
-        if (message == "reset"):
+        if message == "reset":
             return self.reset()
-        elif (message == "cancel"):
+        elif message == "cancel":
             if self.context.goals:
                 self.context.goals.pop()
             self.context.state = "home"
             return "Canceled! What do you want to do?"
+        elif message in ["help", "i need help"]:
+            return "Raise your hand and help will be on the way!"
+        elif re.match(ask_procedures_regex, message):
+            response = f"You have {len(self.context.procedures)} procedures."
+            names = [f"\"{p}\"" for p in self.context.procedures.keys()]
+            if len(names) == 0:
+                return f"You have no procedures."
+            elif len(names) == 1:
+                return response + f" It is {names[0]}"
+            else:
+                return response + f" They are {', '.join(names[:-1])} and {names[-1]}."
 
         try:
             self.context.parsed = self.nlu.parse_message(message)
@@ -110,8 +123,6 @@ class DialogManager(object):
             response = "I cannot do this right now."
             if (self.context.state == "home"):
                 response += " Try 'create a procedure' or 'create a class'."
-            if response:
-                self.context.add_message(response)
             return response
 
         if self.current_goal() is None:
@@ -138,8 +149,6 @@ class DialogManager(object):
             else:
                 response = goal.message
 
-        if response:
-            self.context.add_message(response)
         return response
 
 class DialogContext(object):

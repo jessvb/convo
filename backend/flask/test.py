@@ -133,16 +133,27 @@ set_test = [
     "change step to 5",
     "change variable step to 5",
     "change setting",
-    "5"
+    "5",
+    "create a variable",
+    "my first variable",
+    "5",
+    "set my first variable to 5",
+    "done",
+    "run set test"
 ]
 
-create_procedure_test = [
-    "create a procedure",
-    "my first procedure",
-    "create a variable"
+questions_test = [
+    "what procedures do i have?"
 ]
 
-for i, message in enumerate(set_test):
+loop_test = [
+    "create a procedure called loop test",
+    "create a variable called counter and set it to 5",
+    "while counter is less than 10 then add 10 to counter",
+    "close loop"
+]
+
+for i, message in enumerate(loop_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
