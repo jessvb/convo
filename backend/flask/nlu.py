@@ -2,13 +2,13 @@ import re
 from goals import *
 from models import *
 
-create_class_regex = "(?:make|create)(?: a)? class(?: (?:called|named) (.+))?"
+# create_class_regex = "(?:make|create)(?: a)? class(?: (?:called|named) (.+))?"
+# add_property_regex = "add(?: a)?(?: (.+))? property(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
 create_conditional_regex = "(?:create(?: a)? conditional)|(?:(if .+) then (.+))|(?:(.+) (if .+))"
 create_list_regex = "(?:make|create)(?: a)? list(?: (?:called|named) (.+)| (.+))?"
 create_until_loop_regex = "(?:(?:make|create)(?: a)? until loop)|(?:(.+) (until .+))"
 create_while_loop_regex = "(?:(?:make|create)(?: a)? while loop)|(?:(while .+) then (.+))"
 create_procedure_regex = "(?:make|create)(?: a)? procedure(?: (?:called|named) (.+))?"
-add_property_regex = "add(?: a)?(?: (.+))? property(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
 add_procedure_regex = "add(?: an?)? (?:procedure|action)(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
 add_to_list_regex = "add(?: (.+))? to list(?: (.+))?"
 say_regex = "say(?: (.+))?"
@@ -56,18 +56,9 @@ class SemanticNLU(object):
             condition = group(match, 1)
             action = group(match, 2)
             return WhileLoopActionGoal(self.context, condition=self.try_parse_condition(condition), action=self.try_parse_goal(action))
-        elif re.match(create_class_regex, message):
-            match = re.match(create_class_regex, message)
-            return CreateClassGoal(self.context, name=group(match, 1))
         elif re.match(create_procedure_regex, message):
             match = re.match(create_procedure_regex, message)
             return AddProcedureGoal(self.context, name=group(match, 1))
-        elif re.match(add_property_regex, message):
-            match = re.match(add_property_regex, message)
-            return AddPropertyGoal(self.context, klass=group(match, 3), name=group(match, [2, 4]), type=group(match, 1))
-        elif re.match(add_procedure_regex, message):
-            match = re.match(add_procedure_regex, message)
-            return AddClassProcedureGoal(self.context, name=group(match, [1, 3]), klass=group(match, 2))
         elif re.match(set_regex, message):
             match = re.match(set_regex, message)
             if group(match, 2) == "property":

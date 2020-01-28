@@ -2,7 +2,7 @@ import logging
 from models import *
 from goals import *
 
-class CreateClassGoal(BaseGoal):
+class CreateClassGoal(HomeGoal):
     def __init__(self, context, name=None):
         super().__init__(context)
         self.klass = Class(name)
@@ -16,7 +16,7 @@ class CreateClassGoal(BaseGoal):
 
     def complete(self):
         self.context.add_class(self.klass)
-        self.context.transition("complete")
+        # self.context.transition("complete")
         return super().complete()
 
     def setattr(self, attr, value):

@@ -1,7 +1,7 @@
 from goals import *
 from models import *
 
-class CreateListActionGoal(BaseGoal):
+class CreateListActionGoal(ActionGoal):
     def __init__(self, context, name=None):
         super().__init__(context)
         self.setattr("name", name)
@@ -16,7 +16,7 @@ class CreateListActionGoal(BaseGoal):
             self.todos.append(GetInputGoal(self.context, self, attr, f"What do you want to call this list?"))
         setattr(self, attr, value)
 
-class AddToListActionGoal(BaseGoal):
+class AddToListActionGoal(ActionGoal):
     def __init__(self, context, name=None, value=None):
         super().__init__(context)
         self.setattr("name", name)

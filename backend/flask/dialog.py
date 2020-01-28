@@ -47,35 +47,34 @@ sounds_procedure = Procedure(name="dog or cat", actions=[
     )
 ])
 
-transitions = {
+state_machine = {
     "home": {
-        "edit_class": "class",
-        "create_class": "class",
-        "create_procedure": "actions",
-        "create_class_procedure": "class_actions",
-        "run": "execution",
+        "add_procedure": "creating",
+        "run": "executing",
         "edit": "editing"
     },
-    "class_actions": {
-        "complete": "home"
-    },
-    "edit_actions": {
-        "complete": "editing"
-    },
-    "actions": {
-        "complete": "home"
-    },
-    "class": {
-        "complete": "home"
-    },
-    "execution": {
+    "creating": {
         "complete": "home"
     },
     "editing": {
-        "complete": "home",
-        "add_step": "edit_actions",
-        "change_step": "edit_actions"
+        "add_step": "editing_action",
+        "change_step": "editing_action",
+        "complete": "home"
+    },
+    "executing": {
+        "complete": "home"
+    },
+    "editing_action": {
+        "complete": "editing"
     }
+}
+
+allowed_goals = {
+    "home": [HomeGoal, EditGoal, RunGoal],
+    "creating": [ActionGoal, GetActionsGoal, GetConditionGoal, GetInputGoal],
+    "editing": [StepGoal, GetInputGoal],
+    "editing_action": [ActionGoal, GetActionsGoal, GetConditionGoal, GetInputGoal],
+    "executing": [GetUserInputGoal, GetInputGoal]
 }
 
 class DialogManager(object):
@@ -105,10 +104,8 @@ class DialogManager(object):
 
         try:
             self.context.parsed = self.nlu.parse_message(message)
-            if isinstance(self.context.parsed, BaseGoal):
-                self.context.validate_goal(self.context.parsed)
         except InvalidStateError as e:
-            logging.warning(e.message)
+            logging.error(e.message)
             base = "I cannot do this right now."
             if (self.context.state == "home"):
                 return base + " Try 'create a procedure' or 'create a class'."
@@ -186,45 +183,9 @@ class DialogContext(object):
         return self.classes.get(name)
 
     def validate_goal(self, goal):
-        if self.state == "home":
-            if isinstance(goal, CreateClassGoal):
-                self.transition("create_class")
-            elif isinstance(goal, AddClassProcedureGoal):
-                self.transition("create_class_procedure")
-            elif isinstance(goal, AddProcedureGoal):
-                self.transition("create_procedure")
-            elif isinstance(goal, AddPropertyGoal):
-                self.transition("edit_class")
-            elif isinstance(goal, RunGoal):
-                self.transition("run")
-            elif isinstance(goal, EditGoal):
-                self.transition("edit")
-            else:
-                raise InvalidStateError(self.state, str(goal))
-        elif self.state in ["actions", "class_actions"]:
-            if isinstance(goal, CreateClassGoal) \
-                or isinstance(goal, AddClassProcedureGoal) \
-                or isinstance(goal, AddProcedureGoal) \
-                or isinstance(goal, AddPropertyGoal) \
-                or isinstance(goal, EditGoal):
-                raise InvalidStateError(self.state, str(goal))
-        elif self.state == "edit_actions":
-            if isinstance(goal, AddStepGoal) \
-                or isinstance(goal, DeleteStepGoal) \
-                or isinstance(goal, GoToStepGoal) \
-                or isinstance(goal, ChangeStepGoal):
-                raise InvalidStateError(self.state, str(goal))
-        elif self.state in ["editing"]:
-            if isinstance(goal, AddStepGoal):
-                self.transition("add_step")
-            elif isinstance(goal, ChangeStepGoal):
-                self.transition("change_step")
-        elif self.state == "class":
-            raise InvalidStateError(self.state, str(goal))
+        allowed = any([type(goal) == goaltype or isinstance(goal, goaltype) for goaltype in allowed_goals[self.state]])
+        if not allowed:
+            raise InvalidStateError(f"Cannot create goal {str(goal)} in state {self.state}")
 
     def transition(self, action):
-        actions = transitions[self.state]
-        if action not in actions:
-            raise InvalidStateError(self.state, str(action))
-
-        self.state = actions[action]
+        self.state = state_machine[self.state][str(action)]

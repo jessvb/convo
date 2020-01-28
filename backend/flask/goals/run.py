@@ -5,9 +5,10 @@ from goals import *
 from models import *
 from error import ExecutionError
 
-class RunGoal(BaseGoal):
+class RunGoal(HomeGoal):
     def __init__(self, context, name=None):
         super().__init__(context)
+        self.context.transition(self)
         self.execution = None
         self.setattr("name", name)
 
@@ -42,6 +43,9 @@ class RunGoal(BaseGoal):
                 self.context.execution = ExecutionContext(self.context, [copy.copy(a) for a in self.procedure.actions])
                 self.execution = self.context.execution
                 todo = self.execution.advance()
+                if self.execution.error:
+                    self.error = self.execution.error
+                    self.context.transition("complete")
                 if todo:
                     self.todos.append(todo)
             return
@@ -62,6 +66,7 @@ class RunGoal(BaseGoal):
             todo = self.execution.advance()
             if self.execution.error:
                 self.error = self.execution.error
+                self.context.transition("complete")
             if todo:
                 self.todos.append(todo)
 
@@ -74,7 +79,6 @@ class ExecutionContext(object):
         self.done = False
         self.step = 0
         self.error = None
-        print(self.actions)
 
     def advance(self):
         while self.step < len(self.actions):
@@ -87,6 +91,7 @@ class ExecutionContext(object):
             except ExecutionError as e:
                 self.error = e.message
                 break
+
             self.step += 1
             if goal:
                 return goal

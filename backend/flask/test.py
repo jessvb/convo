@@ -1,6 +1,7 @@
 import logging
 from models import *
 from client import *
+from goals import *
 
 logging.basicConfig(level=logging.DEBUG)
 client = Client("test")
@@ -56,7 +57,8 @@ messages3 = [
     "10"
 ]
 edit_test = [
-    "edit blah",
+    "edit",
+    "blah",
     "edit example",
     "previous step",
     "next step",
@@ -120,10 +122,18 @@ sound_test2 = [
     "dog"
 ]
 
-# for msgs in [messages, messages2, messages3, edit_test]:
-for i, message in enumerate(sound_test2):
+dialogues = [
+    messages,
+    messages2,
+    messages3,
+    edit_test,
+    edit_test2,
+    edit_test3,
+    sound_test,
+    sound_test2
+]
+for i, message in enumerate(sound_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
         logging.info(res)
-# dm.reset()

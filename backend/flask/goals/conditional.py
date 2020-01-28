@@ -3,7 +3,7 @@ from goals import *
 from models import *
 from word2number import w2n
 
-class ConditionalActionGoal(BaseGoal):
+class ConditionalActionGoal(ActionGoal):
     def __init__(self, context, condition=None, action=None):
         super().__init__(context)
         self.conditional_actions = [[], []]

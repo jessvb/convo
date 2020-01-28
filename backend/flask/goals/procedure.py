@@ -1,13 +1,13 @@
 from goals import *
 from models import *
 
-class AddProcedureGoal(BaseGoal):
+class AddProcedureGoal(HomeGoal):
     def __init__(self, context, name=None):
         super().__init__(context)
+        self.context.transition(self)
         self.procedure = Procedure(name, [])
         self.context.current = self.procedure
         self.procedures = self.context.procedures
-
         self.todos = [GetProcedureActionsGoal(self.context, self.procedure.actions)]
         self.setattr("name", name)
 

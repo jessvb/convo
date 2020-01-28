@@ -2,7 +2,7 @@ from goals import *
 from models import *
 from word2number import w2n
 
-class LoopActionGoal(BaseGoal):
+class LoopActionGoal(ActionGoal):
     def __init__(self, context, condition=None, action=None):
         super().__init__(context)
         self.loop_actions = []

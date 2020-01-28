@@ -7,6 +7,7 @@ class BaseGoal(object):
     def __init__(self, context):
         self.error = None
         self.context = context
+        self.context.validate_goal(self)
         self.todos = []
         self._message = None
         logging.debug(f"Creating {self.__class__.__name__}...")
@@ -49,12 +50,20 @@ class BaseGoal(object):
 
     def __str__(self):
         name = self.__class__.__name__
-        return to_snake_case(name[:-len("Goal")]) + (f":{str(self.todos[-1])}" if self.todos else "")
+        return to_snake_case(name[:-len("Goal")])
+
+class HomeGoal(BaseGoal):
+    def __init__(self, context):
+        super().__init__(context)
 
 class ActionGoal(BaseGoal):
     def __init__(self, context):
         super().__init__(context)
-        self.context.validate_goal(self)
         assert isinstance(self.context.current, Procedure)
         self.procedure = self.context.current
         self.variables = self.procedure.variables
+
+class StepGoal(BaseGoal):
+    def __init__(self, context):
+        super().__init__(context)
+        self.edit = self.context.edit
