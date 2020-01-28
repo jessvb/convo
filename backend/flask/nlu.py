@@ -15,7 +15,7 @@ add_to_list_regex = "add(?: (.+))? to list(?: (.+))?"
 say_regex = "say(?: (.+))?"
 set_variable_regex = "(?!change step)(?:set|change)(?:(?: (.+))? to (.+)| (.+))"
 create_variable_regex = "(?:create|make)(?: a)?(?: (.+))? variable(?: called| named)?(?:(?: (.+))? and set(?: it)? to (.+)| (.+))?"
-increment_variable_regex = "(?:add(?: (.+))? to variable(?: (.+))?)|(?:increment variable(?:(?: (.+))? by (.+)| (.+))?)"
+increment_variable_regex = "(?:add(?: (.+))? to(?: (.+))?)|(?:increment(?:(?: (.+))? by (.+)| (.+))?)"
 say_condition_regex = "(?:until|if) i say (.+)"
 comparison_condition_regex = "(?:if|until|while) (.+) is ((?:(?:less|greater) than(?: or equal to)?)|equal to) (.+)"
 run_regex = "run(?: (.+))?"
@@ -27,6 +27,8 @@ delete_step_regex = "(?:delete|remove) step"
 add_step_regex = "add step"
 change_step_regex = "(?:change|replace) step"
 play_sound_regex = "play(?: the)?(?: (.+))? sound"
+
+variable_regex = "(?:.*variable)(?: (.+))?"
 
 class SemanticNLU(object):
     def __init__(self, context):
@@ -59,17 +61,18 @@ class SemanticNLU(object):
             return WhileLoopActionGoal(self.context, condition=self.try_parse_condition(condition), action=self.try_parse_goal(action))
         elif re.match(create_procedure_regex, message):
             match = re.match(create_procedure_regex, message)
-            return AddProcedureGoal(self.context, name=group(match, 1))
+            return CreateProcedureGoal(self.context, name=group(match, 1))
         elif re.match(set_variable_regex, message):
             match = re.match(set_variable_regex, message)
             return SetVariableActionGoal(
-                self.context, name=group(match, [1, 3], ["the", "variable"]), value=self.try_parse_value_of(group(match, 2)))
+                self.context, name=self.try_parse_variable(group(match, [1, 3])), value=self.try_parse_value_of(group(match, 2)))
         elif re.match(create_variable_regex, message):
             match = re.match(create_variable_regex, message)
             return CreateVariableActionGoal(self.context, name=group(match, [2, 4]), value=self.try_parse_value_of(group(match, 3)))
         elif re.match(increment_variable_regex, message):
             match = re.match(increment_variable_regex, message)
-            return IncrementVariableActionGoal(self.context, name=group(match, [2, 3, 5]), value=self.try_parse_value_of(group(match, [1, 4])))
+            return IncrementVariableActionGoal(
+                self.context, name=self.try_parse_variable(group(match, [2, 3, 5])), value=self.try_parse_value_of(group(match, [1, 4])))
         elif re.match(say_regex, message):
             match = re.match(say_regex, message)
             return SayActionGoal(self.context, phrase=self.try_parse_value_of(group(match, 1)))
@@ -120,6 +123,15 @@ class SemanticNLU(object):
         elif re.match(value_of_regex, message):
             match = re.match(value_of_regex, message)
             return ValueOf(variable=group(match, 1))
+        else:
+            return message
+
+    def try_parse_variable(self, message):
+        if message is None:
+            return message
+        elif re.match(variable_regex, message):
+            match = re.match(variable_regex, message)
+            return match.group(1)
         else:
             return message
 

@@ -1,7 +1,7 @@
 from goals import *
 from models import *
 
-class AddProcedureGoal(HomeGoal):
+class CreateProcedureGoal(HomeGoal):
     def __init__(self, context, name=None):
         super().__init__(context)
         self.context.transition(self)
@@ -34,7 +34,7 @@ class AddProcedureGoal(HomeGoal):
             return
         setattr(self, attr, value)
 
-class AddClassProcedureGoal(AddProcedureGoal):
+class AddClassProcedureGoal(CreateProcedureGoal):
     def __init__(self, context, name=None, klass=None):
         super().__init__(context, name)
         self.procedures = None

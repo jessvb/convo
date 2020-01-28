@@ -93,8 +93,8 @@ const example_commands = {
             ]
         }
     ],
-    "actions": action_commands,
-    "edit_actions": action_commands,
+    "creating": action_commands,
+    "editing_action": action_commands,
     "editing": [
         {
             "title": "Navigation",

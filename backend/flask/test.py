@@ -131,7 +131,15 @@ set_test = [
     "setting",
     "change step",
     "change step to 5",
-    "change variable step to 5"
+    "change variable step to 5",
+    "change setting",
+    "5"
+]
+
+create_procedure_test = [
+    "create a procedure",
+    "my first procedure",
+    "create a variable"
 ]
 
 for i, message in enumerate(set_test):

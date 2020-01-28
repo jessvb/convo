@@ -50,7 +50,7 @@ sounds_procedure = Procedure(name="dog or cat", actions=[
 
 state_machine = {
     "home": {
-        "add_procedure": "creating",
+        "create_procedure": "creating",
         "run": "executing",
         "edit": "editing"
     },
