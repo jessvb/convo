@@ -11,6 +11,37 @@ const io = require('socket.io')(httpServer);
 
 app.use(express.static('public'));
 
+// Simple password protection:
+// From https://stackoverflow.com/questions/23616371/basic-http-authentication-with-node-and-express-4
+app.use((req, res, next) => {
+
+    // -----------------------------------------------------------------------
+    // authentication middleware
+
+    const auth = {
+        login: 'feb4',
+        password: 'letstryit!'
+    } // change this
+
+    // parse login and password from headers
+    const b64auth = (req.headers.authorization || '').split(' ')[1] || ''
+    const [login, password] = new Buffer(b64auth, 'base64').toString().split(':')
+
+    // Verify login and password are set and correct
+    if (login && password && login === auth.login && password === auth.password) {
+        // Access granted...
+        return next()
+    }
+
+    // Access denied...
+    res.set('WWW-Authenticate', 'Basic realm="401"'); // change this
+    res.status(401).send('Authentication required: Please enter the username and password ' +
+        'provided by the user study administrators.'); // custom message
+
+    // -----------------------------------------------------------------------
+
+});
+
 app.get('/', (req, res) => res.sendFile(path.resolve('public/html/home.html')));
 app.get('/survey', (req, res) => res.sendFile(path.resolve('public/html/survey.html')));
 app.get('/practice', (req, res) => res.sendFile(path.resolve('public/html/practice.html')));
@@ -82,8 +113,7 @@ io.on('connection', (client) => {
                 } else {
                     console.log('Reached transcription time limit, press Ctrl+C');
                 }
-            }
-        );
+            });
     }
 
     let endStream = () => {
