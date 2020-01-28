@@ -122,17 +122,19 @@ sound_test2 = [
     "dog"
 ]
 
-dialogues = [
-    messages,
-    messages2,
-    messages3,
-    edit_test,
-    edit_test2,
-    edit_test3,
-    sound_test,
-    sound_test2
+set_test = [
+    "create a procedure called set test",
+    "create a variable called setting and set it to 5",
+    "set variable setting to 6",
+    "change setting to 5",
+    "change variable to 5",
+    "setting",
+    "change step",
+    "change step to 5",
+    "change variable step to 5"
 ]
-for i, message in enumerate(sound_test):
+
+for i, message in enumerate(set_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

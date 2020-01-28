@@ -116,6 +116,8 @@ class GetProcedureActionsGoal(GetActionsGoal):
             return f"{self.__class__.__name__} completed!"
 
         if len(self.todos) == 0:
-            return "Added action to procedure! What's next? (Say 'done' if you are finished)" if len(self.actions) > 0 else "What do you want to do first?"
+            return "Added action! Do you want to do anything else?" \
+                if len(self.actions) > 0 \
+                    else "What do you want to happen in the procedure first? You could make me say something. See the sidebar for more options."
         else:
             return self.todos[-1].message

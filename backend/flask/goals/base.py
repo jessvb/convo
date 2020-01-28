@@ -1,6 +1,6 @@
 import re
 import logging
-from utils import to_snake_case
+from helpers import to_snake_case
 from models import *
 
 class BaseGoal(object):
@@ -62,6 +62,16 @@ class ActionGoal(BaseGoal):
         assert isinstance(self.context.current, Procedure)
         self.procedure = self.context.current
         self.variables = self.procedure.variables
+
+    @property
+    def message(self):
+        if self.error:
+            return self.error
+
+        if self._message:
+            return self._message
+
+        return f"Added action!" if self.is_complete else self.todos[-1].message
 
 class StepGoal(BaseGoal):
     def __init__(self, context):

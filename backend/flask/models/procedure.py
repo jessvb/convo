@@ -1,4 +1,4 @@
-from utils import to_snake_case
+from helpers import to_snake_case
 tab = "    "
 
 class Procedure(object):

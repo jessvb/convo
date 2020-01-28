@@ -1,6 +1,7 @@
 import re
 from goals import *
 from models import *
+from helpers import *
 
 # create_class_regex = "(?:make|create)(?: a)? class(?: (?:called|named) (.+))?"
 # add_property_regex = "add(?: a)?(?: (.+))? property(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
@@ -12,7 +13,7 @@ create_procedure_regex = "(?:make|create)(?: a)? procedure(?: (?:called|named) (
 add_procedure_regex = "add(?: an?)? (?:procedure|action)(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
 add_to_list_regex = "add(?: (.+))? to list(?: (.+))?"
 say_regex = "say(?: (.+))?"
-set_regex = "set(?: the)?(?: (.*))? (property|variable)(?:(?: (.+))? to (.+)| (.+))?"
+set_variable_regex = "(?!change step)(?:set|change)(?:(?: (.+))? to (.+)| (.+))"
 create_variable_regex = "(?:create|make)(?: a)?(?: (.+))? variable(?: called| named)?(?:(?: (.+))? and set(?: it)? to (.+)| (.+))?"
 increment_variable_regex = "(?:add(?: (.+))? to variable(?: (.+))?)|(?:increment variable(?:(?: (.+))? by (.+)| (.+))?)"
 say_condition_regex = "(?:until|if) i say (.+)"
@@ -59,12 +60,10 @@ class SemanticNLU(object):
         elif re.match(create_procedure_regex, message):
             match = re.match(create_procedure_regex, message)
             return AddProcedureGoal(self.context, name=group(match, 1))
-        elif re.match(set_regex, message):
-            match = re.match(set_regex, message)
-            if group(match, 2) == "property":
-                return SetPropertyActionGoal(self.context, name=group(match, [1, 3, 5]), value=group(match, 4))
-            elif group(match, 2) == "variable":
-                return SetVariableActionGoal(self.context, name=group(match, [1, 3, 5]), value=self.try_parse_value_of(group(match, 4)))
+        elif re.match(set_variable_regex, message):
+            match = re.match(set_variable_regex, message)
+            return SetVariableActionGoal(
+                self.context, name=group(match, [1, 3], ["the", "variable"]), value=self.try_parse_value_of(group(match, 2)))
         elif re.match(create_variable_regex, message):
             match = re.match(create_variable_regex, message)
             return CreateVariableActionGoal(self.context, name=group(match, [2, 4]), value=self.try_parse_value_of(group(match, 3)))
@@ -124,11 +123,12 @@ class SemanticNLU(object):
         else:
             return message
 
-def group(match, indices):
-    if isinstance(indices, int):
-        idx = indices
-        return match.group(idx) if len(match.groups()) > 0 and match.group(idx) else None
-
-    for idx in indices:
-        if match.group(idx):
-            return match.group(idx)
+def group(match, idx, words_to_remove=[]):
+    if isinstance(idx, int) and len(match.groups()) > 0 and match.group(idx):
+        cleaned = clean(match.group(idx), words_to_remove)
+        return cleaned if cleaned else None
+    elif isinstance(idx, type([])):
+        for i in idx:
+            cleaned = group(match, i, words_to_remove)
+            if cleaned:
+                return cleaned
