@@ -253,10 +253,11 @@ value_of_test = [
 ]
 
 bug_test = [
-    "edit empty",
-    "create a variable called thing and set it to 4",
-    "until thing is equal to 4 say next",
-    "say the value of thing"
+    "create a procedure called fire",
+    "create a variable called fire and set it to 5",
+    "if fire is 5 say hi",
+    "done",
+    "done"
 ]
 
 for i, message in enumerate(bug_test):

@@ -25,7 +25,7 @@ class GetActionsGoal(BaseGoal):
             return f"{self.__class__.__name__} completed!"
 
         if len(self.todos) == 0:
-            return "Added action! Do you want to do anything else?" \
+            return "Added action! Do you want to do anything else in the procedure?" \
                 if len(self.actions) > 0 \
                     else "What do you want to happen in the procedure first? You could make me say something. See the sidebar for more options."
         else:
@@ -73,12 +73,12 @@ class GetConditionalActionsGoal(GetActionsGoal):
         if len(self.todos) == 0:
             if self.condition:
                 if len(self.actions) > 0:
-                    return "Added action to when conditional is true. Anything else? (Say 'done' if you are finished)"
+                    return "Added action to whenever the condition is true. Anything else? You can say 'done' if you are finished."
                 else:
                     return "What do you want to do first if the condition is true?"
             else:
                 if len(self.actions) > 0:
-                    return "Added action to when conditional is false. Anything else? (Say 'done' if you are finished)"
+                    return "Added action to whenever the condition is false. Anything else? You can say 'done' if you are finished."
                 else:
                     return "Would you like to do anything if condition is false? If so, what would you like to do first?"
         else:

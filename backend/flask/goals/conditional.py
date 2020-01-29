@@ -15,6 +15,7 @@ class ConditionalActionGoal(ActionGoal):
     def complete(self):
         hasattr(self, "actions")
         self.actions.append(ConditionalAction(self.condition, self.conditional_actions))
+        self._message = "Added the sets of conditional actions. Do you want to do anything else?"
         return super().complete()
 
     def advance(self):
