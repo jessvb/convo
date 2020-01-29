@@ -19,9 +19,13 @@ class QuestionAnswer(object):
                 return response + f" They are {', '.join(names[:-1])} and {names[-1]}."
         elif re.match(ask_what_which_step_regex, question) and self.context.state == "editing":
             edit = self.context.edit
-            if edit.step == -1:
-                return "You currently have no steps."
-            return f"I am on step {edit.step + 1} where I am {edit.actions[edit.step].to_nl()}"
+            if edit.at_first_step:
+                step_message = f"I am on the first {'and only ' if edit.at_last_step else ''}step"
+            elif edit.at_last_step:
+                step_message = "I am on the last step"
+            else:
+                step_message = f"I am on step {edit.step + 1}"
+            return f"{step_message}, where I am {edit.current.to_nl()}."
 
     @staticmethod
     def is_question(message):

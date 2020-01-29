@@ -103,6 +103,22 @@ edit_test2 = [
     "done"
 ]
 
+edit_test3 = [
+    "create a procedure called empty",
+    "say hello",
+    "say bye",
+    "done",
+    "edit empty",
+    "next step",
+    "next step",
+    "previous step",
+    "previous step",
+    "delete step",
+    "what step am i on",
+    "add step",
+    "say bye"
+]
+
 sound_test = [
     "create a procedure called bark",
     "create a variable called foo and set it to 5",
@@ -208,7 +224,7 @@ procedure_test = [
     "delete deletion"
 ]
 
-for i, message in enumerate(edit_test2):
+for i, message in enumerate(edit_test3):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
