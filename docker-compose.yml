@@ -16,7 +16,7 @@ services:
     volumes:
       - ./frontend:/app
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
     ports:
       - 8080:8080
     command: npm start
