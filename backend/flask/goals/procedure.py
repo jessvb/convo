@@ -8,11 +8,17 @@ class CreateProcedureGoal(HomeGoal):
         self.procedure = Procedure(name, [])
         self.context.current = self.procedure
         self.procedures = self.context.procedures
-        self.todos = [GetProcedureActionsGoal(self.context, self.procedure.actions)]
+        self.todos.append(GetProcedureActionsGoal(self.context, self.procedure.actions))
         self.setattr("name", name)
 
     @property
     def message(self):
+        if self.error:
+            return self.error
+
+        if self._message:
+            return self._message
+
         return f"I created the procedure. You can say, \"run {self.procedure.name}\" to play it." if self.is_complete else self.todos[-1].message
 
     def complete(self):

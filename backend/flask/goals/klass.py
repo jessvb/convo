@@ -16,7 +16,7 @@ class CreateClassGoal(HomeGoal):
 
     def complete(self):
         self.context.add_class(self.klass)
-        # self.context.transition("complete")
+        self.context.transition("complete")
         return super().complete()
 
     def setattr(self, attr, value):

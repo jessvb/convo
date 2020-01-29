@@ -191,7 +191,16 @@ conditional_test = [
     "run conditional test"
 ]
 
-for i, message in enumerate(loop_test):
+bug_test = [
+    "create a procedure",
+    "my first procedure",
+    "create a variable",
+    "variable one",
+    "1",
+    "add 3 to the variable variable one until the variable variable one is 28"
+]
+
+for i, message in enumerate(bug_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

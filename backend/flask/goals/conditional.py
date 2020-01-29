@@ -17,6 +17,24 @@ class ConditionalActionGoal(ActionGoal):
         self.actions.append(ConditionalAction(self.condition, self.conditional_actions))
         return super().complete()
 
+    def advance(self):
+        logging.debug(f"Advancing {self.__class__.__name__}...")
+        self._message = None
+        if self.todos:
+            todo = self.todos.pop()
+            todo.advance()
+            if todo.error:
+                if isinstance(todo, GetConditionGoal):
+                    self.error = todo.error
+                else:
+                    self._message = todo.error
+                return
+
+            if todo.is_complete:
+                todo.complete()
+            else:
+                self.todos.append(todo)
+
     def setattr(self, attr, value):
         if (attr == "action") and value:
             setattr(value, "actions", self.conditional_actions[1])

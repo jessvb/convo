@@ -5,10 +5,10 @@ from models import *
 
 class BaseGoal(object):
     def __init__(self, context):
+        self.todos = []
         self.error = None
         self.context = context
         self.context.validate_goal(self)
-        self.todos = []
         self._message = None
         logging.debug(f"Creating {self.__class__.__name__}...")
 
@@ -31,11 +31,11 @@ class BaseGoal(object):
         self._message = None
         if self.todos:
             todo = self.todos.pop()
+            todo.advance()
             if todo.error:
                 self._message = todo.error
                 return
 
-            todo.advance()
             if todo.is_complete:
                 todo.complete()
             else:

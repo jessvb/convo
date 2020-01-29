@@ -41,9 +41,9 @@ class GetActionsGoal(BaseGoal):
             self.done = True
         elif not isinstance(self.context.parsed, BaseGoal):
             self._message = "I didn't quite catch that. What action did you want me to add?"
-        elif self.context.parsed.error is not None:
+        elif self.context.parsed.error:
             self._message = self.context.parsed.error
-        elif self.context.parsed._message is not None:
+        elif self.context.parsed._message:
             self._message = self.context.parsed._message
         else:
             action = self.context.parsed

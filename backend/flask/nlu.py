@@ -131,10 +131,10 @@ class SemanticNLU(object):
             return message
         elif re.match(comparison_condition_regex, message):
             match = re.match(comparison_condition_regex, message)
-            return ComparisonCondition(variable=group(match, 1), op=group(match, 2), value=group(match, 3))
+            return ComparisonCondition(variable=self.parse_variable(group(match, 1)), op=group(match, 2), value=group(match, 3))
         elif re.match(equality_condition_regex, message):
             match = re.match(equality_condition_regex, message)
-            return EqualityCondition(variable=group(match, 1), value=group(match, 3), negation=(group(match, 2) is not None))
+            return EqualityCondition(variable=self.parse_variable(group(match, 1)), value=group(match, 3), negation=(group(match, 2) is not None))
 
     def parse_condition_and_action(self, message):
         message = strip_punctuation(message)
