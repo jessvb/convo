@@ -20,8 +20,9 @@ example_procedure = Procedure(name="example", actions=[
             [SayAction("foo is greater than 10"), CreateVariableAction("bar", 4), SayAction("random")]
         ]
     ),
-    UntilLoopAction(
-        ComparisonCondition("bar", "less than", 15),
+    LoopAction(
+        loop="until",
+        condition=ComparisonCondition("bar", "less than", 15),
         actions=[
             SayAction("bar is less than 15"),
             IncrementVariableAction("bar", 1)

@@ -145,18 +145,11 @@ class ExecutionContext(object):
             logging.info(f"Current variables: {str(self.variables)}")
             self.actions[self.step:self.step + 1] = action.actions[res]
             self.step -= 1
-        elif isinstance(action, UntilLoopAction):
+        elif isinstance(action, LoopAction):
             res = action.condition.eval(self.variables)
-            logging.info(f"Condition for until loop ({str(action.condition)}) is " + ("true" if res else "false"))
+            logging.info(f"Condition for {action.loop} loop ({str(action.condition)}) is " + ("true" if res else "false"))
             logging.info(f"Current variables: {str(self.variables)}")
-            if not res:
-                self.actions[self.step:self.step] = action.actions
-                self.step -= 1
-        elif isinstance(action, WhileLoopAction):
-            res = action.condition.eval(self.variables)
-            logging.info(f"Condition for while loop ({str(action.condition)}) is " + ("true" if res else "false"))
-            logging.info(f"Current variables: {str(self.variables)}")
-            if res:
+            if (action.loop == "until" and not res) or (action.loop == "while" and res):
                 self.actions[self.step:self.step] = action.actions
                 self.step -= 1
 

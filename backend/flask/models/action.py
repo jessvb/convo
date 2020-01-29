@@ -121,38 +121,28 @@ class ConditionalAction(Action):
         return f"doing {len(falses) if len(falses) > 0 else 'no'} action(s) if {self.condition.to_nl()} and {len(trues) if len(trues) > 0 else 'no'} action(s) otherwise"
 
 class LoopAction(Action):
-    def __init__(self, condition, actions):
+    def __init__(self, loop, condition, actions):
+        self.loop = loop
         self.condition = condition
         self.actions = actions
 
     def json(self):
         return {
             "name": str(self),
+            "loop": self.loop,
             "condition": str(self.condition),
             "actions": [a.json() for a in self.actions]
         }
 
+    def to_nl(self):
+        return f"doing {len(self.actions)} {self.loop} {self.condition.to_nl()}"
+
     def python(self):
+        if self.loop == "while":
+            lines = [f"while {str(self.condition)}:"]
+            lines.extend([f"{tab}{line}" for action in self.actions for line in action.python()])
+            return lines
         raise NotImplementedError
-
-class UntilLoopAction(LoopAction):
-    def __init__(self, condition, actions):
-        super().__init__(condition, actions)
-
-    def to_nl(self):
-        return f"doing {len(self.actions)} until {self.condition.to_nl()}"
-
-class WhileLoopAction(LoopAction):
-    def __init__(self, condition, actions):
-        super().__init__(condition, actions)
-
-    def python(self):
-        lines = [f"while {str(self.condition)}:"]
-        lines.extend([f"{tab}{line}" for action in self.actions for line in action.python()])
-        return lines
-
-    def to_nl(self):
-        return f"doing {len(self.actions)} while {self.condition.to_nl()}"
 
 class CreateListAction(Action):
     def __init__(self, name):

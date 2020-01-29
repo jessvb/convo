@@ -3,29 +3,34 @@ from models import *
 from word2number import w2n
 
 class LoopActionGoal(ActionGoal):
-    def __init__(self, context, condition=None, action=None):
+    def __init__(self, context, loop=None, condition=None, action=None):
         super().__init__(context)
         self.loop_actions = []
         self.todos = [GetLoopActionsGoal(self.context, self.loop_actions)]
         self.setattr("action", action)
         self.setattr("condition", condition)
+        self.setattr("loop", loop)
 
     def complete(self):
         hasattr(self, "actions")
-        self.actions.append(UntilLoopAction(self.condition, self.loop_actions))
+        self.actions.append(LoopAction(self.loop, self.condition, self.loop_actions))
         return super().complete()
 
     def setattr(self, attr, value):
-        if (attr == "action") and value:
+        if attr == "action" and value:
             setattr(value, "actions", self.loop_actions)
-            if value.is_complete:
+            if value.error:
+                self.error = value.error
+            elif value.is_complete:
                 value.complete()
             else:
                 self.todos[0].actions.append(value)
             return
-        elif (attr == "condition"):
+        elif attr == "condition":
             if value is None:
                 self.todos.append(GetConditionGoal(self.context, self))
+            elif value.variable not in self.variables:
+                self.error = f"Variable {value.variable} used in the condition does not exist. Please try again or create the variable first."
             elif value.value.isnumeric():
                 num = float(value.value)
                 value.value = int(num) if num.is_integer() else num
@@ -35,14 +40,13 @@ class LoopActionGoal(ActionGoal):
                     value.value = w2n.word_to_num(value.value)
                     self.condition = value
                 except ValueError as e:
-                    self.todos.append(GetConditionGoal(self.context, self, "The value is not a number. Try again."))
+                    if isinstance(value, EqualityCondition):
+                        self.condition = value
+                    else:
+                        self.todos.append(GetConditionGoal(self.context, self, f"The value {value} is not a number. Try another condition."))
+            return
+        elif attr == "loop":
+            assert value is not None
+            self.loop = value
             return
         setattr(self, attr, value)
-
-class UntilLoopActionGoal(LoopActionGoal):
-    def __init__(self, context, condition=None, action=None):
-        super().__init__(context, condition, action)
-
-class WhileLoopActionGoal(LoopActionGoal):
-    def __init__(self, context, condition=None, action=None):
-        super().__init__(context, condition, action)

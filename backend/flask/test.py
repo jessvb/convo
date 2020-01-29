@@ -26,13 +26,14 @@ messages = [
     "say the value of copy",
     "set the variable copy two to the value of input",
     "add two to variable copy two until copy two is greater than twelve",
-    "done",
+    "close loop",
     "create a variable called copy three and set it to the value of input two",
     "done",
     "run test",
     "five",
     "10"
 ]
+
 messages2 = [
     "create a procedure",
     "text",
@@ -47,6 +48,7 @@ messages2 = [
     "run test",
     "run text"
 ]
+
 messages3 = [
     "create a procedure called fire",
     "create a variable called foo",
@@ -56,6 +58,7 @@ messages3 = [
     "set the variable foo",
     "10"
 ]
+
 edit_test = [
     "edit",
     "blah",
@@ -76,6 +79,7 @@ edit_test = [
     "go to the last step",
     "done"
 ]
+
 edit_test2 = [
     "edit example",
     "next step",
@@ -95,6 +99,7 @@ edit_test2 = [
     "previous step",
     "done"
 ]
+
 edit_test3 = [
     "edit example",
     "delete step",
@@ -102,6 +107,7 @@ edit_test3 = [
     "run example",
     "5"
 ]
+
 sound_test = [
     "create a procedure called bark",
     "create a variable called foo and set it to 5",
@@ -115,6 +121,7 @@ sound_test = [
     "run bark",
     "cat"
 ]
+
 sound_test2 = [
     "run dog or cat",
     "cat",
@@ -149,9 +156,17 @@ questions_test = [
 loop_test = [
     "create a procedure called loop test",
     "create a variable called counter and set it to 5",
-    "while counter is less than 10 then add 10 to counter",
+    "while asdf add 1 to counter",
+    "while counter is less than 10 add 1 to counter",
     "close loop",
-    "done"
+    "create a variable called counter 2 and set it to 1",
+    "until counter 2 is greater than 15, add 2 to counter 2",
+    "close loop",
+    "create a variable called counter 3 and set it to 0",
+    "add 2 to counter 3 until counter 3 is 20",
+    "close loop",
+    "done",
+    "run loop test"
 ]
 
 conditional_test = [
@@ -165,10 +180,10 @@ conditional_test = [
     "if counter is less than 10",
     "create a conditional",
     "if counter is less than 10",
-    "add 2 to counter",
+    "add 3 to counter",
     "done",
     "no",
-    "if counter is 9 say the value of counter",
+    "if counter is 9, say the value of counter",
     "no",
     "say it is not 9",
     "no",
@@ -176,7 +191,7 @@ conditional_test = [
     "run conditional test"
 ]
 
-for i, message in enumerate(sound_test2):
+for i, message in enumerate(loop_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
