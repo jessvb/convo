@@ -83,29 +83,24 @@ edit_test = [
 edit_test2 = [
     "edit example",
     "next step",
+    "what step am i on",
     "delete step",
     "add step",
     "say hello world",
+    "which step am i on",
     "add step",
     "remove step",
     "add step",
     "create a variable",
     "nest",
     "4",
+    "where am i",
     "remove step",
     "change step",
     "say",
     "hello world",
     "previous step",
     "done"
-]
-
-edit_test3 = [
-    "edit example",
-    "delete step",
-    "done",
-    "run example",
-    "5"
 ]
 
 sound_test = [
@@ -213,7 +208,7 @@ procedure_test = [
     "delete deletion"
 ]
 
-for i, message in enumerate(procedure_test):
+for i, message in enumerate(edit_test2):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

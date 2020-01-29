@@ -34,7 +34,7 @@ variable_regex = "(?:(?:a|the) variable)(?: (.+))?|variable (.+)"
 procedure_regex = "(?:(?:a|the) procedure)(?: (.+))?|procedure (.+)"
 
 rename_procedure_regex = "rename(?: (.+) to (.+)| (.+))"
-delete_procedure_regex = "delete(?: (.+))"
+delete_procedure_regex = "(?!.*step)delete(?: (.+))"
 
 action_regexes = [say_regex, set_variable_regex, create_variable_regex, increment_variable_regex, get_user_input_regex, create_list_regex, add_to_list_regex]
 condition_regexes = [comparison_condition_regex, equality_condition_regex]

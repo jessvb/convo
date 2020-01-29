@@ -139,8 +139,8 @@ class EditContext(object):
         self.step = new
 
     def add_step(self, action):
-        self.actions[self.step:self.step] = action
         self.step += 1
+        self.actions[self.step:self.step] = action
 
     def change_step(self, action):
         self.actions[self.step] = action

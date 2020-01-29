@@ -1,6 +1,7 @@
 import logging
 from helpers import *
 from nlu import SemanticNLU
+from question import QuestionAnswer
 from models import *
 from goals import *
 from error import *
@@ -79,12 +80,11 @@ allowed_goals = {
     "executing": [GetUserInputGoal, GetInputGoal]
 }
 
-ask_procedures_regex = "what (.+)?procedures"
-
 class DialogManager(object):
     def __init__(self, sid):
         self.sid = sid
         self.context = DialogContext(sid)
+        self.qa = QuestionAnswer(self.context)
         self.nlu = SemanticNLU(self.context)
 
     def reset(self):
@@ -107,15 +107,10 @@ class DialogManager(object):
             return "Canceled! What do you want to do?"
         elif message in ["help", "i need help"]:
             return "Raise your hand and help will be on the way!"
-        elif re.match(ask_procedures_regex, message):
-            response = f"You have {len(self.context.procedures)} procedures."
-            names = [f"\"{p}\"" for p in self.context.procedures.keys()]
-            if len(names) == 0:
-                return f"You have no procedures."
-            elif len(names) == 1:
-                return response + f" It is {names[0]}"
-            else:
-                return response + f" They are {', '.join(names[:-1])} and {names[-1]}."
+        elif QuestionAnswer.is_question(message):
+            answer = self.qa.answer(message)
+            if answer:
+                return answer
 
         try:
             self.context.parsed = self.nlu.parse_message(message)
