@@ -50,6 +50,8 @@ sounds_procedure = Procedure(name="dog or cat", actions=[
     )
 ])
 
+empty_procedure = Procedure(name="empty", actions=[])
+
 state_machine = {
     "home": {
         "create_procedure": "creating",
@@ -153,7 +155,7 @@ class DialogContext(object):
         example.add_property(Property(example, "count", "number"))
         self.sid = sid
         self.classes = { "example": example }
-        self.procedures = { "example": example_procedure, "dog or cat": sounds_procedure }
+        self.procedures = { "example": example_procedure, "dog or cat": sounds_procedure, "empty": empty_procedure }
         self.reset()
 
     @property

@@ -94,6 +94,8 @@ class SayAction(Action):
         return [f"say(\"{self.phrase}\")"]
 
     def to_nl(self):
+        if isinstance(self.phrase, ValueOf):
+            return f"saying the value of the variable {self.phrase.variable}"
         return f"saying the phrase \"{self.phrase}\""
 
 class ConditionalAction(Action):

@@ -1,4 +1,5 @@
 import logging
+import re
 from goals import *
 from models import *
 

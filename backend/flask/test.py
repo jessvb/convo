@@ -104,7 +104,7 @@ edit_test2 = [
 ]
 
 edit_test3 = [
-    "create a procedure called empty",
+    "create a procedure called edit test 3",
     "say hello",
     "say bye",
     "done",
@@ -117,6 +117,11 @@ edit_test3 = [
     "what step am i on",
     "add step",
     "say bye"
+]
+
+edit_test4 = [
+    "open empty",
+    "what step"
 ]
 
 sound_test = [
@@ -224,7 +229,16 @@ procedure_test = [
     "delete deletion"
 ]
 
-for i, message in enumerate(edit_test3):
+value_of_test = [
+    "create a procedure called adding",
+    "create a variable called yes and set it to no",
+    "done",
+    "edit adding",
+    "add step",
+    "say the value of yes"
+]
+
+for i, message in enumerate(edit_test4):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

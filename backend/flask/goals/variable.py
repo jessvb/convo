@@ -103,7 +103,7 @@ class IncrementVariableActionGoal(ActionGoal):
             return
         elif attr == "value":
             if value is None:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"What value do you want to set the variable to?"))
+                self.todos.append(GetInputGoal(self.context, self, attr, f"What value do you want to add to the variable?"))
             elif isinstance(value, ValueOf):
                 if value.variable not in self.variables:
                     self.error = f"Variable {value} does not exist. Try setting it to the value of an existing variable."
