@@ -12,7 +12,7 @@ example_procedure = Procedure(name="example", actions=[
     GetUserInputAction("input"),
     CreateListAction("groceries"),
     SetVariableAction("foo", 6),
-    IncrementVariableAction("foo", 5),
+    AddToVariableAction("foo", 5),
     SayAction("hello world!"),
     ConditionalAction(
         ComparisonCondition("foo", "greater than", 10),
@@ -26,7 +26,7 @@ example_procedure = Procedure(name="example", actions=[
         condition=ComparisonCondition("bar", "less than", 15),
         actions=[
             SayAction("bar is less than 15"),
-            IncrementVariableAction("bar", 1)
+            AddToVariableAction("bar", 1)
         ]
     ),
     AddToListAction("groceries", "\"apples\"")
@@ -77,7 +77,7 @@ state_machine = {
 allowed_goals = {
     "home": [HomeGoal, EditGoal, RunGoal, GetInputGoal],
     "creating": [ActionGoal, GetActionsGoal, GetConditionGoal, GetInputGoal],
-    "editing": [StepGoal, GetInputGoal, ActionGoal],
+    "editing": [StepGoal, GetInputGoal, ActionGoal, GetActionsGoal, GetConditionGoal],
     "editing_action": [ActionGoal, GetActionsGoal, GetConditionGoal, GetInputGoal],
     "executing": [GetUserInputGoal, GetInputGoal]
 }

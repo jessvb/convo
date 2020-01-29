@@ -125,7 +125,7 @@ class ExecutionContext(object):
             else:
                 logging.warning("Variable not found.")
                 raise KeyError(action.name)
-        elif isinstance(action, IncrementVariableAction):
+        elif isinstance(action, AddToVariableAction):
             value = self.variables.get(action.name)
             if action.name in self.variables:
                 old = self.variables[action.name]

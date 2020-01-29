@@ -97,10 +97,12 @@ class GetLoopActionsGoal(GetActionsGoal):
             return f"{self.__class__.__name__} completed!"
 
         if len(self.todos) == 0:
-            if len(self.actions) > 0:
+            if len(self.actions) == 0:
+                return "What do you want to do first in the loop?"
+            elif len(self.actions) == 1:
                 return "Added action! Do you want to do anything else in the loop? If yes, what's next? If no, say \"close loop\"."
             else:
-                return "What do you want to do first in the loop?"
+                return "Added action! Do you want to do anything else in the loop?"
         else:
             return self.todos[-1].message
 

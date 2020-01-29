@@ -252,7 +252,14 @@ value_of_test = [
     "say the value of yes"
 ]
 
-for i, message in enumerate(edit_test4):
+bug_test = [
+    "edit empty",
+    "create a variable called thing and set it to 4",
+    "until thing is equal to 4 say next",
+    "say the value of thing"
+]
+
+for i, message in enumerate(bug_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

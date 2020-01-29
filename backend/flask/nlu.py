@@ -13,12 +13,13 @@ edit_regex = "(?:open|edit)(?: (.+))?"
 create_list_regex = "(?:make|create)(?: a)? list(?: (?:called|named) (.+)| (.+))?"
 add_to_list_regex = "add(?: (.+))? to list(?: (.+))?"
 say_regex = "say(?: (.+))?"
-set_variable_regex = "(?!change step)(?:set|change)(?:(?: (.+))? to (.+)| (.+))"
-create_variable_regex = "(?:create|make)(?: a)?(?: (.+))? variable(?: called| named)?(?:(?: (.+))? and set(?: it)? to (.+)| (.+))?"
-increment_variable_regex = "(?:add(?: (.+))? to(?: (.+))?)|(?:increment(?:(?: (.+))? by (.+)| (.+))?)"
 get_user_input_regex = "(?:listen for|get)(?: user)? input(?: and (?:(?:call it)?|(?:name it)?|(?:save it as)?) (.+))?"
 value_of_regex = "(?:the )?value of (?:(?:the )?variable )?(.+)"
 play_sound_regex = "play(?: the)?(?: (.+))? sound"
+
+set_variable_regex = "(?!change step$)(?:set|change)(?:(?: the)? value of)?(?:(?: (.+))? to (.+)| (.+))"
+create_variable_regex = "(?:create|make)(?: a)?(?: (.+))? variable(?: called| named)?(?:(?: (.+))? and set(?: it)? to (.+)| (.+))?"
+add_to_variable_regex = "(?:add(?: (.+))? to(?: (.+))?)|(?:increment(?:(?: (.+))? by (.+)| (.+))?)"
 
 go_to_step_regex = "(?:go to step(?: (.+))?|go to(?: the)? (.+) step)"
 delete_step_regex = "(?:delete|remove)(?: the)? step"
@@ -32,9 +33,9 @@ comparison_condition_regex = "(?:if |while |until )?(.+) is ((?:(?:less|greater)
 equality_condition_regex = "(?!.*less|.*greater)(?:if |while |until )?(.+) is(?: (not))?(?: equal to)? (.+)"
 
 variable_regex = "(?:(?:a|the) variable)(?: (.+))?|variable (.+)"
-procedure_regex = "(?:(?:a|the) procedure)(?: (.+))?|procedure (.+)"
+procedure_regex = "(?:(?:a|the) procedure|procedure)(?: called)?(?: (.+))?"
 
-action_regexes = [say_regex, set_variable_regex, create_variable_regex, increment_variable_regex, get_user_input_regex, create_list_regex, add_to_list_regex]
+action_regexes = [say_regex, set_variable_regex, create_variable_regex, add_to_variable_regex, get_user_input_regex, create_list_regex, add_to_list_regex]
 condition_regexes = [comparison_condition_regex, equality_condition_regex]
 
 class SemanticNLU(object):
@@ -114,9 +115,9 @@ class SemanticNLU(object):
         elif re.match(create_variable_regex, message):
             match = re.match(create_variable_regex, message)
             return CreateVariableActionGoal(self.context, name=group(match, [2, 4]), value=self.parse_value_of(group(match, 3), True))
-        elif re.match(increment_variable_regex, message):
-            match = re.match(increment_variable_regex, message)
-            return IncrementVariableActionGoal(
+        elif re.match(add_to_variable_regex, message):
+            match = re.match(add_to_variable_regex, message)
+            return AddToVariableActionGoal(
                 self.context, name=self.parse_variable(group(match, [2, 3, 5])), value=self.parse_value_of(group(match, [1, 4]), True))
         elif re.match(say_regex, message):
             match = re.match(say_regex, message)

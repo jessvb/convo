@@ -69,7 +69,7 @@ class SetVariableAction(VariableAction):
         value = value.to_nl() if isinstance(self.value, ValueOf) else self.value
         return f"setting the value of variable {self.name} to {self.value}"
 
-class IncrementVariableAction(VariableAction):
+class AddToVariableAction(VariableAction):
     def __init__(self, name, value):
         super().__init__(name, value)
 
@@ -79,6 +79,17 @@ class IncrementVariableAction(VariableAction):
     def to_nl(self):
         value = value.to_nl() if isinstance(self.value, ValueOf) else self.value
         return f"adding {value} to variable {self.name}"
+
+class SubtractFromVariableAction(VariableAction):
+    def __init__(self, name, value):
+        super().__init__(name, value)
+
+    def python(self):
+        return [f"{self.name} -= {self.value}"]
+
+    def to_nl(self):
+        value = value.to_nl() if isinstance(self.value, ValueOf) else self.value
+        return f"subtracting {value} from variable {self.name}"
 
 class SayAction(Action):
     def __init__(self, phrase):

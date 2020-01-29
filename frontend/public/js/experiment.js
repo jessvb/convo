@@ -105,9 +105,22 @@ const example_commands = {
             ]
         }
     ],
-    "creating": action_commands,
+    "creating": [
+        {
+            "title": "Finish Creating",
+            "examples": [
+                "done"
+            ]
+        }
+    ].concat(action_commands),
     "editing_action": action_commands,
     "editing": [
+        {
+            "title": "Finish Editing",
+            "examples": [
+                "done"
+            ]
+        },
         {
             "title": "Navigation",
             "examples": [

@@ -18,7 +18,7 @@ class EditGoal(HomeGoal):
             return self._message
 
         if self.is_complete:
-            return "Done with editing program."
+            return f"Done with editing procedure {self.name}."
 
         if len(self.todos) == 0:
             return self.edit.message

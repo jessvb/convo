@@ -81,7 +81,7 @@ class SetVariableActionGoal(ActionGoal):
             return
         setattr(self, attr, value)
 
-class IncrementVariableActionGoal(ActionGoal):
+class AddToVariableActionGoal(ActionGoal):
     def __init__(self, context, name=None, value=None):
         super().__init__(context)
         self.setattr("value", value)
@@ -89,7 +89,7 @@ class IncrementVariableActionGoal(ActionGoal):
 
     def complete(self):
         assert hasattr(self, "actions")
-        self.actions.append(IncrementVariableAction(self.name, self.value))
+        self.actions.append(AddToVariableAction(self.name, self.value))
         return super().complete()
 
     def setattr(self, attr, value):
