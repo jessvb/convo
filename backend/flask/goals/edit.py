@@ -2,9 +2,10 @@ from goals import *
 from models import *
 from word2number import w2n
 
-class EditGoal(BaseGoal):
+class EditGoal(HomeGoal):
     def __init__(self, context, name=None):
         super().__init__(context)
+        self.context.transition(self)
         self.edit = None
         self.setattr("name", name)
 
@@ -144,10 +145,9 @@ class EditContext(object):
     def change_step(self, action):
         self.actions[self.step] = action
 
-class GoToStepGoal(BaseGoal):
+class GoToStepGoal(StepGoal):
     def __init__(self, context, step=None):
         super().__init__(context)
-        self.edit = self.context.edit
         self.setattr("step", step)
 
     def complete(self):
@@ -187,10 +187,9 @@ class GoToStepGoal(BaseGoal):
             return
         setattr(self, attr, value)
 
-class DeleteStepGoal(BaseGoal):
+class DeleteStepGoal(StepGoal):
     def __init__(self, context):
         super().__init__(context)
-        self.edit = self.context.edit
         if len(self.edit.actions) == 0:
             self.error = "There are no actions or steps that you can delete."
 
@@ -203,10 +202,10 @@ class DeleteStepGoal(BaseGoal):
             message += f"Now there are no more actions in the procedure."
         return message
 
-class AddStepGoal(BaseGoal):
+class AddStepGoal(StepGoal):
     def __init__(self, context):
         super().__init__(context)
-        self.edit = self.context.edit
+        self.context.transition(self)
         self.actions = []
 
     @property
@@ -253,10 +252,10 @@ class AddStepGoal(BaseGoal):
             else:
                 self.todos.append(action)
 
-class ChangeStepGoal(BaseGoal):
+class ChangeStepGoal(StepGoal):
     def __init__(self, context):
         super().__init__(context)
-        self.edit = self.context.edit
+        self.context.transition(self)
         self.actions = []
 
     @property
@@ -278,6 +277,7 @@ class ChangeStepGoal(BaseGoal):
 
     def complete(self):
         self.edit.change_step(self.actions[0])
+        self.context.transition("complete")
         return f"Changed step {self.edit.step + 1}, where I am now {self.actions[0].to_nl()}."
 
     def advance(self):

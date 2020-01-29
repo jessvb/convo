@@ -41,9 +41,9 @@ class GetActionsGoal(BaseGoal):
             self.done = True
         elif not isinstance(self.context.parsed, BaseGoal):
             self._message = "I didn't quite catch that. What action did you want me to add?"
-        elif self.context.parsed.error is not None:
+        elif self.context.parsed.error:
             self._message = self.context.parsed.error
-        elif self.context.parsed._message is not None:
+        elif self.context.parsed._message:
             self._message = self.context.parsed._message
         else:
             action = self.context.parsed
@@ -97,11 +97,34 @@ class GetLoopActionsGoal(GetActionsGoal):
 
         if len(self.todos) == 0:
             if len(self.actions) > 0:
-                return "Added action! Do you want to do anything else in the loop? If yes, what's next? If no, say done."
+                return "Added action! Do you want to do anything else in the loop? If yes, what's next? If no, say \"close loop\"."
             else:
                 return "What do you want to do first in the loop?"
         else:
             return self.todos[-1].message
+
+    def advance(self):
+        if self.todos:
+            super().advance()
+            return
+
+        logging.debug(f"Advancing {self.__class__.__name__}...")
+        self._message = None
+        if self.context.current_message in ["close loop"]:
+            self.done = True
+        elif not isinstance(self.context.parsed, BaseGoal):
+            self._message = "I didn't quite catch that. What action did you want me to add?"
+        elif self.context.parsed.error is not None:
+            self._message = self.context.parsed.error
+        elif self.context.parsed._message is not None:
+            self._message = self.context.parsed._message
+        else:
+            action = self.context.parsed
+            setattr(action, "actions", self.actions)
+            if action.is_complete:
+                action.complete()
+            else:
+                self.todos.append(action)
 
 class GetProcedureActionsGoal(GetActionsGoal):
     @property
@@ -116,6 +139,8 @@ class GetProcedureActionsGoal(GetActionsGoal):
             return f"{self.__class__.__name__} completed!"
 
         if len(self.todos) == 0:
-            return "Added action to procedure! What's next? (Say 'done' if you are finished)" if len(self.actions) > 0 else "What do you want to do first?"
+            return "Added action! Do you want to do anything else?" \
+                if len(self.actions) > 0 \
+                    else "What do you want to happen in the procedure first? You could make me say something. See the sidebar for more options."
         else:
             return self.todos[-1].message

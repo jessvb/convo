@@ -2,7 +2,7 @@ import logging
 from models import *
 from goals import *
 
-class CreateClassGoal(BaseGoal):
+class CreateClassGoal(HomeGoal):
     def __init__(self, context, name=None):
         super().__init__(context)
         self.klass = Class(name)

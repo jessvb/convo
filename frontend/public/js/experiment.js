@@ -93,8 +93,8 @@ const example_commands = {
             ]
         }
     ],
-    "actions": action_commands,
-    "edit_actions": action_commands,
+    "creating": action_commands,
+    "editing_action": action_commands,
     "editing": [
         {
             "title": "Navigation",
@@ -225,7 +225,9 @@ let handleSubmit = (message, speak) => {
 
 let speakUtter = (message) => {
     let audio = new SpeechSynthesisUtterance(message);
-    audio.voice = voice;
+    audio.voice = window.speechSynthesis.getVoices().filter((voice) => {
+        return voice.name == 'Google US English' || voice.name == 'Samantha';
+    })[0];
     audio.volume = 1;
     audio.rate = 0.9;
     audio.pitch = 1.0;
@@ -312,7 +314,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.speechSynthesis.onvoiceschanged = () => {
         voice = window.speechSynthesis.getVoices().filter((voice) => {
-            return voice.name == 'Google US English';
+            return voice.name == 'Google US English' || voice.name == 'Samantha';
         })[0];
     };
 });

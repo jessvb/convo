@@ -5,9 +5,10 @@ from goals import *
 from models import *
 from error import ExecutionError
 
-class RunGoal(BaseGoal):
+class RunGoal(HomeGoal):
     def __init__(self, context, name=None):
         super().__init__(context)
+        self.context.transition(self)
         self.execution = None
         self.setattr("name", name)
 
@@ -42,6 +43,9 @@ class RunGoal(BaseGoal):
                 self.context.execution = ExecutionContext(self.context, [copy.copy(a) for a in self.procedure.actions])
                 self.execution = self.context.execution
                 todo = self.execution.advance()
+                if self.execution.error:
+                    self.error = self.execution.error
+                    self.context.transition("complete")
                 if todo:
                     self.todos.append(todo)
             return
@@ -62,6 +66,7 @@ class RunGoal(BaseGoal):
             todo = self.execution.advance()
             if self.execution.error:
                 self.error = self.execution.error
+                self.context.transition("complete")
             if todo:
                 self.todos.append(todo)
 
@@ -74,7 +79,6 @@ class ExecutionContext(object):
         self.done = False
         self.step = 0
         self.error = None
-        print(self.actions)
 
     def advance(self):
         while self.step < len(self.actions):
@@ -98,25 +102,16 @@ class ExecutionContext(object):
             phrase = action.phrase
             if isinstance(action.phrase, ValueOf):
                 variable = action.phrase.variable
-                phrase = f"The value of {variable} is {self.variables[variable]}."
+                phrase = f"The value of {variable} is \"{self.variables[variable]}\"."
             logging.info(f"Saying '{phrase}'")
-            try:
-                flask_socketio.emit("response", { "message": phrase, "state": self.context.state }, room=str(self.context.sid))
-                print(f"Emitting to {self.context.sid}")
-            except RuntimeError as e:
-                if not str(e).startswith("Working outside of request context."):
-                    raise e
+            self.emit("response", { "message": phrase, "state": self.context.state })
             self.context.add_message(action.phrase)
         elif isinstance(action, PlaySoundAction):
             logging.info(f"Playing sound file {action.sound}.")
-            try:
-                flask_socketio.emit("playSound", { "sound": action.sound, "state": self.context.state }, room=str(self.context.sid))
-                print(f"Emitting to {self.context.sid}")
-            except RuntimeError as e:
-                if not str(e).startswith("Working outside of request context."):
-                    raise e
+            self.emit("playSound", { "sound": action.sound, "state": self.context.state })
         elif isinstance(action, GetUserInputAction):
             logging.info(f"Getting user input and setting as {action.variable}")
+            self.emit("response", { "message": "Listening for user input...", "state": self.context.state })
             return GetUserInputGoal(self.context, action.variable)
         elif isinstance(action, CreateVariableAction):
             self.variables[action.name] = self.variables[action.value.variable] if isinstance(action.value, ValueOf) else action.value
@@ -150,17 +145,18 @@ class ExecutionContext(object):
             logging.info(f"Current variables: {str(self.variables)}")
             self.actions[self.step:self.step + 1] = action.actions[res]
             self.step -= 1
-        elif isinstance(action, UntilLoopAction):
+        elif isinstance(action, LoopAction):
             res = action.condition.eval(self.variables)
-            logging.info(f"Condition for until loop ({str(action.condition)}) is " + ("true" if res else "false"))
+            logging.info(f"Condition for {action.loop} loop ({str(action.condition)}) is " + ("true" if res else "false"))
             logging.info(f"Current variables: {str(self.variables)}")
-            if not res:
+            if (action.loop == "until" and not res) or (action.loop == "while" and res):
                 self.actions[self.step:self.step] = action.actions
                 self.step -= 1
-        elif isinstance(action, WhileLoopAction):
-            res = action.condition.eval(self.variables)
-            logging.info(f"Condition for while loop ({str(action.condition)}) is " + ("true" if res else "false"))
-            logging.info(f"Current variables: {str(self.variables)}")
-            if res:
-                self.actions[self.step:self.step] = action.actions
-                self.step -= 1
+
+    def emit(self, key, data):
+        try:
+            flask_socketio.emit(key, data, room=str(self.context.sid))
+            print(f"Emitting to {self.context.sid}")
+        except RuntimeError as e:
+            if not str(e).startswith("Working outside of request context."):
+                raise e

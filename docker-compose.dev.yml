@@ -2,6 +2,7 @@ version: '3.0'
 services:
   server:
     build: ./backend/flask
+    restart: on-failure
     volumes:
       - ./backend/flask:/app
     environment:
@@ -14,6 +15,28 @@ services:
     restart: on-failure
     volumes:
       - ./frontend:/app
+    environment:
+      - NODE_ENV=development
     ports:
       - 8080:8080
     command: npm start
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    volumes:
+      - ./data/nginx:/etc/nginx/conf.d
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - server
+      - web
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"

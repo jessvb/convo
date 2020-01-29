@@ -1,4 +1,5 @@
 import logging
+from helpers import *
 from nlu import SemanticNLU
 from models import *
 from goals import *
@@ -19,8 +20,9 @@ example_procedure = Procedure(name="example", actions=[
             [SayAction("foo is greater than 10"), CreateVariableAction("bar", 4), SayAction("random")]
         ]
     ),
-    UntilLoopAction(
-        ComparisonCondition("bar", "less than", 15),
+    LoopAction(
+        loop="until",
+        condition=ComparisonCondition("bar", "less than", 15),
         actions=[
             SayAction("bar is less than 15"),
             IncrementVariableAction("bar", 1)
@@ -33,10 +35,10 @@ sounds_procedure = Procedure(name="dog or cat", actions=[
     SayAction("Do you want to hear a dog or a cat?"),
     GetUserInputAction("input"),
     ConditionalAction(
-        ComparisonCondition("input", "equal to", "dog"),
+        EqualityCondition("input", "dog"),
         actions=[
             [ConditionalAction(
-                ComparisonCondition("input", "equal to", "cat"),
+                EqualityCondition("input", "cat"),
                 actions=[
                     [SayAction("You did not say a dog or a cat.")],
                     [PlaySoundAction("meow")]
@@ -47,36 +49,37 @@ sounds_procedure = Procedure(name="dog or cat", actions=[
     )
 ])
 
-transitions = {
+state_machine = {
     "home": {
-        "edit_class": "class",
-        "create_class": "class",
-        "create_procedure": "actions",
-        "create_class_procedure": "class_actions",
-        "run": "execution",
+        "create_procedure": "creating",
+        "run": "executing",
         "edit": "editing"
     },
-    "class_actions": {
-        "complete": "home"
-    },
-    "edit_actions": {
-        "complete": "editing"
-    },
-    "actions": {
-        "complete": "home"
-    },
-    "class": {
-        "complete": "home"
-    },
-    "execution": {
+    "creating": {
         "complete": "home"
     },
     "editing": {
-        "complete": "home",
-        "add_step": "edit_actions",
-        "change_step": "edit_actions"
+        "add_step": "editing_action",
+        "change_step": "editing_action",
+        "complete": "home"
+    },
+    "executing": {
+        "complete": "home"
+    },
+    "editing_action": {
+        "complete": "editing"
     }
 }
+
+allowed_goals = {
+    "home": [HomeGoal, EditGoal, RunGoal],
+    "creating": [ActionGoal, GetActionsGoal, GetConditionGoal, GetInputGoal],
+    "editing": [StepGoal, GetInputGoal],
+    "editing_action": [ActionGoal, GetActionsGoal, GetConditionGoal, GetInputGoal],
+    "executing": [GetUserInputGoal, GetInputGoal]
+}
+
+ask_procedures_regex = "what (.+)?procedures"
 
 class DialogManager(object):
     def __init__(self, sid):
@@ -95,26 +98,32 @@ class DialogManager(object):
         self.context.add_message(message)
 
         # Check for interrupts
-        if (message == "reset"):
+        if message == "reset":
             return self.reset()
-        elif (message == "cancel"):
+        elif message == "cancel":
             if self.context.goals:
                 self.context.goals.pop()
             self.context.state = "home"
             return "Canceled! What do you want to do?"
+        elif message in ["help", "i need help"]:
+            return "Raise your hand and help will be on the way!"
+        elif re.match(ask_procedures_regex, message):
+            response = f"You have {len(self.context.procedures)} procedures."
+            names = [f"\"{p}\"" for p in self.context.procedures.keys()]
+            if len(names) == 0:
+                return f"You have no procedures."
+            elif len(names) == 1:
+                return response + f" It is {names[0]}"
+            else:
+                return response + f" They are {', '.join(names[:-1])} and {names[-1]}."
 
         try:
             self.context.parsed = self.nlu.parse_message(message)
-            if isinstance(self.context.parsed, BaseGoal):
-                self.context.validate_goal(self.context.parsed)
         except InvalidStateError as e:
-            logging.warning(e.message)
-            base = "I cannot do this right now."
+            logging.error(e.message)
+            response = "I cannot do this right now."
             if (self.context.state == "home"):
-                return base + " Try 'create a procedure' or 'create a class'."
-            response = base + (f" {self.current_goal().message}" if self.current_goal() else "")
-            if response:
-                self.context.add_message(response)
+                response += " Try 'create a procedure' or 'create a class'."
             return response
 
         if self.current_goal() is None:
@@ -141,8 +150,6 @@ class DialogManager(object):
             else:
                 response = goal.message
 
-        if response:
-            self.context.add_message(response)
         return response
 
 class DialogContext(object):
@@ -186,45 +193,9 @@ class DialogContext(object):
         return self.classes.get(name)
 
     def validate_goal(self, goal):
-        if self.state == "home":
-            if isinstance(goal, CreateClassGoal):
-                self.transition("create_class")
-            elif isinstance(goal, AddClassProcedureGoal):
-                self.transition("create_class_procedure")
-            elif isinstance(goal, AddProcedureGoal):
-                self.transition("create_procedure")
-            elif isinstance(goal, AddPropertyGoal):
-                self.transition("edit_class")
-            elif isinstance(goal, RunGoal):
-                self.transition("run")
-            elif isinstance(goal, EditGoal):
-                self.transition("edit")
-            else:
-                raise InvalidStateError(self.state, str(goal))
-        elif self.state in ["actions", "class_actions"]:
-            if isinstance(goal, CreateClassGoal) \
-                or isinstance(goal, AddClassProcedureGoal) \
-                or isinstance(goal, AddProcedureGoal) \
-                or isinstance(goal, AddPropertyGoal) \
-                or isinstance(goal, EditGoal):
-                raise InvalidStateError(self.state, str(goal))
-        elif self.state == "edit_actions":
-            if isinstance(goal, AddStepGoal) \
-                or isinstance(goal, DeleteStepGoal) \
-                or isinstance(goal, GoToStepGoal) \
-                or isinstance(goal, ChangeStepGoal):
-                raise InvalidStateError(self.state, str(goal))
-        elif self.state in ["editing"]:
-            if isinstance(goal, AddStepGoal):
-                self.transition("add_step")
-            elif isinstance(goal, ChangeStepGoal):
-                self.transition("change_step")
-        elif self.state == "class":
-            raise InvalidStateError(self.state, str(goal))
+        allowed = any([type(goal) == goaltype or isinstance(goal, goaltype) for goaltype in allowed_goals[self.state]])
+        if not allowed:
+            raise InvalidStateError(f"Cannot create goal {str(goal)} in state {self.state}")
 
     def transition(self, action):
-        actions = transitions[self.state]
-        if action not in actions:
-            raise InvalidStateError(self.state, str(action))
-
-        self.state = actions[action]
+        self.state = state_machine[self.state][str(action)]

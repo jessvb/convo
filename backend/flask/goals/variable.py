@@ -97,7 +97,7 @@ class IncrementVariableActionGoal(ActionGoal):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"What variable do you want to increment?"))
             elif value not in self.variables:
-                self.error = f"The variable, {value}, hasn't been created, so we can't set it yet. You can create it by saying, \"create a variable called {value}.\""
+                self.error = f"The variable, {value}, hasn't been created so there is nothing to add to. You can create it by saying, \"create a variable called {value}.\""
             else:
                 self.name = value
             return

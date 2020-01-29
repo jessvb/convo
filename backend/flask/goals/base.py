@@ -1,13 +1,14 @@
 import re
 import logging
-from utils import to_snake_case
+from helpers import to_snake_case
 from models import *
 
 class BaseGoal(object):
     def __init__(self, context):
+        self.todos = []
         self.error = None
         self.context = context
-        self.todos = []
+        self.context.validate_goal(self)
         self._message = None
         logging.debug(f"Creating {self.__class__.__name__}...")
 
@@ -30,11 +31,11 @@ class BaseGoal(object):
         self._message = None
         if self.todos:
             todo = self.todos.pop()
+            todo.advance()
             if todo.error:
                 self._message = todo.error
                 return
 
-            todo.advance()
             if todo.is_complete:
                 todo.complete()
             else:
@@ -49,12 +50,30 @@ class BaseGoal(object):
 
     def __str__(self):
         name = self.__class__.__name__
-        return to_snake_case(name[:-len("Goal")]) + (f":{str(self.todos[-1])}" if self.todos else "")
+        return to_snake_case(name[:-len("Goal")])
+
+class HomeGoal(BaseGoal):
+    def __init__(self, context):
+        super().__init__(context)
 
 class ActionGoal(BaseGoal):
     def __init__(self, context):
         super().__init__(context)
-        self.context.validate_goal(self)
         assert isinstance(self.context.current, Procedure)
         self.procedure = self.context.current
         self.variables = self.procedure.variables
+
+    @property
+    def message(self):
+        if self.error:
+            return self.error
+
+        if self._message:
+            return self._message
+
+        return f"Added action!" if self.is_complete else self.todos[-1].message
+
+class StepGoal(BaseGoal):
+    def __init__(self, context):
+        super().__init__(context)
+        self.edit = self.context.edit
