@@ -77,7 +77,7 @@ state_machine = {
 allowed_goals = {
     "home": [HomeGoal, EditGoal, RunGoal, GetInputGoal],
     "creating": [ActionGoal, GetActionsGoal, GetConditionGoal, GetInputGoal],
-    "editing": [StepGoal, GetInputGoal],
+    "editing": [StepGoal, GetInputGoal, ActionGoal],
     "editing_action": [ActionGoal, GetActionsGoal, GetConditionGoal, GetInputGoal],
     "executing": [GetUserInputGoal, GetInputGoal]
 }
@@ -118,10 +118,22 @@ class DialogManager(object):
             self.context.parsed = self.nlu.parse_message(message)
         except InvalidStateError as e:
             logging.error(e.message)
-            response = "I cannot do this right now."
-            if (self.context.state == "home"):
-                response += " Try 'create a procedure' or 'create a class'."
-            return response
+            response = "I cannot do this right now"
+            if isinstance(e.goal, ActionGoal):
+                response += " because I am currently not creating or editing a procedure"
+            elif isinstance(e.goal, StepGoal):
+                if e.state == "editing_action":
+                    response += " because I am currently adding or editing an action"
+                else:
+                    response += " because I am currently not editing a procedure"
+            elif isinstance(e.goal, HomeGoal):
+                if e.state == "creating":
+                    response += " because I am currently creating a procedure. You can stop by saying \"done\""
+                elif e.state == "editing":
+                    response += " because I am currently editing a procedure. You can stop by saying \"done\""
+                elif e.state == "editing_action":
+                    response += " because I am currently adding or editing an action. Finish editing then you can stop by saying \"done\""
+            return f"{response}."
 
         if self.current_goal() is None:
             goal = self.context.parsed
@@ -129,20 +141,19 @@ class DialogManager(object):
                 response = "I didn't understand what you were saying. Please try again."
             elif goal.error:
                 response = goal.error
+            elif goal.is_complete:
+                response = goal.complete()
             else:
-                if goal.is_complete:
-                    response = goal.complete()
-                else:
-                    response = goal.message
-                    self.context.add_goal(goal)
+                response = goal.message
+                self.context.add_goal(goal)
         else:
             goal = self.current_goal()
             goal.advance()
-            if goal.is_complete:
-                response = goal.complete()
-                self.context.goals.pop()
-            elif goal.error:
+            if goal.error:
                 response = goal.error
+                self.context.goals.pop()
+            elif goal.is_complete:
+                response = goal.complete()
                 self.context.goals.pop()
             else:
                 response = goal.message
@@ -192,7 +203,7 @@ class DialogContext(object):
     def validate_goal(self, goal):
         allowed = any([type(goal) == goaltype or isinstance(goal, goaltype) for goaltype in allowed_goals[self.state]])
         if not allowed:
-            raise InvalidStateError(f"Cannot create goal {str(goal)} in state {self.state}")
+            raise InvalidStateError(goal, self.state)
 
     def transition(self, action):
         self.state = state_machine[self.state][str(action)]

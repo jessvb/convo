@@ -33,7 +33,7 @@ class CreateProcedureGoal(HomeGoal):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, "What do you want to call the procedure?"))
             elif value in self.procedures:
-                self.error = f"Procedure {value} already exists. Try creating a procedure with another name."
+                self.error = f"Procedure {value} already exists. You can edit the procedure by saying \"edit {value}\"."
                 self.context.transition("complete")
             else:
                 self.procedure.name = value

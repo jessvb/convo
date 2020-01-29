@@ -76,7 +76,12 @@ class EditGoal(HomeGoal):
         elif self.context.parsed._message is not None:
             self._message = self.context.parsed._message
         else:
-            action = self.context.parsed
+            if isinstance(self.context.parsed, ActionGoal):
+                action = AddStepGoal(self.context)
+                action.advance()
+            else:
+                action = self.context.parsed
+
             if action.is_complete:
                 self._message = action.complete()
             else:
@@ -158,6 +163,9 @@ class EditContext(object):
         self.actions[self.step:self.step] = action
 
     def change_step(self, action):
+        old_action = self.actions[self.step]
+        if isinstance(old_action, CreateVariableAction):
+            self.context.current.variables.remove(old_action.name)
         self.actions[self.step] = action
 
 class GoToStepGoal(StepGoal):

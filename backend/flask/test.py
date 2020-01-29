@@ -108,7 +108,7 @@ edit_test3 = [
     "say hello",
     "say bye",
     "done",
-    "edit empty",
+    "edit edit test 3",
     "next step",
     "next step",
     "previous step",
@@ -121,7 +121,21 @@ edit_test3 = [
 
 edit_test4 = [
     "open empty",
-    "what step"
+    "say hello",
+    "add step",
+    "say hello",
+    "what step",
+    "create a variable called var",
+    "4",
+    "say the value of var",
+    "add step",
+    "set var to 9",
+    "say the value of var",
+    "previous step",
+    "change step",
+    "set var to 10",
+    "done",
+    "run empty"
 ]
 
 sound_test = [

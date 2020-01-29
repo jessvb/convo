@@ -4,25 +4,26 @@ from goals import *
 from models import *
 from helpers import *
 
-# create_class_regex = "(?:make|create)(?: a)? class(?: (?:called|named) (.+))?"
-# add_property_regex = "add(?: a)?(?: (.+))? property(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
-# add_procedure_regex = "add(?: an?)? (?:procedure|action)(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
-create_list_regex = "(?:make|create)(?: a)? list(?: (?:called|named) (.+)| (.+))?"
 create_procedure_regex = "(?:make|create)(?: a)? (?:procedure|program)(?: (?:called|named) (.+))?$"
+rename_procedure_regex = "rename(?: (.+) to (.+)| (.+))"
+delete_procedure_regex = "(?!.*step)delete(?: (.+))"
+run_regex = "run(?: (.+))?"
+edit_regex = "(?:open|edit)(?: (.+))?"
+
+create_list_regex = "(?:make|create)(?: a)? list(?: (?:called|named) (.+)| (.+))?"
 add_to_list_regex = "add(?: (.+))? to list(?: (.+))?"
 say_regex = "say(?: (.+))?"
 set_variable_regex = "(?!change step)(?:set|change)(?:(?: (.+))? to (.+)| (.+))"
 create_variable_regex = "(?:create|make)(?: a)?(?: (.+))? variable(?: called| named)?(?:(?: (.+))? and set(?: it)? to (.+)| (.+))?"
 increment_variable_regex = "(?:add(?: (.+))? to(?: (.+))?)|(?:increment(?:(?: (.+))? by (.+)| (.+))?)"
-run_regex = "run(?: (.+))?"
 get_user_input_regex = "(?:listen for|get)(?: user)? input(?: and (?:(?:call it)?|(?:name it)?|(?:save it as)?) (.+))?"
 value_of_regex = "(?:the )?value of (?:(?:the )?variable )?(.+)"
-edit_regex = "(?:open|edit)(?: (.+))?"
-go_to_step_regex = "(?:go to step(?: (.+))?|go to(?: the)? (.+) step)"
-delete_step_regex = "(?:delete|remove) step"
-add_step_regex = "add step"
-change_step_regex = "(?:change|replace) step"
 play_sound_regex = "play(?: the)?(?: (.+))? sound"
+
+go_to_step_regex = "(?:go to step(?: (.+))?|go to(?: the)? (.+) step)"
+delete_step_regex = "(?:delete|remove)(?: the)? step"
+add_step_regex = "(?:add|create|make)(?: a)?(?: new)? step"
+change_step_regex = "(?:change|replace)(?: the)? step"
 
 create_conditional_regex = "(?:create|make)(?: a)? conditional|if (.+) then (.+)|(.+) if (.+)|if (.+)"
 create_loop_regex = "(.+) (while|until) (.+)|(while|until) (.+)"
@@ -32,9 +33,6 @@ equality_condition_regex = "(?!.*less|.*greater)(?:if |while |until )?(.+) is(?:
 
 variable_regex = "(?:(?:a|the) variable)(?: (.+))?|variable (.+)"
 procedure_regex = "(?:(?:a|the) procedure)(?: (.+))?|procedure (.+)"
-
-rename_procedure_regex = "rename(?: (.+) to (.+)| (.+))"
-delete_procedure_regex = "(?!.*step)delete(?: (.+))"
 
 action_regexes = [say_regex, set_variable_regex, create_variable_regex, increment_variable_regex, get_user_input_regex, create_list_regex, add_to_list_regex]
 condition_regexes = [comparison_condition_regex, equality_condition_regex]

@@ -138,7 +138,7 @@ const example_commands = {
                 "replace step"
             ]
         }
-    ]
+    ].concat(action_commands)
 }
 
 let changeSidebarText = (state) => {
