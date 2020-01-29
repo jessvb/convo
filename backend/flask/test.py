@@ -150,10 +150,33 @@ loop_test = [
     "create a procedure called loop test",
     "create a variable called counter and set it to 5",
     "while counter is less than 10 then add 10 to counter",
-    "close loop"
+    "close loop",
+    "done"
 ]
 
-for i, message in enumerate(loop_test):
+conditional_test = [
+    "create a procedure called conditional test",
+    "create a variable called counter and set it to 5",
+    "if adf is less than 10 add 10 to counter",
+    "if counter is less than 10 add 10 to asf",
+    "if counter is less than 10 then add 1 to counter",
+    "done",
+    "done",
+    "if counter is less than 10",
+    "create a conditional",
+    "if counter is less than 10",
+    "add 2 to counter",
+    "done",
+    "no",
+    "if counter is 9 say the value of counter",
+    "no",
+    "say it is not 9",
+    "no",
+    "done",
+    "run conditional test"
+]
+
+for i, message in enumerate(sound_test2):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

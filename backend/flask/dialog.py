@@ -34,10 +34,10 @@ sounds_procedure = Procedure(name="dog or cat", actions=[
     SayAction("Do you want to hear a dog or a cat?"),
     GetUserInputAction("input"),
     ConditionalAction(
-        ComparisonCondition("input", "equal to", "dog"),
+        EqualityCondition("input", "dog"),
         actions=[
             [ConditionalAction(
-                ComparisonCondition("input", "equal to", "cat"),
+                EqualityCondition("input", "cat"),
                 actions=[
                     [SayAction("You did not say a dog or a cat.")],
                     [PlaySoundAction("meow")]

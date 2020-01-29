@@ -1,4 +1,5 @@
 import re
+import string
 from goals import *
 from models import *
 from helpers import *
@@ -6,10 +7,7 @@ from helpers import *
 # create_class_regex = "(?:make|create)(?: a)? class(?: (?:called|named) (.+))?"
 # add_property_regex = "add(?: a)?(?: (.+))? property(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
 # add_procedure_regex = "add(?: an?)? (?:procedure|action)(?: called| named)?(?:(?: (.+))? to (.+)| (.+))?"
-create_conditional_regex = "(?:create(?: a)? conditional)|(?:(if .+) then (.+))|(?:(.+) (if .+))"
 create_list_regex = "(?:make|create)(?: a)? list(?: (?:called|named) (.+)| (.+))?"
-create_until_loop_regex = "(?:(?:make|create)(?: a)? until loop)|(?:(.+) (until .+))"
-create_while_loop_regex = "(?:(?:make|create)(?: a)? while loop)|(?:(while .+) then (.+))"
 create_procedure_regex = "(?:make|create)(?: a)? (?:procedure|program)(?: (?:called|named) (.+))?$"
 add_to_list_regex = "add(?: (.+))? to list(?: (.+))?"
 say_regex = "say(?: (.+))?"
@@ -26,8 +24,18 @@ add_step_regex = "add step"
 change_step_regex = "(?:change|replace) step"
 play_sound_regex = "play(?: the)?(?: (.+))? sound"
 
-comparison_condition_regex = "(?:if|until|while) (.+) is ((?:(?:less|greater) than(?: or equal to)?)|equal to) (.+)"
+create_conditional_regex = "(?:create|make)(?: a)? conditional|if (.+) then (.+)|(.+) if (.+)|if (.+)"
+create_loop_regex = "(.+) (while|until) (.+)|(while|until) (.+)"
+create_until_loop_regex = "(?:(?:make|create)(?: a)? until loop)|(?:(.+) (until .+))"
+create_while_loop_regex = "(?:(?:make|create)(?: a)? while loop)|(?:(while .+) then (.+))"
+
+comparison_condition_regex = "(?:if |while |until )?(.+) is ((?:(?:less|greater) than(?: or equal to)?)) (.+)"
+equality_condition_regex = "(?!.*less|.*greater)(?:if |while |until )?(.+) is(?: (not))?(?: equal to)? (.+)"
+
 variable_regex = "(?:(?:a|the) variable)(?: (.+))?|variable (.+)"
+
+action_regexes = [say_regex, set_variable_regex, create_variable_regex, increment_variable_regex, get_user_input_regex, create_list_regex, add_to_list_regex]
+condition_regexes = [comparison_condition_regex, equality_condition_regex]
 
 class SemanticNLU(object):
     def __init__(self, context):
@@ -37,65 +45,27 @@ class SemanticNLU(object):
         message = message.lower()
         if message.startswith(("what")):
             return self.try_parse_question(message)
-
-        for parse in [self.try_parse_goal, self.try_parse_value_of, self.try_parse_condition]:
+        for parse in [self.parse_home_goal, self.parse_action_goal, self.parse_step_goal, self.parse_condition, self.parse_value_of]:
             parsed = parse(message)
             if parsed is not None:
                 return parsed
 
-    def try_parse_goal(self, message):
+    def parse_home_goal(self, message):
         if message is None:
             return message
-        elif re.match(create_conditional_regex, message):
-            match = re.match(create_conditional_regex, message)
-            condition = group(match, [1, 4])
-            action = group(match, [2, 3])
-            return ConditionalActionGoal(self.context, condition=self.try_parse_condition(condition), action=self.try_parse_goal(action))
-        elif re.match(create_until_loop_regex, message):
-            match = re.match(create_until_loop_regex, message)
-            action = group(match, 1)
-            condition = group(match, 2)
-            return UntilLoopActionGoal(self.context, condition=self.try_parse_condition(condition), action=self.try_parse_goal(action))
-        elif re.match(create_while_loop_regex, message):
-            match = re.match(create_while_loop_regex, message)
-            condition = group(match, 1)
-            action = group(match, 2)
-            return WhileLoopActionGoal(self.context, condition=self.try_parse_condition(condition), action=self.try_parse_goal(action))
         elif re.match(create_procedure_regex, message):
             match = re.match(create_procedure_regex, message)
             return CreateProcedureGoal(self.context, name=group(match, 1))
-        elif re.match(set_variable_regex, message):
-            match = re.match(set_variable_regex, message)
-            return SetVariableActionGoal(
-                self.context, name=self.try_parse_variable(group(match, [1, 3])), value=self.try_parse_value_of(group(match, 2)))
-        elif re.match(create_variable_regex, message):
-            match = re.match(create_variable_regex, message)
-            return CreateVariableActionGoal(self.context, name=group(match, [2, 4]), value=self.try_parse_value_of(group(match, 3)))
-        elif re.match(increment_variable_regex, message):
-            match = re.match(increment_variable_regex, message)
-            return IncrementVariableActionGoal(
-                self.context, name=self.try_parse_variable(group(match, [2, 3, 5])), value=self.try_parse_value_of(group(match, [1, 4])))
-        elif re.match(say_regex, message):
-            match = re.match(say_regex, message)
-            return SayActionGoal(self.context, phrase=self.try_parse_value_of(group(match, 1)))
-        elif re.match(create_list_regex, message):
-            match = re.match(create_list_regex, message)
-            return CreateListActionGoal(self.context, name=group(match, [1, 2]))
-        elif re.match(add_to_list_regex, message):
-            match = re.match(add_to_list_regex, message)
-            return AddToListActionGoal(self.context, name=group(match, 2), value=group(match, 1))
-        elif re.match(play_sound_regex, message):
-            match = re.match(play_sound_regex, message)
-            return PlaySoundActionGoal(self.context, sound=group(match, 1))
         elif re.match(run_regex, message):
             match = re.match(run_regex, message)
             return RunGoal(self.context, name=group(match, 1))
-        elif re.match(get_user_input_regex, message):
-            match = re.match(get_user_input_regex, message)
-            return GetUserInputActionGoal(self.context, variable=group(match, 1))
         elif re.match(edit_regex, message):
             match = re.match(edit_regex, message)
             return EditGoal(self.context, name=group(match, 1))
+
+    def parse_step_goal(self, message):
+        if message is None:
+            return message
         elif re.match(go_to_step_regex, message):
             match = re.match(go_to_step_regex, message)
             return GoToStepGoal(self.context, step=group(match, [1, 2]))
@@ -109,23 +79,98 @@ class SemanticNLU(object):
             match = re.match(change_step_regex, message)
             return ChangeStepGoal(self.context)
 
-    def try_parse_condition(self, message):
+    def parse_action_goal(self, message):
+        if message is None:
+            return message
+        elif re.match(create_conditional_regex, message):
+            match = re.match(create_conditional_regex, message)
+            condition = group(match, [1, 4])
+            action = group(match, [2, 3])
+            if not (condition and action) and group(match, 5):
+                condition, action = self.parse_condition_and_action(group(match, 5))
+                return ConditionalActionGoal(self.context, condition=condition, action=action) if condition and action else None
+            else:
+                return ConditionalActionGoal(self.context, condition=self.parse_condition(condition), action=self.parse_action_goal(action))
+        elif re.match(create_loop_regex, message):
+            match = re.match(create_loop_regex, message)
+            loop = group(match, [2, 4])
+            condition = group(match, 3)
+            action = group(match, 1)
+            if not (condition and action) and group(match, 5):
+                condition, action = self.parse_condition_and_action(group(match, 5))
+                return ConditionalActionGoal(self.context, condition=condition, action=action) if condition and action else None
+            else:
+                return ConditionalActionGoal(self.context, condition=self.parse_condition(condition), action=self.parse_action_goal(action))
+        elif re.match(create_until_loop_regex, message):
+            match = re.match(create_until_loop_regex, message)
+            action = group(match, 1)
+            condition = group(match, 2)
+            return UntilLoopActionGoal(self.context, condition=self.parse_condition(condition), action=self.parse_action_goal(action))
+        elif re.match(create_while_loop_regex, message):
+            match = re.match(create_while_loop_regex, message)
+            condition = group(match, 1)
+            action = group(match, 2)
+            return WhileLoopActionGoal(self.context, condition=self.parse_condition(condition), action=self.parse_action_goal(action))
+        elif re.match(set_variable_regex, message):
+            match = re.match(set_variable_regex, message)
+            return SetVariableActionGoal(
+                self.context, name=self.parse_variable(group(match, [1, 3])), value=self.parse_value_of(group(match, 2), True))
+        elif re.match(create_variable_regex, message):
+            match = re.match(create_variable_regex, message)
+            return CreateVariableActionGoal(self.context, name=group(match, [2, 4]), value=self.parse_value_of(group(match, 3), True))
+        elif re.match(increment_variable_regex, message):
+            match = re.match(increment_variable_regex, message)
+            return IncrementVariableActionGoal(
+                self.context, name=self.parse_variable(group(match, [2, 3, 5])), value=self.parse_value_of(group(match, [1, 4]), True))
+        elif re.match(say_regex, message):
+            match = re.match(say_regex, message)
+            return SayActionGoal(self.context, phrase=self.parse_value_of(group(match, 1), True))
+        elif re.match(create_list_regex, message):
+            match = re.match(create_list_regex, message)
+            return CreateListActionGoal(self.context, name=group(match, [1, 2]))
+        elif re.match(add_to_list_regex, message):
+            match = re.match(add_to_list_regex, message)
+            return AddToListActionGoal(self.context, name=group(match, 2), value=group(match, 1))
+        elif re.match(play_sound_regex, message):
+            match = re.match(play_sound_regex, message)
+            return PlaySoundActionGoal(self.context, sound=group(match, 1))
+        elif re.match(get_user_input_regex, message):
+            match = re.match(get_user_input_regex, message)
+            return GetUserInputActionGoal(self.context, variable=group(match, 1))
+
+    def parse_condition(self, message):
         if message is None:
             return message
         elif re.match(comparison_condition_regex, message):
             match = re.match(comparison_condition_regex, message)
             return ComparisonCondition(variable=group(match, 1), op=group(match, 2), value=group(match, 3))
+        elif re.match(equality_condition_regex, message):
+            match = re.match(equality_condition_regex, message)
+            return EqualityCondition(variable=group(match, 1), value=group(match, 3), negation=(group(match, 2) is not None))
 
-    def try_parse_value_of(self, message):
+    def parse_condition_and_action(self, message):
+        message = strip_punctuation(message)
+        for rgx in action_regexes:
+            match = re.search(rgx, message)
+            if not match:
+                continue
+            for condition_rgx in condition_regexes:
+                condition_match = re.search(condition_rgx, message[:match.start()].strip())
+                if not condition_match:
+                    continue
+                return self.parse_condition(condition_match.group(0)), self.parse_action_goal(match.group(0))
+        return None, None
+
+    def parse_value_of(self, message, return_original=False):
         if message is None:
             return message
         elif re.match(value_of_regex, message):
             match = re.match(value_of_regex, message)
             return ValueOf(variable=group(match, 1))
         else:
-            return message
+            return message if return_original else None
 
-    def try_parse_variable(self, message):
+    def parse_variable(self, message):
         if message is None:
             return message
         elif re.match(variable_regex, message):
@@ -134,12 +179,19 @@ class SemanticNLU(object):
         else:
             return message
 
-def group(match, idx, words_to_remove=[]):
+def group(match, idx):
     if isinstance(idx, int) and len(match.groups()) > 0 and match.group(idx):
-        cleaned = clean(match.group(idx), words_to_remove)
-        return cleaned if cleaned else None
-    elif isinstance(idx, type([])):
+        return match.group(idx)
+    elif isinstance(idx, list):
         for i in idx:
-            cleaned = group(match, i, words_to_remove)
-            if cleaned:
-                return cleaned
+            return group(match, i)
+
+# def group(match, idx, words_to_remove=[]):
+#     if isinstance(idx, int) and len(match.groups()) > 0 and match.group(idx):
+#         cleaned = clean(match.group(idx), words_to_remove)
+#         return cleaned if cleaned else None
+#     elif isinstance(idx, type([])):
+#         for i in idx:
+#             cleaned = group(match, i, words_to_remove)
+#             if cleaned:
+#                 return cleaned

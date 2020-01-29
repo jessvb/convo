@@ -91,9 +91,6 @@ class ExecutionContext(object):
             except ExecutionError as e:
                 self.error = e.message
                 break
-            except RuntimeError as e:
-                if not str(e).startswith("Working outside of request context."):
-                    raise e
             self.step += 1
             if goal:
                 return goal
@@ -107,17 +104,14 @@ class ExecutionContext(object):
                 variable = action.phrase.variable
                 phrase = f"The value of {variable} is \"{self.variables[variable]}\"."
             logging.info(f"Saying '{phrase}'")
-            flask_socketio.emit("response", { "message": phrase, "state": self.context.state }, room=str(self.context.sid))
-            print(f"Emitting to {self.context.sid}")
+            self.emit("response", { "message": phrase, "state": self.context.state })
             self.context.add_message(action.phrase)
         elif isinstance(action, PlaySoundAction):
             logging.info(f"Playing sound file {action.sound}.")
-            flask_socketio.emit("playSound", { "sound": action.sound, "state": self.context.state }, room=str(self.context.sid))
-            print(f"Emitting to {self.context.sid}")
+            self.emit("playSound", { "sound": action.sound, "state": self.context.state })
         elif isinstance(action, GetUserInputAction):
             logging.info(f"Getting user input and setting as {action.variable}")
-            flask_socketio.emit("response", { "message": "Listening for user input...", "state": self.context.state }, room=str(self.context.sid))
-            print(f"Emitting to {self.context.sid}")
+            self.emit("response", { "message": "Listening for user input...", "state": self.context.state })
             return GetUserInputGoal(self.context, action.variable)
         elif isinstance(action, CreateVariableAction):
             self.variables[action.name] = self.variables[action.value.variable] if isinstance(action.value, ValueOf) else action.value
@@ -165,3 +159,11 @@ class ExecutionContext(object):
             if res:
                 self.actions[self.step:self.step] = action.actions
                 self.step -= 1
+
+    def emit(self, key, data):
+        try:
+            flask_socketio.emit(key, data, room=str(self.context.sid))
+            print(f"Emitting to {self.context.sid}")
+        except RuntimeError as e:
+            if not str(e).startswith("Working outside of request context."):
+                raise e

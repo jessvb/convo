@@ -118,7 +118,7 @@ class ConditionalAction(Action):
 
     def to_nl(self):
         falses, trues = self.actions
-        return f"doing {len(falses) if len(falses) > 0 else 'no'} actions if {self.condition.to_nl()} and {len(trues) if len(trues) > 0 else 'no'} actions otherwise"
+        return f"doing {len(falses) if len(falses) > 0 else 'no'} action(s) if {self.condition.to_nl()} and {len(trues) if len(trues) > 0 else 'no'} action(s) otherwise"
 
 class LoopAction(Action):
     def __init__(self, condition, actions):

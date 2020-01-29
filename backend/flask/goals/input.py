@@ -21,7 +21,7 @@ class GetInputGoal(BaseGoal):
 
     def advance(self):
         logging.debug(f"Advancing {self.__class__.__name__}...")
-        if isinstance(self.context.parsed, ValueOf):
+        if self.context.parsed and isinstance(self.context.parsed, ValueOf):
             self.value = self.context.parsed
         else:
             self.value = self.context.current_message
@@ -47,7 +47,7 @@ class GetUserInputGoal(BaseGoal):
     def advance(self):
         logging.debug(f"Advancing {self.__class__.__name__}...")
 
-        if isinstance(self.context.parsed, ValueOf):
+        if self.context.parsed and isinstance(self.context.parsed, ValueOf):
             self.value = self.context.parsed
         else:
             message = self.context.current_message
