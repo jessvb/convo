@@ -122,7 +122,7 @@ const example_commands = {
             ]
         },
         {
-            "title": "Navigation",
+            "title": "Navigate Through Procedure",
             "examples": [
                 "next step",
                 "previous step",
@@ -134,7 +134,9 @@ const example_commands = {
         {
             "title": "Add a New Action",
             "examples": [
-                "add step"
+                "add step",
+                "make a new step",
+                "create a new step"
             ]
         },
         {
