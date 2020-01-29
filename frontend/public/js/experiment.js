@@ -81,8 +81,7 @@ const example_commands = {
         {
             "title": "Run a Procedure or Program",
             "examples": [
-                "run test",
-                "play test"
+                "run test"
             ]
         },
         {
@@ -90,6 +89,19 @@ const example_commands = {
             "examples": [
                 "edit test",
                 "open test"
+            ]
+        },
+        {
+            "title": "Rename a Procedure or Program",
+            "examples": [
+                "rename hello",
+                "rename test to hello"
+            ]
+        },
+        {
+            "title": "Delete a Procedure or Program",
+            "examples": [
+                "delete hello"
             ]
         }
     ],

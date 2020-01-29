@@ -200,7 +200,20 @@ bug_test = [
     "add 3 to the variable variable one until the variable variable one is 28"
 ]
 
-for i, message in enumerate(bug_test):
+procedure_test = [
+    "rename procedure",
+    "hello",
+    "rename procedure example to hello",
+    "rename procedure dog or cat to dog",
+    "run dog",
+    "cat",
+    "make a procedure called deletion",
+    "done",
+    "what are my procedures",
+    "delete deletion"
+]
+
+for i, message in enumerate(procedure_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

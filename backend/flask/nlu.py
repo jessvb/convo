@@ -31,6 +31,10 @@ comparison_condition_regex = "(?:if |while |until )?(.+) is ((?:(?:less|greater)
 equality_condition_regex = "(?!.*less|.*greater)(?:if |while |until )?(.+) is(?: (not))?(?: equal to)? (.+)"
 
 variable_regex = "(?:(?:a|the) variable)(?: (.+))?|variable (.+)"
+procedure_regex = "(?:(?:a|the) procedure)(?: (.+))?|procedure (.+)"
+
+rename_procedure_regex = "rename(?: (.+) to (.+)| (.+))"
+delete_procedure_regex = "delete(?: (.+))"
 
 action_regexes = [say_regex, set_variable_regex, create_variable_regex, increment_variable_regex, get_user_input_regex, create_list_regex, add_to_list_regex]
 condition_regexes = [comparison_condition_regex, equality_condition_regex]
@@ -56,10 +60,16 @@ class SemanticNLU(object):
             return CreateProcedureGoal(self.context, name=group(match, 1))
         elif re.match(run_regex, message):
             match = re.match(run_regex, message)
-            return RunGoal(self.context, name=group(match, 1))
+            return RunGoal(self.context, name=self.parse_procedure(group(match, 1)))
         elif re.match(edit_regex, message):
             match = re.match(edit_regex, message)
-            return EditGoal(self.context, name=group(match, 1))
+            return EditGoal(self.context, name=self.parse_procedure(group(match, 1)))
+        elif re.match(rename_procedure_regex, message):
+            match = re.match(rename_procedure_regex, message)
+            return RenameProcedureGoal(self.context, name=self.parse_procedure(group(match, [1, 3])), new_name=group(match, 2))
+        elif re.match(delete_procedure_regex, message):
+            match = re.match(delete_procedure_regex, message)
+            return DeleteProcedureGoal(self.context, name=self.parse_procedure(group(match, 1)))
 
     def parse_step_goal(self, message):
         if message is None:
@@ -163,6 +173,15 @@ class SemanticNLU(object):
             return message
         elif re.match(variable_regex, message):
             match = re.match(variable_regex, message)
+            return match.group(1) if match.group(1) else match.group(2)
+        else:
+            return message
+
+    def parse_procedure(self, message):
+        if message is None:
+            return message
+        elif re.match(procedure_regex, message):
+            match = re.match(procedure_regex, message)
             return match.group(1) if match.group(1) else match.group(2)
         else:
             return message
