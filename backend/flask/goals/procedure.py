@@ -70,3 +70,74 @@ class AddClassProcedureGoal(CreateProcedureGoal):
                     self.todos.append(GetInputGoal(self.context, self, "name", f"Procedure {name} already exists. Try another name or say cancel."))
             return
         setattr(self, attr, value)
+
+class RenameProcedureGoal(HomeGoal):
+    def __init__(self, context, name=None, new_name=None):
+        super().__init__(context)
+        self.setattr("new_name", new_name)
+        self.setattr("name", name)
+
+    @property
+    def message(self):
+        if self.error:
+            return self.error
+
+        if self._message:
+            return self._message
+
+        return f"I renamed procedure {self.name} to {self.new_name}. What do you want to do now?" if self.is_complete else self.todos[-1].message
+
+    def complete(self):
+        procedure = self.context.procedures[self.name]
+        procedure.name = self.new_name
+        self.context.procedures[procedure.name] = procedure
+        del self.context.procedures[self.name]
+        return super().complete()
+
+    def setattr(self, attr, value):
+        if (attr == "name"):
+            if not value:
+                self.todos.append(GetInputGoal(self.context, self, attr, "Which procedure do you want to rename?"))
+            elif value not in self.context.procedures:
+                self.error = f"Procedure with the name {value} does not exist."
+            else:
+                self.name = value
+            return
+        elif (attr == "new_name"):
+            if not value:
+                self.todos.append(GetInputGoal(self.context, self, attr, "What new name do you want to give the procedure?"))
+            elif value in self.context.procedures:
+                self.error = f"A procedure with the name {value} already exists."
+            else:
+                self.new_name = value
+        setattr(self, attr, value)
+
+class DeleteProcedureGoal(HomeGoal):
+    def __init__(self, context, name=None):
+        super().__init__(context)
+        self.setattr("name", name)
+
+    @property
+    def message(self):
+        if self.error:
+            return self.error
+
+        if self._message:
+            return self._message
+
+        return f"I deleted the procedure {self.name}. What do you want to do now?" if self.is_complete else self.todos[-1].message
+
+    def complete(self):
+        del self.context.procedures[self.name]
+        return super().complete()
+
+    def setattr(self, attr, value):
+        if (attr == "name"):
+            if not value:
+                self.todos.append(GetInputGoal(self.context, self, attr, "Which procedure do you want to delete?"))
+            elif value not in self.context.procedures:
+                self.error = f"Procedure with the name {value} does not exist."
+            else:
+                self.name = value
+            return
+        setattr(self, attr, value)
