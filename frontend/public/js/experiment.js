@@ -278,13 +278,13 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('example-actions').innerHTML = `
         <div id="example-actions-heading">
             <div><b>Things You Can Say To...</b></div>
-            <div id="example-actions-direction">&#9650</div>
+            <div id="example-actions-direction">&#9660</div>
         </div>
         <div id="example-actions-list"></div>`;
     document.getElementById('example-actions-heading').onclick = () => {
         let actionsList = document.getElementById('example-actions-list');
         let displ = actionsList.style.display === 'block' ? 'none' : 'block';
-        document.getElementById('example-actions-direction').innerHTML = displ === 'none' ? "&#9650" : "&#9660";
+        document.getElementById('example-actions-direction').innerHTML = displ === 'none' ? "&#9660" : "&#9650";
         actionsList.style.display = displ;
     }
     changeSidebarText("home");
@@ -292,14 +292,14 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('example-programs').innerHTML = `
         <div id="example-programs-heading">
             <div><b>Example Programs</b></div>
-            <div id="example-programs-direction">&#9650</div>
+            <div id="example-programs-direction">&#9660</div>
         </div>
         <div id="example-programs-list"></div>`;
 
     document.getElementById('example-programs-heading').onclick = () => {
         let programsList = document.getElementById('example-programs-list');
         let displ = programsList.style.display === 'block' ? 'none' : 'block';
-        document.getElementById('example-programs-direction').innerHTML = displ === 'none' ? "&#9650" : "&#9660";
+        document.getElementById('example-programs-direction').innerHTML = displ === 'none' ? "&#9660" : "&#9650";
         programsList.style.display = displ;
     }
     addExamplePrograms();
