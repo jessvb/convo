@@ -28,16 +28,20 @@
             <h2>Demographic Survey</h2>
             <div class="survey">
                 <div class="question">1) How old are you?</div>
-                <input class="answer" id='age' type="number" min="8" max="99" placeholder="ex: 15">
+                <input class="answer" id='age' type="number" min="11" max="99" placeholder="ex: 15">
 
-                <div class="question">2) What is your gender?</div>
-                <select class="answer" id='sex'>
+                <div class="question">2) What best describes your gender?</div>
+                <!-- <div class="answer"> -->
+                <select class="answer" id='sex' onchange="showOtherTextBox(this, 'gender-textbox')">
                     <option value="select">Select...</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
-                    <option value="other">Other</option>
+                    <option value="other">Prefer to self-describe</option>
                     <option value="na">Prefer not to answer</option>
                 </select>
+                <div class="question paired" style="display: none;"><!-- filler question s.t. the next "answer" is paired with a q --></div>
+                <input class="answer paired" id='gender-textbox' type="text" placeholder="Self-description:">
+                <!-- </div> -->
 
                 <!-- <div class="question">3) What is your race and ethnicity? <br> - To select multiple, hold down the Ctrl button (Cmd button on Mac) + click </div>
                 <select multiple class="answer" id='race'>
@@ -70,7 +74,7 @@
                     <option value="advanced">Advanced</option>
                 </select>
 
-                <div class="question">5) What programming languages and/or softwares have you used before? (Select as many as applies) </div>
+                <div class="question">5) What programming languages have you used before? (Hold CTRL (or CMD on Mac) to select as many as applies) </div>
                 <div>
                     <select class="answer" id='languages-select' onchange="showOtherTextBox(this, 'languages-textbox')" multiple>
                       <option value="none">None</option>
@@ -88,7 +92,7 @@
                     <input class="answer" id='languages-textbox' type="text" placeholder="Other">
                 </div>
 
-                <div class="question">6) What type of conversational agents have you interacted with before? (Select as many as applies) </div>
+                <div class="question">6) What type of conversational agents have you interacted with before? (Hold CTRL (or CMD on Mac) to select as many as applies) </div>
                 <div>
                     <select multiple class="answer" id='agents-select' onchange="showOtherTextBox(this, 'agents-textbox')">
                       <option value="none">None</option>

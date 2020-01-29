@@ -9,7 +9,8 @@ select {
 }
 
 #languages-textbox,
-#agents-textbox {
+#agents-textbox,
+#gender-textbox {
 	display: none;
 }
 
