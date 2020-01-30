@@ -58,7 +58,7 @@ class CreateVariableAction(VariableAction):
         super().__init__(name, value)
 
     def to_nl(self):
-        value = value.to_nl() if isinstance(self.value, ValueOf) else self.value
+        value = self.value.to_nl() if isinstance(self.value, ValueOf) else self.value
         return f"creating a variable called {self.name} and setting its value to {self.value}"
 
 class SetVariableAction(VariableAction):
@@ -66,7 +66,7 @@ class SetVariableAction(VariableAction):
         super().__init__(name, value)
 
     def to_nl(self):
-        value = value.to_nl() if isinstance(self.value, ValueOf) else self.value
+        value = self.value.to_nl() if isinstance(self.value, ValueOf) else self.value
         return f"setting the value of variable {self.name} to {self.value}"
 
 class AddToVariableAction(VariableAction):
@@ -77,7 +77,7 @@ class AddToVariableAction(VariableAction):
         return [f"{self.name} += {self.value}"]
 
     def to_nl(self):
-        value = value.to_nl() if isinstance(self.value, ValueOf) else self.value
+        value = self.value.to_nl() if isinstance(self.value, ValueOf) else self.value
         return f"adding {value} to variable {self.name}"
 
 class SubtractFromVariableAction(VariableAction):
@@ -88,7 +88,7 @@ class SubtractFromVariableAction(VariableAction):
         return [f"{self.name} -= {self.value}"]
 
     def to_nl(self):
-        value = value.to_nl() if isinstance(self.value, ValueOf) else self.value
+        value = self.value.to_nl() if isinstance(self.value, ValueOf) else self.value
         return f"subtracting {value} from variable {self.name}"
 
 class SayAction(Action):

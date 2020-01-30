@@ -16,7 +16,7 @@ def strip_punctuation(s):
     return s.translate(str.maketrans('', '', string.punctuation.replace("-", "")))
 
 def parse_number(message):
-    if not message:
+    if not message or not isinstance(message, str):
         return message
 
     contains_negation = ("negative" in message) or ("-" in message)

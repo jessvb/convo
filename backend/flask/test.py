@@ -286,7 +286,10 @@ negative_test = [
 for i, message in enumerate(messages):
     logging.info(message)
     res = dm.handle_message(message)
+    timing = False
     if res:
         logging.info(res)
     if message.startswith("run"):
+        timing = True
+    if timing:
         time.sleep(1)

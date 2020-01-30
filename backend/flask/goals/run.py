@@ -18,11 +18,9 @@ class RunGoal(HomeGoal):
         if self.error:
             return self.error
 
-        # return "Program finished running." if self.is_complete else (self.todos[-1].message if self.todos else None)
-
     @property
     def is_complete(self):
-        return self.context.execution and self.context.execution.step == len(self.context.execution.actions) and super().is_complete
+        return self.context.execution and self.context.execution.done and super().is_complete
 
     def complete(self):
         message = super().complete()
@@ -44,12 +42,13 @@ class RunGoal(HomeGoal):
                 self.context.execution = ExecutionContext(self.context, [copy.copy(a) for a in self.procedure.actions], self.todos)
                 self.execution = self.context.execution
                 self.execution.run()
+
                 if self.execution.error:
                     self.error = self.execution.error
                     self.execution.stop()
+                    self.context.execution = None
                     self.context.transition("complete")
-                # if todo:
-                #     self.todos.append(todo)
+
             return
         setattr(self, attr, value)
 
@@ -64,14 +63,13 @@ class RunGoal(HomeGoal):
             else:
                 self.todos.append(todo)
 
-        if self.execution and not self.execution.done:
+        if self.execution and not self.execution.done and len(self.todos) == 0:
             self.execution.run()
             if self.execution.error:
                 self.error = self.execution.error
                 self.execution.stop()
+                self.context.execution = None
                 self.context.transition("complete")
-            # if todo:
-            #     self.todos.append(todo)
 
 class ExecutionContext(object):
     def __init__(self, context, actions, todos):
@@ -83,21 +81,24 @@ class ExecutionContext(object):
         self.step = 0
         self.done = False
         self.error = None
+        self.running = False
 
     def run(self):
         self.thread = threading.Thread(target=self.advance)
         logging.info(f"Starting execution thread at step {self.step}.")
+        self.running = True
         self.thread.start()
 
     def stop(self):
-        if self.thread:
-            self.done = True
+        self.running = False
+        self.thread = None
 
     def advance(self):
-        while not self.done:
+        while self.running:
             action = self.actions[self.step]
             try:
                 goal = self.evaluate_action(action)
+                self.step += 1
                 if goal:
                     self.todos.append(goal)
                     return
@@ -107,9 +108,11 @@ class ExecutionContext(object):
             except ExecutionError as e:
                 self.error = e.message
                 break
-            self.step += 1
+
             if self.step >= len(self.actions):
                 break
+
+        self.running = False
         self.done = True
 
     def evaluate_action(self, action):
