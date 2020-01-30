@@ -1,6 +1,7 @@
 import logging
 import flask_socketio
 import copy
+import threading
 from goals import *
 from models import *
 from error import ExecutionError
@@ -17,11 +18,11 @@ class RunGoal(HomeGoal):
         if self.error:
             return self.error
 
-        return "Program finished running." if self.is_complete else (self.todos[-1].message if self.todos else None)
+        # return "Program finished running." if self.is_complete else (self.todos[-1].message if self.todos else None)
 
     @property
     def is_complete(self):
-        return self.context.execution and self.context.execution.done and super().is_complete
+        return self.context.execution and self.context.execution.step == len(self.context.execution.actions) and super().is_complete
 
     def complete(self):
         message = super().complete()
@@ -40,14 +41,15 @@ class RunGoal(HomeGoal):
             else:
                 self.name = value
                 self.procedure = self.context.procedures[value]
-                self.context.execution = ExecutionContext(self.context, [copy.copy(a) for a in self.procedure.actions])
+                self.context.execution = ExecutionContext(self.context, [copy.copy(a) for a in self.procedure.actions], self.todos)
                 self.execution = self.context.execution
-                todo = self.execution.advance()
+                self.execution.run()
                 if self.execution.error:
                     self.error = self.execution.error
+                    self.execution.stop()
                     self.context.transition("complete")
-                if todo:
-                    self.todos.append(todo)
+                # if todo:
+                #     self.todos.append(todo)
             return
         setattr(self, attr, value)
 
@@ -63,28 +65,42 @@ class RunGoal(HomeGoal):
                 self.todos.append(todo)
 
         if self.execution and not self.execution.done:
-            todo = self.execution.advance()
+            self.execution.run()
             if self.execution.error:
                 self.error = self.execution.error
+                self.execution.stop()
                 self.context.transition("complete")
-            if todo:
-                self.todos.append(todo)
+            # if todo:
+            #     self.todos.append(todo)
 
 class ExecutionContext(object):
-    def __init__(self, context, actions):
+    def __init__(self, context, actions, todos):
+        logging.debug(f"Actions: {[str(a) for a in actions]}")
         self.context = context
         self.actions = actions
-        logging.debug(f"Actions: {[str(a) for a in actions]}")
+        self.todos = todos
         self.variables = {}
-        self.done = False
         self.step = 0
+        self.done = False
         self.error = None
 
+    def run(self):
+        self.thread = threading.Thread(target=self.advance)
+        logging.info(f"Starting execution thread at step {self.step}.")
+        self.thread.start()
+
+    def stop(self):
+        if self.thread:
+            self.done = True
+
     def advance(self):
-        while self.step < len(self.actions):
+        while not self.done:
             action = self.actions[self.step]
             try:
                 goal = self.evaluate_action(action)
+                if goal:
+                    self.todos.append(goal)
+                    return
             except KeyError as e:
                 self.error = f"Error occured while running. Variable {e.args[0]} did not exist when I was {action.to_nl()}."
                 break
@@ -92,8 +108,8 @@ class ExecutionContext(object):
                 self.error = e.message
                 break
             self.step += 1
-            if goal:
-                return goal
+            if self.step >= len(self.actions):
+                break
         self.done = True
 
     def evaluate_action(self, action):
@@ -161,8 +177,11 @@ class ExecutionContext(object):
 
     def emit(self, key, data):
         try:
+            log_message = f"Emitting to {self.context.sid}"
+            if "message" in data:
+                log_message += f" with the message: {data['message']}"
+            logging.info(f"{log_message}.")
             flask_socketio.emit(key, data, room=str(self.context.sid))
-            print(f"Emitting to {self.context.sid}")
         except RuntimeError as e:
             if not str(e).startswith("Working outside of request context."):
                 raise e

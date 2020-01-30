@@ -1,4 +1,5 @@
 import logging
+import time
 from models import *
 from client import *
 from goals import *
@@ -282,8 +283,10 @@ negative_test = [
     "run negative comparison"
 ]
 
-for i, message in enumerate(negative_test):
+for i, message in enumerate(messages):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
         logging.info(res)
+    if message.startswith("run"):
+        time.sleep(1)
