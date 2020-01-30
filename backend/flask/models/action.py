@@ -69,7 +69,7 @@ class SetVariableAction(VariableAction):
         value = value.to_nl() if isinstance(self.value, ValueOf) else self.value
         return f"setting the value of variable {self.name} to {self.value}"
 
-class IncrementVariableAction(VariableAction):
+class AddToVariableAction(VariableAction):
     def __init__(self, name, value):
         super().__init__(name, value)
 
@@ -79,6 +79,17 @@ class IncrementVariableAction(VariableAction):
     def to_nl(self):
         value = value.to_nl() if isinstance(self.value, ValueOf) else self.value
         return f"adding {value} to variable {self.name}"
+
+class SubtractFromVariableAction(VariableAction):
+    def __init__(self, name, value):
+        super().__init__(name, value)
+
+    def python(self):
+        return [f"{self.name} -= {self.value}"]
+
+    def to_nl(self):
+        value = value.to_nl() if isinstance(self.value, ValueOf) else self.value
+        return f"subtracting {value} from variable {self.name}"
 
 class SayAction(Action):
     def __init__(self, phrase):
@@ -94,6 +105,8 @@ class SayAction(Action):
         return [f"say(\"{self.phrase}\")"]
 
     def to_nl(self):
+        if isinstance(self.phrase, ValueOf):
+            return f"saying the value of the variable {self.phrase.variable}"
         return f"saying the phrase \"{self.phrase}\""
 
 class ConditionalAction(Action):
@@ -118,7 +131,7 @@ class ConditionalAction(Action):
 
     def to_nl(self):
         falses, trues = self.actions
-        return f"doing {len(falses) if len(falses) > 0 else 'no'} action(s) if {self.condition.to_nl()} and {len(trues) if len(trues) > 0 else 'no'} action(s) otherwise"
+        return f"doing {len(falses) if len(falses) > 0 else 'no'} action(s) when {self.condition.to_nl()} and {len(trues) if len(trues) > 0 else 'no'} action(s) otherwise"
 
 class LoopAction(Action):
     def __init__(self, loop, condition, actions):

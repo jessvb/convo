@@ -105,11 +105,24 @@ const example_commands = {
             ]
         }
     ],
-    "creating": action_commands,
+    "creating": [
+        {
+            "title": "Finish Creating",
+            "examples": [
+                "done"
+            ]
+        }
+    ].concat(action_commands),
     "editing_action": action_commands,
     "editing": [
         {
-            "title": "Navigation",
+            "title": "Finish Editing",
+            "examples": [
+                "done"
+            ]
+        },
+        {
+            "title": "Navigate Through Procedure",
             "examples": [
                 "next step",
                 "previous step",
@@ -121,7 +134,9 @@ const example_commands = {
         {
             "title": "Add a New Action",
             "examples": [
-                "add step"
+                "add step",
+                "make a new step",
+                "create a new step"
             ]
         },
         {
@@ -138,7 +153,7 @@ const example_commands = {
                 "replace step"
             ]
         }
-    ]
+    ].concat(action_commands)
 }
 
 let changeSidebarText = (state) => {

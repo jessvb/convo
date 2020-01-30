@@ -83,15 +83,18 @@ edit_test = [
 edit_test2 = [
     "edit example",
     "next step",
+    "what step am i on",
     "delete step",
     "add step",
     "say hello world",
+    "which step am i on",
     "add step",
     "remove step",
     "add step",
     "create a variable",
     "nest",
     "4",
+    "where am i",
     "remove step",
     "change step",
     "say",
@@ -101,11 +104,38 @@ edit_test2 = [
 ]
 
 edit_test3 = [
-    "edit example",
-    "delete step",
+    "create a procedure called edit test 3",
+    "say hello",
+    "say bye",
     "done",
-    "run example",
-    "5"
+    "edit edit test 3",
+    "next step",
+    "next step",
+    "previous step",
+    "previous step",
+    "delete step",
+    "what step am i on",
+    "add step",
+    "say bye"
+]
+
+edit_test4 = [
+    "open empty",
+    "say hello",
+    "add step",
+    "say hello",
+    "what step",
+    "create a variable called var",
+    "4",
+    "say the value of var",
+    "add step",
+    "set var to 9",
+    "say the value of var",
+    "previous step",
+    "change step",
+    "set var to 10",
+    "done",
+    "run empty"
 ]
 
 sound_test = [
@@ -149,10 +179,6 @@ set_test = [
     "run set test"
 ]
 
-questions_test = [
-    "what procedures do i have?"
-]
-
 loop_test = [
     "create a procedure called loop test",
     "create a variable called counter and set it to 5",
@@ -191,15 +217,6 @@ conditional_test = [
     "run conditional test"
 ]
 
-bug_test = [
-    "create a procedure",
-    "my first procedure",
-    "create a variable",
-    "variable one",
-    "1",
-    "add 3 to the variable variable one until the variable variable one is 28"
-]
-
 procedure_test = [
     "rename procedure",
     "hello",
@@ -213,7 +230,59 @@ procedure_test = [
     "delete deletion"
 ]
 
-for i, message in enumerate(procedure_test):
+value_of_test = [
+    "create a procedure called adding",
+    "create a variable called yes and set it to no",
+    "done",
+    "edit adding",
+    "add step",
+    "say the value of yes",
+    "create a variable called yes yes and set it to no",
+    "if yes is equal to value of yes yes say never",
+    "done",
+    "nothing",
+    "done",
+    "run adding"
+]
+
+subtraction_test = [
+    "create a procedure called fire",
+    "create a variable called counter and set it to 10",
+    "subtract 2 from counter until counter is less than or equal to 0",
+    "say value of counter",
+    "close loop",
+    "done",
+    "run fire"
+]
+
+subtraction_test2 = [
+    "edit empty",
+    "create a variable called counter and set it to negative one",
+    "until counter is greater than 10 add 2 to counter",
+    "close loop",
+    "say the value of counter",
+    "until counter is less than -1 subtract 4 from counter",
+    "close loop",
+    "say the value of counter",
+    "done",
+    "run empty"
+]
+
+negative_test = [
+    "create a procedure called negative comparison",
+    "create a variable called negative",
+    "-1",
+    "create a variable called positive and set it to 5",
+    "say starting loop",
+    "until negative is greater than the value of positive say going up",
+    "add 5 to negative",
+    "say the value of negative",
+    "close loop",
+    "done",
+    "run negative comparison"
+]
+
+for i, message in enumerate(negative_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

@@ -1,6 +1,5 @@
 from goals import *
 from models import *
-from word2number import w2n
 
 class LoopActionGoal(ActionGoal):
     def __init__(self, context, loop=None, condition=None, action=None):
@@ -49,19 +48,12 @@ class LoopActionGoal(ActionGoal):
                 self.todos.append(GetConditionGoal(self.context, self))
             elif value.variable not in self.variables:
                 self.error = f"Variable {value.variable} used in the condition does not exist. Please try again or create the variable first."
-            elif value.value.isnumeric():
-                num = float(value.value)
-                value.value = int(num) if num.is_integer() else num
-                self.condition = value
+            elif isinstance(value.value, ValueOf) and value.value.variable not in self.variables:
+                self.error = f"Variable {value.value.variable} used in the condition does not exist. Please try again or create the variable first."
+            elif isinstance(value, ComparisonCondition) and isinstance(value.value, str):
+                self.error = f"The value {value} is not a number, so I cannot compare. Please try again."
             else:
-                try:
-                    value.value = w2n.word_to_num(value.value)
-                    self.condition = value
-                except ValueError as e:
-                    if isinstance(value, EqualityCondition):
-                        self.condition = value
-                    else:
-                        self.todos.append(GetConditionGoal(self.context, self, f"The value {value} is not a number. Try another condition."))
+                self.condition = value
             return
         elif attr == "loop":
             assert value is not None

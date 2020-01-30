@@ -18,7 +18,7 @@ class EditGoal(HomeGoal):
             return self._message
 
         if self.is_complete:
-            return "Done with editing program."
+            return f"Done with editing procedure {self.name}."
 
         if len(self.todos) == 0:
             return self.edit.message
@@ -54,8 +54,20 @@ class EditGoal(HomeGoal):
         if self.context.current_message == "done":
             self.edit.done = True
         elif self.context.current_message in ["next step", "continue", "next"]:
+            if not self.edit.current:
+                self._message = "There are no steps in the procedure for me to go."
+                return
+            if self.edit.at_last_step:
+                self._message = f"I am already on the last step, {self.edit.actions[self.edit.step].to_nl()}. There is no where for me to go."
+                return
             self.edit.next_step()
         elif self.context.current_message in ["previous step", "previous", "go back"]:
+            if not self.edit.current:
+                self._message = "There are no steps in the procedure for me to go."
+                return
+            if self.edit.at_first_step:
+                self._message = f"I am already on the first step, {self.edit.actions[self.edit.step].to_nl()}. There is no where for me to go."
+                return
             self.edit.prev_step()
         elif not isinstance(self.context.parsed, BaseGoal):
             self._message = "I didn't quite catch that. What do you want me to do?"
@@ -64,7 +76,12 @@ class EditGoal(HomeGoal):
         elif self.context.parsed._message is not None:
             self._message = self.context.parsed._message
         else:
-            action = self.context.parsed
+            if isinstance(self.context.parsed, ActionGoal):
+                action = AddStepGoal(self.context)
+                action.advance()
+            else:
+                action = self.context.parsed
+
             if action.is_complete:
                 self._message = action.complete()
             else:
@@ -109,12 +126,12 @@ class EditContext(object):
     @property
     def message(self):
         if self.current:
-            if self.at_last_step:
-                step_message = "I am on the last step"
-            elif self.at_first_step:
-                step_message = "I am on the first step"
+            if self.at_first_step:
+                step_message = f"I am on the first {'and only ' if self.at_last_step else ''}step"
             else:
                 step_message = f"I am on step {self.step + 1}"
+                if self.at_last_step:
+                    step_message += " which is the last step"
             return f"{step_message}, where I am {self.current.to_nl()}. What do you want to do? You can say 'done' if you are finished editing."
         else:
             return f"There are currently no actions. What do you want to do?"
@@ -135,25 +152,38 @@ class EditContext(object):
         new = self.step
         if self.step == len(self.actions) - 1:
             new = self.step - 1
+        action = self.actions[self.step]
+        if isinstance(action, CreateVariableAction):
+            self.context.current.variables.remove(action.name)
         del self.actions[self.step]
         self.step = new
 
     def add_step(self, action):
-        self.actions[self.step:self.step] = action
         self.step += 1
+        self.actions[self.step:self.step] = action
 
     def change_step(self, action):
+        old_action = self.actions[self.step]
+        if isinstance(old_action, CreateVariableAction):
+            self.context.current.variables.remove(old_action.name)
         self.actions[self.step] = action
 
 class GoToStepGoal(StepGoal):
     def __init__(self, context, step=None):
         super().__init__(context)
+        if not self.context.edit.current:
+            self.error = "There are no steps in the procedure for me to go."
+            return
         self.setattr("step", step)
 
     def complete(self):
         if self.step == "next":
+            if self.edit.at_last_step:
+                return f"I am already on the last step, {self.edit.actions[self.edit.step].to_nl()}. There is no where for me to go."
             self.edit.next_step()
         elif self.step == "previous":
+            if self.edit.at_first_step:
+                return f"I am already on the first step, {self.edit.actions[self.edit.step].to_nl()}. There is no where for me to go."
             self.edit.prev_step()
         elif self.step == "first":
             self.edit.to_step(0)
@@ -226,10 +256,13 @@ class AddStepGoal(StepGoal):
             return "What action do you want to add?"
 
     def complete(self):
-        message = f"Added action after step {self.edit.step + 1}."
+        if not self.edit.current:
+            message = f"I added the action, which is the first action in the procedure."
+        else:
+            message = f"I added the action after step {self.edit.step + 1}."
         self.edit.add_step(self.actions)
         self.context.transition("complete")
-        return f"{message} Now I am at step {self.edit.step + 1} where I am {self.actions[0].to_nl()}."
+        return f"{message} I am at step {self.edit.step + 1} where I am {self.actions[0].to_nl()}."
 
     def advance(self):
         if self.todos:
