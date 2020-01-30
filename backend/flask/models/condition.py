@@ -1,4 +1,5 @@
-from error import ExecutionError
+from error import *
+from models import *
 
 class Condition(object):
     def __init__(self):
@@ -32,16 +33,20 @@ class EqualityCondition(Condition):
 
     def eval(self, variables):
         variable = variables[self.variable]
-        if type(self.value) != type(variable):
-            raise ExecutionError(f"The values {self.value} and {variable} cannot be compared.")
+        value = variables[self.value.variable] if isinstance(self.value, ValueOf) else self.value
+        if type(value) != type(variable):
+            if isinstance(value, str) or isinstance(variable, str):
+                raise ExecutionError(f"The values {value} and {variable} cannot be compared.")
 
-        return variable != self.value if self.negation else variable == self.value
+        return variable != value if self.negation else variable == value
 
     def __str__(self):
-        return f"{self.variable} {'!' if self.negation else '='}= {self.value}"
+        value = f"the value of {self.value.variable}" if isinstance(self.value, ValueOf) else self.value
+        return f"{self.variable} {'!' if self.negation else '='}= {value}"
 
     def to_nl(self):
-        return f"variable {self.variable} is {'not ' if self.negation else ''}equal to {self.value}"
+        value = f"the value of {self.value.variable}" if isinstance(self.value, ValueOf) else self.value
+        return f"variable {self.variable} is {'not ' if self.negation else ''}equal to {value}"
 
 class ComparisonCondition(Condition):
     def __init__(self, variable, op, value):
@@ -51,21 +56,25 @@ class ComparisonCondition(Condition):
 
     def eval(self, variables):
         variable = variables[self.variable]
-        if type(self.value) != type(variable):
-            raise ExecutionError(f"The values {self.value} and {variable} cannot be compared.")
+        value = variables[self.value.variable] if isinstance(self.value, ValueOf) else self.value
+        if type(value) != type(variable):
+            if isinstance(value, str) or isinstance(variable, str):
+                raise ExecutionError(f"The values {value} and {variable} cannot be compared.")
 
         if self.op == "greater than":
-            return variable > self.value
+            return variable > value
         elif self.op == "less than":
-            return variable < self.value
+            return variable < value
         elif self.op == "greater than or equal to":
-            return variable >= self.value
+            return variable >= value
         elif self.op == "less than or equal to":
-            return variable <= self.value
+            return variable <= value
         return False
 
     def __str__(self):
-        return f"{self.variable} {comparison_ops.get(self.op)} {self.value}"
+        value = f"the value of {self.value.variable}" if isinstance(self.value, ValueOf) else self.value
+        return f"{self.variable} {comparison_ops.get(self.op)} {value}"
 
     def to_nl(self):
-        return f"variable {self.variable} is {self.op} {self.value}"
+        value = f"the value of {self.value.variable}" if isinstance(self.value, ValueOf) else self.value
+        return f"variable {self.variable} is {self.op} {value}"

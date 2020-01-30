@@ -179,10 +179,6 @@ set_test = [
     "run set test"
 ]
 
-questions_test = [
-    "what procedures do i have?"
-]
-
 loop_test = [
     "create a procedure called loop test",
     "create a variable called counter and set it to 5",
@@ -221,15 +217,6 @@ conditional_test = [
     "run conditional test"
 ]
 
-bug_test = [
-    "create a procedure",
-    "my first procedure",
-    "create a variable",
-    "variable one",
-    "1",
-    "add 3 to the variable variable one until the variable variable one is 28"
-]
-
 procedure_test = [
     "rename procedure",
     "hello",
@@ -249,18 +236,53 @@ value_of_test = [
     "done",
     "edit adding",
     "add step",
-    "say the value of yes"
-]
-
-bug_test = [
-    "create a procedure called fire",
-    "create a variable called fire and set it to 5",
-    "if fire is 5 say hi",
+    "say the value of yes",
+    "create a variable called yes yes and set it to no",
+    "if yes is equal to value of yes yes say never",
     "done",
-    "done"
+    "nothing",
+    "done",
+    "run adding"
 ]
 
-for i, message in enumerate(bug_test):
+subtraction_test = [
+    "create a procedure called fire",
+    "create a variable called counter and set it to 10",
+    "subtract 2 from counter until counter is less than or equal to 0",
+    "say value of counter",
+    "close loop",
+    "done",
+    "run fire"
+]
+
+subtraction_test2 = [
+    "edit empty",
+    "create a variable called counter and set it to negative one",
+    "until counter is greater than 10 add 2 to counter",
+    "close loop",
+    "say the value of counter",
+    "until counter is less than -1 subtract 4 from counter",
+    "close loop",
+    "say the value of counter",
+    "done",
+    "run empty"
+]
+
+negative_test = [
+    "create a procedure called negative comparison",
+    "create a variable called negative",
+    "-1",
+    "create a variable called positive and set it to 5",
+    "say starting loop",
+    "until negative is greater than the value of positive say going up",
+    "add 5 to negative",
+    "say the value of negative",
+    "close loop",
+    "done",
+    "run negative comparison"
+]
+
+for i, message in enumerate(negative_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

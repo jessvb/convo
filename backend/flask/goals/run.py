@@ -125,16 +125,20 @@ class ExecutionContext(object):
             else:
                 logging.warning("Variable not found.")
                 raise KeyError(action.name)
-        elif isinstance(action, AddToVariableAction):
+        elif isinstance(action, AddToVariableAction) or isinstance(action, SubtractFromVariableAction):
             value = self.variables.get(action.name)
             if action.name in self.variables:
                 old = self.variables[action.name]
+                factor = 1 if isinstance(action, AddToVariableAction) else -1
                 if isinstance(value, float) or isinstance(value, int):
-                    self.variables[action.name] += action.value
+                    self.variables[action.name] += factor * action.value
                 elif isinstance(value, ValueOf):
-                    self.variables[action.name] += self.variables[action.value.variable]
+                    self.variables[action.name] += factor * self.variables[action.value.variable]
                 new = self.variables[action.name]
-                logging.info(f"Incremented variable {action.name} from {old} to {new}")
+                if isinstance(action, AddToVariableAction):
+                    logging.info(f"Incremented variable {action.name} from {old} to {new}")
+                else:
+                    logging.info(f"Decremented variable {action.name} from {old} to {new}")
                 logging.info(f"Current variables: {str(self.variables)}")
             else:
                 logging.warning("Variable not found.")
@@ -152,6 +156,8 @@ class ExecutionContext(object):
             if (action.loop == "until" and not res) or (action.loop == "while" and res):
                 self.actions[self.step:self.step] = action.actions
                 self.step -= 1
+        else:
+            raise NotImplementedError
 
     def emit(self, key, data):
         try:

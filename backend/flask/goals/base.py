@@ -38,7 +38,6 @@ class BaseGoal(object):
 
             if todo.is_complete:
                 todo.complete()
-                self._message = todo._message
             else:
                 self.todos.append(todo)
 

@@ -131,7 +131,7 @@ class EditContext(object):
             else:
                 step_message = f"I am on step {self.step + 1}"
                 if self.at_last_step:
-                    step_message += "which is the last step"
+                    step_message += " which is the last step"
             return f"{step_message}, where I am {self.current.to_nl()}. What do you want to do? You can say 'done' if you are finished editing."
         else:
             return f"There are currently no actions. What do you want to do?"

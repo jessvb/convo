@@ -1,10 +1,10 @@
 import logging
-from helpers import *
 from nlu import SemanticNLU
 from question import QuestionAnswer
 from models import *
 from goals import *
 from error import *
+from helpers import *
 
 example_procedure = Procedure(name="example", actions=[
     CreateVariableAction("foo", 4),

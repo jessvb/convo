@@ -1,6 +1,5 @@
 from models import *
 from goals import *
-from word2number import w2n
 
 class CreateVariableActionGoal(ActionGoal):
     def __init__(self, context, name=None, value=None):
@@ -31,14 +30,8 @@ class CreateVariableActionGoal(ActionGoal):
                     self.error = f"Variable {value} does not exist. Try setting it to the value of an existing variable."
                 else:
                     self.value = value
-            elif value.isnumeric():
-                num = float(value)
-                self.value = int(num) if num.is_integer() else num
             else:
-                try:
-                    self.value = w2n.word_to_num(value)
-                except ValueError as e:
-                    self.value = value
+                self.value = value
             return
         setattr(self, attr, value)
 
@@ -70,14 +63,8 @@ class SetVariableActionGoal(ActionGoal):
                     self.error = f"Variable {value} does not exist. Try setting it to the value of an existing variable."
                 else:
                     self.value = value
-            elif value.isnumeric():
-                num = float(value)
-                self.value = int(num) if num.is_integer() else num
             else:
-                try:
-                    self.value = w2n.word_to_num(value)
-                except ValueError as e:
-                    self.value = value
+                self.value = value
             return
         setattr(self, attr, value)
 
@@ -95,9 +82,9 @@ class AddToVariableActionGoal(ActionGoal):
     def setattr(self, attr, value):
         if attr == "name":
             if value is None:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"What variable do you want to increment?"))
+                self.todos.append(GetInputGoal(self.context, self, attr, f"What variable do you want to add to?"))
             elif value not in self.variables:
-                self.error = f"The variable, {value}, hasn't been created so there is nothing to add to. You can create it by saying, \"create a variable called {value}.\""
+                self.error = f"The variable, {value}, hasn't been created so there is nothing to add to. Try creating the variable first."
             else:
                 self.name = value
             return
@@ -109,12 +96,42 @@ class AddToVariableActionGoal(ActionGoal):
                     self.error = f"Variable {value} does not exist. Try setting it to the value of an existing variable."
                 else:
                     self.value = value
-            elif value.isnumeric():
-                num = float(value)
-                self.value = int(num) if num.is_integer() else num
+            elif isinstance(value, str):
+                self.todos.append(GetInputGoal(self.context, self, attr, f"Not a number. Try again."))
             else:
-                try:
-                    self.value = w2n.word_to_num(value)
-                except ValueError as e:
-                    self.todos.append(GetInputGoal(self.context, self, attr, f"Not a number. Try again."))
+                self.value = value
+            return
+
+class SubtractFromVariableActionGoal(ActionGoal):
+    def __init__(self, context, name=None, value=None):
+        super().__init__(context)
+        self.setattr("value", value)
+        self.setattr("name", name)
+
+    def complete(self):
+        assert hasattr(self, "actions")
+        self.actions.append(SubtractFromVariableAction(self.name, self.value))
+        return super().complete()
+
+    def setattr(self, attr, value):
+        if attr == "name":
+            if value is None:
+                self.todos.append(GetInputGoal(self.context, self, attr, f"What variable do you want to subtract from?"))
+            elif value not in self.variables:
+                self.error = f"The variable, {value}, hasn't been created so there is nothing to subtract it. Try creating the variable first."
+            else:
+                self.name = value
+            return
+        elif attr == "value":
+            if value is None:
+                self.todos.append(GetInputGoal(self.context, self, attr, f"What value do you want to subtract from the variable?"))
+            elif isinstance(value, ValueOf):
+                if value.variable not in self.variables:
+                    self.error = f"Variable {value} does not exist. Try setting it to the value of an existing variable."
+                else:
+                    self.value = value
+            elif isinstance(value, str):
+                self.todos.append(GetInputGoal(self.context, self, attr, f"Not a number. Try again."))
+            else:
+                self.value = value
             return

@@ -19,7 +19,8 @@ play_sound_regex = "play(?: the)?(?: (.+))? sound"
 
 set_variable_regex = "(?!change step$)(?:set|change)(?:(?: the)? value of)?(?:(?: (.+))? to (.+)| (.+))"
 create_variable_regex = "(?:create|make)(?: a)?(?: (.+))? variable(?: called| named)?(?:(?: (.+))? and set(?: it)? to (.+)| (.+))?"
-add_to_variable_regex = "(?:add(?: (.+))? to(?: (.+))?)|(?:increment(?:(?: (.+))? by (.+)| (.+))?)"
+add_to_variable_regex = "add(?: (.+))? to (.+)"
+subtract_from_variable_regex = "subtract(?: (.+))? from (.+)"
 
 go_to_step_regex = "(?:go to step(?: (.+))?|go to(?: the)? (.+) step)"
 delete_step_regex = "(?:delete|remove)(?: the)? step"
@@ -35,7 +36,12 @@ equality_condition_regex = "(?!.*less|.*greater)(?:if |while |until )?(.+) is(?:
 variable_regex = "(?:(?:a|the) variable)(?: (.+))?|variable (.+)"
 procedure_regex = "(?:(?:a|the) procedure|procedure)(?: called)?(?: (.+))?"
 
-action_regexes = [say_regex, set_variable_regex, create_variable_regex, add_to_variable_regex, get_user_input_regex, create_list_regex, add_to_list_regex]
+action_regexes = [
+    say_regex,
+    set_variable_regex, create_variable_regex, add_to_variable_regex, subtract_from_variable_regex,
+    get_user_input_regex,
+    create_list_regex, add_to_list_regex
+]
 condition_regexes = [comparison_condition_regex, equality_condition_regex]
 
 class SemanticNLU(object):
@@ -110,18 +116,19 @@ class SemanticNLU(object):
                 return LoopActionGoal(self.context, loop=loop, condition=self.parse_condition(condition), action=self.parse_action_goal(action))
         elif re.match(set_variable_regex, message):
             match = re.match(set_variable_regex, message)
-            return SetVariableActionGoal(
-                self.context, name=self.parse_variable(group(match, [1, 3])), value=self.parse_value_of(group(match, 2), True))
+            return SetVariableActionGoal(self.context, name=self.parse_variable(group(match, [1, 3])), value=self.parse_value(group(match, 2)))
         elif re.match(create_variable_regex, message):
             match = re.match(create_variable_regex, message)
-            return CreateVariableActionGoal(self.context, name=group(match, [2, 4]), value=self.parse_value_of(group(match, 3), True))
+            return CreateVariableActionGoal(self.context, name=group(match, [2, 4]), value=self.parse_value(group(match, 3)))
         elif re.match(add_to_variable_regex, message):
             match = re.match(add_to_variable_regex, message)
-            return AddToVariableActionGoal(
-                self.context, name=self.parse_variable(group(match, [2, 3, 5])), value=self.parse_value_of(group(match, [1, 4]), True))
+            return AddToVariableActionGoal(self.context, name=self.parse_variable(group(match, 2)), value=self.parse_value(group(match, 1)))
+        elif re.match(subtract_from_variable_regex, message):
+            match = re.match(subtract_from_variable_regex, message)
+            return SubtractFromVariableActionGoal(self.context, name=self.parse_variable(group(match, 2)), value=self.parse_value(group(match, 1)))
         elif re.match(say_regex, message):
             match = re.match(say_regex, message)
-            return SayActionGoal(self.context, phrase=self.parse_value_of(group(match, 1), True))
+            return SayActionGoal(self.context, phrase=self.parse_value(group(match, 1)))
         elif re.match(create_list_regex, message):
             match = re.match(create_list_regex, message)
             return CreateListActionGoal(self.context, name=group(match, [1, 2]))
@@ -140,10 +147,10 @@ class SemanticNLU(object):
             return message
         elif re.match(comparison_condition_regex, message):
             match = re.match(comparison_condition_regex, message)
-            return ComparisonCondition(variable=self.parse_variable(group(match, 1)), op=group(match, 2), value=group(match, 3))
+            return ComparisonCondition(variable=self.parse_variable(group(match, 1)), op=group(match, 2), value=self.parse_value(group(match, 3)))
         elif re.match(equality_condition_regex, message):
             match = re.match(equality_condition_regex, message)
-            return EqualityCondition(variable=self.parse_variable(group(match, 1)), value=group(match, 3), negation=(group(match, 2) is not None))
+            return EqualityCondition(variable=self.parse_variable(group(match, 1)), value=self.parse_value(group(match, 3)), negation=(group(match, 2) is not None))
 
     def parse_condition_and_action(self, message):
         message = strip_punctuation(message)
@@ -157,15 +164,6 @@ class SemanticNLU(object):
                     continue
                 return self.parse_condition(condition_match.group(0)), self.parse_action_goal(match.group(0))
         return None, None
-
-    def parse_value_of(self, message, return_original=False):
-        if message is None:
-            return message
-        elif re.match(value_of_regex, message):
-            match = re.match(value_of_regex, message)
-            return ValueOf(variable=group(match, 1))
-        else:
-            return message if return_original else None
 
     def parse_variable(self, message):
         if message is None:
@@ -181,9 +179,27 @@ class SemanticNLU(object):
             return message
         elif re.match(procedure_regex, message):
             match = re.match(procedure_regex, message)
-            return match.group(1) if match.group(1) else match.group(2)
+            return match.group(1)
         else:
             return message
+
+    def parse_value(self, message):
+        value_of = self.parse_value_of(message)
+        if value_of:
+            return value_of
+
+        number = parse_number(message)
+        if number is not None:
+            return number
+
+        return message
+
+    def parse_value_of(self, message):
+        if not message:
+            return message
+        elif re.match(value_of_regex, message):
+            match = re.match(value_of_regex, message)
+            return ValueOf(variable=group(match, 1))
 
 def group(match, idx):
     if isinstance(idx, int) and len(match.groups()) > 0 and match.group(idx):
