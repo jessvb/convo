@@ -65,7 +65,7 @@ class SemanticNLU(object):
             return CreateProcedureGoal(self.context, name=group(match, 1))
         elif re.match(run_regex, message):
             match = re.match(run_regex, message)
-            return RunGoal(self.context, name=self.parse_procedure(group(match, 1)))
+            return ExecuteGoal(self.context, name=self.parse_procedure(group(match, 1)))
         elif re.match(edit_regex, message):
             match = re.match(edit_regex, message)
             return EditGoal(self.context, name=self.parse_procedure(group(match, 1)))

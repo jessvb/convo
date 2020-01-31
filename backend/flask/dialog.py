@@ -52,10 +52,19 @@ sounds_procedure = Procedure(name="dog or cat", actions=[
 
 empty_procedure = Procedure(name="empty", actions=[])
 
+infinite_loop_procedure = Procedure(name="infinite loop", actions=[
+    CreateVariableAction("bad var", 0),
+    LoopAction(
+        loop="while",
+        condition=EqualityCondition("bar var", 1),
+        actions=[ SayAction("in the loop")]
+    )
+])
+
 state_machine = {
     "home": {
         "create_procedure": "creating",
-        "run": "executing",
+        "execute": "executing",
         "edit": "editing"
     },
     "creating": {
@@ -67,7 +76,7 @@ state_machine = {
         "complete": "home"
     },
     "executing": {
-        "complete": "home"
+        "finish": "home"
     },
     "editing_action": {
         "complete": "editing"
@@ -113,6 +122,18 @@ class DialogManager(object):
             answer = self.qa.answer(message)
             if answer:
                 return answer
+
+        # Check if running program
+        if self.context.state == "executing":
+            execution = self.context.execution
+            if message == "stop":
+                execution.stop()
+                return "Procedure has been stopped."
+            elif execution.input_needed:
+                execution.run(message)
+                return
+            else:
+                return "Procedure is still executing."
 
         try:
             self.context.parsed = self.nlu.parse_message(message)
@@ -166,7 +187,7 @@ class DialogContext(object):
         example.add_property(Property(example, "count", "number"))
         self.sid = sid
         self.classes = { "example": example }
-        self.procedures = { "example": example_procedure, "dog or cat": sounds_procedure, "empty": empty_procedure }
+        self.procedures = { "example": example_procedure, "dog or cat": sounds_procedure, "empty": empty_procedure, "infinite loop": infinite_loop_procedure }
         self.reset()
 
     @property

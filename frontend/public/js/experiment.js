@@ -178,7 +178,8 @@ let handleSocketApiResponse = (data) => {
     if (audioPlayer.src && !audioPlayer.ended) {
         setTimeout(() => handleSocketApiResponse(data), 500);
     } else {
-        changeSidebarText(data.state);
+        if ('state' in data)
+            changeSidebarText(data.state);
         addUtter("agent-utter", data.message, data.speak);
     }
 }

@@ -154,7 +154,8 @@ sound_test = [
 ]
 
 sound_test2 = [
-    "run dog or cat",
+    "run",
+    "dog or cat",
     "cat",
     "run dog or cat",
     "dog"
@@ -283,13 +284,21 @@ negative_test = [
     "run negative comparison"
 ]
 
-for i, message in enumerate(messages):
+infinite_while_loop_test = [
+    "create a procedure called while loop",
+    "create a variable called bad and set it to 0",
+    "while bad is not 1 say bad",
+    "close loop",
+    "done",
+    "run while loop",
+    "oh no",
+    "why is this happening",
+    "stop"
+]
+
+for i, message in enumerate(infinite_while_loop_test):
     logging.info(message)
     res = dm.handle_message(message)
-    timing = False
     if res:
         logging.info(res)
-    if message.startswith("run"):
-        timing = True
-    if timing:
-        time.sleep(1)
+    time.sleep(1)
