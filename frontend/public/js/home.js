@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', (event) => {
-  // generate / store an id for the computer / browser in local storage
+    // generate / store an id for the computer / browser in local storage
     getUniqueId();
 
     // initialize userID in local storage. This will increment if you use the same
@@ -11,9 +11,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
     localStorage.setItem('userID', userID);
 
     // set the button url
-    let url = 'survey?userID=' + userID;
+    let url = 'demographic-survey';
     let button = document.getElementById('btn-begin');
-    button.onclick = () => window.location.href = url;
+    button.onclick = () => {
+        window.open(url, '_self');
+    };
 });
 
 // Genrates or remembers a somewhat-unique ID with distilled user-agent info.

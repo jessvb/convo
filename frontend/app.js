@@ -38,14 +38,31 @@ if (process.env.NODE_ENV && process.env.NODE_ENV === "production") {
 }
 
 app.get('/', (req, res) => res.sendFile(path.resolve('public/html/home.html')));
-app.get('/survey', (req, res) => res.sendFile(path.resolve('public/html/survey.html')));
-app.get('/practice', (req, res) => res.sendFile(path.resolve('public/html/practice.html')));
-app.get('/experiments', (req, res) => res.sendFile(path.resolve('public/html/experiments/index.html')));
-app.get('/voice-and-conversation', (req, res) => res.sendFile(path.resolve('public/html/experiments/voice-and-conversation.html')));
-app.get('/text-and-conversation', (req, res) => res.sendFile(path.resolve('public/html/experiments/text-and-conversation.html')));
-app.get('/voice-and-program', (req, res) => res.sendFile(path.resolve('public/html/experiments/voice-and-program.html')));
-app.get('/voice-and-text', (req, res) => res.sendFile(path.resolve('public/html/experiments/voice-and-text.html')));
-app.get('/voice-only', (req, res) => res.sendFile(path.resolve('public/html/experiments/voice-only.html')));
+app.get('/demographic-survey', (req, res) => res.sendFile(path.resolve('public/html/demographic-survey.html')));
+app.get('/conclusion', (req, res) => res.sendFile(path.resolve('public/html/conclusion.html')));
+
+app.get('/practice-info', (req, res) => res.sendFile(path.resolve('public/html/stage-info/practice-info.html')));
+app.get('/novice-info', (req, res) => res.sendFile(path.resolve('public/html/stage-info/novice-info.html')));
+app.get('/advanced-info', (req, res) => res.sendFile(path.resolve('public/html/stage-info/advanced-info.html')));
+
+app.get('/practice-text', (req, res) => res.sendFile(path.resolve('public/html/stages/practice-stage-text.html')));
+app.get('/practice-voice', (req, res) => res.sendFile(path.resolve('public/html/stages/practice-stage-voice.html')));
+app.get('/practice-voice-text', (req, res) => res.sendFile(path.resolve('public/html/stages/practice-stage-voice-text.html')));
+
+app.get('/novice-text', (req, res) => res.sendFile(path.resolve('public/html/stages/novice-stage-text.html')));
+app.get('/novice-voice', (req, res) => res.sendFile(path.resolve('public/html/stages/novice-stage-voice.html')));
+app.get('/novice-voice-text', (req, res) => res.sendFile(path.resolve('public/html/stages/novice-stage-voice-text.html')));
+
+app.get('/advanced-text', (req, res) => res.sendFile(path.resolve('public/html/stages/advanced-stage-text.html')));
+app.get('/advanced-voice', (req, res) => res.sendFile(path.resolve('public/html/stages/advanced-stage-voice.html')));
+app.get('/advanced-voice-text', (req, res) => res.sendFile(path.resolve('public/html/stages/advanced-stage-voice-text.html')));
+
+app.get('/experiments', (req, res) => res.sendFile(path.resolve('public/html/experiment-templates/index.html')));
+app.get('/voice-and-conversation', (req, res) => res.sendFile(path.resolve('public/html/experiment-templates/voice-and-conversation.html')));
+app.get('/text-and-conversation', (req, res) => res.sendFile(path.resolve('public/html/experiment-templates/text-and-conversation.html')));
+app.get('/voice-and-program', (req, res) => res.sendFile(path.resolve('public/html/experiment-templates/voice-and-program.html')));
+app.get('/voice-and-text', (req, res) => res.sendFile(path.resolve('public/html/experiment-templates/voice-and-text.html')));
+app.get('/voice-only', (req, res) => res.sendFile(path.resolve('public/html/experiment-templates/voice-only.html')));
 app.get('/demo', (req, res) => res.sendFile(path.resolve('public/html/demo.html')));
 
 const speech = require('@google-cloud/speech');

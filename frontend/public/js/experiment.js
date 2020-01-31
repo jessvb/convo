@@ -15,8 +15,7 @@ const tutorial_required_messages = [
     "Hello world!"
 ]
 
-const action_commands = [
-    {
+const action_commands = [{
         "title": "Create a Variable",
         "examples": [
             "create a variable called foo",
@@ -73,8 +72,7 @@ const action_commands = [
 ]
 
 const example_commands = {
-    "home": [
-        {
+    "home": [{
             "title": "Create a Procedure or Program",
             "examples": [
                 "create a procedure",
@@ -108,17 +106,14 @@ const example_commands = {
             ]
         }
     ],
-    "creating": [
-        {
-            "title": "Finish Creating",
-            "examples": [
-                "done"
-            ]
-        }
-    ].concat(action_commands),
+    "creating": [{
+        "title": "Finish Creating",
+        "examples": [
+            "done"
+        ]
+    }].concat(action_commands),
     "editing_action": action_commands,
-    "editing": [
-        {
+    "editing": [{
             "title": "Finish Editing",
             "examples": [
                 "done"
@@ -157,15 +152,13 @@ const example_commands = {
             ]
         }
     ].concat(action_commands),
-    "executing": [
-        {
-            "title": "Stop Currently Running Procedure",
-            "examples": [
-                "stop",
-                "cancel"
-            ]
-        }
-    ]
+    "executing": [{
+        "title": "Stop Currently Running Procedure",
+        "examples": [
+            "stop",
+            "cancel"
+        ]
+    }]
 }
 
 let handleStateChange = (newState) => {
@@ -210,7 +203,7 @@ let tutorial = true;
 let voice;
 
 let checkQuery = (field, value) => {
-    let url = window.location.href;
+    window.open(url, '_self');
     let query = `${field}=${value}`
     if (url.indexOf(`?${query}`) != -1)
         return true;
@@ -263,7 +256,11 @@ let handleTutorial = (message, speak) => {
 let handleSubmit = (message, speak) => {
     if (state === "executing" && message.toLowerCase().trim() === "stop")
         synth.cancel();
-    socketApi.emit('message', { message: message, sid: localStorage.getItem('sid'), speak: speak })
+    socketApi.emit('message', {
+        message: message,
+        sid: localStorage.getItem('sid'),
+        speak: speak
+    })
 };
 
 let speakUtter = (message) => {
@@ -278,7 +275,7 @@ let speakUtter = (message) => {
     synth.speak(audio);
 }
 
-let addUtter = (className, message, speak=true) => {
+let addUtter = (className, message, speak = true) => {
     if (speak && className === "agent-utter")
         speakUtter(message);
 

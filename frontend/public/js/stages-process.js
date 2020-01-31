@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', (event) => {
     var currStage = localStorage.getItem('currStage');
     var completedParts = JSON.parse(localStorage.getItem('completedParts')).parts;
-    var isAdvanced = JSON.parse(localStorage.getItem('isAdvanced')).value; // TODO: set this in demographics page
+    var isAdvanced = JSON.parse(localStorage.getItem('isAdvanced')).value;
     
     var nextBtn = document.getElementById('btn-next-stage');
     nextBtn.addEventListener('click', function(){
