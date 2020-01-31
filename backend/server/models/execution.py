@@ -31,11 +31,12 @@ class Execution(object):
     def stop(self):
         self.thread_running = False
 
-    def finish(self, message):
+    def finish(self, message=None):
         self.stop()
         self.finished = True
         self.context.transition("finish")
-        self.emit("response", { "message": message, "state": self.context.state })
+        if message:
+            self.emit("response", { "message": message, "state": self.context.state })
 
     def advance(self):
         while self.thread_running and not self.finished:

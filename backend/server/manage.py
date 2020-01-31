@@ -18,9 +18,10 @@ def join(sid):
 
 @sio.on("disconnect")
 def disconnect():
-    sid = socket_sessions[request.sid]
-    del socket_sessions[request.sid]
-    app.logger.info(f"Client {sid} disconnected.")
+    sid = socket_sessions.get(request.sid)
+    if sid:
+        del socket_sessions[request.sid]
+        app.logger.info(f"Client {sid} disconnected.")
 
 @sio.on("message")
 def message(data):

@@ -193,6 +193,7 @@ class DialogContext(object):
         self.sid = sid
         self.classes = { "example": example }
         self.procedures = { "example": example_procedure, "dog or cat": sounds_procedure, "empty": empty_procedure, "infinite loop": infinite_loop_procedure }
+        self.execution = None
         self.reset()
 
     @property
@@ -204,6 +205,8 @@ class DialogContext(object):
         return self.goals[-1] if self.goals else None
 
     def reset(self):
+        if self.execution:
+            self.execution.finish()
         self.state = "home"
         self.conversation = []
         self.goals = []

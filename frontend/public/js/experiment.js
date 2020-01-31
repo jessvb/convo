@@ -1,5 +1,6 @@
 const server = 'https://userstudy.appinventor.mit.edu/api';
 const synth = window.speechSynthesis;
+synth.cancel();
 let state = "home";
 
 const instructions_text = [
@@ -156,7 +157,15 @@ const example_commands = {
             ]
         }
     ].concat(action_commands),
-    "executing": []
+    "executing": [
+        {
+            "title": "Stop Currently Running Procedure",
+            "examples": [
+                "stop",
+                "cancel"
+            ]
+        }
+    ]
 }
 
 let handleStateChange = (newState) => {
