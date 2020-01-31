@@ -1,5 +1,6 @@
 import logging
 import time
+import copy
 from models import *
 from client import *
 from goals import *
@@ -297,12 +298,24 @@ infinite_while_loop_test = [
 ]
 
 bugs_test = [
-    "run infinite loop",
-    "stop"
+    "I want to create a procedure",
+    "hello world",
+    "say hello world",
+    "done",
+    "run hello world"
 ]
 
-for i, message in enumerate(bugs_test):
+bugs_test2 = [
+    "I want to create a procedure called hello world",
+    "say",
+    "hello world"
+    "done",
+    "run hello world"
+]
+
+for i, message in enumerate(bugs_test2):
     logging.info(message)
+    old_context = copy.deepcopy(dm.context)
     res = dm.handle_message(message)
     if res:
         logging.info(res)

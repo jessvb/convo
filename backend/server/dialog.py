@@ -105,21 +105,27 @@ class DialogManager(object):
     def current_goal(self):
         return self.context.current_goal
 
+    def current_immediate_goal(self):
+        current = self.context.current_goal
+        while current and current.todos:
+            current = current.todos[-1]
+        return current
+
     def handle_message(self, message):
         self.context.add_message(message)
 
         # Check for interrupts
-        if message == "reset":
+        if message.lower() == "reset":
             return self.reset()
 
         # Check for help
-        if message in ["help", "i need help"]:
+        if message.lower() in ["help", "i need help"]:
             return "Raise your hand and help will be on the way!"
 
         # Check if running program
         if self.context.state == "executing":
             execution = self.context.execution
-            if message in ["stop", "cancel"]:
+            if message.lower() in ["stop", "cancel"]:
                 execution.finish("Procedure has been stopped.")
             elif execution.input_needed:
                 execution.run(message)
@@ -128,7 +134,7 @@ class DialogManager(object):
             return
 
         # Check if desire to cancel goal
-        if message == "cancel":
+        if message.lower() == "cancel":
             if self.context.goals:
                 self.context.goals.pop()
             self.context.state = "home"
@@ -198,7 +204,7 @@ class DialogContext(object):
 
     @property
     def current_message(self):
-        return self.conversation[-1] if self.conversation else None
+        return self.conversation[-1].lower() if self.conversation else None
 
     @property
     def current_goal(self):

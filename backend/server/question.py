@@ -8,7 +8,7 @@ class QuestionAnswer(object):
         self.context = context
 
     def answer(self, question):
-        if re.match(ask_what_procedures_regex, question) and self.context.state == "home":
+        if re.match(ask_what_procedures_regex, question.lower()) and self.context.state == "home":
             response = f"You have {len(self.context.procedures)} procedures."
             names = [f"\"{p}\"" for p in self.context.procedures.keys()]
             if len(names) == 0:
@@ -17,7 +17,7 @@ class QuestionAnswer(object):
                 return response + f" It is {names[0]}"
             else:
                 return response + f" They are {', '.join(names[:-1])} and {names[-1]}."
-        elif re.match(ask_what_which_step_regex, question) and self.context.state == "editing":
+        elif re.match(ask_what_which_step_regex, question.lower()) and self.context.state == "editing":
             edit = self.context.edit
             if not edit.current:
                 return "You currently do not have any actions."
@@ -32,4 +32,4 @@ class QuestionAnswer(object):
 
     @staticmethod
     def is_question(message):
-        return message.startswith(("what", "which", "when", "how", "where", "why"))
+        return message.lower().startswith(("what", "which", "when", "how", "where", "why"))

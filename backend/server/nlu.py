@@ -37,7 +37,7 @@ variable_regex = "(?:(?:a|the) variable)(?: (.+))?|variable (.+)"
 procedure_regex = "(?:(?:a|the) procedure|procedure)(?: called)?(?: (.+))?"
 
 action_regexes = [
-    say_regex,
+    say_regex, play_sound_regex,
     set_variable_regex, create_variable_regex, add_to_variable_regex, subtract_from_variable_regex,
     get_user_input_regex,
     create_list_regex, add_to_list_regex
@@ -60,20 +60,20 @@ class SemanticNLU(object):
     def parse_home_goal(self, message):
         if message is None:
             return message
-        elif re.match(create_procedure_regex, message):
-            match = re.match(create_procedure_regex, message)
+        elif re.search(create_procedure_regex, message):
+            match = re.search(create_procedure_regex, message)
             return CreateProcedureGoal(self.context, name=group(match, 1))
-        elif re.match(execute_regex, message):
-            match = re.match(execute_regex, message)
+        elif re.search(execute_regex, message):
+            match = re.search(execute_regex, message)
             return ExecuteGoal(self.context, name=self.parse_procedure(group(match, 1)))
-        elif re.match(edit_regex, message):
-            match = re.match(edit_regex, message)
+        elif re.search(edit_regex, message):
+            match = re.search(edit_regex, message)
             return EditGoal(self.context, name=self.parse_procedure(group(match, 1)))
-        elif re.match(rename_procedure_regex, message):
-            match = re.match(rename_procedure_regex, message)
+        elif re.search(rename_procedure_regex, message):
+            match = re.search(rename_procedure_regex, message)
             return RenameProcedureGoal(self.context, name=self.parse_procedure(group(match, [1, 3])), new_name=group(match, 2))
-        elif re.match(delete_procedure_regex, message):
-            match = re.match(delete_procedure_regex, message)
+        elif re.search(delete_procedure_regex, message):
+            match = re.search(delete_procedure_regex, message)
             return DeleteProcedureGoal(self.context, name=self.parse_procedure(group(match, 1)))
 
     def parse_step_goal(self, message):

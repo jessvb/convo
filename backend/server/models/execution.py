@@ -35,6 +35,7 @@ class Execution(object):
         self.stop()
         self.finished = True
         self.context.transition("finish")
+        self.context.execution = None
         if message:
             self.emit("response", { "message": message, "state": self.context.state })
 

@@ -28,3 +28,9 @@ class Procedure(object):
 
     def add_variable(self, variable):
         self.variables.add(variable)
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return self.actions == self.actions and self.variables == self.variables
