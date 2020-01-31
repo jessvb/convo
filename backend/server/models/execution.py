@@ -17,6 +17,7 @@ class Execution(object):
         self.step = 0
         self.input_needed = None
         self.thread_running = False
+        self.finished = False
 
     def run(self, message=None):
         if self.input_needed and message:
@@ -32,11 +33,12 @@ class Execution(object):
 
     def finish(self, message):
         self.stop()
+        self.finished = True
         self.context.transition("finish")
         self.emit("response", { "message": message, "state": self.context.state })
 
     def advance(self):
-        while self.thread_running:
+        while self.thread_running and not self.finished:
             action = self.actions[self.step]
             try:
                 self.evaluate_action(action)
@@ -55,7 +57,8 @@ class Execution(object):
             if self.step >= len(self.actions):
                 break
 
-        self.finish("Procedure finished running.")
+        if not self.finished:
+            self.finish("Procedure finished running.")
 
     def emit(self, event, data):
         try:

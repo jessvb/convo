@@ -296,7 +296,12 @@ infinite_while_loop_test = [
     "stop"
 ]
 
-for i, message in enumerate(infinite_while_loop_test):
+bugs_test = [
+    "run infinite loop",
+    "stop"
+]
+
+for i, message in enumerate(bugs_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
