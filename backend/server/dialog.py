@@ -84,7 +84,7 @@ state_machine = {
 }
 
 allowed_goals = {
-    "home": [HomeGoal, EditGoal, RunGoal, GetInputGoal],
+    "home": [HomeGoal, GetInputGoal],
     "creating": [ActionGoal, GetActionsGoal, GetConditionGoal, GetInputGoal],
     "editing": [StepGoal, GetInputGoal, ActionGoal, GetActionsGoal, GetConditionGoal],
     "editing_action": [ActionGoal, GetActionsGoal, GetConditionGoal, GetInputGoal],
