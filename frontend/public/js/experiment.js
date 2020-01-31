@@ -1,4 +1,6 @@
 const server = 'https://userstudy.appinventor.mit.edu/api';
+const synth = window.speechSynthesis;
+let state = "home";
 
 const instructions_text = [
     "Begin by typing or saying 'Hello'.",
@@ -157,7 +159,8 @@ const example_commands = {
     "executing": []
 }
 
-let changeSidebarText = (state) => {
+let handleStateChange = (newState) => {
+    state = newState;
     let examples = document.getElementById('example-actions-list');
     examples.innerHTML = "";
     if (state != null && state in example_commands) {
@@ -180,7 +183,7 @@ let handleSocketApiResponse = (data) => {
         setTimeout(() => handleSocketApiResponse(data), 500);
     } else {
         if ('state' in data)
-            changeSidebarText(data.state);
+            handleStateChange(data.state);
         addUtter("agent-utter", data.message, data.speak);
     }
 }
@@ -249,19 +252,21 @@ let handleTutorial = (message, speak) => {
 };
 
 let handleSubmit = (message, speak) => {
+    if (state === "executing" && message.toLowerCase().trim() === "stop")
+        synth.cancel();
     socketApi.emit('message', { message: message, sid: localStorage.getItem('sid'), speak: speak })
 };
 
 let speakUtter = (message) => {
     let audio = new SpeechSynthesisUtterance(message);
-    audio.voice = window.speechSynthesis.getVoices().filter((voice) => {
+    audio.voice = synth.getVoices().filter((voice) => {
         return voice.name == 'Google US English' || voice.name == 'Samantha';
     })[0];
     audio.volume = 1;
     audio.rate = 0.9;
     audio.pitch = 1.0;
     audio.lang = 'en-US';
-    window.speechSynthesis.speak(audio);
+    synth.speak(audio);
 }
 
 let addUtter = (className, message, speak=true) => {
@@ -318,7 +323,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('example-actions-direction').innerHTML = displ === 'none' ? "&#9660" : "&#9650";
         actionsList.style.display = displ;
     }
-    changeSidebarText("home");
+    handleStateChange("home");
 
     document.getElementById('example-programs').innerHTML = `
         <div id="example-programs-heading">
@@ -341,8 +346,8 @@ document.addEventListener("DOMContentLoaded", () => {
     audioPlayer.style = "display: none";
     document.body.appendChild(audioPlayer);
 
-    window.speechSynthesis.onvoiceschanged = () => {
-        voice = window.speechSynthesis.getVoices().filter((voice) => {
+    synth.onvoiceschanged = () => {
+        voice = synth.getVoices().filter((voice) => {
             return voice.name == 'Google US English' || voice.name == 'Samantha';
         })[0];
     };
