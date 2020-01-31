@@ -1,15 +1,15 @@
 version: '3.0'
 services:
   server:
-    build: ./backend/flask
+    build: ./backend/server
     restart: on-failure
     volumes:
-      - ./backend/flask:/app
+      - ./backend/server:/app
     environment:
       - FLASK_ENV=development
     ports:
       - 5000:5000
-    command: gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:5000 --capture-output app:app
+    command: gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:5000 --log-level=info manage:app
   web:
     build: ./frontend
     restart: on-failure
@@ -34,9 +34,13 @@ services:
     depends_on:
       - server
       - web
+    logging:
+      driver: none
   certbot:
     image: certbot/certbot
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    logging:
+      driver: none

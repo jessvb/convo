@@ -1,4 +1,5 @@
 import logging
+import time
 from models import *
 from client import *
 from goals import *
@@ -153,7 +154,8 @@ sound_test = [
 ]
 
 sound_test2 = [
-    "run dog or cat",
+    "run",
+    "dog or cat",
     "cat",
     "run dog or cat",
     "dog"
@@ -282,8 +284,26 @@ negative_test = [
     "run negative comparison"
 ]
 
-for i, message in enumerate(negative_test):
+infinite_while_loop_test = [
+    "create a procedure called while loop",
+    "create a variable called bad and set it to 0",
+    "while bad is not 1 say bad",
+    "close loop",
+    "done",
+    "run while loop",
+    "oh no",
+    "why is this happening",
+    "stop"
+]
+
+bugs_test = [
+    "run infinite loop",
+    "stop"
+]
+
+for i, message in enumerate(bugs_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
         logging.info(res)
+    time.sleep(1)

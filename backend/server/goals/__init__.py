@@ -8,6 +8,6 @@ from goals.procedure import *
 from goals.say import *
 from goals.conditional import *
 from goals.loop import *
-from goals.run import *
 from goals.edit import *
 from goals.sound import *
+from goals.execution import *

@@ -7,7 +7,7 @@ from helpers import *
 create_procedure_regex = "(?:make|create)(?: a)? (?:procedure|program)(?: (?:called|named) (.+))?$"
 rename_procedure_regex = "rename(?: (.+) to (.+)| (.+))"
 delete_procedure_regex = "(?!.*step)delete(?: (.+))"
-run_regex = "run(?: (.+))?"
+execute_regex = "run(?: (.+))?"
 edit_regex = "(?:open|edit)(?: (.+))?"
 
 create_list_regex = "(?:make|create)(?: a)? list(?: (?:called|named) (.+)| (.+))?"
@@ -63,9 +63,9 @@ class SemanticNLU(object):
         elif re.match(create_procedure_regex, message):
             match = re.match(create_procedure_regex, message)
             return CreateProcedureGoal(self.context, name=group(match, 1))
-        elif re.match(run_regex, message):
-            match = re.match(run_regex, message)
-            return RunGoal(self.context, name=self.parse_procedure(group(match, 1)))
+        elif re.match(execute_regex, message):
+            match = re.match(execute_regex, message)
+            return ExecuteGoal(self.context, name=self.parse_procedure(group(match, 1)))
         elif re.match(edit_regex, message):
             match = re.match(edit_regex, message)
             return EditGoal(self.context, name=self.parse_procedure(group(match, 1)))

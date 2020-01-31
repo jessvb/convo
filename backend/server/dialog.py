@@ -52,10 +52,19 @@ sounds_procedure = Procedure(name="dog or cat", actions=[
 
 empty_procedure = Procedure(name="empty", actions=[])
 
+infinite_loop_procedure = Procedure(name="infinite loop", actions=[
+    CreateVariableAction("bad var", 0),
+    LoopAction(
+        loop="while",
+        condition=EqualityCondition("bad var", 0),
+        actions=[SayAction("in the loop")]
+    )
+])
+
 state_machine = {
     "home": {
         "create_procedure": "creating",
-        "run": "executing",
+        "execute": "executing",
         "edit": "editing"
     },
     "creating": {
@@ -67,7 +76,7 @@ state_machine = {
         "complete": "home"
     },
     "executing": {
-        "complete": "home"
+        "finish": "home"
     },
     "editing_action": {
         "complete": "editing"
@@ -75,7 +84,7 @@ state_machine = {
 }
 
 allowed_goals = {
-    "home": [HomeGoal, EditGoal, RunGoal, GetInputGoal],
+    "home": [HomeGoal, GetInputGoal],
     "creating": [ActionGoal, GetActionsGoal, GetConditionGoal, GetInputGoal],
     "editing": [StepGoal, GetInputGoal, ActionGoal, GetActionsGoal, GetConditionGoal],
     "editing_action": [ActionGoal, GetActionsGoal, GetConditionGoal, GetInputGoal],
@@ -102,14 +111,31 @@ class DialogManager(object):
         # Check for interrupts
         if message == "reset":
             return self.reset()
-        elif message == "cancel":
+
+        # Check for help
+        if message in ["help", "i need help"]:
+            return "Raise your hand and help will be on the way!"
+
+        # Check if running program
+        if self.context.state == "executing":
+            execution = self.context.execution
+            if message in ["stop", "cancel"]:
+                execution.finish("Procedure has been stopped.")
+            elif execution.input_needed:
+                execution.run(message)
+            else:
+                return "Procedure is still executing."
+            return
+
+        # Check if desire to cancel goal
+        if message == "cancel":
             if self.context.goals:
                 self.context.goals.pop()
             self.context.state = "home"
             return "Canceled! What do you want to do?"
-        elif message in ["help", "i need help"]:
-            return "Raise your hand and help will be on the way!"
-        elif QuestionAnswer.is_question(message):
+
+        # Check if message is a question
+        if QuestionAnswer.is_question(message):
             answer = self.qa.answer(message)
             if answer:
                 return answer
@@ -166,7 +192,8 @@ class DialogContext(object):
         example.add_property(Property(example, "count", "number"))
         self.sid = sid
         self.classes = { "example": example }
-        self.procedures = { "example": example_procedure, "dog or cat": sounds_procedure, "empty": empty_procedure }
+        self.procedures = { "example": example_procedure, "dog or cat": sounds_procedure, "empty": empty_procedure, "infinite loop": infinite_loop_procedure }
+        self.execution = None
         self.reset()
 
     @property
@@ -178,6 +205,8 @@ class DialogContext(object):
         return self.goals[-1] if self.goals else None
 
     def reset(self):
+        if self.execution:
+            self.execution.finish()
         self.state = "home"
         self.conversation = []
         self.goals = []
