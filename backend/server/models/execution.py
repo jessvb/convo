@@ -30,30 +30,29 @@ class Execution(object):
     def stop(self):
         self.thread_running = False
 
-    def advance(self, app):
-        with app.app_context():
-            while self.thread_running:
-                action = self.actions[self.step]
-                try:
-                    self.evaluate_action(action)
-                    self.step += 1
-                    time.sleep(0.25)
-                    if self.input_needed:
-                        self.stop()
-                        return
-                except KeyError as e:
-                    message = f"Error occured while running. Variable {e.args[0]} did not exist when I was {action.to_nl()}."
-                    self.emit("response", { "message": message })
-                    break
-                except ExecutionError as e:
-                    self.emit("response", { "message": e.message })
-                    break
+    def advance(self):
+        while self.thread_running:
+            action = self.actions[self.step]
+            try:
+                self.evaluate_action(action)
+                self.step += 1
+                time.sleep(0.25)
+                if self.input_needed:
+                    self.stop()
+                    return
+            except KeyError as e:
+                message = f"Error occured while running. Variable {e.args[0]} did not exist when I was {action.to_nl()}."
+                self.emit("response", { "message": message })
+                break
+            except ExecutionError as e:
+                self.emit("response", { "message": e.message })
+                break
 
-                if self.step >= len(self.actions):
-                    break
+            if self.step >= len(self.actions):
+                break
 
-            self.stop()
-            self.context.transition("finish")
+        self.stop()
+        self.context.transition("finish")
 
     def emit(self, event, data):
         try:
