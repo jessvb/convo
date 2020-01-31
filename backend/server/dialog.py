@@ -56,8 +56,8 @@ infinite_loop_procedure = Procedure(name="infinite loop", actions=[
     CreateVariableAction("bad var", 0),
     LoopAction(
         loop="while",
-        condition=EqualityCondition("bar var", 1),
-        actions=[ SayAction("in the loop")]
+        condition=EqualityCondition("bad var", 0),
+        actions=[SayAction("in the loop")]
     )
 ])
 
@@ -127,13 +127,12 @@ class DialogManager(object):
         if self.context.state == "executing":
             execution = self.context.execution
             if message == "stop":
-                execution.stop()
-                return "Procedure has been stopped."
+                execution.finish("Procedure has been stopped.")
             elif execution.input_needed:
                 execution.run(message)
-                return
             else:
                 return "Procedure is still executing."
+            return
 
         try:
             self.context.parsed = self.nlu.parse_message(message)

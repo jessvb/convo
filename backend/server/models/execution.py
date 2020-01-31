@@ -1,9 +1,9 @@
 import logging
-import flask_socketio
 import copy
 import threading
 import time
 
+from app import sio
 from error import *
 from models import *
 
@@ -30,35 +30,38 @@ class Execution(object):
     def stop(self):
         self.thread_running = False
 
+    def finish(self, message):
+        self.stop()
+        self.context.transition("finish")
+        self.emit("response", { "message": message, "state": self.context.state })
+
     def advance(self):
         while self.thread_running:
             action = self.actions[self.step]
             try:
                 self.evaluate_action(action)
                 self.step += 1
-                time.sleep(0.25)
+                sio.sleep(0.5)
                 if self.input_needed:
                     self.stop()
                     return
             except KeyError as e:
-                message = f"Error occured while running. Variable {e.args[0]} did not exist when I was {action.to_nl()}."
-                self.emit("response", { "message": message })
-                break
+                self.finish(f"Error occured while running. Variable {e.args[0]} did not exist when I was {action.to_nl()}.")
+                return
             except ExecutionError as e:
-                self.emit("response", { "message": e.message })
-                break
+                self.finish(e.message)
+                return
 
             if self.step >= len(self.actions):
                 break
 
-        self.stop()
-        self.context.transition("finish")
+        self.finish("Procedure finished running.")
 
     def emit(self, event, data):
         try:
             message = f" with the message: {data['message']}" if "message" in data else ""
             logger.info(f"Emitting event {event} to client {self.context.sid}{message}.")
-            flask_socketio.emit(event, data, room=str(self.context.sid))
+            sio.emit(event, data, room=str(self.context.sid))
         except RuntimeError as e:
             logger.info(e)
             if not str(e).startswith("Working outside of request context."):

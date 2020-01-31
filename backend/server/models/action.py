@@ -148,7 +148,8 @@ class LoopAction(Action):
         }
 
     def to_nl(self):
-        return f"doing {len(self.actions)} {self.loop} {self.condition.to_nl()}"
+        num_actions = str(len(self.actions)) if len(self.actions) > 0 else 'no'
+        return f"doing {num_actions} action{'s' if num_actions != '1' else ''} {self.loop} {self.condition.to_nl()}"
 
     def python(self):
         if self.loop == "while":
