@@ -35,4 +35,4 @@ class ExecuteGoal(HomeGoal):
     def complete(self):
         self.context.transition(self)
         self.execution.run()
-        return None
+        return "Procedure started running."

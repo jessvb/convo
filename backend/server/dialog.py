@@ -111,28 +111,34 @@ class DialogManager(object):
         # Check for interrupts
         if message == "reset":
             return self.reset()
-        elif message == "cancel":
-            if self.context.goals:
-                self.context.goals.pop()
-            self.context.state = "home"
-            return "Canceled! What do you want to do?"
-        elif message in ["help", "i need help"]:
+
+        # Check for help
+        if message in ["help", "i need help"]:
             return "Raise your hand and help will be on the way!"
-        elif QuestionAnswer.is_question(message):
-            answer = self.qa.answer(message)
-            if answer:
-                return answer
 
         # Check if running program
         if self.context.state == "executing":
             execution = self.context.execution
-            if message == "stop":
+            if message in ["stop", "cancel"]:
                 execution.finish("Procedure has been stopped.")
             elif execution.input_needed:
                 execution.run(message)
             else:
                 return "Procedure is still executing."
             return
+
+        # Check if desire to cancel goal
+        if message == "cancel":
+            if self.context.goals:
+                self.context.goals.pop()
+            self.context.state = "home"
+            return "Canceled! What do you want to do?"
+
+        # Check if message is a question
+        if QuestionAnswer.is_question(message):
+            answer = self.qa.answer(message)
+            if answer:
+                return answer
 
         try:
             self.context.parsed = self.nlu.parse_message(message)

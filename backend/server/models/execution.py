@@ -78,15 +78,15 @@ class Execution(object):
                 variable = action.phrase.variable
                 phrase = f"The value of {variable} is \"{self.variables[variable]}\"."
             logger.info(f"Saying '{phrase}'")
-            self.emit("response", { "message": phrase })
+            self.emit("response", { "message": phrase, "state": self.context.state })
             self.context.add_message(action.phrase)
         elif isinstance(action, PlaySoundAction):
             logger.info(f"Playing sound file {action.sound}.")
-            self.emit("playSound", { "sound": action.sound })
+            self.emit("playSound", { "sound": action.sound, "state": self.context.state })
         elif isinstance(action, GetUserInputAction):
             logger.info(f"Getting user input and setting as {action.variable}")
             self.input_needed = action.variable
-            self.emit("response", { "message": "Listening for user input..." })
+            self.emit("response", { "message": "Listening for user input...", "state": self.context.state })
         elif isinstance(action, CreateVariableAction):
             self.variables[action.name] = self.variables[action.value.variable] if isinstance(action.value, ValueOf) else action.value
             logger.info(f"Created variable {action.name} with value {self.variables[action.name]}")
