@@ -38,25 +38,39 @@ if (process.env.NODE_ENV && process.env.NODE_ENV === "production") {
 }
 
 app.get('/', (req, res) => res.sendFile(path.resolve('public/html/home.html')));
-app.get('/demographic-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/demographic-survey.html')));
 app.get('/conclusion', (req, res) => res.sendFile(path.resolve('public/html/conclusion.html')));
 
+// Surveys:
+app.get('/demographic-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/demographic-survey.html')));
+app.get('/novice-text-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/novice-text-survey.html')));
+app.get('/novice-voice-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/novice-voice-survey.html')));
+app.get('/novice-voice-text-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/novice-voice-text-survey.html')));
+app.get('/advanced-text-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/advanced-text-survey.html')));
+app.get('/advanced-voice-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/advanced-voice-survey.html')));
+app.get('/advanced-voice-text-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/advanced-voice-text-survey.html')));
+app.get('/overall-voice-text-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/overall-voice-text-survey.html')));
+
+// Information pages:
 app.get('/practice-info', (req, res) => res.sendFile(path.resolve('public/html/stage-info/practice-info.html')));
 app.get('/novice-info', (req, res) => res.sendFile(path.resolve('public/html/stage-info/novice-info.html')));
 app.get('/advanced-info', (req, res) => res.sendFile(path.resolve('public/html/stage-info/advanced-info.html')));
 
+// Practice stage parts:
 app.get('/practice-text', (req, res) => res.sendFile(path.resolve('public/html/stages/practice-stage-text.html')));
 app.get('/practice-voice', (req, res) => res.sendFile(path.resolve('public/html/stages/practice-stage-voice.html')));
 app.get('/practice-voice-text', (req, res) => res.sendFile(path.resolve('public/html/stages/practice-stage-voice-text.html')));
 
+// Novice stage parts:
 app.get('/novice-text', (req, res) => res.sendFile(path.resolve('public/html/stages/novice-stage-text.html')));
 app.get('/novice-voice', (req, res) => res.sendFile(path.resolve('public/html/stages/novice-stage-voice.html')));
 app.get('/novice-voice-text', (req, res) => res.sendFile(path.resolve('public/html/stages/novice-stage-voice-text.html')));
 
+// Advanced stage parts:
 app.get('/advanced-text', (req, res) => res.sendFile(path.resolve('public/html/stages/advanced-stage-text.html')));
 app.get('/advanced-voice', (req, res) => res.sendFile(path.resolve('public/html/stages/advanced-stage-voice.html')));
 app.get('/advanced-voice-text', (req, res) => res.sendFile(path.resolve('public/html/stages/advanced-stage-voice-text.html')));
 
+// Various test pages:
 app.get('/experiments', (req, res) => res.sendFile(path.resolve('public/html/experiment-templates/index.html')));
 app.get('/voice-and-conversation', (req, res) => res.sendFile(path.resolve('public/html/experiment-templates/voice-and-conversation.html')));
 app.get('/text-and-conversation', (req, res) => res.sendFile(path.resolve('public/html/experiment-templates/text-and-conversation.html')));
