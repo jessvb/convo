@@ -7,3 +7,9 @@ class ValueOf(object):
 
     def to_nl(self):
         return f"the value of variable {self.variable}"
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return self.variable == self.variable

@@ -50,7 +50,7 @@ class BaseGoal(object):
 
     def __str__(self):
         name = self.__class__.__name__
-        return to_snake_case(name[:-len("Goal")])
+        return to_snake_case(name[:-len("Goal")]) + (f":{str(self.todos[-1])}" if self.todos else "")
 
 class HomeGoal(BaseGoal):
     def __init__(self, context):

@@ -1,5 +1,6 @@
 import logging
 import time
+import copy
 from models import *
 from client import *
 from goals import *
@@ -297,13 +298,19 @@ infinite_while_loop_test = [
 ]
 
 bugs_test = [
-    "run infinite loop",
-    "stop"
+    "I want to create a procedure called hello world",
+    "get user input",
+    "input",
+    "done",
+    "run hello world",
+    "five"
 ]
 
-for i, message in enumerate(bugs_test):
+for i, message in enumerate(messages3):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
         logging.info(res)
     time.sleep(1)
+
+time.sleep(5)

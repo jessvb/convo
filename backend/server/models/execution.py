@@ -6,6 +6,7 @@ import time
 from app import sio
 from error import *
 from models import *
+from helpers import *
 
 logger = logging.getLogger("gunicorn.error")
 
@@ -21,7 +22,8 @@ class Execution(object):
 
     def run(self, message=None):
         if self.input_needed and message:
-            self.variables[self.input_needed] = message
+            self.variables[self.input_needed] = parse_number(message)
+            logger.info(f"Current variables: {str(self.variables)}")
             self.input_needed = None
         self.thread = threading.Thread(target=self.advance)
         self.thread.daemon = True
@@ -35,11 +37,12 @@ class Execution(object):
         self.stop()
         self.finished = True
         self.context.transition("finish")
+        self.context.execution = None
         if message:
             self.emit("response", { "message": message, "state": self.context.state })
 
     def advance(self):
-        while self.thread_running and not self.finished:
+        while self.thread_running and not self.finished and self.step < len(self.actions):
             action = self.actions[self.step]
             try:
                 self.evaluate_action(action)

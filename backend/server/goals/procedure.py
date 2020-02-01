@@ -4,11 +4,9 @@ from models import *
 class CreateProcedureGoal(HomeGoal):
     def __init__(self, context, name=None):
         super().__init__(context)
-        self.context.transition(self)
         self.procedure = Procedure(name, [])
         self.context.current = self.procedure
         self.procedures = self.context.procedures
-        self.todos.append(GetProcedureActionsGoal(self.context, self.procedure.actions))
         self.setattr("name", name)
 
     @property
@@ -19,13 +17,13 @@ class CreateProcedureGoal(HomeGoal):
         if self._message:
             return self._message
 
-        return f"I created the procedure. You can say, \"run {self.procedure.name}\" to play it." if self.is_complete else self.todos[-1].message
+        return f"What do you want to happen in the procedure first? You could make me say something. See the sidebar for more options." if self.is_complete else self.todos[-1].message
 
     def complete(self):
         self.procedures[self.procedure.name] = self.procedure
-        self.context.transition("complete")
-        self.context.current = None
-        logging.debug(f"Procedure: {[str(a) for a in self.procedure.actions]}")
+        self.context.transition(self)
+        self.context.current = self.procedure
+        self.context.goals.insert(len(self.context.goals) - 2, GetProcedureActionsGoal(self.context, self.procedure))
         return super().complete()
 
     def setattr(self, attr, value):

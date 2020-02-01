@@ -98,9 +98,21 @@ class DialogManager(object):
         self.qa = QuestionAnswer(self.context)
         self.nlu = SemanticNLU(self.context)
 
-    def reset(self):
-        self.context.reset()
+    def reset(self, context=None):
+        if context:
+            self.context = context
+            self.qa = QuestionAnswer(context)
+            self.nlu = SemanticNLU(context)
+        else:
+            self.context.reset()
         return "Conversation has been reset. What do you want to do first?"
+
+    @property
+    def immediate_goal(self):
+        current = self.context.current_goal
+        while current and current.todos:
+            current = current.todos[-1]
+        return current
 
     def current_goal(self):
         return self.context.current_goal
@@ -108,38 +120,68 @@ class DialogManager(object):
     def handle_message(self, message):
         self.context.add_message(message)
 
-        # Check for interrupts
-        if message == "reset":
+        response = self.handle_reset(message)
+        if response:
+            return response
+
+        response = self.handle_help(message)
+        if response:
+            return response
+
+        if self.context.state == "executing":
+            return self.handle_execution(message)
+
+        response = self.handle_cancel(message)
+        if response:
+            return response
+
+        response = self.handle_question(message)
+        if response:
+            return response
+
+        response = self.handle_parse(message)
+        if response:
+            return response
+
+        return self.handle_goal()
+
+    def handle_reset(self, message):
+        # Check for reset
+        if message.lower() == "reset":
             return self.reset()
 
+    def handle_help(self, message):
         # Check for help
-        if message in ["help", "i need help"]:
+        if message.lower() in ["help", "i need help"]:
             return "Raise your hand and help will be on the way!"
 
+    def handle_execution(self, message):
         # Check if running program
-        if self.context.state == "executing":
-            execution = self.context.execution
-            if message in ["stop", "cancel"]:
-                execution.finish("Procedure has been stopped.")
-            elif execution.input_needed:
-                execution.run(message)
-            else:
-                return "Procedure is still executing."
-            return
+        execution = self.context.execution
+        if message.lower() in ["stop", "cancel"]:
+            execution.finish("Procedure has been stopped.")
+        elif execution.input_needed:
+            execution.run(message)
+        else:
+            return "Procedure is still executing."
+        return
 
+    def handle_cancel(self, message):
         # Check if desire to cancel goal
-        if message == "cancel":
+        if message.lower() == "cancel":
             if self.context.goals:
                 self.context.goals.pop()
             self.context.state = "home"
             return "Canceled! What do you want to do?"
 
+    def handle_question(self, message):
         # Check if message is a question
         if QuestionAnswer.is_question(message):
             answer = self.qa.answer(message)
             if answer:
                 return answer
 
+    def handle_parse(self, message):
         try:
             self.context.parsed = self.nlu.parse_message(message)
         except InvalidStateError as e:
@@ -161,6 +203,7 @@ class DialogManager(object):
                     response += " because I am currently adding or editing an action. Finish editing then you can stop by saying \"done\""
             return f"{response}."
 
+    def handle_goal(self):
         if self.current_goal() is None:
             goal = self.context.parsed
             if goal is None or not isinstance(goal, BaseGoal):
@@ -198,7 +241,7 @@ class DialogContext(object):
 
     @property
     def current_message(self):
-        return self.conversation[-1] if self.conversation else None
+        return self.conversation[-1].lower() if self.conversation else None
 
     @property
     def current_goal(self):

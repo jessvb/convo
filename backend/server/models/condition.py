@@ -18,6 +18,12 @@ class SayCondition(Condition):
     def __str__(self):
         return f"'{self.phrase}'"
 
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return self.phrase == other.phrase
+
 comparison_ops = {
     "greater than": ">",
     "less than": "<",
@@ -47,6 +53,12 @@ class EqualityCondition(Condition):
     def to_nl(self):
         value = f"the value of {self.value.variable}" if isinstance(self.value, ValueOf) else self.value
         return f"variable {self.variable} is {'not ' if self.negation else ''}equal to {value}"
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return self.variable == other.variable and self.value == other.value and self.negation == other.negation
 
 class ComparisonCondition(Condition):
     def __init__(self, variable, op, value):
@@ -78,3 +90,9 @@ class ComparisonCondition(Condition):
     def to_nl(self):
         value = f"the value of {self.value.variable}" if isinstance(self.value, ValueOf) else self.value
         return f"variable {self.variable} is {self.op} {value}"
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return self.variable == other.variable and self.value == other.value and self.op == other.op

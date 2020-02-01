@@ -20,6 +20,9 @@ class Action(object):
     def to_nl(self):
         raise NotImplementedError
 
+    def __eq__(self, other):
+        raise NotImplementedError
+
 class SetPropertyAction(Action):
     def __init__(self, property, value):
         self.property = property
@@ -38,6 +41,12 @@ class SetPropertyAction(Action):
     def to_nl(self):
         return f"setting property {self.property} to {self.value}"
 
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return self.property == other.property and self.value == other.value
+
 class VariableAction(Action):
     def __init__(self, name, value):
         self.name = name
@@ -52,6 +61,12 @@ class VariableAction(Action):
 
     def python(self):
         return [f"{self.name} = {self.value}"]
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return self.name == other.name and self.value == other.value
 
 class CreateVariableAction(VariableAction):
     def __init__(self, name, value):
@@ -109,6 +124,12 @@ class SayAction(Action):
             return f"saying the value of the variable {self.phrase.variable}"
         return f"saying the phrase \"{self.phrase}\""
 
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return self.phrase.lower() == other.phrase.lower()
+
 class ConditionalAction(Action):
     def __init__(self, condition, actions):
         self.condition = condition
@@ -132,6 +153,12 @@ class ConditionalAction(Action):
     def to_nl(self):
         falses, trues = self.actions
         return f"doing {len(falses) if len(falses) > 0 else 'no'} action(s) when {self.condition.to_nl()} and {len(trues) if len(trues) > 0 else 'no'} action(s) otherwise"
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return self.condition == other.condition and self.actions == other.actions
 
 class LoopAction(Action):
     def __init__(self, loop, condition, actions):
@@ -158,6 +185,12 @@ class LoopAction(Action):
             return lines
         raise NotImplementedError
 
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return self.loop == self.loop and self.condition == other.condition and self.actions == self.actions
+
 class CreateListAction(Action):
     def __init__(self, name):
         self.name = name
@@ -173,6 +206,12 @@ class CreateListAction(Action):
 
     def to_nl(self):
         return f"creating a list called {self.name}"
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return self.name == self.name
 
 class AddToListAction(Action):
     def __init__(self, name, value):
@@ -192,6 +231,12 @@ class AddToListAction(Action):
     def to_nl(self):
         return f"adding {self.value} to list {self.name}"
 
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return self.name == other.name and self.value == other.value
+
 class AddToListPropertyAction(Action):
     def __init__(self, property, value):
         self.property = name
@@ -207,6 +252,12 @@ class AddToListPropertyAction(Action):
     def python(self):
         return [f"{self.property}.append({self.value})"]
 
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return self.property == other.property and self.value == other.value
+
 class GetUserInputAction(Action):
     def __init__(self, variable):
         self.variable = variable
@@ -220,6 +271,12 @@ class GetUserInputAction(Action):
     def to_nl(self):
         return f"getting input from user and saving it as variable {self.variable}"
 
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return self.variable == other.variable
+
 class PlaySoundAction(Action):
     def __init__(self, sound):
         self.sound = sound
@@ -232,3 +289,9 @@ class PlaySoundAction(Action):
 
     def to_nl(self):
         return f"playing the sound file {self.sound}"
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return self.sound == other.sound

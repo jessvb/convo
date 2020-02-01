@@ -130,6 +130,10 @@ class GetLoopActionsGoal(GetActionsGoal):
                 self.todos.append(action)
 
 class GetProcedureActionsGoal(GetActionsGoal):
+    def __init__(self, context, procedure):
+        super().__init__(context, procedure.actions)
+        self.procedure = procedure
+
     @property
     def message(self):
         if self.error:
@@ -139,7 +143,7 @@ class GetProcedureActionsGoal(GetActionsGoal):
             return self._message
 
         if self.is_complete:
-            return f"{self.__class__.__name__} completed!"
+            return f"I finished creating the procedure. You can say, \"run {self.procedure.name}\" to play it."
 
         if len(self.todos) == 0:
             return "Added action! Do you want to do anything else?" \
@@ -147,3 +151,9 @@ class GetProcedureActionsGoal(GetActionsGoal):
                     else "What do you want to happen in the procedure first? You could make me say something. See the sidebar for more options."
         else:
             return self.todos[-1].message
+
+    def complete(self):
+        self.context.transition("complete")
+        self.context.current = None
+        logging.debug(f"Procedure: {[str(a) for a in self.procedure.actions]}")
+        return super().complete()
