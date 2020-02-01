@@ -298,24 +298,16 @@ infinite_while_loop_test = [
 ]
 
 bugs_test = [
-    "I want to create a procedure",
-    "hello world",
-    "say hello world",
-    "done",
-    "run hello world"
-]
-
-bugs_test2 = [
     "I want to create a procedure called hello world",
-    "say",
-    "hello world",
+    "get user input",
+    "input",
     "done",
-    "run hello world"
+    "run hello world",
+    "five"
 ]
 
 for i, message in enumerate(messages):
     logging.info(message)
-    # old_context = copy.deepcopy(dm.context)
     res = dm.handle_message(message)
     if res:
         logging.info(res)

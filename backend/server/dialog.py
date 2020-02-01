@@ -107,14 +107,43 @@ class DialogManager(object):
             self.context.reset()
         return "Conversation has been reset. What do you want to do first?"
 
-    def current_goal(self):
-        return self.context.current_goal
-
-    def current_immediate_goal(self):
+    @property
+    def immediate_goal(self):
         current = self.context.current_goal
         while current and current.todos:
             current = current.todos[-1]
         return current
+
+    def current_goal(self):
+        return self.context.current_goal
+
+    def handle_message(self, message):
+        self.context.add_message(message)
+
+        response = self.handle_reset(message)
+        if response:
+            return response
+
+        response = self.handle_help(message)
+        if response:
+            return response
+
+        if self.context.state == "executing":
+            return self.handle_execution(message)
+
+        response = self.handle_cancel(message)
+        if response:
+            return response
+
+        response = self.handle_question(message)
+        if response:
+            return response
+
+        response = self.handle_parse(message)
+        if response:
+            return response
+
+        return self.handle_goal()
 
     def handle_reset(self, message):
         # Check for reset
@@ -174,32 +203,7 @@ class DialogManager(object):
                     response += " because I am currently adding or editing an action. Finish editing then you can stop by saying \"done\""
             return f"{response}."
 
-    def handle_message(self, message):
-        self.context.add_message(message)
-
-        response = self.handle_reset(message)
-        if response:
-            return response
-
-        response = self.handle_help(message)
-        if response:
-            return response
-
-        if self.context.state == "executing":
-            return self.handle_execution(message)
-
-        response = self.handle_cancel(message)
-        if response:
-            return response
-
-        response = self.handle_question(message)
-        if response:
-            return response
-
-        response = self.handle_parse(message)
-        if response:
-            return response
-
+    def handle_goal(self):
         if self.current_goal() is None:
             goal = self.context.parsed
             if goal is None or not isinstance(goal, BaseGoal):
