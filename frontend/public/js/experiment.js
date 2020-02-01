@@ -203,7 +203,7 @@ let tutorial = true;
 let voice;
 
 let checkQuery = (field, value) => {
-    window.open(url, '_self');
+    let url = window.location.href;
     let query = `${field}=${value}`
     if (url.indexOf(`?${query}`) != -1)
         return true;

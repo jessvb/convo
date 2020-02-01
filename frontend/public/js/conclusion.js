@@ -1,11 +1,11 @@
 // Once the DOM has finished loading, do stuff:
 document.addEventListener('DOMContentLoaded', (event) => {
-    var finishBtn = document.getElementById('btn-finish');
+    let finishBtn = document.getElementById('btn-finish');
 
     finishBtn.addEventListener('click', function () {
         // Log the emails + isAdvanced to the server
-        var email = document.getElementById('email-textbox').value;
-        var isAdvanced = JSON.parse(localStorage.getItem('isAdvanced')).value;
+        let email = document.getElementById('email-textbox').value;
+        let isAdvanced = JSON.parse(localStorage.getItem('isAdvanced')).value;
         window.alert("TODO: @Kevin: Log the emails + isAdvanced to the server. " + email + ' ' + isAdvanced);
 
         // change text to just say thank you

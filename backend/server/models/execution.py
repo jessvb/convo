@@ -11,7 +11,7 @@ from helpers import *
 logger = logging.getLogger("gunicorn.error")
 
 class Execution(object):
-    def __init__(self, context, actions):
+    def __init__(self, context, actions, to_emit=True):
         self.context = context
         self.actions = actions
         self.variables = {}
@@ -19,6 +19,7 @@ class Execution(object):
         self.input_needed = None
         self.thread_running = False
         self.finished = False
+        self.to_emit = to_emit
 
     def run(self, message=None):
         if self.input_needed and message:
@@ -65,6 +66,9 @@ class Execution(object):
             self.finish("Procedure finished running.")
 
     def emit(self, event, data):
+        if not self.to_emit:
+            return
+
         try:
             message = f" with the message: {data['message']}" if "message" in data else ""
             logger.info(f"Emitting event {event} to client {self.context.sid}{message}.")

@@ -68,7 +68,7 @@
 <tail>
     <script>
         localStorage.setItem('currStage', 'advanced');
-        var prevCompletedParts = JSON.parse(localStorage.getItem('completedParts')).parts;
+        let prevCompletedParts = JSON.parse(localStorage.getItem('completedParts')).parts;
         localStorage.setItem('completedParts', JSON.stringify({
             parts: prevCompletedParts.concat('text')
         }));

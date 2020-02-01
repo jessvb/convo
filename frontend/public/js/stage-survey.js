@@ -7,24 +7,24 @@ document.addEventListener('DOMContentLoaded', (event) => {
  * Submits the relevant variables from the form to the Google form and goes to
  * the next page.
  */
-var submitAndGo = () => {
+let submitAndGo = () => {
     // Get the user id for this computer and person:
-    var sid = localStorage.getItem('sid');
+    let sid = localStorage.getItem('sid');
 
     // get the number of shortAns and likert q's:
-    var numLikertQs = localStorage.getItem('numLikertQs');
-    var numShortAnsQs = localStorage.getItem('numShortAnsQs');
+    let numLikertQs = localStorage.getItem('numLikertQs');
+    let numShortAnsQs = localStorage.getItem('numShortAnsQs');
 
-    var likertAns = [];
-    for (var i = 0; i < numLikertQs; i++) {
-        var radios = document.getElementsByName('l' + i);
+    let likertAns = [];
+    for (let i = 0; i < numLikertQs; i++) {
+        let radios = document.getElementsByName('l' + i);
         radios.forEach(radio => {
             if (radio.checked) {
                 likertAns.push(radio.value);
             }
         });
     }
-    var shortAns = [];
+    let shortAns = [];
     for (i = 0; i < numShortAnsQs; i++) {
         shortAns.push(document.getElementById('s' + i).value);
     }
@@ -38,12 +38,12 @@ var submitAndGo = () => {
         localStorage.setItem('doneSurvey', JSON.stringify({
             value: true
         }));
-        var currStage = localStorage.getItem('currStage');
-        var completedParts = JSON.parse(localStorage.getItem('completedParts')).parts;
-        var currPart = completedParts[completedParts.length - 1];
-        var isAdvanced = JSON.parse(localStorage.getItem('isAdvanced')).value;
+        let currStage = localStorage.getItem('currStage');
+        let completedParts = JSON.parse(localStorage.getItem('completedParts')).parts;
+        let currPart = completedParts[completedParts.length - 1];
+        let isAdvanced = JSON.parse(localStorage.getItem('isAdvanced')).value;
 
-        // TODO: store survey data!!! 
+        // TODO: store survey data!!!
         // --> Make sure it's stored wrt currStage (novice/adv)
         // --> Make sure it's stored wrt currPart (v,t,v+t)
         window.alert('Survey data is not being stored. TODO: @Kevin store data in server.');
@@ -51,24 +51,24 @@ var submitAndGo = () => {
             likertAns + '; ' + shortAns);
 
         // getNextStageUrl is found in stages-process.js
-        var url = getNextStageUrl(currStage, completedParts, true, isAdvanced);
+        let url = getNextStageUrl(currStage, completedParts, true, isAdvanced);
         window.open(url, '_self');
     }
 };
 
 /**
- * Programatically create the survey using the currStage (novice, advanced, finalSurvey) 
+ * Programatically create the survey using the currStage (novice, advanced, finalSurvey)
  * and completedParts information found in localstorage.
  */
-var createDOM = () => {
+let createDOM = () => {
     // Create the survey
-    var currStage = localStorage.getItem('currStage');
-    var completedParts = JSON.parse(localStorage.getItem('completedParts')).parts;
-    var currPart = completedParts[completedParts.length - 1];
+    let currStage = localStorage.getItem('currStage');
+    let completedParts = JSON.parse(localStorage.getItem('completedParts')).parts;
+    let currPart = completedParts[completedParts.length - 1];
 
-    var system = '';
-    var verbage = '';
-    var finalSurvey = false;
+    let system = '';
+    let verbage = '';
+    let finalSurvey = false;
     if (currStage != 'finalSurvey') {
         if (currPart.includes('voice') && currPart.includes('text')) {
             system = 'voice/text';
@@ -85,7 +85,7 @@ var createDOM = () => {
     }
 
     // #1: add heading
-    var info = document.getElementById("info");
+    let info = document.getElementById("info");
     if (!finalSurvey) {
         info.innerHTML = '<h2>' + (system.charAt(0).toUpperCase() + system.substring(1)) +
             '-based System Survey</h2>' + '<h3>' + (currStage.charAt(0).toUpperCase() +
@@ -98,7 +98,7 @@ var createDOM = () => {
             'each system compared to the others?</p>';
     }
     info.innerHTML += '<div id="likert-wrap">' + '<form id="likert-form"></form></div>';
-    var form = document.getElementById('likert-form');
+    let form = document.getElementById('likert-form');
 
     // #2: add the likert scale questions
     // E.g.,
@@ -127,9 +127,9 @@ var createDOM = () => {
     //         <label>Strongly disagree</label>
     //     </li>
     // </ul>
-    var likertQs = [];
-    var labels = [];
-    var values = [];
+    let likertQs = [];
+    let labels = [];
+    let values = [];
     if (!finalSurvey) {
         likertQs = ['I found it difficult to complete the goal with the ' + system +
             '-based system.', 'I found programming with the ' + system + '-based system difficult to use.',
@@ -167,14 +167,14 @@ var createDOM = () => {
         });
 
         // programmatically create the likert scale preference questions
-        var domInd = addLikertQsToDOM(form, likertQs, values, labels);
+        let domInd = addLikertQsToDOM(form, likertQs, values, labels);
 
         // put a paragraph to split up the questions:
         form.innerHTML += '<p>How strongly do you agree ' +
             'with the following statements?</p>';
 
 
-        var additionalLikertQs = [
+        let additionalLikertQs = [
             'I think programming with just voice is easier than programming with just text.',
             'I think programming with just text is easier than programming with just both voice and text.',
             'I think programming with just voice is easier than programming with both voice and text.',
@@ -188,13 +188,13 @@ var createDOM = () => {
             'I am a programmer.'
         ];
 
-        var additionalLabels = [];
-        var additionalValues = [];
+        let additionalLabels = [];
+        let additionalValues = [];
         additionalLikertQs.forEach(function (question) {
             additionalLabels.push(['Strongly agree', 'Agree', 'Neutral', 'Disagree', 'Strongly disagree']);
             additionalValues.push(['strongly_agree', 'Agree', 'neutral', 'disagree', 'strongly_disagree']);
-            // Even though all the likert q's will be added to the DOM via the 'additional...' variables, 
-            // we still need to make sure the variable likertQs has *all* likert questions s.t. we know 
+            // Even though all the likert q's will be added to the DOM via the 'additional...' variables,
+            // we still need to make sure the variable likertQs has *all* likert questions s.t. we know
             // the total number of q's (for checking if users have completed every question):
             likertQs.push(question);
             labels.push(['Strongly agree', 'Agree', 'Neutral', 'Disagree', 'Strongly disagree']);
@@ -235,8 +235,8 @@ var createDOM = () => {
     //     What did you like about programming with the voice-based system?
     // </label>
     // <textarea class="answer" id="s1" type="text" placeholder="I liked..."></textarea>
-    var shortAnsQs = [];
-    var placeholders = [];
+    let shortAnsQs = [];
+    let placeholders = [];
     if (!finalSurvey) {
         shortAnsQs = ['What did you like about programming with the ' + system + '-based system?',
             'What was frustrating about programming with the ' + system + '-based system? ' +
@@ -285,10 +285,10 @@ var createDOM = () => {
 
 /**
  * Adds likert scale questions to the DOM.
- * @param {*} form 
- * @param {*} likertQs 
- * @param {*} values 
- * @param {*} labels 
+ * @param {*} form
+ * @param {*} likertQs
+ * @param {*} values
+ * @param {*} labels
  * @param {*} prevIndex : If other likert q's have been added to the DOM, we want to make sure
  * the ID of the DOM elements aren't overwritten, so enter the value that was returned by the
  * last call to addLikertQsToDOM() for prevIndex.
@@ -299,18 +299,18 @@ function addLikertQsToDOM(form, likertQs, values, labels, prevIndex) {
     if (!prevIndex) {
         prevIndex = 0;
     }
-    for (var i = 0; i < likertQs.length; i++) {
+    for (let i = 0; i < likertQs.length; i++) {
         form.innerHTML += '<label class="statement">' + likertQs[i] + '</label>';
         form.innerHTML += '<ul class=\'likert answer\' id="l' + (i + prevIndex) + '"></ul>';
-        var ul = document.getElementById('l' + (i + prevIndex));
+        let ul = document.getElementById('l' + (i + prevIndex));
 
-        for (var j = 0; j < labels[i].length; j++) {
-            var li = document.createElement("LI");
-            var input = document.createElement("input");
+        for (let j = 0; j < labels[i].length; j++) {
+            let li = document.createElement("LI");
+            let input = document.createElement("input");
             input.type = "radio";
             input.name = "l" + (i + prevIndex);
             input.value = values[i][j];
-            var label = document.createElement("label");
+            let label = document.createElement("label");
             label.innerHTML = labels[i][j];
             li.appendChild(input);
             li.appendChild(label);

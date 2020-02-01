@@ -22,16 +22,16 @@
 
 <body>
     <!-- TODO: delete from here until next comment -->
-    <h2>Learning How to Program Conversationally</h2>
+    <!-- <h2>Learning How to Program Conversationally</h2>
     <h3>Practice Stage: Text</h3>
     <div id="button-container">
         <button type="button" id="btn-next-stage" class="btn btn-primary">
             Next Stage
         </button>
-    </div>
+    </div> -->
     <!-- TODO: uncomment the stuff below -->
 
-    <!-- <div id="title">
+    <div id="title">
         <h2>Learning How to Program Conversationally</h2>
         <h3>Practice Stage: Text</h3>
     </div>
@@ -62,13 +62,13 @@
                 </div>
             </div>
         </div>
-    </div> -->
+    </div>
 </body>
 
 <tail>
     <script>
         localStorage.setItem('currStage', 'practice');
-        var prevCompletedParts = JSON.parse(localStorage.getItem('completedParts')).parts;
+        let prevCompletedParts = JSON.parse(localStorage.getItem('completedParts')).parts;
         localStorage.setItem('completedParts', JSON.stringify({
             parts: prevCompletedParts.concat('text')
         }));
