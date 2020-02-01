@@ -32,7 +32,8 @@ var submitAndGo = () => {
     // send and go to next stage
     if (sid == null || likertAns.length < numLikertQs || shortAns.length < numShortAnsQs) {
         window.alert('There is an unanswered question. Please report this error to the experimenter.');
-        window.alert('Collected answers: ', sid, currStage, currPart, likertAns, shortAns);
+        window.alert('Collected answers: ' + sid + '; ' + currStage + '; ' + currPart + '; ' +
+            likertAns + '; ' + shortAns);
     } else {
         localStorage.setItem('doneSurvey', JSON.stringify({
             value: true
@@ -45,8 +46,9 @@ var submitAndGo = () => {
         // TODO: store survey data!!! 
         // --> Make sure it's stored wrt currStage (novice/adv)
         // --> Make sure it's stored wrt currPart (v,t,v+t)
-        window.alert('Survey data is not being stored. TODO: store data!!');
-        window.alert('Collected answers: ', sid, currStage, currPart, likertAns, shortAns);
+        window.alert('Survey data is not being stored. TODO: @Kevin store data in server.');
+        window.alert('Collected answers: ' + sid + '; ' + currStage + '; ' + currPart + '; ' +
+            likertAns + '; ' + shortAns);
 
         // getNextStageUrl is found in stages-process.js
         var url = getNextStageUrl(currStage, completedParts, true, isAdvanced);

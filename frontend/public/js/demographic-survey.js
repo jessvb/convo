@@ -22,10 +22,12 @@ let submitAndGo = () => {
         firstLanguage == null || level == null ||
         programmingLanguages == null || convAgents == null) {
         window.alert('There is an unanswered question. Please report this error to the experimenter.');
-        window.alert('Collected answers: ', userID, age, sex, genderTextBox, firstLanguage, level, programmingLanguages, programmingLanguagesTextBox, convAgents, convAgentsTextBox);
+        window.alert('Collected answers: ' + userID + '; ' + age + '; ' + sex + '; ' + genderTextBox +
+            '; ' + firstLanguage + '; ' + level + '; ' + programmingLanguages + '; ' +
+            programmingLanguagesTextBox + '; ' + convAgents + '; ' + convAgentsTextBox);
     } else {
         // set advanced / not advanced in local storage for stages-process.js:
-        if (level == 'advanced'){
+        if (level == 'advanced') {
             localStorage.setItem('isAdvanced', JSON.stringify({
                 value: true
             }));
@@ -34,6 +36,10 @@ let submitAndGo = () => {
                 value: false
             }));
         }
+
+        // todo del:
+        window.alert('Survey data is not being stored. TODO: @Kevin store data in server.');
+
         let url = 'practice-info';
         window.open(url, '_self');
     }
