@@ -3,7 +3,9 @@
 // Once the DOM has finished loading, do stuff:
 document.addEventListener('DOMContentLoaded', (event) => {
 	// focus on the first input element
-	document.getElementsByClassName('answer').item(0).focus();
+	if (document.getElementsByClassName('answer').item(0)) {
+		document.getElementsByClassName('answer').item(0).focus();
+	}
 
 	// disable the submit button:
 	setSubmitBtn('answer');

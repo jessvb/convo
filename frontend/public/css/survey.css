@@ -30,6 +30,9 @@ select {
 
 .answer {
     display: flex;
+}
+
+.wide {
     width: 150%;
 }
 

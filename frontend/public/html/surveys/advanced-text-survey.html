@@ -6,7 +6,7 @@
     <!-- Use mobile-aware viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Survey: Text-based System</title>
+    <title>System Survey</title>
 
     <!-- Load style sheets -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
@@ -24,165 +24,16 @@
             <h1>Conversational Programming Experiment</h1>
         </div>
 
-        <div id="info">
-            <h2>Text-based System Survey</h2>
-            <h3>Advanced Stage</h3>
-            <p>
-                How strongly do you agree with the following statements with regards to your experience with the
-                <strong>text-based</strong> system (i.e., the typing-only system)?
-            </p>
+        <div id="info"></div>
 
-            <div class="likert-wrap">
-                <form action="">
-                    <label class="statement">
-                        I found it difficult to complete the goal with the text-based system.
-                    </label>
-                    <ul class='likert answer' id="l1">
-                        <li>
-                            <input type="radio" name="l1" value="strong_agree">
-                            <label>Strongly agree</label>
-                        </li>
-                        <li>
-                            <input type="radio" name="l1" value="strong_agree">
-                            <label>Agree</label>
-                        </li>
-                        <li>
-                            <input type="radio" name="l1" value="strong_agree">
-                            <label>Neutral</label>
-                        </li>
-                        <li>
-                            <input type="radio" name="l1" value="disagree">
-                            <label>Disagree</label>
-                        </li>
-                        <li>
-                            <input type="radio" name="l1" value="strong_agree">
-                            <label>Strongly disagree</label>
-                        </li>
-                    </ul>
-
-                    <label class="statement">
-                        I found programming with the text-based system difficult to use.
-                    </label>
-                    <ul class='likert answer' id="l2">
-                        <li>
-                            <input type="radio" name="l2" value="strong_agree">
-                            <label>Strongly agree</label>
-                        </li>
-                        <li>
-                            <input type="radio" name="l2" value="strong_agree">
-                            <label>Agree</label>
-                        </li>
-                        <li>
-                            <input type="radio" name="l2" value="strong_agree">
-                            <label>Neutral</label>
-                        </li>
-                        <li>
-                            <input type="radio" name="l2" value="disagree">
-                            <label>Disagree</label>
-                        </li>
-                        <li>
-                            <input type="radio" name="l2" value="strong_agree">
-                            <label>Strongly disagree</label>
-                        </li>
-                    </ul>
-
-                    <label class="statement">
-                        I am satisfied programming with the text-based system.
-                    </label>
-                    <ul class='likert answer' id="l3">
-                        <li>
-                            <input type="radio" name="l3" value="strong_agree">
-                            <label>Strongly agree</label>
-                        </li>
-                        <li>
-                            <input type="radio" name="l3" value="strong_agree">
-                            <label>Agree</label>
-                        </li>
-                        <li>
-                            <input type="radio" name="l3" value="strong_agree">
-                            <label>Neutral</label>
-                        </li>
-                        <li>
-                            <input type="radio" name="l3" value="disagree">
-                            <label>Disagree</label>
-                        </li>
-                        <li>
-                            <input type="radio" name="l3" value="strong_agree">
-                            <label>Strongly disagree</label>
-                        </li>
-                    </ul>
-
-                    <label class="statement">
-                        I found programming with the text-based system efficient to use.
-                    </label>
-                    <ul class='likert answer' id="l4">
-                        <li>
-                            <input type="radio" name="l4" value="strong_agree">
-                            <label>Strongly agree</label>
-                        </li>
-                        <li>
-                            <input type="radio" name="l4" value="strong_agree">
-                            <label>Agree</label>
-                        </li>
-                        <li>
-                            <input type="radio" name="l4" value="strong_agree">
-                            <label>Neutral</label>
-                        </li>
-                        <li>
-                            <input type="radio" name="l4" value="disagree">
-                            <label>Disagree</label>
-                        </li>
-                        <li>
-                            <input type="radio" name="l4" value="strong_agree">
-                            <label>Strongly disagree</label>
-                        </li>
-                    </ul>
-
-                    <h2>Text-based System Survey</h2>
-                    <h3>Advanced Stage</h3>
-                    <p width>
-                        Answer the following questions with regards to your experience with the
-                        <strong>text-based</strong> system (i.e., the typing-only system).
-                    </p>
-
-                    <label class="statement">
-                        What did you like about programming with the text-based system?
-                    </label>
-                    <textarea class="answer" id="s1" type="text" placeholder="I liked..."></textarea>
-
-                    <label class="statement">
-                        What was frustrating about programming with the text-based system? How could we make it less
-                        frustrating?
-                    </label>
-                    <textarea class="answer" id="s1" type="text" placeholder="You could improve the system by..."></textarea>
-
-                    <label class="statement">
-                        What did you wish you could say to the agent? What didn’t the agent understand?
-                    </label>
-                    <textarea class="answer" id="s1" type="text" placeholder="I wish I could have said things like..."></textarea>
-
-                    <label class="statement">
-                        What features can we add, change, or remove to make the system better?
-                    </label>
-                    <textarea class="answer" id="s1" type="text" placeholder="You could add..."></textarea>
-
-
-                    <div id="button-container">
-                        <button type="button" class="btn btn-primary submit" id="btn-next">
-                            Next
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-        </div>
+    </div>
 
     </div>
 </body>
 
 <tail>
+    <script src="js/stage-survey.js"></script>
     <script src="js/survey.js"></script>
-    <script src="js/demographic-survey.js"></script>
 </tail>
 
 </html>
