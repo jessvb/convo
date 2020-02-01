@@ -306,9 +306,11 @@ bugs_test = [
     "five"
 ]
 
-for i, message in enumerate(messages):
+for i, message in enumerate(messages3):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
         logging.info(res)
     time.sleep(1)
+
+time.sleep(5)
