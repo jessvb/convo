@@ -21,8 +21,8 @@ let submitAndGo = () => {
     if (userID == null || uid == null || age == null || sex == null ||
         firstLanguage == null || level == null ||
         programmingLanguages == null || convAgents == null) {
-        console.error('There is an unanswered question. Please report this error to the experimenter.');
-        console.error('Collected answers: ', userID, age, sex, genderTextBox, firstLanguage, level, programmingLanguages, programmingLanguagesTextBox, convAgents, convAgentsTextBox);
+        window.alert('There is an unanswered question. Please report this error to the experimenter.');
+        window.alert('Collected answers: ', userID, age, sex, genderTextBox, firstLanguage, level, programmingLanguages, programmingLanguagesTextBox, convAgents, convAgentsTextBox);
     } else {
         // set advanced / not advanced in local storage for stages-process.js:
         if (level == 'advanced'){

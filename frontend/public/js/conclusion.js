@@ -6,9 +6,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         // Log the emails + isAdvanced to the server
         var email = document.getElementById('email-textbox').value;
         var isAdvanced = JSON.parse(localStorage.getItem('isAdvanced')).value;
-        console.log("email: " + email);
-        console.log("isAdvanced: " + isAdvanced);
-        console.error("TODO: @Kevin: Log the emails + isAdvanced to the server");
+        window.alert("TODO: @Kevin: Log the emails + isAdvanced to the server. " + email + ' ' + isAdvanced);
 
         // change text to just say thank you
         document.getElementById('info').innerHTML = "<br><h2>Thank you for participating!</h2>";
