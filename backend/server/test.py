@@ -308,14 +308,14 @@ bugs_test = [
 bugs_test2 = [
     "I want to create a procedure called hello world",
     "say",
-    "hello world"
+    "hello world",
     "done",
     "run hello world"
 ]
 
-for i, message in enumerate(bugs_test2):
+for i, message in enumerate(messages):
     logging.info(message)
-    old_context = copy.deepcopy(dm.context)
+    # old_context = copy.deepcopy(dm.context)
     res = dm.handle_message(message)
     if res:
         logging.info(res)

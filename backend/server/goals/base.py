@@ -1,7 +1,7 @@
 import re
 import logging
 from helpers import to_snake_case
-from models import *
+# from models import *
 
 class BaseGoal(object):
     def __init__(self, context):
@@ -59,7 +59,7 @@ class HomeGoal(BaseGoal):
 class ActionGoal(BaseGoal):
     def __init__(self, context):
         super().__init__(context)
-        assert isinstance(self.context.current, Procedure)
+        # assert isinstance(self.context.current, Procedure)
         self.procedure = self.context.current
         self.variables = self.procedure.variables
 
