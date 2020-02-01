@@ -5,9 +5,11 @@ from client import *
 from userstudy import *
 
 practice_test = [
+    "run",
     "asdf",
     "create a procedure",
     "blah",
+    "create a procedure called hello world",
     "create a variable",
     "adfs",
     "run",
@@ -17,7 +19,8 @@ practice_test = [
     "done",
     "say",
     "hello world",
-    "done"
+    "done",
+    "run hello"
 ]
 
 novice_test = [
@@ -44,7 +47,10 @@ novice_test = [
     "no",
     "create a procedure called hi",
     "hi",
-    "done"
+    "done",
+    "run",
+    "adf",
+    "run pet sounds"
 ]
 
 logging.basicConfig(level=logging.INFO)
@@ -53,7 +59,19 @@ dm = UserStudyDialogManager("scenario", novice_scenario)
 client.dm = dm
 
 for i, message in enumerate(novice_test):
-    logging.debug(message)
+    print("===========================")
+    logging.info(f"Message: {message}")
+    logging.info(f"State: {dm.context.state}")
+    logging.info(f"Goal: {dm.context.current_goal}")
+    logging.info(f"Step: {dm.step}")
+    logging.info(f"Backup State: {dm.backup_context.state}")
+    logging.info(f"Backup Goal: {dm.backup_context.current_goal}")
     res = dm.handle_message(message)
     if res:
-        logging.debug(res)
+        print("---------------------------------")
+        logging.info(f"Response: {res}")
+        logging.info(f"State: {dm.context.state}")
+        logging.info(f"Goal: {dm.context.current_goal}")
+        logging.info(f"Step: {dm.step}")
+        logging.info(f"Backup State: {dm.backup_context.state}")
+        logging.info(f"Backup Goal: {dm.backup_context.current_goal}")

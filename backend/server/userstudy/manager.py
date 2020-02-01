@@ -25,7 +25,6 @@ class UserStudyDialogManager(DialogManager):
             self.context.reset()
             self.reference = DialogManager(sid)
             self.step = 0
-            self.backup_context = copy.deepcopy(self.context)
         self.backup_context = copy.deepcopy(self.context)
         return "Conversation has been reset. What do you want to do first?"
 
@@ -66,48 +65,52 @@ class UserStudyDialogManager(DialogManager):
             return "I didn't quite catch that. Please follow the instructions and try again!"
 
     def handle_goal(self):
-        if self.current_goal() is None:
-            self.backup_context = copy.deepcopy(self.context)
-            return super().handle_goal()
-        else:
-            if not isinstance(self.immediate_goal, GetInputGoal):
-                self.backup_context = copy.deepcopy(self.context)
+        backup_reference_context = copy.deepcopy(self.reference.context)
 
+        if self.current_goal() is None:
+            goal = self.context.parsed
+            if goal is None or not isinstance(goal, BaseGoal):
+                response = "I didn't understand what you were saying. Please try again."
+            elif goal.error:
+                self.reset(copy.deepcopy(self.backup_context))
+                response = "I think your action is slightly wrong. Please follow the instructions and try again!"
+            elif goal.is_complete:
+                response = goal.complete()
+            else:
+                response = goal.message
+                self.context.add_goal(goal)
+        else:
             goal = self.current_goal()
             goal.advance()
 
             if goal.error or self.last_parsed_goal.error:
                 self.reset(copy.deepcopy(self.backup_context))
-                return "I think your action is slightly wrong. Please follow the instructions and try again!"
+                response = "I think your action is slightly wrong. Please follow the instructions and try again!"
             elif goal.is_complete:
                 response = goal.complete()
                 self.context.goals.pop()
             else:
                 response = goal.message
 
-            backup_reference_context = copy.deepcopy(self.reference.context)
-            if not isinstance(self.immediate_goal, GetInputGoal) and not self.last_parsed_goal.error:
-                next_message = self.next_message
-                self.reference.handle_message(next_message)
+        if not isinstance(self.immediate_goal, GetInputGoal) and not self.last_parsed_goal.error:
+            next_message = self.next_message
+            self.reference.handle_message(next_message)
 
-            if isinstance(self.immediate_goal, GetActionsGoal):
-                if self.immediate_goal.actions != self.reference.immediate_goal.actions:
-                    self.reset(copy.deepcopy(self.backup_context))
-                    self.reference.reset(backup_reference_context)
-                    self.step = max(self.step - 1, 0)
-                    return "Not the right action."
+        if isinstance(self.immediate_goal, GetActionsGoal):
+            wrong_procedure = isinstance(self.last_parsed_goal, CreateProcedureGoal) and self.context.current.name != self.reference.context.current.name
+            wrong_action = self.immediate_goal.actions != self.reference.immediate_goal.actions
 
-            return response
+            if wrong_procedure or wrong_action:
+                self.reset(copy.deepcopy(self.backup_context))
+                self.reference.reset(backup_reference_context)
+                self.step = max(self.step - 1, 0)
+                return "Not the right procedure." if wrong_procedure else "Not the right action."
+
+        return response
 
     def handle_message(self, message):
         if self.step >= len(self.scenario):
             return super().handle_message(message)
-
-        print("===========================")
-        logging.info(f"Message: {message}")
-        logging.info(f"State: {self.context.state}")
-        logging.info(f"Goal: {self.context.current_goal}")
-        logging.info(f"Step: {self.step}")
 
         self.context.add_message(message)
 
@@ -130,12 +133,9 @@ class UserStudyDialogManager(DialogManager):
         if response:
             return response
 
-        response = self.handle_goal()
+        if not isinstance(self.immediate_goal, GetInputGoal):
+            self.backup_context = copy.deepcopy(self.context)
 
-        print("---------------------------------")
-        logging.info(f"Response: {response}")
-        logging.info(f"State: {self.context.state}")
-        logging.info(f"Goal: {self.context.current_goal}")
-        logging.info(f"Step: {self.step}")
+        response = self.handle_goal()
 
         return response
