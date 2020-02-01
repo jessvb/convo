@@ -44,8 +44,3 @@ docker-compose up --build
 
 Now, head to `http://localhost:8080`.
 
-## TODO
-- [ ] Choose a good name (convercode's just a temp name :wink: cocoder? convercoder? coprogrammer? something totally different? feel free to add ideas!)
-- [X] Initialize repo :sunglasses:
-- [X] Add website/GUI to subfolder, "frontend"
-- [X] Add Rasa to subfolder, "backend"
