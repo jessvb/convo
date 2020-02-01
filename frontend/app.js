@@ -38,7 +38,7 @@ if (process.env.NODE_ENV && process.env.NODE_ENV === "production") {
 }
 
 app.get('/', (req, res) => res.sendFile(path.resolve('public/html/home.html')));
-app.get('/demographic-survey', (req, res) => res.sendFile(path.resolve('public/html/demographic-survey.html')));
+app.get('/demographic-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/demographic-survey.html')));
 app.get('/conclusion', (req, res) => res.sendFile(path.resolve('public/html/conclusion.html')));
 
 app.get('/practice-info', (req, res) => res.sendFile(path.resolve('public/html/stage-info/practice-info.html')));
