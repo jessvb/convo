@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!-- Use mobile-aware viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>General Information</title>
+
+    <!-- Load style sheets -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Load javascript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+    <div id="site-container" class="">
+        <div id="title">
+            <h1>Advanced Stage</h1>
+        </div>
+        <div id="info">
+            <ul>
+                <li>
+                    Since you self-identified as an advanced programmer, you will now complete a more advanced task
+                    <strong>without guidance</strong>. The task will be similar to the novice task, but will involve
+                    programming a loop.
+                </li>
+                <li>The <strong>order</strong> in which you complete the tasks will be <strong>randomized</strong> (you
+                    may be asked to complete the task using just voice first, voice/text first or just text first.)
+                </li>
+                <li><strong>Guidance</strong> will be shown on the <strong>left side of the screen</strong>. This will
+                    change depending on the context of the conversation.
+                </li>
+                <li>Please remember that we are <strong>evaluating and comparing the different systems</strong>, not
+                    your abilities.
+                </li>
+            </ul>
+        </div>
+
+        <div id="button-container">
+            <button type="button" id="btn-next-stage" class="btn btn-primary">
+                Begin Advanced Stage
+            </button>
+        </div>
+    </div>
+</body>
+
+<tail>
+    <script>
+        // reset currstage, doneSurvey and completed parts
+        localStorage.setItem('currStage', 'advanced');
+        localStorage.setItem('doneSurvey', JSON.stringify({
+            value: false
+        }));
+        localStorage.setItem('completedParts', JSON.stringify({
+            parts: []
+        }));
+    </script>
+    <script src="js/stages-process.js"></script>
+</tail>
+
+</html>

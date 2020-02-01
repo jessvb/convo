@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!-- Use mobile-aware viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>General Information</title>
+
+    <!-- Load style sheets -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Load javascript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+    <div id="site-container" class="">
+        <div id="title">
+            <h1>Practice Stage</h1>
+        </div>
+        <div id="info">
+            <ul>
+                <li>
+                    You’re going to learn how to converse with the conversational agent and <strong>program a simple
+                        <i>Hello World</i> program</strong> in three slightly different ways: by speaking, by typing,
+                    and by speaking and/or typing (you choose).
+                </li>
+                <li>The <strong>order</strong> in which you complete the tasks will be <strong>randomized</strong> (you
+                    may be asked to complete the task using just voice first, voice/text first or just text first.)
+                </li>
+                <ul>
+                    <li>
+                        In the <b>voice</b> system, you can click a button or press the spacebar to say commands
+                        to the agent.
+                    </li>
+                    <li>
+                        In the <b>text</b> system, you can type out commands to the agent.
+                    </li>
+                    <li>
+                        In the <b>voice + text</b> system, you can click a button or press the spacebar to say
+                        commands or type out commands to the agent.
+                    </li>
+                </ul>
+                <li><strong>Guidance</strong> will be shown on the <strong>left side of the screen</strong>. This will
+                    change depending on the context of the conversation.
+                </li>
+                <li>After each practice stage, you may play around with the system in a “sandbox mode” to see how it
+                    works.!
+                </li>
+            </ul>
+        </div>
+
+        <div id="button-container">
+            <button type="button" id="btn-next-stage" class="btn btn-primary">
+                Begin Practice
+            </button>
+        </div>
+    </div>
+</body>
+
+<tail>
+    <script>
+        // reset currstage, doneSurvey and completed parts
+        localStorage.setItem('currStage', 'practice');
+        localStorage.setItem('doneSurvey', JSON.stringify({
+            value: false
+        }));
+        localStorage.setItem('completedParts', JSON.stringify({
+            parts: []
+        }));
+    </script>
+    <script src="js/stages-process.js"></script>
+</tail>
+
+</html>

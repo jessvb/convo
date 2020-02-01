@@ -17,13 +17,31 @@ let submitAndGo = () => {
     let convAgents = document.getElementById('agents-select').value;
     let convAgentsTextBox = document.getElementById('agents-textbox').value;
 
+
     if (userID == null || uid == null || age == null || sex == null ||
         firstLanguage == null || level == null ||
         programmingLanguages == null || convAgents == null) {
-        console.error('There is an unanswered question. Please report this error to the experimenter.');
-        console.error('Collected answers: ', userID, age, sex, genderTextBox, firstLanguage, level, programmingLanguages, programmingLanguagesTextBox, convAgents, convAgentsTextBox);
+        window.alert('There is an unanswered question. Please report this error to the experimenter.');
+        window.alert('Collected answers: ' + userID + '; ' + age + '; ' + sex + '; ' + genderTextBox +
+            '; ' + firstLanguage + '; ' + level + '; ' + programmingLanguages + '; ' +
+            programmingLanguagesTextBox + '; ' + convAgents + '; ' + convAgentsTextBox);
     } else {
-        window.location.href = 'experiments';
+        // set advanced / not advanced in local storage for stages-process.js:
+        if (level == 'advanced') {
+            localStorage.setItem('isAdvanced', JSON.stringify({
+                value: true
+            }));
+        } else {
+            localStorage.setItem('isAdvanced', JSON.stringify({
+                value: false
+            }));
+        }
+
+        // todo del:
+        window.alert('Survey data is not being stored. TODO: @Kevin store data in server.');
+
+        let url = 'practice-info';
+        window.open(url, '_self');
     }
 };
 
@@ -33,7 +51,7 @@ let submitAndGo = () => {
 // Opening Survey submission function
 // submits to the google form at this URL:
 // docs.google.com/forms/d/1cjwOdJUqsqpqsWqllwyK2MYCzhkp5lb_ElrvrltfuLM/edit
-let sendOpeningSurvey = (userid, uid, age, sex, computerusage, pointingdevice) => {
+let sendDemographicSurvey = (userid, uid, age, sex, computerusage, pointingdevice) => {
     var formid = "e/1FAIpQLScd3bGWrwzLRGFvO2Vn8czBQcCdYkZd5EUt1hccNeiAd_aoiA";
     var data = {
         "entry.232033829": userid,

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Conversational Programming Experiment</title>
+
+    <!-- Use mobile-aware viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Load style sheets -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/experiment.css">
+
+    <!-- Load any supplemental Javascript libraries here -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <!-- TODO: delete from here until next comment -->
+    <h2>Learning How to Program Conversationally</h2>
+    <h3>Novice Stage: Voice</h3>
+    <div id="button-container">
+        <button type="button" id="btn-next-stage" class="btn btn-primary">
+            Next Stage
+        </button>
+    </div>
+    <!-- TODO: uncomment the stuff below -->
+
+    <!-- <div id="title">
+        <h2>Learning How to Program Conversationally</h2>
+        <h3>Novice Stage: Voice</h3>
+    </div>
+    <div id="experiment-container">
+        <div id="sidebar-container" class="grid-container">
+            <div id="sidebar-tutorial"></div>
+            <div id="sidebar">
+                <div><b>You are in sandbox mode.</b></div>
+                <div><em>Stuck? If stuck for 5 minutes, say "I need help".</em></div>
+                <div id="example-programs"></div>
+                <div id="example-actions"></div>
+            </div>
+        </div>
+        <div id="voice-text-container" class="grid-container">
+            <div id="conversation">
+                <div class="space-filler"></div>
+            </div>
+            <div id="input-container">
+                <div class="microphone">
+                    <button type="button" id="btn-record">
+                        <div>Hold Spacebar to Talk</div>
+                        <div id="recording-status"></div>
+                    </button>
+                </div>
+                <div class="textbox">
+                    <input type="text" id="textbox" placeholder="Type here..."/>
+                    <button type="button" onclick="submitText()" id="btn-textbox">Enter</button>
+                </div>
+            </div>
+        </div>
+    </div> -->
+</body>
+
+<tail>
+    <script>
+        localStorage.setItem('currStage', 'novice');
+        var prevCompletedParts = JSON.parse(localStorage.getItem('completedParts')).parts;
+        localStorage.setItem('completedParts', JSON.stringify({
+            parts: prevCompletedParts.concat('voice')
+        }));
+        localStorage.setItem('doneSurvey', JSON.stringify({
+            value: false
+        }));
+    </script>
+    <script src="js/socket.js"></script>
+    <script src="js/experiment.js"></script>
+    <script src="js/stream.js"></script>
+    <script src="js/stages-process.js"></script>
+</tail>
+
+</html>

@@ -3,7 +3,9 @@
 // Once the DOM has finished loading, do stuff:
 document.addEventListener('DOMContentLoaded', (event) => {
 	// focus on the first input element
-	document.getElementsByClassName('answer').item(0).focus();
+	if (document.getElementsByClassName('answer').item(0)) {
+		document.getElementsByClassName('answer').item(0).focus();
+	}
 
 	// disable the submit button:
 	setSubmitBtn('answer');
@@ -18,12 +20,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 	// add event listener for keystroke etc. such that we can tell if the user has
 	// entered information into the input boxes before submitting
-    // get all input boxes, check if they all have values
-    // enable or disable the submit button:
-    document.oninput = () => setSubmitBtn('answer');
+	// get all input boxes, check if they all have values
+	// enable or disable the submit button:
+	document.oninput = () => setSubmitBtn('answer');
 
 	// This ensures the radio button changes also trigger setSubmitBtn
-    document.onchange = () => setSubmitBtn('answer');
+	document.onchange = () => setSubmitBtn('answer');
 });
 
 /**
@@ -34,7 +36,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
  *                      you want to check to see if they have value entered
  */
 let setSubmitBtn = (inputClassName) => {
-    let button = getVisibleSubmitBtn();
+	let button = getVisibleSubmitBtn();
 	// check if there's a visible submit button on the page (if not, don't do
 	// anything)
 	if (button != null) {
@@ -78,7 +80,7 @@ let setSubmitBtn = (inputClassName) => {
 		// enable/disable submit btn
 		button.disabled = !formCompleted;
 	}
-}
+};
 
 /**
  * Returns the submit button that is visible in the DOM (or null if no visible
@@ -97,7 +99,7 @@ let getVisibleSubmitBtn = () => {
 		}
 	}
 	return visBtn;
-}
+};
 
 /**
  * Get the selected radio button value. Returns null if none selected.
@@ -113,7 +115,7 @@ let getSelectedRadio = (radioGroupName) => {
 		}
 	}
 	return selectedVal;
-}
+};
 
 /**
  * Returns true if the provided element is visible in the DOM.
