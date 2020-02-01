@@ -42,13 +42,13 @@ app.get('/conclusion', (req, res) => res.sendFile(path.resolve('public/html/conc
 
 // Surveys:
 app.get('/demographic-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/demographic-survey.html')));
-app.get('/novice-text-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/novice-text-survey.html')));
-app.get('/novice-voice-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/novice-voice-survey.html')));
-app.get('/novice-voice-text-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/novice-voice-text-survey.html')));
-app.get('/advanced-text-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/advanced-text-survey.html')));
-app.get('/advanced-voice-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/advanced-voice-survey.html')));
-app.get('/advanced-voice-text-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/advanced-voice-text-survey.html')));
-app.get('/overall-voice-text-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/overall-voice-text-survey.html')));
+app.get('/novice-text-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/stage-survey-template.html')));
+app.get('/novice-voice-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/stage-survey-template.html')));
+app.get('/novice-voice-text-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/stage-survey-template.html')));
+app.get('/advanced-text-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/stage-survey-template.html')));
+app.get('/advanced-voice-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/stage-survey-template.html')));
+app.get('/advanced-voice-text-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/stage-survey-template.html')));
+app.get('/comparison-survey', (req, res) => res.sendFile(path.resolve('public/html/surveys/comparison-survey.html')));
 
 // Information pages:
 app.get('/practice-info', (req, res) => res.sendFile(path.resolve('public/html/stage-info/practice-info.html')));

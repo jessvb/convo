@@ -65,7 +65,11 @@
 
 <tail>
     <script>
+        // reset currstage, doneSurvey and completed parts
         localStorage.setItem('currStage', 'practice');
+        localStorage.setItem('doneSurvey', JSON.stringify({
+            value: false
+        }));
         localStorage.setItem('completedParts', JSON.stringify({
             parts: []
         }));

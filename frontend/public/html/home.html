@@ -113,6 +113,15 @@
 </body>
 
 <tail>
+    <script>
+        // reset local storage
+        localStorage.setItem('currStage', '');
+        localStorage.setItem('completedParts', '{"parts":[]}');
+        localStorage.setItem('isAdvanced', '{"value":null}');
+        localStorage.setItem('doneSurvey', null);
+        localStorage.setItem('numLikertQs', -1);
+        localStorage.setItem('numShortAnsQs', -1);
+    </script>
     <script src="js/home.js"></script>
 </tail>
 

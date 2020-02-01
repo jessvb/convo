@@ -72,6 +72,9 @@
         localStorage.setItem('completedParts', JSON.stringify({
             parts: prevCompletedParts.concat('voice')
         }));
+        localStorage.setItem('doneSurvey', JSON.stringify({
+            value: false
+        }));
     </script>
     <script src="js/socket.js"></script>
     <script src="js/experiment.js"></script>
