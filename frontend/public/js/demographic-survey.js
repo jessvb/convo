@@ -3,10 +3,6 @@
  * the next page.
  */
 let submitAndGo = () => {
-    // Get the user id for this computer and person:
-    let userID = localStorage.getItem('userID');
-    let uid = localStorage.getItem('uid');
-
     let age = document.getElementById('age').value;
     let sex = document.getElementById('sex').value;
     let genderTextBox = document.getElementById('gender-textbox').value;
@@ -17,30 +13,33 @@ let submitAndGo = () => {
     let convAgents = document.getElementById('agents-select').value;
     let convAgentsTextBox = document.getElementById('agents-textbox').value;
 
-    if (userID == null || uid == null || age == null || sex == null ||
+    if (age == null || sex == null ||
         firstLanguage == null || level == null ||
         programmingLanguages == null || convAgents == null) {
         window.alert('There is an unanswered question. Please report this error to the experimenter.');
-        window.alert('Collected answers: ' + userID + '; ' + age + '; ' + sex + '; ' + genderTextBox +
+        window.alert('Collected answers: ' + age + '; ' + sex + '; ' + genderTextBox +
             '; ' + firstLanguage + '; ' + level + '; ' + programmingLanguages + '; ' +
             programmingLanguagesTextBox + '; ' + convAgents + '; ' + convAgentsTextBox);
     } else {
         // set advanced / not advanced in local storage for stages-process.js:
-        if (level == 'advanced') {
-            localStorage.setItem('isAdvanced', JSON.stringify({
-                value: true
-            }));
-        } else {
-            localStorage.setItem('isAdvanced', JSON.stringify({
-                value: false
-            }));
+        localStorage.setItem('isAdvanced', JSON.stringify({ value: level == 'advanced' }));
+
+        surveyData = {
+            "age": age,
+            "sex": sex == null ? (genderTextBox == null ? null : genderTextBox) : sex,
+            "first_language": firstLanguage,
+            "level": level,
+            "programming_languages": programmingLanguages,
+            "conv_agents": convAgents
         }
+        console.log(surveyData);
+        console.log(programmingLanguagesTextBox);
+        console.log(genderTextBox);
+        console.log(convAgentsTextBox);
+        socketApi.emit("survey", { "sid": localStorage.getItem("sid"), "data": surveyData, "type": "demographics" });
+        // window.alert('Survey data is not being stored. TODO: @Kevin store data in server.');
 
-        // todo del:
-        window.alert('Survey data is not being stored. TODO: @Kevin store data in server.');
-
-        let url = 'practice-info';
-        window.open(url, '_self');
+        window.location.href = '/practice-info';
     }
 };
 
@@ -67,15 +66,13 @@ let showOtherTextBox = (sel, id) => {
         if (opt.value === "other" && opt.selected) {
             ansElm.style.display = 'block';
             // if there's a paired question element, then display it too:
-            if (pairedQuesElm) {
+            if (pairedQuesElm)
                 pairedQuesElm.style.display = 'block';
-            }
         } else if (opt.value === "other" && !opt.selected) {
             ansElm.style.display = 'none';
             // if there's a paired question element, then hide it too:
-            if (pairedQuesElm) {
+            if (pairedQuesElm)
                 pairedQuesElm.style.display = 'none';
-            }
         }
     }
 };

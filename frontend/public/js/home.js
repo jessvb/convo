@@ -11,11 +11,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     localStorage.setItem('userID', userID);
 
     // set the button url
-    let url = 'demographic-survey';
     let button = document.getElementById('btn-begin');
-    button.onclick = () => {
-        window.open(url, '_self');
-    };
+    button.onclick = () => { window.location.href = "/demographic-survey"; };
 });
 
 // Genrates or remembers a somewhat-unique ID with distilled user-agent info.

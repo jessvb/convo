@@ -63,3 +63,10 @@ def message(data):
         }
 
         sio.emit("response", response, room=str(sid))
+
+@sio.on("survey")
+def survey(data):
+    sid = data.get("sid")
+    survey_type = data.get("type")
+    survey_data = data.get("data")
+    sio.emit("surveySaved", response, room=str(sid))

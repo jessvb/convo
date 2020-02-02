@@ -51,8 +51,7 @@ let submitAndGo = () => {
             likertAns + '; ' + shortAns);
 
         // getNextStageUrl is found in stages-process.js
-        let url = getNextStageUrl(currStage, completedParts, true, isAdvanced);
-        window.open(url, '_self');
+        window.location.href = getNextStageUrl(currStage, completedParts, true, isAdvanced);
     }
 };
 
