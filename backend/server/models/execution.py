@@ -147,3 +147,49 @@ class Execution(object):
                 self.step -= 1
         else:
             raise NotImplementedError
+
+class InternalExecution(Execution):
+    def __init__(self, context, actions, inputs):
+        super().__init__(context, actions)
+        self.inputs = inputs
+        self.iterinputs = iter(inputs)
+        self.emits = []
+        self.original_length = len(actions)
+
+    def advance(self):
+        while self.step < len(self.actions):
+            action = self.actions[self.step]
+            try:
+                self.evaluate_action(action)
+                self.step += 1
+                if self.input_needed:
+                    message = next(self.iterinputs)
+                    number = parse_number(message)
+                    self.variables[self.input_needed] = number if number else message
+                    self.input_needed = None
+            except KeyError as e:
+                logger.info(f"Error detected: {str(e)}")
+                return "KeyError"
+            except ExecutionError as e:
+                logger.info(f"Error detected: {str(e)}")
+                return "ExecutionError"
+            except StopIteration as e:
+                logger.info(f"Error detected: {str(e)}")
+                return "Stop Iteration"
+
+            if len(self.actions) > self.original_length * 100:
+                logger.info(f"Detected a potential infinite loop.")
+                return "InfiniteLoop"
+
+        self.finish()
+        return None
+
+    def run(self):
+        logger.info("Currently testing the procedure actions.")
+        return self.advance()
+
+    def finish(self):
+        self.finished = True
+
+    def emit(self, event, data):
+        self.emits.append((event, data))

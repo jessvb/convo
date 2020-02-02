@@ -142,10 +142,12 @@ class UserStudyDialogManager(DialogManager):
 
     def handle_message(self, message):
         if self.step >= len(self.scenario):
+            logger.info(f"Finished the goal, so using default handling.")
             return super().handle_message(message)
 
         self.context.add_message(message)
 
+        logger.info(f"Handling help.")
         response = self.handle_help(message)
         if response:
             return response
@@ -153,14 +155,17 @@ class UserStudyDialogManager(DialogManager):
         if self.context.state == "executing":
             return self.handle_execution(message)
 
+        logger.info(f"Handling question.")
         response = self.handle_question(message)
         if response:
             return response
 
+        logger.info(f"Handling parsing.")
         response = self.handle_parse(message)
         if response:
             return response
 
+        logger.info(f"Checking goal.")
         response = self.check_goal(message)
         if response:
             return response
@@ -168,6 +173,59 @@ class UserStudyDialogManager(DialogManager):
         if not isinstance(self.immediate_goal, GetInputGoal):
             self.backup_context = copy.deepcopy(self.context)
 
+        logger.info(f"Handling goal.")
         response = self.handle_goal()
 
         return response
+
+class UserStudyAdvancedDialogManager(DialogManager):
+    def __init__(self, sid, inputs, check):
+        super().__init__(sid)
+        self.stage = "advanced"
+        self.inputs = inputs
+        self.check = check
+        logger.info(f"UserStudyDialogManager created for stage {self.stage}.")
+
+    def handle_goal(self):
+        if self.current_goal() is None:
+            response = super().handle_goal()
+        else:
+            logger.info(f"Handling goal {self.current_goal()}")
+            goal = self.current_goal()
+            goal.advance()
+            if goal.error:
+                logger.info(f"Error with the goal.")
+                response = goal.error
+                self.context.goals.pop()
+            elif goal.is_complete:
+                if isinstance(goal, EditGoal) or isinstance(goal, GetProcedureActionsGoal):
+                    logger.info(f"User done with editing or creating goal so checking procedure.")
+                    valid = self.check_procedure()
+                    procedure_name = self.context.current.name
+                    if not valid:
+                        goal.complete()
+                        self.context.goals.pop()
+                        return f"Hmm, I checked your procedure, and it doesn't seem to meet the goal. You can test the procedure by saying, \"run {procedure_name}\", or edit it by saying \"edit {procedure_name}\"."
+                    else:
+                        sio.emit("stageCompleted", room=str(self.sid))
+                        return f"Looks like you achieved the goal! You can try running the procedure by saying, \"run {procedure_name}\"."
+                response = goal.complete()
+                self.context.goals.pop()
+            else:
+                response = goal.message
+
+        return response
+
+    def check_procedure(self):
+        procedure = self.context.current
+        logger.info(f"Checking procedure {procedure.name}.")
+        execution = InternalExecution(self.context, procedure.actions, self.inputs)
+        logger.info(f"Internally executing procedure {procedure.name}.")
+        response = execution.run()
+        logger.info(f"Using the check function for unit testing procedure {procedure.name}.")
+        valid = self.check(execution, response, self.inputs)
+        if valid:
+            logger.info(f"Procedure {procedure.name} met the objectives.")
+        else:
+            logger.info(f"Procedure {procedure.name} did not meet the objectives.")
+        return valid

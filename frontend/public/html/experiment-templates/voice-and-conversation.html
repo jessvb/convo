@@ -50,6 +50,13 @@
 </body>
 
 <tail>
+    <script>
+        localStorage.setItem('currStage', 'sandbox');
+        localStorage.setItem('completedParts', []);
+        localStorage.setItem('doneSurvey', JSON.stringify({
+            value: false
+        }));
+    </script>
     <script src="js/socket.js"></script>
     <script src="js/experiment.js"></script>
     <script src="js/stream.js"></script>

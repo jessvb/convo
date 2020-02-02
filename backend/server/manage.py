@@ -10,7 +10,7 @@ from client import Client
 def join(data):
     if isinstance(data, str):
         sid = data
-        stage = "sandbox"
+        stage = None
     else:
         sid = request.sid if data.get("sid") is None else data.get("sid")
         stage = data.get("stage")
@@ -21,8 +21,14 @@ def join(data):
     client = socket_clients.get(sid, Client(sid))
     socket_clients[sid] = client
 
-    if stage and stage in userstudy_scenarios:
-        client.dm = UserStudyDialogManager(sid, stage, userstudy_scenarios[stage])
+    if stage:
+        if stage in ["novice", "practice"]:
+            client.dm = UserStudyDialogManager(sid, stage, userstudy_scenarios[stage])
+        elif stage == "advanced":
+            inputs, check = userstudy_scenarios[stage]
+            client.dm = UserStudyAdvancedDialogManager(sid, inputs, check)
+        else:
+            client.dm = DialogManager(sid)
     else:
         client.dm = DialogManager(sid)
 
