@@ -207,6 +207,15 @@
     padding-right: 0.5rem;
 }
 
+#instruction ol {
+    margin: 0px;
+}
+
+#instruction li {
+    padding-bottom: 0px;
+    padding-top: 2px;
+}
+
 #example-actions-list,
 #example-programs-list {
     display: none;
