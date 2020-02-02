@@ -71,8 +71,8 @@ class Execution(object):
             return
 
         try:
-            message = f" with the message: {data['message']}" if "message" in data else ""
-            logger.info(f"Emitting event {event} to client {self.context.sid}{message}.")
+            message = f" with the message: {data['message']}" if "message" in data else "."
+            logger.info(f"Emitting event {event} to client {self.context.sid}{message}")
             sio.emit(event, data, room=str(self.context.sid))
         except RuntimeError as e:
             logger.info(e)

@@ -3,25 +3,34 @@ from flask_socketio import join_room
 
 from app import app, sio, socket_clients, socket_sessions
 from dialog import DialogManager
+from userstudy import UserStudyDialogManager, userstudy_scenarios
 from client import Client
 
 @sio.on("join")
-def join(sid):
-    sid = request.sid if sid is None else sid
-    app.logger.info(f"Client {sid} connected.")
+def join(data):
+    sid = request.sid if data.get("sid") is None else data.get("sid")
+    stage = data.get("stage")
+    stage_log = f" and at the {stage} stage" if stage else ""
+    app.logger.info(f"Client {sid} has connected{stage_log}.")
+
     join_room(str(sid))
     client = socket_clients.get(sid, Client(sid))
     socket_clients[sid] = client
-    socket_sessions[request.sid] = sid
-    client.dm.reset()
+
+    if stage and stage in userstudy_scenarios:
+        client.dm = UserStudyDialogManager(sid, stage, userstudy_scenarios[stage])
+    else:
+        client.dm = DialogManager(sid)
+
+    socket_sessions[request.sid] = (sid, stage)
     sio.emit("joined", sid, room=str(sid))
 
 @sio.on("disconnect")
 def disconnect():
-    sid = socket_sessions.get(request.sid)
+    sid, stage = socket_sessions.get(request.sid)
     if sid:
         del socket_sessions[request.sid]
-        app.logger.info(f"Client {sid} disconnected.")
+        app.logger.info(f"Client {sid} disconnected from the {stage} stage.")
 
 @sio.on("message")
 def message(data):

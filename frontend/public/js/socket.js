@@ -2,7 +2,7 @@ const socket = io.connect("https://userstudy.appinventor.mit.edu");
 const socketApi = io.connect("https://userstudy.appinventor.mit.edu", { path: '/api/socket.io' })
 
 socketApi.on('connect', (data) => {
-    socketApi.emit('join', localStorage.getItem("sid"));
+    socketApi.emit('join', { "sid": localStorage.getItem("sid"), "stage": localStorage.getItem("currStage")});
 });
 
 socketApi.on('joined', (data) => {
