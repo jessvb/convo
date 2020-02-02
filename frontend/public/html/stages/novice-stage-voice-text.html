@@ -21,27 +21,15 @@
 </head>
 
 <body>
-    <!-- TODO: delete from here until next comment -->
-    <h2>Learning How to Program Conversationally</h2>
-    <h3>Novice Stage: Voice or Text</h3>
-    <div id="button-container">
-        <button type="button" id="btn-next-stage" class="btn btn-primary">
-            Next Stage
-        </button>
-    </div>
-    <!-- TODO: uncomment the stuff below -->
-
-    <!-- <div id="title">
+    <div id="title">
         <h2>Learning How to Program Conversationally</h2>
         <h3>Novice Stage: Voice or Text</h3>
     </div>
     <div id="experiment-container">
         <div id="sidebar-container" class="grid-container">
-            <div id="sidebar-tutorial"></div>
             <div id="sidebar">
-                <div><b>You are in sandbox mode.</b></div>
                 <div><em>Stuck? If stuck for 5 minutes, say "I need help".</em></div>
-                <div id="example-programs"></div>
+                <div id="instructions"></div>
                 <div id="example-actions"></div>
             </div>
         </div>
@@ -62,14 +50,18 @@
                 </div>
             </div>
         </div>
-    </div> -->
-
+    </div>
+    <div id="button-container" class="stage-button">
+        <button type="button" id="btn-next-stage" class="btn btn-primary">
+            Next Stage
+        </button>
+    </div>
 </body>
 
 <tail>
     <script>
         localStorage.setItem('currStage', 'novice');
-        var prevCompletedParts = JSON.parse(localStorage.getItem('completedParts')).parts;
+        let prevCompletedParts = JSON.parse(localStorage.getItem('completedParts')).parts;
         localStorage.setItem('completedParts', JSON.stringify({
             parts: prevCompletedParts.concat('voice-text')
         }));
@@ -81,6 +73,7 @@
     <script src="js/experiment.js"></script>
     <script src="js/stream.js"></script>
     <script src="js/stages-process.js"></script>
+    <script src="js/novice.js"></script>
 </tail>
 
 </html>

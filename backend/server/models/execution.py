@@ -11,7 +11,7 @@ from helpers import *
 logger = logging.getLogger("gunicorn.error")
 
 class Execution(object):
-    def __init__(self, context, actions):
+    def __init__(self, context, actions, to_emit=True):
         self.context = context
         self.actions = actions
         self.variables = {}
@@ -19,15 +19,23 @@ class Execution(object):
         self.input_needed = None
         self.thread_running = False
         self.finished = False
+        self.to_emit = to_emit
+        self.first_message_emitted = False
 
     def run(self, message=None):
         if self.input_needed and message:
-            self.variables[self.input_needed] = parse_number(message)
+            number = parse_number(message)
+            self.variables[self.input_needed] = number if number else message
             logger.info(f"Current variables: {str(self.variables)}")
             self.input_needed = None
         self.thread = threading.Thread(target=self.advance)
         self.thread.daemon = True
         self.thread_running = True
+
+        if not self.first_message_emitted:
+            self.emit("response", { "message": "Procedure started running.", "state": self.context.state, "speak": False })
+            self.first_message_emitted = True
+
         self.thread.start()
 
     def stop(self):
@@ -65,9 +73,12 @@ class Execution(object):
             self.finish("Procedure finished running.")
 
     def emit(self, event, data):
+        if not self.to_emit:
+            return
+
         try:
-            message = f" with the message: {data['message']}" if "message" in data else ""
-            logger.info(f"Emitting event {event} to client {self.context.sid}{message}.")
+            message = f" with the message: {data['message']}" if "message" in data else "."
+            logger.info(f"Emitting event {event} to client {self.context.sid}{message}")
             sio.emit(event, data, room=str(self.context.sid))
         except RuntimeError as e:
             logger.info(e)

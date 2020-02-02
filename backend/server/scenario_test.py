@@ -27,19 +27,19 @@ novice_test = [
     "create procedure",
     "pet sounds",
     "get user input",
-    "input",
+    "pet",
     "if dune is dog play the bark sound",
-    "if input is dog play the bark sound",
+    "if pet is dog play the bark sound",
     "dafsdf",
     "done",
     "no",
-    "if input is dog play the bark sound",
-    "while input is dog play sound",
-    "if input is dog play the sound",
+    "if pet is dog play the bark sound",
+    "while pet is dog play sound",
+    "if pet is dog play the sound",
     "bark",
-    "if input is cat play sound",
+    "if pet is cat play sound",
     "bark",
-    "if input is cat play sound",
+    "if pet is cat play sound",
     "meow",
     "asdf",
     "dafsdf",
@@ -53,12 +53,26 @@ novice_test = [
     "run pet sounds"
 ]
 
+novice_test2 = [
+    "create a procedure called pet sounds",
+    "get user input and save it as pet",
+    "if pet is dog play the bark sound",
+    "done",
+    "no",
+    "if pet is cat, play the meow sound",
+    "done",
+    "no",
+    "done",
+    "run pet sounds",
+    "dog"
+]
+
 logging.basicConfig(level=logging.INFO)
 client = Client("scenario")
-dm = UserStudyDialogManager("scenario", novice_scenario)
+dm = UserStudyDialogManager("scenario", "novice", novice_scenario)
 client.dm = dm
 
-for i, message in enumerate(novice_test):
+for i, message in enumerate(novice_test2):
     print("===========================")
     logging.info(f"Message: {message}")
     logging.info(f"State: {dm.context.state}")
@@ -75,3 +89,6 @@ for i, message in enumerate(novice_test):
         logging.info(f"Step: {dm.step}")
         logging.info(f"Backup State: {dm.backup_context.state}")
         logging.info(f"Backup Goal: {dm.backup_context.current_goal}")
+    time.sleep(3)
+
+time.sleep(5)

@@ -21,16 +21,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
 // Genrates or remembers a somewhat-unique ID with distilled user-agent info.
 let getUniqueId = () => {
     if (!('uid' in localStorage)) {
-        var browser = findFirstString(navigator.userAgent, [
+        let browser = findFirstString(navigator.userAgent, [
             'Seamonkey', 'Firefox', 'Chromium', 'Chrome', 'Safari', 'OPR', 'Opera',
             'Edge', 'MSIE', 'Blink', 'Webkit', 'Gecko', 'Trident', 'Mozilla'
         ]);
 
-        var os = findFirstString(navigator.userAgent, [
+        let os = findFirstString(navigator.userAgent, [
             'Android', 'iOS', 'Symbian', 'Blackberry', 'Windows Phone',
             'Windows', 'OS X', 'Linux', 'iOS', 'CrOS'
         ]).replace(/ /g, '_');
-        var unique = ('' + Math.random()).substr(2);
+        let unique = ('' + Math.random()).substr(2);
 
         localStorage['uid'] = `${os}-${browser}-${unique}`;
     }
@@ -40,7 +40,7 @@ let getUniqueId = () => {
 
 // Parse user agent string by looking for recognized substring.
 let findFirstString = (str, choices) => {
-    for (var j = 0; j < choices.length; j++) {
+    for (let j = 0; j < choices.length; j++) {
         if (str.indexOf(choices[j]) >= 0) {
             return choices[j];
         }

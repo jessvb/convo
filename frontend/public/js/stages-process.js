@@ -1,16 +1,16 @@
 // Once the DOM has finished loading, do stuff:
 document.addEventListener('DOMContentLoaded', (event) => {
-	var currStage = localStorage.getItem('currStage');
-	var completedParts = JSON.parse(localStorage.getItem('completedParts')).parts;
-	var doneSurvey = JSON.parse(localStorage.getItem('doneSurvey')).value;
-	var isAdvanced = JSON.parse(localStorage.getItem('isAdvanced')).value;
+	let currStage = localStorage.getItem('currStage');
+	let completedParts = JSON.parse(localStorage.getItem('completedParts')).parts;
+	let doneSurvey = JSON.parse(localStorage.getItem('doneSurvey')).value;
+	let isAdvanced = JSON.parse(localStorage.getItem('isAdvanced')).value;
 
-	var nextBtn = document.getElementById('btn-next-stage');
+	let nextBtn = document.getElementById('btn-next-stage');
 	if (nextBtn) {
-		nextBtn.addEventListener('click', function () {
-			var url = getNextStageUrl(currStage, completedParts, doneSurvey, isAdvanced);
+		nextBtn.onclick = () => {
+			let url = getNextStageUrl(currStage, completedParts, doneSurvey, isAdvanced);
 			window.open(url, '_self');
-		});
+		};
 	}
 });
 
@@ -22,8 +22,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
  * @param {*} doneSurvey : boolean of whether the user completed the survey for this part
  * @param {*} isAdvanced : true if the user is an advanced user
  */
-function getNextStageUrl(currStage, completedParts, doneSurvey, isAdvanced) {
-	var url = '';
+let getNextStageUrl = (currStage, completedParts, doneSurvey, isAdvanced) => {
+	let url = '';
 
 	if (currStage == 'finalSurvey') {
 		url = 'conclusion';
@@ -73,7 +73,7 @@ function getNextStageUrl(currStage, completedParts, doneSurvey, isAdvanced) {
 				if (completedParts.length < 1) {
 					url = getRandPartUrl(currStage, completedParts);
 				} else {
-					var currPart = completedParts[completedParts.length - 1];
+					let currPart = completedParts[completedParts.length - 1];
 					url = currStage + '-' + currPart + '-survey';
 				}
 				break;
@@ -90,12 +90,12 @@ function getNextStageUrl(currStage, completedParts, doneSurvey, isAdvanced) {
  * Helper function to get a random part, wrt completed parts and current stage.
  * If there's no parts left to complete, it returns null.
  */
-function getRandPartUrl(currStage, completedParts) {
-	var url = currStage + '-';
+let getRandPartUrl = (currStage, completedParts) => {
+	let url = currStage + '-';
 
 	// get a list of *uncompleted parts* so we can choose from them
-	var chooseNum = 3 - completedParts.length; // 3 types of stages to choose from (v,t,v+t)
-	var uncompletedParts = ['voice', 'text', 'voice-text'];
+	let chooseNum = 3 - completedParts.length; // 3 types of stages to choose from (v,t,v+t)
+	let uncompletedParts = ['voice', 'text', 'voice-text'];
 	if (completedParts.includes('voice')) {
 		uncompletedParts.splice(uncompletedParts.indexOf('voice'), 1);
 	}
@@ -110,7 +110,7 @@ function getRandPartUrl(currStage, completedParts) {
 	if (uncompletedParts.length < 1) {
 		url = null;
 	} else {
-		var rand = Math.floor(Math.random() * chooseNum); // returns a random integer from 0 to chooseNum
+		let rand = Math.floor(Math.random() * chooseNum); // returns a random integer from 0 to chooseNum
 		url += uncompletedParts[rand];
 	}
 	return url;

@@ -37,7 +37,6 @@
     </div>
     <div id="experiment-container">
         <div id="sidebar-container" class="grid-container">
-            <div id="sidebar-tutorial"></div>
             <div id="sidebar">
                 <div><b>You are in sandbox mode.</b></div>
                 <div><em>Stuck? If stuck for 5 minutes, say "I need help".</em></div>
@@ -69,7 +68,7 @@
 <tail>
     <script>
         localStorage.setItem('currStage', 'advanced');
-        var prevCompletedParts = JSON.parse(localStorage.getItem('completedParts')).parts;
+        let prevCompletedParts = JSON.parse(localStorage.getItem('completedParts')).parts;
         localStorage.setItem('completedParts', JSON.stringify({
             parts: prevCompletedParts.concat('voice-text')
         }));
