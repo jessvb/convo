@@ -29,6 +29,7 @@ class Execution(object):
         self.thread = threading.Thread(target=self.advance)
         self.thread.daemon = True
         self.thread_running = True
+        self.emit("response", { "message": "Procedure started running.", "state": self.context.state })
         self.thread.start()
 
     def stop(self):

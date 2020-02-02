@@ -55,7 +55,7 @@ novice_test = [
 
 logging.basicConfig(level=logging.INFO)
 client = Client("scenario")
-dm = UserStudyDialogManager("scenario", novice_scenario)
+dm = UserStudyDialogManager("scenario", "novice", novice_scenario)
 client.dm = dm
 
 for i, message in enumerate(novice_test):

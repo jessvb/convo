@@ -3,18 +3,6 @@ const synth = window.speechSynthesis;
 synth.cancel();
 let state = "home";
 
-const instructions_text = [
-    "Begin by typing or saying 'Hello'.",
-    "Then, type or say 'Start programming'.",
-    "Type or say 'Hello world!'.",
-]
-
-const tutorial_required_messages = [
-    "Hello",
-    "Start programming",
-    "Hello world!"
-]
-
 const action_commands = [{
         "title": "Create a Variable",
         "examples": [
@@ -198,8 +186,6 @@ socketApi.on('playSound', (data) => {
     audioPlayer.play();
 });
 
-let tutorial_step = 0;
-let tutorial = true;
 let voice;
 
 let checkQuery = (field, value) => {
@@ -222,36 +208,9 @@ let submitText = () => {
 }
 
 let submitMessage = (message, speak) => {
-    addUtter("user-utter", message)
-
-    if (tutorial)
-        handleTutorial(message, speak);
-    else
-        handleSubmit(message, speak);
+    addUtter("user-utter", message);
+    handleSubmit(message, speak);
 }
-
-let handleTutorial = (message, speak) => {
-    let correct = tutorial_required_messages[tutorial_step].toLowerCase().includes(message);
-
-    if (correct)
-        tutorial_step++;
-
-    if (message === "skip" || tutorial_step > instructions_text.length - 1) {
-        document.getElementById("sidebar-tutorial").style.display = "none";
-        document.getElementById("sidebar").style.display = "flex";
-        tutorial = false;
-        addUtter("agent-utter", "You have finished the tutorial!", speak);
-        addUtter("agent-utter", "What would you like to do now?", speak);
-    } else {
-        if (!correct)
-            addUtter('agent-utter', 'To advance, please follow the instructions on the left.', speak);
-        document.getElementById("sidebar-tutorial").innerHTML = `
-            <div><b>You are currently in practice mode.</b></div>
-            <div>${instructions_text[tutorial_step]}</div><br>
-            <div>If you want to skip the tutorial at any time, type or say 'Skip'.</div>
-        `
-    }
-};
 
 let handleSubmit = (message, speak) => {
     if (state === "executing" && message.toLowerCase().trim() === "stop")
@@ -294,43 +253,6 @@ let addUtter = (className, message, speak = true) => {
 };
 
 let addExamplePrograms = () => {
-    let programs = document.getElementById('example-programs-list');
-    programs.innerHTML = `
-        <div class="example-program">
-            <div class="program-title"><b>Hello World!</b></div>
-            <ol class="program-instructions">
-                <li>Say <em>"Create a procedure called hello"</em></li>
-                <li>Say <em>"Say hello world"</em></li>
-                <li>Say <em>"Done"</em></li>
-                <li>Say <em>"Run hello"</em></li>
-            </ol>
-        <div>`;
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    let textbox = document.getElementById("textbox");
-    if (textbox != null) {
-        textbox.onkeyup = (e) => {
-            e.preventDefault();
-            if (e.keyCode === 13)
-                submitText();
-        }
-    }
-
-    document.getElementById('example-actions').innerHTML = `
-        <div id="example-actions-heading">
-            <div><b>Things You Can Say To...</b></div>
-            <div id="example-actions-direction">&#9660</div>
-        </div>
-        <div id="example-actions-list"></div>`;
-    document.getElementById('example-actions-heading').onclick = () => {
-        let actionsList = document.getElementById('example-actions-list');
-        let displ = actionsList.style.display === 'block' ? 'none' : 'block';
-        document.getElementById('example-actions-direction').innerHTML = displ === 'none' ? "&#9660" : "&#9650";
-        actionsList.style.display = displ;
-    }
-    handleStateChange("home");
-
     document.getElementById('example-programs').innerHTML = `
         <div id="example-programs-heading">
             <div><b>Example Programs</b></div>
@@ -344,8 +266,38 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('example-programs-direction').innerHTML = displ === 'none' ? "&#9660" : "&#9650";
         programsList.style.display = displ;
     }
-    addExamplePrograms();
 
+    let programs = document.getElementById('example-programs-list');
+    programs.innerHTML = `
+        <div class="example-program">
+            <div class="program-title"><b>Hello World!</b></div>
+            <ol class="program-instructions">
+                <li>Say <em>"Create a procedure called hello"</em></li>
+                <li>Say <em>"Say hello world"</em></li>
+                <li>Say <em>"Done"</em></li>
+                <li>Say <em>"Run hello"</em></li>
+            </ol>
+        <div>`;
+}
+
+let addExampleActions = () => {
+    document.getElementById('example-actions').innerHTML = `
+        <div id="example-actions-heading">
+            <div><b>Things You Can Say To...</b></div>
+            <div id="example-actions-direction">&#9660</div>
+        </div>
+        <div id="example-actions-list"></div>`;
+    document.getElementById('example-actions-heading').onclick = () => {
+        let actionsList = document.getElementById('example-actions-list');
+        let displ = actionsList.style.display === 'block' ? 'none' : 'block';
+        document.getElementById('example-actions-direction').innerHTML = displ === 'none' ? "&#9660" : "&#9650";
+        actionsList.style.display = displ;
+    }
+
+    handleStateChange("home");
+}
+
+let addAudioPlayer = () => {
     let audioPlayer = document.createElement('audio');
     audioPlayer.id = 'audio-player';
     audioPlayer.preload = 'none';
@@ -357,17 +309,27 @@ document.addEventListener("DOMContentLoaded", () => {
             return voice.name == 'Google US English' || voice.name == 'Samantha';
         })[0];
     };
-});
-
-if (checkQuery("tutorial", 0)) {
-    document.getElementById("sidebar-tutorial").style.display = "none";
-    document.getElementById("sidebar").style.display = "flex";
-    tutorial = false;
-    addUtter("agent-utter", "Hi, what would you like to do? You can create a procedure or run one you have already created.", false);
-} else {
-    document.getElementById("sidebar-tutorial").innerHTML = `
-        <div><b>You are currently in practice mode.</b></div>
-        <div>${instructions_text[tutorial_step]}</div><br>
-        <div>If you want to skip the tutorial at any time, type or say 'Skip'.</div>`;
-    addUtter("agent-utter", "Hi, please follow the instructions on the left.", false);
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    let textbox = document.getElementById("textbox");
+    if (textbox != null) {
+        textbox.onkeyup = (e) => {
+            e.preventDefault();
+            if (e.keyCode === 13)
+                submitText();
+        }
+    }
+
+    let exampleActions = document.getElementById('example-actions');
+    if (exampleActions != null) {
+        addExampleActions();
+    }
+
+    let examplePrograms = document.getElementById('example-programs');
+    if (examplePrograms != null) {
+        addExamplePrograms();
+    }
+
+    addAudioPlayer();
+});

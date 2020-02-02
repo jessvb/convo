@@ -19,3 +19,8 @@ novice_scenario = [
     ("done", None),
     ("run pet sounds", ExecuteGoal)
 ]
+
+userstudy_scenarios = {
+    "practice": practice_scenario,
+    "novice": novice_scenario
+}
