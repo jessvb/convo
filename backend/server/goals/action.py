@@ -3,6 +3,8 @@ import re
 from goals import *
 from models import *
 
+logger = logging.getLogger("gunicorn.error")
+
 class GetActionsGoal(BaseGoal):
     def __init__(self, context, actions):
         super().__init__(context)
@@ -36,7 +38,7 @@ class GetActionsGoal(BaseGoal):
             super().advance()
             return
 
-        logging.debug(f"Advancing {self.__class__.__name__}...")
+        logger.debug(f"Advancing {self.__class__.__name__}...")
         self._message = None
         if self.context.current_message in ["done", "nothing", "no"]:
             self.done = True
@@ -103,14 +105,14 @@ class GetLoopActionsGoal(GetActionsGoal):
                 return "Added action to the loop! Anything else? If yes, what's next? If no, say \"close loop\"."
             else:
                 return "Added action to the loop! Anything else? If no, say \"close loop\"."
-            return self.todos[-1].message
+        return self.todos[-1].message
 
     def advance(self):
         if self.todos:
             super().advance()
             return
 
-        logging.debug(f"Advancing {self.__class__.__name__}...")
+        logger.debug(f"Advancing {self.__class__.__name__}...")
         self._message = None
         if self.context.current_message in ["close loop", "no", "done"]:
             self.done = True
@@ -154,5 +156,5 @@ class GetProcedureActionsGoal(GetActionsGoal):
     def complete(self):
         self.context.transition("complete")
         self.context.current = None
-        logging.debug(f"Procedure: {[str(a) for a in self.procedure.actions]}")
+        logger.debug(f"Procedure: {[str(a) for a in self.procedure.actions]}")
         return super().complete()

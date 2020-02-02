@@ -168,19 +168,24 @@ class InternalExecution(Execution):
                     self.variables[self.input_needed] = number if number else message
                     self.input_needed = None
             except KeyError as e:
+                logger.info(f"Error detected: {str(e)}")
                 return "KeyError"
             except ExecutionError as e:
+                logger.info(f"Error detected: {str(e)}")
                 return "ExecutionError"
             except StopIteration as e:
+                logger.info(f"Error detected: {str(e)}")
                 return "Stop Iteration"
 
             if len(self.actions) > self.original_length * 100:
+                logger.info(f"Detected a potential infinite loop.")
                 return "InfiniteLoop"
 
         self.finish()
         return None
 
     def run(self):
+        logger.info("Currently testing the procedure actions.")
         return self.advance()
 
     def finish(self):

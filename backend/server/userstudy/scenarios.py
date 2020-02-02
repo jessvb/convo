@@ -25,9 +25,11 @@ novice_scenario = [
 
 def advanced_scenario_check(execution, response, inputs):
     if response:
+        logger.info("Execution resulted in an error response.")
         return False
 
     if not execution.finished:
+        logger.info("Execution did not finish.")
         return False
 
     pet_sounds = {
@@ -37,15 +39,18 @@ def advanced_scenario_check(execution, response, inputs):
 
     get_user_inputs = [emit for emit in execution.emits if emit[0] == "response" and emit[1]["message"] == "Listening for user input..."]
     if len(get_user_inputs) != len(inputs):
+        logger.info("Number of times user input is asked is not the same as the number of inputs.")
         return False
 
     play_sounds = [emit for emit in execution.emits if emit[0] == "playSound"]
     if len(play_sounds) != len(inputs):
+        logger.info("Number of sound playing is not the same as the number of inputs.")
         return False
 
     play_sound_outputs = [(inp, data[1]["sound"]) for (data, inp) in zip(play_sounds, inputs)]
     play_sound_compares = [pet in pet_sounds and pet_sounds[pet] == sound for (pet, sound) in play_sound_outputs]
     if not all(play_sound_compares):
+        logger.info(f"The sounds played were not the correct ones: {play_sound_compares}")
         return False
 
     return True

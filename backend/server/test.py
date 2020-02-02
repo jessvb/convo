@@ -4,10 +4,8 @@ import copy
 from models import *
 from client import *
 from goals import *
+from userstudy import *
 
-logging.basicConfig(level=logging.DEBUG)
-client = Client("test")
-dm = client.dm
 messages = [
     "make a procedure called test",
     "say getting user input",
@@ -315,17 +313,25 @@ conditional_test = [
     "if pet is dog play the bark sound",
     "done",
     "no",
+    "if pet is cat play the meow sound",
+    "done",
+    "no",
     "add 1 to counter",
     "close loop",
     "done",
-    "run hello world",
-    "dog",
-    "cat",
-    "dog",
-    "dog",
-    "cat"
+    # "run hello world",
+    # "dog",
+    # "cat",
+    # "dog",
+    # "dog",
+    # "cat"
 ]
 
+inputs, check = userstudy_scenarios["advanced"]
+logging.basicConfig(level=logging.DEBUG)
+client = Client("test")
+client.dm = UserStudyAdvancedDialogManager("test", inputs, check)
+dm = client.dm
 sleep_time = 1
 for i, message in enumerate(conditional_test):
     logging.info(message)
