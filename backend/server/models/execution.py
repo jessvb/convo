@@ -149,11 +149,10 @@ class Execution(object):
             raise NotImplementedError
 
 class InternalExecution(Execution):
-    def __init__(self, context, actions, inputs, expected_emits):
+    def __init__(self, context, actions, inputs):
         super().__init__(context, actions)
         self.inputs = inputs
         self.iterinputs = iter(inputs)
-        self.expected_emits = expected_emits
         self.emits = []
         self.original_length = len(actions)
 

@@ -173,10 +173,11 @@ class UserStudyDialogManager(DialogManager):
         return response
 
 class UserStudyAdvancedDialogManager(DialogManager):
-    def __init__(self, sid, procedure):
+    def __init__(self, sid, inputs, check):
         super().__init__(sid)
         self.stage = "advanced"
         self.step = 0
+        self.inputs = inputs
         logger.info(f"UserStudyDialogManager created for stage {self.stage}.")
 
     def handle_goal(self):
@@ -190,7 +191,9 @@ class UserStudyAdvancedDialogManager(DialogManager):
                 self.context.goals.pop()
             elif goal.is_complete:
                 if isinstance(goal, EditGoal) or isinstance(goal, GetProcedureActionsGoal):
-                    self.check_procedure()
+                    response = self.check_procedure()
+                    if response:
+                        return "Try again."
                 response = goal.complete()
                 self.context.goals.pop()
             else:
@@ -199,4 +202,9 @@ class UserStudyAdvancedDialogManager(DialogManager):
         return response
 
     def check_procedure(self):
-        procedure = self.context.procedure
+        procedure = self.context.current
+        execution = InternalExecution(self.context, procedure.actions, self.inputs)
+        response = execution.run()
+        valid = self.check(execution, response)
+        if not valid:
+            return response

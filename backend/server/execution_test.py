@@ -88,8 +88,13 @@ incorrect_actions4 = [
     ])
 ]
 
+incorrect_actions5 = [
+    CreateVariableAction("counter", 5),
+    SayAction(ValueOf("counter"))
+]
+
 def checking(actions):
-    execution = InternalExecution(DialogContext("sid"), actions, inputs, [])
+    execution = InternalExecution(DialogContext("sid"), actions, inputs)
     response = execution.run()
 
     if response:
@@ -123,12 +128,20 @@ def checking(actions):
 
     return True
 
-list_actions = [
-    correct_actions, correct_actions2, correct_actions3, correct_actions4,
-    incorrect_actions1, incorrect_actions2, incorrect_actions3, incorrect_actions4
-]
+corrects = [correct_actions, correct_actions2, correct_actions3, correct_actions4]
+incorrects = [incorrect_actions1, incorrect_actions2, incorrect_actions3, incorrect_actions4, incorrect_actions5]
 
-for acts in list_actions:
+print("=============")
+print("Corrects")
+for acts in corrects:
     res = checking(acts)
     if res:
         print(res)
+print("=============")
+print("Incorrects")
+print("-----------")
+for acts in incorrects:
+    res = checking(acts)
+    if res:
+        print(res)
+print("=============")

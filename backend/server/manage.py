@@ -21,8 +21,12 @@ def join(data):
     client = socket_clients.get(sid, Client(sid))
     socket_clients[sid] = client
 
-    if stage and stage in userstudy_scenarios:
-        client.dm = UserStudyDialogManager(sid, stage, userstudy_scenarios[stage])
+    if stage:
+        if stage in ["novice", "practice"]:
+            client.dm = UserStudyDialogManager(sid, stage, userstudy_scenarios[stage])
+        elif stage == "advanced":
+            inputs, check = userstudy_scenarios[stage]
+            client.dm = UserStudyAdvancedDialogManager(sid, inputs, check)
     else:
         client.dm = DialogManager(sid)
 
