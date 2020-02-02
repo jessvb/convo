@@ -7,10 +7,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 	let nextBtn = document.getElementById('btn-next-stage');
 	if (nextBtn) {
-		nextBtn.addEventListener('click', function () {
+		nextBtn.onclick = () => {
 			let url = getNextStageUrl(currStage, completedParts, doneSurvey, isAdvanced);
 			window.open(url, '_self');
-		});
+		};
 	}
 });
 
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
  * @param {*} doneSurvey : boolean of whether the user completed the survey for this part
  * @param {*} isAdvanced : true if the user is an advanced user
  */
-function getNextStageUrl(currStage, completedParts, doneSurvey, isAdvanced) {
+let getNextStageUrl = (currStage, completedParts, doneSurvey, isAdvanced) => {
 	let url = '';
 
 	if (currStage == 'finalSurvey') {
@@ -90,7 +90,7 @@ function getNextStageUrl(currStage, completedParts, doneSurvey, isAdvanced) {
  * Helper function to get a random part, wrt completed parts and current stage.
  * If there's no parts left to complete, it returns null.
  */
-function getRandPartUrl(currStage, completedParts) {
+let getRandPartUrl = (currStage, completedParts) => {
 	let url = currStage + '-';
 
 	// get a list of *uncompleted parts* so we can choose from them

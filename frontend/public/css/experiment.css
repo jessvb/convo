@@ -221,3 +221,9 @@
 #example-programs-direction {
     font-size: 12px;
 }
+
+#button-container.stage-button {
+    display: none;
+    justify-content: center;
+    margin: 2rem;
+}

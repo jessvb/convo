@@ -17,6 +17,7 @@ socketApi.on('stageCompleted', () => {
         <div class="stage-completed">
             Stage completed! <b>Please click the button to move on to the next stage.</b>
         </div>`;
+    document.getElementById('button-container').style.display = 'flex';
 });
 
 document.addEventListener('DOMContentLoaded', (event) => {

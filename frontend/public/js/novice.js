@@ -1,11 +1,10 @@
 const stage_instructions = [
     "Create a procedure called pet sounds",
-    "Get user input",
-    "animal",
-    "If animal is dog play the bark sound",
+    "Get user input and save it as pet",
+    "If pet is dog play the bark sound",
     "Done",
     "No",
-    "If animal is cat, play the meow sound",
+    "If pet is cat, play the meow sound",
     "Done",
     "No",
     "Done",
@@ -16,6 +15,7 @@ let instructionStep = 0;
 let handleStepUpdate = (data) => {
     instructionStep = data['step'];
     document.getElementById('instruction').innerHTML = `<em>"${stage_instructions[instructionStep]}"</em>`;
+    document.getElementById('button-container').style.display = 'flex';
 }
 
 socketApi.on('stepUpdate', handleStepUpdate);

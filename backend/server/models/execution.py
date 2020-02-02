@@ -23,7 +23,8 @@ class Execution(object):
 
     def run(self, message=None):
         if self.input_needed and message:
-            self.variables[self.input_needed] = parse_number(message)
+            number = parse_number(message)
+            self.variables[self.input_needed] = number if number else message
             logger.info(f"Current variables: {str(self.variables)}")
             self.input_needed = None
         self.thread = threading.Thread(target=self.advance)

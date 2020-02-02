@@ -3,7 +3,7 @@ from flask_socketio import join_room
 
 from app import app, sio, socket_clients, socket_sessions
 from dialog import DialogManager
-from userstudy import UserStudyDialogManager, userstudy_scenarios
+from userstudy import *
 from client import Client
 
 @sio.on("join")
