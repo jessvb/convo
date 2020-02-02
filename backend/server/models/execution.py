@@ -147,3 +147,45 @@ class Execution(object):
                 self.step -= 1
         else:
             raise NotImplementedError
+
+class InternalExecution(Execution):
+    def __init__(self, context, actions, inputs, expected_emits):
+        super().__init__(context, actions)
+        self.inputs = inputs
+        self.iterinputs = iter(inputs)
+        self.expected_emits = expected_emits
+        self.emits = []
+        self.original_length = len(actions)
+
+    def advance(self):
+        while self.step < len(self.actions):
+            action = self.actions[self.step]
+            try:
+                self.evaluate_action(action)
+                self.step += 1
+                if self.input_needed:
+                    message = next(self.iterinputs)
+                    number = parse_number(message)
+                    self.variables[self.input_needed] = number if number else message
+                    self.input_needed = None
+            except KeyError as e:
+                return "KeyError"
+            except ExecutionError as e:
+                return "ExecutionError"
+            except StopIteration as e:
+                return "Stop Iteration"
+
+            if len(self.actions) > self.original_length * 100:
+                return "InfiniteLoop"
+
+        self.finish()
+        return None
+
+    def run(self):
+        return self.advance()
+
+    def finish(self):
+        self.finished = True
+
+    def emit(self, event, data):
+        self.emits.append((event, data))

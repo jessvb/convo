@@ -3,6 +3,10 @@ from models import *
 from goals import *
 from client import *
 from userstudy import *
+from dialog import *
+from models import *
+
+logging.basicConfig(level=logging.ERROR)
 
 practice_test = [
     "run",
@@ -67,28 +71,27 @@ novice_test2 = [
     "dog"
 ]
 
-logging.basicConfig(level=logging.INFO)
-client = Client("scenario")
-dm = UserStudyDialogManager("scenario", "novice", novice_scenario)
-client.dm = dm
+# client = Client("scenario")
+# dm = UserStudyAdvancedDialogManager("scenario", "novice", novice_scenario)
+# client.dm = dm
 
-for i, message in enumerate(novice_test2):
-    print("===========================")
-    logging.info(f"Message: {message}")
-    logging.info(f"State: {dm.context.state}")
-    logging.info(f"Goal: {dm.context.current_goal}")
-    logging.info(f"Step: {dm.step}")
-    logging.info(f"Backup State: {dm.backup_context.state}")
-    logging.info(f"Backup Goal: {dm.backup_context.current_goal}")
-    res = dm.handle_message(message)
-    if res:
-        print("---------------------------------")
-        logging.info(f"Response: {res}")
-        logging.info(f"State: {dm.context.state}")
-        logging.info(f"Goal: {dm.context.current_goal}")
-        logging.info(f"Step: {dm.step}")
-        logging.info(f"Backup State: {dm.backup_context.state}")
-        logging.info(f"Backup Goal: {dm.backup_context.current_goal}")
-    time.sleep(3)
+# for i, message in enumerate(novice_test2):
+#     print("===========================")
+#     logging.info(f"Message: {message}")
+#     logging.info(f"State: {dm.context.state}")
+#     logging.info(f"Goal: {dm.context.current_goal}")
+#     logging.info(f"Step: {dm.step}")
+#     logging.info(f"Backup State: {dm.backup_context.state}")
+#     logging.info(f"Backup Goal: {dm.backup_context.current_goal}")
+#     res = dm.handle_message(message)
+#     if res:
+#         print("---------------------------------")
+#         logging.info(f"Response: {res}")
+#         logging.info(f"State: {dm.context.state}")
+#         logging.info(f"Goal: {dm.context.current_goal}")
+#         logging.info(f"Step: {dm.step}")
+#         logging.info(f"Backup State: {dm.backup_context.state}")
+#         logging.info(f"Backup Goal: {dm.backup_context.current_goal}")
+#     time.sleep(3)
 
-time.sleep(5)
+# time.sleep(5)

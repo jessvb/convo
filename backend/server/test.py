@@ -306,11 +306,34 @@ bugs_test = [
     "five"
 ]
 
-for i, message in enumerate(messages3):
+conditional_test = [
+    "create a procedure called hello world",
+    "create a variable called counter and set it to 0",
+    "create a while loop",
+    "while counter is less than 5",
+    "get user input and save it as pet",
+    "if pet is dog play the bark sound",
+    "done",
+    "no",
+    "add 1 to counter",
+    "close loop",
+    "done",
+    "run hello world",
+    "dog",
+    "cat",
+    "dog",
+    "dog",
+    "cat"
+]
+
+sleep_time = 1
+for i, message in enumerate(conditional_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
         logging.info(res)
-    time.sleep(1)
+    if message.startswith("run"):
+        sleep_time = 3
+    time.sleep(sleep_time)
 
 time.sleep(5)

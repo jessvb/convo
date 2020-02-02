@@ -10,7 +10,7 @@ from client import Client
 def join(data):
     if isinstance(data, str):
         sid = data
-        stage = "sandbox"
+        stage = None
     else:
         sid = request.sid if data.get("sid") is None else data.get("sid")
         stage = data.get("stage")

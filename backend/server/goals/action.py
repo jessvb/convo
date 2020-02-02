@@ -100,10 +100,9 @@ class GetLoopActionsGoal(GetActionsGoal):
             if len(self.actions) == 0:
                 return "What do you want to do first in the loop?"
             elif len(self.actions) == 1:
-                return "Added action! Do you want to do anything else in the loop? If yes, what's next? If no, say \"close loop\"."
+                return "Added action to the loop! Anything else? If yes, what's next? If no, say \"close loop\"."
             else:
-                return "Added action! Do you want to do anything else in the loop?"
-        else:
+                return "Added action to the loop! Anything else? If no, say \"close loop\"."
             return self.todos[-1].message
 
     def advance(self):
@@ -113,7 +112,7 @@ class GetLoopActionsGoal(GetActionsGoal):
 
         logging.debug(f"Advancing {self.__class__.__name__}...")
         self._message = None
-        if self.context.current_message in ["close loop"]:
+        if self.context.current_message in ["close loop", "no", "done"]:
             self.done = True
         elif not isinstance(self.context.parsed, BaseGoal):
             self._message = "I didn't quite catch that. What action did you want me to add?"
@@ -146,9 +145,9 @@ class GetProcedureActionsGoal(GetActionsGoal):
             return f"I finished creating the procedure. You can say, \"run {self.procedure.name}\" to play it."
 
         if len(self.todos) == 0:
-            return "Added action! Do you want to do anything else?" \
+            return "Added action to the procedure! Do you want to do anything else?" \
                 if len(self.actions) > 0 \
-                    else "What do you want to happen in the procedure first? You could make me say something. See the sidebar for more options."
+                    else "What do you want to do first in the procedure? You could make me say something. See the sidebar for more options."
         else:
             return self.todos[-1].message
 

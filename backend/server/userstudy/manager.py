@@ -171,3 +171,32 @@ class UserStudyDialogManager(DialogManager):
         response = self.handle_goal()
 
         return response
+
+class UserStudyAdvancedDialogManager(DialogManager):
+    def __init__(self, sid, procedure):
+        super().__init__(sid)
+        self.stage = "advanced"
+        self.step = 0
+        logger.info(f"UserStudyDialogManager created for stage {self.stage}.")
+
+    def handle_goal(self):
+        if self.current_goal() is None:
+            super().handle_goal()
+        else:
+            goal = self.current_goal()
+            goal.advance()
+            if goal.error:
+                response = goal.error
+                self.context.goals.pop()
+            elif goal.is_complete:
+                if isinstance(goal, EditGoal) or isinstance(goal, GetProcedureActionsGoal):
+                    self.check_procedure()
+                response = goal.complete()
+                self.context.goals.pop()
+            else:
+                response = goal.message
+
+        return response
+
+    def check_procedure(self):
+        procedure = self.context.procedure

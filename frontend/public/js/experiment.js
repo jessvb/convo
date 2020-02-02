@@ -34,20 +34,30 @@ const action_commands = [{
     {
         "title": "Make a Conditional",
         "examples": [
-            "if foo is greater than 5 then say hooray",
-            "if bar is less than 10 then add 10 to variable bar"
+            "if foo is greater than 5 say hooray",
+            "if bar is less than 10 add 10 to variable bar"
         ]
     },
     {
         "title": "Make a While Loop",
         "examples": [
-            "while foo is less than 2 then add 2 to variable foo"
+            "while foo is less than 2 add 2 to variable foo",
+            "make a while loop"
         ]
     },
     {
         "title": "Make a Until Loop",
         "examples": [
-            "add 2 to variable foo until foo is equal to 20"
+            "add 2 to variable foo until foo is equal to 20",
+            "make a until loop"
+        ]
+    },
+    {
+        "title": "Give a Condition (Only When Asked)",
+        "examples": [
+            "if foo is equal to 5",
+            "until foo is greater than 2",
+            "while foo is not 0"
         ]
     },
     {
