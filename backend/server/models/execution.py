@@ -20,6 +20,7 @@ class Execution(object):
         self.thread_running = False
         self.finished = False
         self.to_emit = to_emit
+        self.first_message_emitted = False
 
     def run(self, message=None):
         if self.input_needed and message:
@@ -30,7 +31,11 @@ class Execution(object):
         self.thread = threading.Thread(target=self.advance)
         self.thread.daemon = True
         self.thread_running = True
-        self.emit("response", { "message": "Procedure started running.", "state": self.context.state })
+
+        if not self.first_message_emitted:
+            self.emit("response", { "message": "Procedure started running.", "state": self.context.state, "speak": False })
+            self.first_message_emitted = True
+
         self.thread.start()
 
     def stop(self):
