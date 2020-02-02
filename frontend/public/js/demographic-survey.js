@@ -1,44 +1,52 @@
+document.addEventListener('DOMContentLoaded', (event) => {
+    socketApi.on('surveySaved', () => { console.log("Survey saved.") });
+});
+
 /**
  * Submits the relevant variables from the form to the Google form and goes to
  * the next page.
  */
 let submitAndGo = () => {
-    let age = document.getElementById('age').value;
-    let sex = document.getElementById('sex').value;
-    let genderTextBox = document.getElementById('gender-textbox').value;
-    let firstLanguage = document.getElementById('firstLanguage').value;
-    let level = document.getElementById('level').value;
-    let programmingLanguages = document.getElementById('languages-select').value;
-    let programmingLanguagesTextBox = document.getElementById('languages-textbox').value;
-    let convAgents = document.getElementById('agents-select').value;
-    let convAgentsTextBox = document.getElementById('agents-textbox').value;
+    let age = $('#age').val();
+    let sex = $('#sex').val();
+    let genderTextBox = $('#gender-textbox').val();
+    let firstLanguage = $('#firstLanguage').val();
+    let level = $('#level').val();
+    let languages = $('#languages-select').val();
+    let languagesOther = $('#languages-textbox').val();
+    let agents = $('#agents-select').val();
+    let agentsOther = $('#agents-textbox').val();
 
-    if (age == null || sex == null ||
-        firstLanguage == null || level == null ||
-        programmingLanguages == null || convAgents == null) {
+    if (age == null || firstLanguage == null || level == null || sex == null || languages == null || agents == null ) {
         window.alert('There is an unanswered question. Please report this error to the experimenter.');
         window.alert('Collected answers: ' + age + '; ' + sex + '; ' + genderTextBox +
-            '; ' + firstLanguage + '; ' + level + '; ' + programmingLanguages + '; ' +
-            programmingLanguagesTextBox + '; ' + convAgents + '; ' + convAgentsTextBox);
+            '; ' + firstLanguage + '; ' + level + '; ' + languages + '; ' +
+            languagesOther + '; ' + agents + '; ' + agentsOther);
     } else {
         // set advanced / not advanced in local storage for stages-process.js:
         localStorage.setItem('isAdvanced', JSON.stringify({ value: level == 'advanced' }));
 
+        // if selected "other", add the "other" language
+        if (languages.includes('other') && languagesOther)
+            languages.push(languagesOther);
+
+        // if selected "other", add the "other" agent
+        if (agents.includes('other') && agentsOther)
+            agents.push(agentsOther);
+
+        // if prefer to self-describe, use text box answer
+        if (sex === 'other' && genderTextBox)
+            sex = genderTextBox;
+
         surveyData = {
             "age": age,
-            "sex": sex == null ? (genderTextBox == null ? null : genderTextBox) : sex,
+            "gender": sex,
             "first_language": firstLanguage,
             "level": level,
-            "programming_languages": programmingLanguages,
-            "conv_agents": convAgents
+            "programming_languages": languages,
+            "conv_agents": agents
         }
-        console.log(surveyData);
-        console.log(programmingLanguagesTextBox);
-        console.log(genderTextBox);
-        console.log(convAgentsTextBox);
         socketApi.emit("survey", { "sid": localStorage.getItem("sid"), "data": surveyData, "type": "demographics" });
-        // window.alert('Survey data is not being stored. TODO: @Kevin store data in server.');
-
         window.location.href = '/practice-info';
     }
 };
