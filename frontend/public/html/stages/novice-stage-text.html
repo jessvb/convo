@@ -39,22 +39,17 @@
         <div id="sidebar-container" class="grid-container">
             <div id="sidebar">
                 <div><em>Stuck? If stuck for 5 minutes, say "I need help".</em></div>
+                <div id="instructions"></div>
                 <div id="example-actions"></div>
             </div>
         </div>
-        <div id="voice-text-container" class="grid-container">
+        <div id="text-container" class="grid-container">
             <div id="conversation">
                 <div class="space-filler"></div>
             </div>
             <div id="input-container">
-                <div class="microphone">
-                    <button type="button" id="btn-record">
-                        <div>Hold Spacebar to Talk</div>
-                        <div id="recording-status"></div>
-                    </button>
-                </div>
                 <div class="textbox">
-                    <input type="text" id="textbox" placeholder="Type here..." />
+                    <input type="text" id="textbox" placeholder="Type here..."/>
                     <button type="button" onclick="submitText()" id="btn-textbox">Enter</button>
                 </div>
             </div>
@@ -75,7 +70,6 @@
     </script>
     <script src="js/socket.js"></script>
     <script src="js/experiment.js"></script>
-    <script src="js/stream.js"></script>
     <script src="js/stages-process.js"></script>
     <script src="js/novice.js"></script>
 </tail>

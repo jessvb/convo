@@ -112,7 +112,8 @@ class UserStudyDialogManager(DialogManager):
         if not isinstance(self.immediate_goal, GetInputGoal) and not self.last_parsed_goal.error:
             next_message = self.next_message
             logger.info(f"Tentatively moving on to step {self.step} of the scenario.")
-            self.reference.handle_message(next_message)
+            if not next_message.startswith("run"):
+                self.reference.handle_message(next_message)
 
         if isinstance(self.immediate_goal, GetActionsGoal):
             wrong_procedure = isinstance(self.last_parsed_goal, CreateProcedureGoal) and self.context.current.name != self.reference.context.current.name

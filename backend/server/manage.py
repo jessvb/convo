@@ -8,8 +8,12 @@ from client import Client
 
 @sio.on("join")
 def join(data):
-    sid = request.sid if data.get("sid") is None else data.get("sid")
-    stage = data.get("stage")
+    if isinstance(data, str):
+        sid = data
+        stage = "sandbox"
+    else:
+        sid = request.sid if data.get("sid") is None else data.get("sid")
+        stage = data.get("stage")
     stage_log = f" and at the {stage} stage" if stage else ""
     app.logger.info(f"Client {sid} has connected{stage_log}.")
 

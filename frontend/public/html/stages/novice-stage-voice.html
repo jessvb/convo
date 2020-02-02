@@ -39,6 +39,7 @@
         <div id="sidebar-container" class="grid-container">
             <div id="sidebar">
                 <div><em>Stuck? If stuck for 5 minutes, say "I need help".</em></div>
+                <div id="instructions"></div>
                 <div id="example-actions"></div>
             </div>
         </div>
@@ -46,16 +47,12 @@
             <div id="conversation">
                 <div class="space-filler"></div>
             </div>
-            <div id="input-container">
+            <div id="voice-input-container">
                 <div class="microphone">
                     <button type="button" id="btn-record">
                         <div>Hold Spacebar to Talk</div>
                         <div id="recording-status"></div>
                     </button>
-                </div>
-                <div class="textbox">
-                    <input type="text" id="textbox" placeholder="Type here..."/>
-                    <button type="button" onclick="submitText()" id="btn-textbox">Enter</button>
                 </div>
             </div>
         </div>
