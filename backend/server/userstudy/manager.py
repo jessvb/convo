@@ -176,13 +176,13 @@ class UserStudyAdvancedDialogManager(DialogManager):
     def __init__(self, sid, inputs, check):
         super().__init__(sid)
         self.stage = "advanced"
-        self.step = 0
         self.inputs = inputs
+        self.check = check
         logger.info(f"UserStudyDialogManager created for stage {self.stage}.")
 
     def handle_goal(self):
         if self.current_goal() is None:
-            super().handle_goal()
+            response = super().handle_goal()
         else:
             goal = self.current_goal()
             goal.advance()
@@ -191,9 +191,13 @@ class UserStudyAdvancedDialogManager(DialogManager):
                 self.context.goals.pop()
             elif goal.is_complete:
                 if isinstance(goal, EditGoal) or isinstance(goal, GetProcedureActionsGoal):
-                    response = self.check_procedure()
-                    if response:
+                    valid = self.check_procedure()
+                    if not valid:
+                        goal.complete()
+                        self.context.goals.pop()
                         return "Try again."
+                    else:
+                        sio.emit("stageCompleted", room=str(self.sid))
                 response = goal.complete()
                 self.context.goals.pop()
             else:
@@ -203,8 +207,14 @@ class UserStudyAdvancedDialogManager(DialogManager):
 
     def check_procedure(self):
         procedure = self.context.current
+        logger.info(f"Checking procedure {procedure.name}.")
         execution = InternalExecution(self.context, procedure.actions, self.inputs)
+        logger.info(f"Internally executing procedure {procedure.name}.")
         response = execution.run()
-        valid = self.check(execution, response)
-        if not valid:
-            return response
+        logger.info(f"Using the check function for unit testing procedure {procedure.name}.")
+        valid = self.check(execution, response, self.inputs)
+        if valid:
+            logger.info(f"Procedure {procedure.name} met the objectives.")
+        else:
+            logger.info(f"Procedure {procedure.name} did not meet the objectives.")
+        return valid

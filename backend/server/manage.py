@@ -27,6 +27,8 @@ def join(data):
         elif stage == "advanced":
             inputs, check = userstudy_scenarios[stage]
             client.dm = UserStudyAdvancedDialogManager(sid, inputs, check)
+        else:
+            client.dm = DialogManager(sid)
     else:
         client.dm = DialogManager(sid)
 

@@ -21,47 +21,35 @@
 </head>
 
 <body>
-    <!-- TODO: delete from here until next comment -->
-    <h2>Learning How to Program Conversationally</h2>
-    <h3>Advanced Stage: Text</h3>
-    <div id="button-container">
-        <button type="button" id="btn-next-stage" class="btn btn-primary">
-            Next Stage
-        </button>
-    </div>
-    <!-- TODO: uncomment the stuff below -->
-
-    <!-- <div id="title">
+    <div id="title">
         <h2>Learning How to Program Conversationally</h2>
-        <h3>Advanced Stage: Text</h3>
+        <h3>Practice Stage: Text</h3>
     </div>
     <div id="experiment-container">
         <div id="sidebar-container" class="grid-container">
             <div id="sidebar">
-                <div><b>You are in sandbox mode.</b></div>
                 <div><em>Stuck? If stuck for 5 minutes, say "I need help".</em></div>
-                <div id="example-programs"></div>
+                <div id="instructions"></div>
                 <div id="example-actions"></div>
             </div>
         </div>
-        <div id="voice-text-container" class="grid-container">
+        <div id="text-container" class="grid-container">
             <div id="conversation">
                 <div class="space-filler"></div>
             </div>
             <div id="input-container">
-                <div class="microphone">
-                    <button type="button" id="btn-record">
-                        <div>Hold Spacebar to Talk</div>
-                        <div id="recording-status"></div>
-                    </button>
-                </div>
                 <div class="textbox">
-                    <input type="text" id="textbox" placeholder="Type here..." />
+                    <input type="text" id="textbox" placeholder="Type here..."/>
                     <button type="button" onclick="submitText()" id="btn-textbox">Enter</button>
                 </div>
             </div>
         </div>
-    </div> -->
+    </div>
+    <div id="button-container" class="stage-button">
+        <button type="button" id="btn-next-stage" class="btn btn-primary">
+            Next Stage
+        </button>
+    </div>
 </body>
 
 <tail>
@@ -79,6 +67,7 @@
     <script src="js/experiment.js"></script>
     <script src="js/stream.js"></script>
     <script src="js/stages-process.js"></script>
+    <script src="js/advanced.js"></script>
 </tail>
 
 </html>

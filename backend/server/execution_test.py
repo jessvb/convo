@@ -3,14 +3,6 @@ from goals import *
 from userstudy import *
 from dialog import *
 
-inputs = [
-    "dog",
-    "cat",
-    "dog",
-    "cat",
-    "cat"
-]
-
 correct_actions = [
     CreateVariableAction("counter", 5),
     LoopAction("while", ComparisonCondition("counter", "greater than", 0), [
@@ -93,55 +85,64 @@ incorrect_actions5 = [
     SayAction(ValueOf("counter"))
 ]
 
-def checking(actions):
-    execution = InternalExecution(DialogContext("sid"), actions, inputs)
-    response = execution.run()
+incorrect_actions6 = [
+]
 
-    if response:
-        print("Response incorrect.")
-        return False
+inputs, check = userstudy_scenarios["advanced"]
 
-    if not execution.finished:
-        print("Program not finished.")
-        return False
+# def checking(actions):
+#     execution = InternalExecution(DialogContext("sid"), actions, inputs)
+#     response = execution.run()
 
-    pet_sounds = {
-        "dog": "bark",
-        "cat": "meow"
-    }
+#     if response:
+#         print("Response incorrect.")
+#         return False
 
-    get_user_inputs = [emit for emit in execution.emits if emit[0] == "response" and emit[1]["message"] == "Listening for user input..."]
-    if len(get_user_inputs) != len(inputs):
-        print("Number of getting inputs and provided inputs not the same.")
-        return False
+#     if not execution.finished:
+#         print("Program not finished.")
+#         return False
 
-    play_sounds = [emit for emit in execution.emits if emit[0] == "playSound"]
-    if len(play_sounds) != len(inputs):
-        print("Number of play sounds not the same as number of provided inputs.")
-        return False
+#     pet_sounds = {
+#         "dog": "bark",
+#         "cat": "meow"
+#     }
 
-    play_sound_outputs = [(inp, data[1]["sound"]) for (data, inp) in zip(play_sounds, inputs)]
-    play_sound_compares = [pet in pet_sounds and pet_sounds[pet] == sound for (pet, sound) in play_sound_outputs]
-    if not all(play_sound_compares):
-        print("Played sounds are not correct.")
-        return False
+#     get_user_inputs = [emit for emit in execution.emits if emit[0] == "response" and emit[1]["message"] == "Listening for user input..."]
+#     if len(get_user_inputs) != len(inputs):
+#         print("Number of getting inputs and provided inputs not the same.")
+#         return False
 
-    return True
+#     play_sounds = [emit for emit in execution.emits if emit[0] == "playSound"]
+#     if len(play_sounds) != len(inputs):
+#         print("Number of play sounds not the same as number of provided inputs.")
+#         return False
+
+#     play_sound_outputs = [(inp, data[1]["sound"]) for (data, inp) in zip(play_sounds, inputs)]
+#     play_sound_compares = [pet in pet_sounds and pet_sounds[pet] == sound for (pet, sound) in play_sound_outputs]
+#     if not all(play_sound_compares):
+#         print("Played sounds are not correct.")
+#         return False
+
+#     return True
 
 corrects = [correct_actions, correct_actions2, correct_actions3, correct_actions4]
-incorrects = [incorrect_actions1, incorrect_actions2, incorrect_actions3, incorrect_actions4, incorrect_actions5]
+incorrects = [incorrect_actions1, incorrect_actions2, incorrect_actions3, incorrect_actions4, incorrect_actions5, incorrect_actions6]
 
 print("=============")
 print("Corrects")
 for acts in corrects:
-    res = checking(acts)
+    execution = InternalExecution(DialogContext("sid"), acts, inputs)
+    response = execution.run()
+    res = check(execution, response, inputs)
     if res:
         print(res)
 print("=============")
 print("Incorrects")
 print("-----------")
 for acts in incorrects:
-    res = checking(acts)
+    execution = InternalExecution(DialogContext("sid"), acts, inputs)
+    response = execution.run()
+    res = check(execution, response, inputs)
     if res:
         print(res)
 print("=============")

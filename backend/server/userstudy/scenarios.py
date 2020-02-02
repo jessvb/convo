@@ -1,4 +1,7 @@
+import logging
 from goals import *
+
+logger = logging.getLogger("gunicorn.error")
 
 practice_scenario = [
     ("create a procedure called hello world", CreateProcedureGoal),
@@ -20,13 +23,7 @@ novice_scenario = [
     ("run pet sounds", ExecuteGoal)
 ]
 
-userstudy_scenarios = {
-    "practice": practice_scenario,
-    "novice": novice_scenario
-    "advanced": (["dog", "cat", "cat", "dog", "dog"], advanced_scenario_check)
-}
-
-def advanced_scenario_check(execution, response):
+def advanced_scenario_check(execution, response, inputs):
     if response:
         return False
 
@@ -52,3 +49,9 @@ def advanced_scenario_check(execution, response):
         return False
 
     return True
+
+userstudy_scenarios = {
+    "practice": practice_scenario,
+    "novice": novice_scenario,
+    "advanced": (["dog", "cat", "cat", "dog", "dog"], advanced_scenario_check)
+}
