@@ -185,7 +185,8 @@
 
 #example-actions-heading,
 #example-programs-heading,
-#instructions-heading {
+#instructions-heading,
+#goal-heading {
     font-size: 18px;
     cursor: pointer;
     display: flex;
