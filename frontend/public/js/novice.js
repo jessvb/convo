@@ -15,7 +15,6 @@ let instructionStep = 0;
 let handleStepUpdate = (data) => {
     instructionStep = data['step'];
     document.getElementById('instruction').innerHTML = `<em>"${stage_instructions[instructionStep]}"</em>`;
-    document.getElementById('button-container').style.display = 'flex';
 }
 
 socketApi.on('stepUpdate', handleStepUpdate);
@@ -24,6 +23,7 @@ socketApi.on('stageCompleted', () => {
         <div class="stage-completed">
             Stage completed! <b>Please click the button to move on to the next stage.</b>
         </div>`;
+    document.getElementById('button-container').style.display = 'flex';
 });
 
 document.addEventListener('DOMContentLoaded', (event) => {
