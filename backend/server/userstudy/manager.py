@@ -54,6 +54,9 @@ class UserStudyDialogManager(DialogManager):
         return current
 
     def handle_parse(self, message):
+        if self.step >= len(self.scenario):
+            return super().handle_parse(message)
+
         try:
             self.context.parsed = self.nlu.parse_message(message)
         except InvalidStateError as e:
@@ -80,6 +83,9 @@ class UserStudyDialogManager(DialogManager):
             return "I didn't quite catch that. Please follow the instructions and try again!"
 
     def handle_goal(self):
+        if self.step >= len(self.scenario):
+            return super().handle_goal()
+
         backup_reference_context = copy.deepcopy(self.reference.context)
 
         if self.current_goal() is None:

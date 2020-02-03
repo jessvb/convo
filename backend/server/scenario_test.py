@@ -6,26 +6,6 @@ from userstudy import *
 from dialog import *
 from models import *
 
-logging.basicConfig(level=logging.ERROR)
-
-practice_test = [
-    "run",
-    "asdf",
-    "create a procedure",
-    "blah",
-    "create a procedure called hello world",
-    "create a variable",
-    "adfs",
-    "run",
-    "say",
-    "asdfsdf",
-    "create a procedure",
-    "done",
-    "say",
-    "hello world",
-    "done",
-    "run hello"
-]
 
 novice_test = [
     "create procedure",
@@ -71,27 +51,35 @@ novice_test2 = [
     "dog"
 ]
 
-# client = Client("scenario")
-# dm = UserStudyAdvancedDialogManager("scenario", "novice", novice_scenario)
-# client.dm = dm
+practice_test = [
+    "create a procedure called hello world",
+    "say hello world",
+    "done",
+    "run hello world",
+    "create a procedure called hi"
+]
 
-# for i, message in enumerate(novice_test2):
-#     print("===========================")
-#     logging.info(f"Message: {message}")
-#     logging.info(f"State: {dm.context.state}")
-#     logging.info(f"Goal: {dm.context.current_goal}")
-#     logging.info(f"Step: {dm.step}")
-#     logging.info(f"Backup State: {dm.backup_context.state}")
-#     logging.info(f"Backup Goal: {dm.backup_context.current_goal}")
-#     res = dm.handle_message(message)
-#     if res:
-#         print("---------------------------------")
-#         logging.info(f"Response: {res}")
-#         logging.info(f"State: {dm.context.state}")
-#         logging.info(f"Goal: {dm.context.current_goal}")
-#         logging.info(f"Step: {dm.step}")
-#         logging.info(f"Backup State: {dm.backup_context.state}")
-#         logging.info(f"Backup Goal: {dm.backup_context.current_goal}")
-#     time.sleep(3)
+client = Client("scenario")
+dm = UserStudyDialogManager("scenario", "practice", practice_scenario)
+client.dm = dm
 
-# time.sleep(5)
+for i, message in enumerate(practice_test):
+    print("===========================")
+    print(f"Message: {message}")
+    print(f"State: {dm.context.state}")
+    print(f"Goal: {dm.context.current_goal}")
+    print(f"Step: {dm.step}")
+    print(f"Backup State: {dm.backup_context.state}")
+    print(f"Backup Goal: {dm.backup_context.current_goal}")
+    res = dm.handle_message(message)
+    if res:
+        print("---------------------------------")
+        print(f"Response: {res}")
+        print(f"State: {dm.context.state}")
+        print(f"Goal: {dm.context.current_goal}")
+        print(f"Step: {dm.step}")
+        print(f"Backup State: {dm.backup_context.state}")
+        print(f"Backup Goal: {dm.backup_context.current_goal}")
+    time.sleep(1)
+
+time.sleep(3)
