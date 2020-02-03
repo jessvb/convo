@@ -17,10 +17,10 @@ class GetActionsGoal(BaseGoal):
 
     @property
     def message(self):
-        if self.error:
+        if self.error is not None:
             return self.error
 
-        if self._message:
+        if self._message is not None:
             return self._message
 
         if self.is_complete:
@@ -63,17 +63,17 @@ class GetConditionalActionsGoal(GetActionsGoal):
 
     @property
     def message(self):
-        if self.error:
+        if self.error is not None:
             return self.error
 
-        if self._message:
+        if self._message is not None:
             return self._message
 
         if self.is_complete:
             return f"{self.__class__.__name__} completed!"
 
         if len(self.todos) == 0:
-            if self.condition:
+            if self.condition is not None:
                 if len(self.actions) > 0:
                     return "Added action to whenever the condition is true. Anything else? You can say 'done' if you are finished."
                 else:
@@ -89,10 +89,10 @@ class GetConditionalActionsGoal(GetActionsGoal):
 class GetLoopActionsGoal(GetActionsGoal):
     @property
     def message(self):
-        if self.error:
+        if self.error is not None:
             return self.error
 
-        if self._message:
+        if self._message is not None:
             return self._message
 
         if self.is_complete:
@@ -137,10 +137,10 @@ class GetProcedureActionsGoal(GetActionsGoal):
 
     @property
     def message(self):
-        if self.error:
+        if self.error is not None:
             return self.error
 
-        if self._message:
+        if self._message is not None:
             return self._message
 
         if self.is_complete:

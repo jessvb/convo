@@ -1,5 +1,6 @@
 import re
 import string
+import logging
 from word2number import w2n
 
 def to_snake_case(name):
@@ -16,7 +17,7 @@ def strip_punctuation(s):
     return s.translate(str.maketrans('', '', string.punctuation.replace("-", "")))
 
 def parse_number(message):
-    if not message or not isinstance(message, str):
+    if message is None or not isinstance(message, str):
         return message
 
     contains_negation = ("negative" in message) or ("-" in message)
