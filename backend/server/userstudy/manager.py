@@ -203,12 +203,13 @@ class UserStudyAdvancedDialogManager(DialogManager):
                     valid = self.check_procedure()
                     procedure_name = self.context.current.name
                     if not valid:
-                        goal.complete()
-                        self.context.goals.pop()
-                        return f"Hmm, I checked your procedure, and it doesn't seem to meet the goal. You can test the procedure by saying, \"run {procedure_name}\", or edit it by saying \"edit {procedure_name}\"."
+                        response = f"Hmm, I checked your procedure, and it doesn't seem to meet the goal. You can test the procedure by saying, \"run {procedure_name}\", or edit it by saying \"edit {procedure_name}\"."
                     else:
                         sio.emit("stageCompleted", room=str(self.sid))
-                        return f"Looks like you achieved the goal! You can try running the procedure by saying, \"run {procedure_name}\"."
+                        response = f"Looks like you achieved the goal! You can try running the procedure by saying, \"run {procedure_name}\"."
+                    goal.complete()
+                    self.context.goals.pop()
+                    return
                 response = goal.complete()
                 self.context.goals.pop()
             else:

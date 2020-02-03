@@ -41,12 +41,12 @@ class LoopActionGoal(ActionGoal):
             elif value.is_complete:
                 value.complete()
             else:
-                self.todos[0].actions.append(value)
+                self.todos[0].todos.append(value)
             return
         elif attr == "condition":
             if value is None:
                 self.todos.append(GetConditionGoal(self.context, self))
-            elif value.variable not in self.variables:
+            elif value.variable.variable not in self.variables:
                 self.error = f"Variable {value.variable} used in the condition does not exist. Please try again or create the variable first."
             elif isinstance(value.value, ValueOf) and value.value.variable not in self.variables:
                 self.error = f"Variable {value.value.variable} used in the condition does not exist. Please try again or create the variable first."

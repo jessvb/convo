@@ -73,7 +73,7 @@ class GetConditionalActionsGoal(GetActionsGoal):
             return f"{self.__class__.__name__} completed!"
 
         if len(self.todos) == 0:
-            if self.condition is not None:
+            if self.condition:
                 if len(self.actions) > 0:
                     return "Added action to whenever the condition is true. Anything else? You can say 'done' if you are finished."
                 else:
