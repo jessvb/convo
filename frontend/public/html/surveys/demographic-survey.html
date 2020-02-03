@@ -77,7 +77,8 @@
 
                 <div class="question">5) What programming languages have you used before? (Hold CTRL (or CMD on Mac) to select as many as applies) </div>
                 <div>
-                    <select multiple="multiple" class="answer wide" id='languages-select' onchange="showOtherTextBox(this, 'languages-textbox')">
+                    <select multiple="multiple" class="answer wide" id='languages-select' onchange="showOtherTextBox(this, 'languages-textbox')"
+                        style="height:195px"> <!-- TODO: change the height to be responsive to the number of inner options-->
                       <option value="none">None</option>
                       <option value="scratch">Scratch</option>
                       <option value="appinventor">App Inventor</option>
@@ -95,7 +96,8 @@
 
                 <div class="question">6) What type of conversational agents have you interacted with before? (Hold CTRL (or CMD on Mac) to select as many as applies) </div>
                 <div>
-                    <select multiple="multiple" class="answer wide" id='agents-select' onchange="showOtherTextBox(this, 'agents-textbox')">
+                    <select multiple="multiple" class="answer wide" id='agents-select' onchange="showOtherTextBox(this, 'agents-textbox')"
+                        style="height:125px"> <!-- TODO: change the height to be responsive to the number of inner options-->
                       <option value="none">None</option>
                       <option value="alexa">Amazon Alexa</option>
                       <option value="siri">Apple Siri</option>
