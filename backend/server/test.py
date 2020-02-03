@@ -329,10 +329,8 @@ bugs_test = [
     # "five"
 ]
 
-inputs, check = userstudy_scenarios["advanced"]
 logging.basicConfig(level=logging.DEBUG)
 client = Client("test")
-# client.dm = UserStudyAdvancedDialogManager("test", inputs, check)
 dm = client.dm
 sleep_time = 1
 for i, message in enumerate(messages):

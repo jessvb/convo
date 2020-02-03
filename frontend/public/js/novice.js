@@ -1,10 +1,11 @@
-const stage_instructions = [
+let stage_instructions = ["Create a procedure called pet sounds"];
+let novice_instructions = (sounds) => [
     "Create a procedure called pet sounds",
     "Get user input and save it as pet",
-    "If the value of 'pet' is dog play the dog sound",
+    `If the value of pet is ${sounds[0]}, play the ${sounds[0]} sound`,
     "Done",
     "No",
-    "If pet is cat, play the cat sound",
+    `If the value of pet is ${sounds[1]}, play the ${sounds[1]} sound`,
     "Done",
     "No",
     "Done",
@@ -17,6 +18,7 @@ let handleStepUpdate = (data) => {
     document.getElementById('instruction').innerHTML = `<em>"${stage_instructions[instructionStep]}"</em>`;
 }
 
+socketApi.on('noviceInstructions', (data) => { stage_instructions = novice_instructions(data.sounds); });
 socketApi.on('stepUpdate', handleStepUpdate);
 socketApi.on('stageCompleted', () => {
     document.getElementById('instruction-container').innerHTML = `

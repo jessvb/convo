@@ -1,14 +1,12 @@
-import logging
 import copy
 
 from dialog import DialogManager
 from manage import sio
+from app import logger
 from goals import *
 from models import *
 from question import *
 from nlu import *
-
-logger = logging.getLogger("gunicorn.error")
 
 class UserStudyDialogManager(DialogManager):
     def __init__(self, sid, stage, scenario):
@@ -217,10 +215,10 @@ class UserStudyAdvancedDialogManager(DialogManager):
                     valid = self.check_procedure()
                     procedure_name = self.context.current.name
                     if not valid:
-                        response = f"Hmm, I checked your procedure, and it doesn't seem to meet the goal. You can test the procedure by saying, \"run {procedure_name}\", or edit it by saying \"edit {procedure_name}\"."
-                    else:
                         sio.emit("stageCompleted", room=str(self.sid))
                         response = f"Looks like you achieved the goal! You can try running the procedure by saying, \"run {procedure_name}\"."
+                    else:
+                        response = f"Hmm, I checked your procedure, and it doesn't seem to meet the goal. You can test the procedure by saying, \"run {procedure_name}\", or edit it by saying \"edit {procedure_name}\"."
                     goal.complete()
                     self.context.goals.pop()
                     return

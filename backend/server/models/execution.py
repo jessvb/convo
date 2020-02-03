@@ -175,7 +175,7 @@ class InternalExecution(Execution):
                 return "ExecutionError"
             except StopIteration as e:
                 logger.info(f"Error detected: {str(e)}")
-                return "Stop Iteration"
+                return "StopIteration"
 
             if len(self.actions) > self.original_length * 100:
                 logger.info(f"Detected a potential infinite loop.")

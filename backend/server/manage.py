@@ -1,54 +1,54 @@
 from flask import request
 from flask_socketio import join_room
 
-from app import app, sio, socket_clients, socket_sessions
+from app import app, sio, logger, socket_clients, socket_sessions
 from dialog import DialogManager
 from userstudy import *
-from client import Client
+from client import *
 
 @sio.on("join")
 def join(data):
-    if isinstance(data, str):
-        sid = data
-        stage = None
-    else:
-        sid = request.sid if data.get("sid") is None else data.get("sid")
-        stage = data.get("stage")
-    stage_log = f" and at the {stage} stage" if stage else ""
-    app.logger.info(f"Client {sid} has connected{stage_log}.")
+    sid = request.sid if data.get("sid") is None else data.get("sid")
+    stage = data.get("stage")
+    part = data.get("part")
+    stage_log = f" at {stage} stage" if stage else ""
+    part_log = f" on part {part}" if part else ""
+    logger.info(f"Client {sid} has connected{stage_log}{part_log}.")
 
     join_room(str(sid))
-    client = socket_clients.get(sid, Client(sid))
+    client = socket_clients.get(sid, UserStudyClient(sid))
     socket_clients[sid] = client
 
-    if stage:
-        if stage in ["novice", "practice"]:
-            client.dm = UserStudyDialogManager(sid, stage, userstudy_scenarios[stage])
-        elif stage == "advanced":
-            inputs, check = userstudy_scenarios[stage]
-            client.dm = UserStudyAdvancedDialogManager(sid, inputs, check)
+    if stage in ["practice", "novice", "advanced"] and part in ["voice", "text", "voice-text"]:
+        scenario = client.inputs[stage][part]
+        if stage == "practice":
+            client.dm = UserStudyDialogManager(sid, stage, scenario)
+        elif stage == "novice":
+            client.dm = UserStudyDialogManager(sid, stage, scenario[1])
+            sio.emit("noviceInstructions", { "sounds": scenario[0] }, room=str(sid))
         else:
-            client.dm = DialogManager(sid)
+            client.dm = UserStudyAdvancedDialogManager(sid, scenario[1], advanced_scenario_check)
+            sio.emit("advancedInstructions", { "sounds": scenario[0], "iters": len(scenario[1]) }, room=str(sid))
     else:
         client.dm = DialogManager(sid)
 
-    socket_sessions[request.sid] = (sid, stage)
+    socket_sessions[request.sid] = (sid, stage, part)
     sio.emit("joined", sid, room=str(sid))
 
 @sio.on("disconnect")
 def disconnect():
-    sid, stage = socket_sessions.get(request.sid)
+    sid, stage, part = socket_sessions.get(request.sid)
     if sid:
         del socket_sessions[request.sid]
-        app.logger.info(f"Client {sid} disconnected from the {stage} stage.")
+        logger.info(f"Client {sid} disconnected from {stage} stage at part {part}.")
 
 @sio.on("message")
 def message(data):
     message = data.get("message")
     sid = data.get("sid")
 
-    client = socket_clients.get(sid, Client(sid))
-    if not message:
+    client = socket_clients.get(sid)
+    if client is None or message is None:
         return
 
     dm = client.dm
