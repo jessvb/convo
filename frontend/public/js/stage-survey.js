@@ -23,8 +23,8 @@ let submitAndGo = () => {
         });
     }
     let shortAns = [];
-    for (i = 0; i < numShortAnsQs; i++) {
-        shortAns.push(document.getElementById(`s${i}`).value);
+    for (let i = 0; i < numShortAnsQs; i++) {
+        shortAns.push($(`#s${i}`).val());
     }
 
     // Send and go to next stage
@@ -38,15 +38,21 @@ let submitAndGo = () => {
         let currPart = completedParts[completedParts.length - 1];
         let isAdvanced = JSON.parse(localStorage.getItem('isAdvanced')).value;
 
-        // TODO: store survey data!!!
-        // --> Make sure it's stored wrt currStage (novice/adv)
-        // --> Make sure it's stored wrt currPart (v,t,v+t)
-        window.alert('Survey data is not being stored. TODO: @Kevin store data in server.');
-        window.alert('Collected answers: ' + sid + '; ' + currStage + '; ' + currPart + '; ' +
-            likertAns + '; ' + shortAns);
+        surveyData = {
+            "stage": currStage,
+            "part": currPart,
+            "likert_answers": likertAns,
+            "short_answers": shortAns
+        }
+
+        socketApi.emit("survey", {
+            "sid": sid,
+            "type": "stage",
+            "data": surveyData
+        });
 
         // getNextStageUrl is found in stages-process.js
-        // window.location.href = getNextStageUrl(currStage, completedParts, true, isAdvanced);
+        window.location.href = getNextStageUrl(currStage, completedParts, true, isAdvanced);
     }
 };
 
@@ -223,11 +229,6 @@ let createDOM = () => {
                 Answer the following questions with regards to your
                 experience with the <strong>${system}-based</strong> system (i.e., the ${verbage} system).
             </p>`;
-        // form.innerHTML += '<h2>' + (system.charAt(0).toUpperCase() + system.substring(1)) +
-        //     '-based System Survey</h2>' + '<h3>' + (currStage.charAt(0).toUpperCase() +
-        //         currStage.substring(1)) + ' Stage</h3>' + '<p>Answer the following questions ' +
-        //     'with regards to your experience with the <strong>' + system +
-        //     '-based</strong> system (i.e., the ' + verbage + ' system)?' + '</p>';
     } else {
         // final survey
         form.innerHTML += `
@@ -276,7 +277,6 @@ let createDOM = () => {
     localStorage.setItem('numShortAnsQs', shortAnsQs.length);
 
     for (let i = 0; i < shortAnsQs.length; i++) {
-        console.log(`Adding short answer questions: ${shortAnsQs[i]}`);
         form.innerHTML += `
             <label class="statement">${shortAnsQs[i]}</label>
             <textarea class="answer" id="s${i}" type="text" placeholder="${placeholders[i]}"></textarea>`;
@@ -288,7 +288,6 @@ let createDOM = () => {
     //         Next
     //     </button>
     // </div>
-    console.log('Adding button.')
     form.innerHTML += `
         <div id="button-container">
             <button type="button" class="btn btn-primary submit" id="btn-next">Next</button>

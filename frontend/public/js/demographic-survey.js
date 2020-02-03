@@ -1,12 +1,9 @@
-document.addEventListener('DOMContentLoaded', (event) => {
-    socketApi.on('surveySaved', () => { console.log("Survey saved.") });
-});
-
 /**
  * Submits the relevant variables from the form to the Google form and goes to
  * the next page.
  */
 let submitAndGo = () => {
+    let sid = localStorage.getItem('sid');
     let age = $('#age').val();
     let sex = $('#sex').val();
     let genderTextBox = $('#gender-textbox').val();
@@ -17,9 +14,9 @@ let submitAndGo = () => {
     let agents = $('#agents-select').val();
     let agentsOther = $('#agents-textbox').val();
 
-    if (age == null || firstLanguage == null || level == null || sex == null || languages == null || agents == null ) {
+    if (sid == null || age == null || firstLanguage == null || level == null || sex == null || languages == null || agents == null ) {
         alert('There is an unanswered question. Please report this error to the experimenter.');
-        alert(`Collected answers: ${age}; ${sex}; ${genderTextBox}; ${firstLanguage}; ${level}; ${languages}; ${languagesOther}; ${agents}; ${agentsOther}`);
+        alert(`Collected answers: ${sid}; ${age}; ${sex}; ${genderTextBox}; ${firstLanguage}; ${level}; ${languages}; ${languagesOther}; ${agents}; ${agentsOther}`);
     } else {
         // set advanced / not advanced in local storage for stages-process.js:
         localStorage.setItem('isAdvanced', JSON.stringify({ value: level == 'advanced' }));
@@ -44,7 +41,13 @@ let submitAndGo = () => {
             "programming_languages": languages,
             "conv_agents": agents
         }
-        socketApi.emit("survey", { "sid": localStorage.getItem("sid"), "data": surveyData, "type": "demographics" });
+
+        socketApi.emit("survey", {
+            "sid": sid,
+            "type": "demographics",
+            "data": surveyData
+        });
+
         window.location.href = '/practice-info';
     }
 };

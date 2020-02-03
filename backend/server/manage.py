@@ -69,4 +69,8 @@ def survey(data):
     sid = data.get("sid")
     survey_type = data.get("type")
     survey_data = data.get("data")
-    sio.emit("surveySaved", room=str(sid))
+
+@sio.on("email")
+def email(data):
+    email = data.get("email")
+    advanced = data.get("advanced")
