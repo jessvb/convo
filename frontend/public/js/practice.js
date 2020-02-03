@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         </div>`;
     handleStepUpdate({ "step": 0 });
 
-    initial_utter = "Hello! Let’s create a procedure that says “Hello world!” today. If you ever need help, just say “I need help.”"
+    initial_utter = "Hello! Let’s create a procedure that says “Hello world!” today."
     addUtter("agent-utter", initial_utter, false);
     addUtter("agent-utter", "How would you like to start?", false);
 });
