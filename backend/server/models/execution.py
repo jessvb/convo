@@ -55,7 +55,7 @@ class Execution(object):
             try:
                 self.evaluate_action(action)
                 self.step += 1
-                sio.sleep(0.5)
+                sio.sleep(0.1)
                 if self.input_needed:
                     self.stop()
                     return
