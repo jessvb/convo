@@ -18,10 +18,10 @@ class BaseGoal(object):
 
     @property
     def message(self):
-        if self.error:
+        if self.error is not None:
             return self.error
 
-        if self._message:
+        if self._message is not None:
             return self._message
 
         return f"{self.__class__.__name__} completed!" if self.is_complete else self.todos[-1].message

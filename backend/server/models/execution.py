@@ -25,7 +25,7 @@ class Execution(object):
     def run(self, message=None):
         if self.input_needed and message:
             number = parse_number(message)
-            self.variables[self.input_needed] = number if number else message
+            self.variables[self.input_needed] = number if number is not None else message
             logger.info(f"Current variables: {str(self.variables)}")
             self.input_needed = None
         self.thread = threading.Thread(target=self.advance)
@@ -46,7 +46,7 @@ class Execution(object):
         self.finished = True
         self.context.transition("finish")
         self.context.execution = None
-        if message:
+        if message is not None:
             self.emit("response", { "message": message, "state": self.context.state })
 
     def advance(self):
@@ -55,7 +55,7 @@ class Execution(object):
             try:
                 self.evaluate_action(action)
                 self.step += 1
-                sio.sleep(0.5)
+                sio.sleep(0.1)
                 if self.input_needed:
                     self.stop()
                     return
@@ -165,7 +165,7 @@ class InternalExecution(Execution):
                 if self.input_needed:
                     message = next(self.iterinputs)
                     number = parse_number(message)
-                    self.variables[self.input_needed] = number if number else message
+                    self.variables[self.input_needed] = number if number is not None else message
                     self.input_needed = None
             except KeyError as e:
                 logger.info(f"Error detected: {str(e)}")

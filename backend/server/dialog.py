@@ -99,7 +99,7 @@ class DialogManager(object):
         self.nlu = SemanticNLU(self.context)
 
     def reset(self, context=None):
-        if context:
+        if context is not None:
             self.context = context
             self.qa = QuestionAnswer(context)
             self.nlu = SemanticNLU(context)
@@ -121,26 +121,26 @@ class DialogManager(object):
         self.context.add_message(message)
 
         response = self.handle_reset(message)
-        if response:
+        if response is not None:
             return response
 
         response = self.handle_help(message)
-        if response:
+        if response is not None:
             return response
 
         if self.context.state == "executing":
             return self.handle_execution(message)
 
         response = self.handle_cancel(message)
-        if response:
+        if response is not None:
             return response
 
         response = self.handle_question(message)
-        if response:
+        if response is not None:
             return response
 
         response = self.handle_parse(message)
-        if response:
+        if response is not None:
             return response
 
         return self.handle_goal()
@@ -178,7 +178,7 @@ class DialogManager(object):
         # Check if message is a question
         if QuestionAnswer.is_question(message):
             answer = self.qa.answer(message)
-            if answer:
+            if answer is not None:
                 return answer
 
     def handle_parse(self, message):
@@ -208,7 +208,7 @@ class DialogManager(object):
             goal = self.context.parsed
             if goal is None or not isinstance(goal, BaseGoal):
                 response = "I didn't understand what you were saying. Please try again."
-            elif goal.error:
+            elif goal.error is not None:
                 response = goal.error
             elif goal.is_complete:
                 response = goal.complete()
@@ -218,7 +218,7 @@ class DialogManager(object):
         else:
             goal = self.current_goal()
             goal.advance()
-            if goal.error:
+            if goal.error is not None:
                 response = goal.error
                 self.context.goals.pop()
             elif goal.is_complete:
@@ -248,7 +248,7 @@ class DialogContext(object):
         return self.goals[-1] if self.goals else None
 
     def reset(self):
-        if self.execution:
+        if self.execution is not None:
             self.execution.finish()
         self.state = "home"
         self.conversation = []

@@ -26,7 +26,7 @@ class GetInputGoal(BaseGoal):
         else:
             message = self.context.current_message
             number = parse_number(message)
-            self.value = number if number else message
+            self.value = number if number is not None else message
 
     def complete(self):
         self.obj.setattr(self.input, self.value)
@@ -54,7 +54,7 @@ class GetUserInputGoal(BaseGoal):
         else:
             message = self.context.current_message
             number = parse_number(message)
-            self.value = number if number else message
+            self.value = number if number is not None else message
 
     def complete(self):
         variables = self.context.execution.variables
