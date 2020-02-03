@@ -225,14 +225,14 @@ class UserStudyAdvancedDialogManager(DialogManager):
                     logger.info(f"User done with editing or creating goal so checking procedure.")
                     valid = self.check_procedure()
                     procedure_name = self.context.current.name
-                    if not valid:
+                    if valid:
                         sio.emit("stageCompleted", room=str(self.sid))
                         response = f"Looks like you achieved the goal! You can try running the procedure by saying, \"run {procedure_name}\"."
                     else:
                         response = f"Hmm, I checked your procedure, and it doesn't seem to meet the goal. You can test the procedure by saying, \"run {procedure_name}\", or edit it by saying \"edit {procedure_name}\"."
                     goal.complete()
                     self.context.goals.pop()
-                    return
+                    return response
                 response = goal.complete()
                 self.context.goals.pop()
             else:

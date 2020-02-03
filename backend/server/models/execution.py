@@ -3,12 +3,10 @@ import copy
 import threading
 import time
 
-from app import sio
+from app import sio, logger
 from error import *
 from models import *
 from helpers import *
-
-logger = logging.getLogger("gunicorn.error")
 
 class Execution(object):
     def __init__(self, context, actions, to_emit=True):
