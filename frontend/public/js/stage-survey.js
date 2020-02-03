@@ -299,7 +299,8 @@ function addLikertQsToDOM(form, likertQs, values, labels, prevIndex) {
     if (!prevIndex) {
         prevIndex = 0;
     }
-    for (let i = 0; i < likertQs.length; i++) {
+    let i = 0;
+    for (i = 0; i < likertQs.length; i++) {
         form.innerHTML += '<label class="statement">' + likertQs[i] + '</label>';
         form.innerHTML += '<ul class=\'likert answer\' id="l' + (i + prevIndex) + '"></ul>';
         let ul = document.getElementById('l' + (i + prevIndex));
