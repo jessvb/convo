@@ -43,9 +43,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
             <p>
                 Watch this video to see the goal for this portion of the study.
             </p>
-            <iframe width="100%" src="https://www.youtube.com/embed/qtf-3kr25JA" 
-                frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; 
-                picture-in-picture" allowfullscreen></iframe>
+            <iframe width="100%"
+                    src="https://www.youtube.com/embed/qtf-3kr25JA"
+                    frameborder="0"
+                    allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+            </iframe>
         </div>`;
     handleStepUpdate({
         "step": 0

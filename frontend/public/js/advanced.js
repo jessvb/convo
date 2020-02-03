@@ -29,8 +29,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
             <p>
                 Watch this video to see the goal for this portion of the study.
             </p>
-            <iframe width="100%" src="https://www.youtube.com/embed/TiCcaTJJP4Y" frameborder="0" 
-                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+            <iframe width="100%"
+                    src="https://www.youtube.com/embed/TiCcaTJJP4Y"
+                    frameborder="0"
+                    allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
             </iframe>
         </div>`;
 
@@ -38,6 +41,5 @@ document.addEventListener('DOMContentLoaded', (event) => {
     initial_utter2 = "This time, let’s add a countdown. I will continue to listen for user input until I’ve responded five times."
     addUtter("agent-utter", initial_utter1, false);
     addUtter("agent-utter", initial_utter2, false);
-    addUtter("agent-utter", initial_utter3, false);
     addUtter("agent-utter", "Let’s get started! How would you like to start?", false);
 });
