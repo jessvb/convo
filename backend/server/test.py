@@ -139,16 +139,16 @@ edit_test4 = [
 ]
 
 sound_test = [
-    "create a procedure called bark",
+    "create a procedure called dog",
     "create a variable called foo and set it to 5",
     "get user input",
     "bar",
-    "if bar is equal to dog then play the bark sound",
+    "if bar is equal to dog then play the dog sound",
     "no",
-    "play the meow sound",
+    "play the cat sound",
     "no",
     "done",
-    "run bark",
+    "run dog",
     "cat"
 ]
 
@@ -301,10 +301,10 @@ conditional_test = [
     "create a while loop",
     "while counter is less than 5",
     "get user input and save it as pet",
-    "if pet is dog play the bark sound",
+    "if pet is dog play the dog sound",
     "done",
     "no",
-    "if pet is cat play the meow sound",
+    "if pet is cat play the cat sound",
     "done",
     "no",
     "add 1 to counter",

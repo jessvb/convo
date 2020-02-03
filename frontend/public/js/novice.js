@@ -1,10 +1,10 @@
 const stage_instructions = [
     "Create a procedure called pet sounds",
     "Get user input and save it as pet",
-    "If the value of 'pet' is dog play the bark sound",
+    "If the value of 'pet' is dog play the dog sound",
     "Done",
     "No",
-    "If pet is cat, play the meow sound",
+    "If pet is cat, play the cat sound",
     "Done",
     "No",
     "Done",

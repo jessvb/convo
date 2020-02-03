@@ -13,10 +13,10 @@ practice_scenario = [
 novice_scenario = [
     ("create a procedure called pet sounds", CreateProcedureGoal),
     ("get user input and save it as pet", GetUserInputActionGoal),
-    ("if pet is dog play the bark sound", ConditionalActionGoal),
+    ("if pet is dog play the dog sound", ConditionalActionGoal),
     ("done", None),
     ("no", None),
-    ("if pet is cat, play the meow sound", ConditionalActionGoal),
+    ("if pet is cat, play the cat sound", ConditionalActionGoal),
     ("done", None),
     ("no", None),
     ("done", None),
@@ -33,8 +33,8 @@ def advanced_scenario_check(execution, response, inputs):
         return False
 
     pet_sounds = {
-        "dog": "bark",
-        "cat": "meow"
+        "dog": "dog",
+        "cat": "cat"
     }
 
     get_user_inputs = [emit for emit in execution.emits if emit[0] == "response" and emit[1]["message"] == "Listening for user input..."]

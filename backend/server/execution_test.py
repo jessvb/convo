@@ -7,8 +7,8 @@ correct_actions = [
     CreateVariableAction("counter", 5),
     LoopAction("while", ComparisonCondition(ValueOf("counter"), "greater than", 0), [
         GetUserInputAction("pet"),
-        ConditionalAction(EqualityCondition(ValueOf("pet"), "dog"), [[], [PlaySoundAction("bark")]]),
-        ConditionalAction(EqualityCondition(ValueOf("pet"), "cat"), [[], [PlaySoundAction("meow")]]),
+        ConditionalAction(EqualityCondition(ValueOf("pet"), "dog"), [[], [PlaySoundAction("dog")]]),
+        ConditionalAction(EqualityCondition(ValueOf("pet"), "cat"), [[], [PlaySoundAction("cat")]]),
         SubtractFromVariableAction("counter", 1)
     ])
 ]
@@ -17,8 +17,8 @@ correct_actions2 = [
     CreateVariableAction("asdf", 5),
     LoopAction("while", ComparisonCondition(ValueOf("asdf"), "greater than", 0), [
         GetUserInputAction("pet"),
-        ConditionalAction(EqualityCondition(ValueOf("pet"), "cat"), [[], [PlaySoundAction("meow")]]),
-        ConditionalAction(EqualityCondition(ValueOf("pet"), "dog"), [[], [PlaySoundAction("bark")]]),
+        ConditionalAction(EqualityCondition(ValueOf("pet"), "cat"), [[], [PlaySoundAction("cat")]]),
+        ConditionalAction(EqualityCondition(ValueOf("pet"), "dog"), [[], [PlaySoundAction("dog")]]),
         SubtractFromVariableAction("asdf", 1)
     ])
 ]
@@ -27,8 +27,8 @@ correct_actions3 = [
     CreateVariableAction("counter", 5),
     LoopAction("until", EqualityCondition(ValueOf("counter"), 0), [
         GetUserInputAction("pet"),
-        ConditionalAction(EqualityCondition(ValueOf("pet"), "cat"), [[], [PlaySoundAction("meow")]]),
-        ConditionalAction(EqualityCondition(ValueOf("pet"), "dog"), [[], [PlaySoundAction("bark")]]),
+        ConditionalAction(EqualityCondition(ValueOf("pet"), "cat"), [[], [PlaySoundAction("cat")]]),
+        ConditionalAction(EqualityCondition(ValueOf("pet"), "dog"), [[], [PlaySoundAction("dog")]]),
         SubtractFromVariableAction("counter", 1)
     ])
 ]
@@ -37,8 +37,8 @@ correct_actions4 = [
     CreateVariableAction("counter", 0),
     LoopAction("until", EqualityCondition(ValueOf("counter"), 5), [
         GetUserInputAction("animal"),
-        ConditionalAction(EqualityCondition(ValueOf("animal"), "cat"), [[], [PlaySoundAction("meow")]]),
-        ConditionalAction(EqualityCondition(ValueOf("animal"), "dog"), [[], [PlaySoundAction("bark")]]),
+        ConditionalAction(EqualityCondition(ValueOf("animal"), "cat"), [[], [PlaySoundAction("cat")]]),
+        ConditionalAction(EqualityCondition(ValueOf("animal"), "dog"), [[], [PlaySoundAction("dog")]]),
         AddToVariableAction("counter", 1)
     ])
 ]
@@ -47,25 +47,25 @@ incorrect_actions1 = [
     CreateVariableAction("counter", 5),
     LoopAction("while", ComparisonCondition(ValueOf("counter"), "greater than", 4), [
         GetUserInputAction("pet"),
-        ConditionalAction(EqualityCondition(ValueOf("pet"), "dog"), [[PlaySoundAction("bark")], []]),
-        ConditionalAction(EqualityCondition(ValueOf("pet"), "cat"), [[PlaySoundAction("meow")], []]),
+        ConditionalAction(EqualityCondition(ValueOf("pet"), "dog"), [[PlaySoundAction("dog")], []]),
+        ConditionalAction(EqualityCondition(ValueOf("pet"), "cat"), [[PlaySoundAction("cat")], []]),
     ])
 ]
 
 incorrect_actions2 = [
-    PlaySoundAction("bark"),
-    PlaySoundAction("meow"),
-    PlaySoundAction("meow"),
-    PlaySoundAction("bark"),
-    PlaySoundAction("bark")
+    PlaySoundAction("dog"),
+    PlaySoundAction("cat"),
+    PlaySoundAction("cat"),
+    PlaySoundAction("dog"),
+    PlaySoundAction("dog")
 ]
 
 incorrect_actions3 = [
     CreateVariableAction("counter", 5),
     LoopAction("while", ComparisonCondition(ValueOf("counter"), "greater than", 0), [
         GetUserInputAction("pet"),
-        ConditionalAction(EqualityCondition(ValueOf("pet"), "dog"), [[PlaySoundAction("bark")], []]),
-        ConditionalAction(EqualityCondition(ValueOf("pet"), "cat"), [[PlaySoundAction("meow")], []]),
+        ConditionalAction(EqualityCondition(ValueOf("pet"), "dog"), [[PlaySoundAction("dog")], []]),
+        ConditionalAction(EqualityCondition(ValueOf("pet"), "cat"), [[PlaySoundAction("cat")], []]),
         SubtractFromVariableAction("counter", 1)
     ])
 ]
@@ -74,8 +74,8 @@ incorrect_actions4 = [
     CreateVariableAction("counter", 5),
     LoopAction("while", ComparisonCondition(ValueOf("counter"), "greater than", 4), [
         GetUserInputAction("pet"),
-        ConditionalAction(EqualityCondition(ValueOf("pet"), "dog"), [[], [PlaySoundAction("bark")]]),
-        ConditionalAction(EqualityCondition(ValueOf("pet"), "cat"), [[], [PlaySoundAction("meow")]]),
+        ConditionalAction(EqualityCondition(ValueOf("pet"), "dog"), [[], [PlaySoundAction("dog")]]),
+        ConditionalAction(EqualityCondition(ValueOf("pet"), "cat"), [[], [PlaySoundAction("cat")]]),
         SubtractFromVariableAction("counter", 1)
     ])
 ]
@@ -103,8 +103,8 @@ inputs, check = userstudy_scenarios["advanced"]
 #         return False
 
 #     pet_sounds = {
-#         "dog": "bark",
-#         "cat": "meow"
+#         "dog": "dog",
+#         "cat": "cat"
 #     }
 
 #     get_user_inputs = [emit for emit in execution.emits if emit[0] == "response" and emit[1]["message"] == "Listening for user input..."]
