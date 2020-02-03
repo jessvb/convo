@@ -91,30 +91,12 @@ const request = {
         languageCode: languageCode,
         speech_contexts: [
             [
-                "create a procedure",
-                "create",
-                "make",
-                "variable",
-                "class",
-                "property",
-                "procedure",
-                "conditional",
-                "while loop",
-                "until loop",
-                "run",
-                "list",
-                "add",
-                "add step",
-                "delete step",
-                "remove step",
-                "change step",
-                "replace step",
-                "if",
-                "is greater than",
-                "is less than",
-                "is equal to",
-                "is greater than or equal to",
-                "is less than or equal to"
+                "create a procedure", "create", "make",
+                "variable", "class", "property", "procedure",
+                "conditional", "while loop", "until loop", "close loop",
+                "run", "add", "add step", "delete step", "remove step", "change step", "replace step",
+                "if", "is", "greater than", "less than", "equal to", "greater than or equal to", "less than or equal to",
+                "pet", "horse", "cat", "dog", "cricket", "bird", "cow"
             ]
         ]
     },
