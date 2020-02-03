@@ -295,15 +295,6 @@ infinite_while_loop_test = [
     "stop"
 ]
 
-bugs_test = [
-    "I want to create a procedure called hello world",
-    "get user input",
-    "input",
-    "done",
-    "run hello world",
-    "five"
-]
-
 conditional_test = [
     "create a procedure called hello world",
     "create a variable called counter and set it to 0",
@@ -327,13 +318,24 @@ conditional_test = [
     # "cat"
 ]
 
+bugs_test = [
+    "I want to create a procedure called hello world",
+    "create a variable called var and set it to 0",
+    "while var is less than 5 play sound",
+    # "get user input",
+    # "input",
+    # "done",
+    # "run hello world",
+    # "five"
+]
+
 inputs, check = userstudy_scenarios["advanced"]
 logging.basicConfig(level=logging.DEBUG)
 client = Client("test")
-client.dm = UserStudyAdvancedDialogManager("test", inputs, check)
+# client.dm = UserStudyAdvancedDialogManager("test", inputs, check)
 dm = client.dm
 sleep_time = 1
-for i, message in enumerate(conditional_test):
+for i, message in enumerate(messages):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

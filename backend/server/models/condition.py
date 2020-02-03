@@ -38,7 +38,7 @@ class EqualityCondition(Condition):
         self.negation = negation
 
     def eval(self, variables):
-        variable = variables[self.variable]
+        variable = variables[self.variable.variable]
         value = variables[self.value.variable] if isinstance(self.value, ValueOf) else self.value
         if type(value) != type(variable):
             if isinstance(value, str) or isinstance(variable, str):
@@ -48,11 +48,11 @@ class EqualityCondition(Condition):
 
     def __str__(self):
         value = f"the value of {self.value.variable}" if isinstance(self.value, ValueOf) else self.value
-        return f"{self.variable} {'!' if self.negation else '='}= {value}"
+        return f"{self.variable.variable} {'!' if self.negation else '='}= {value}"
 
     def to_nl(self):
         value = f"the value of {self.value.variable}" if isinstance(self.value, ValueOf) else self.value
-        return f"variable {self.variable} is {'not ' if self.negation else ''}equal to {value}"
+        return f"variable {self.variable.variable} is {'not ' if self.negation else ''}equal to {value}"
 
     def __eq__(self, other):
         if not isinstance(other, type(self)):
@@ -67,7 +67,7 @@ class ComparisonCondition(Condition):
         self.op = op
 
     def eval(self, variables):
-        variable = variables[self.variable]
+        variable = variables[self.variable.variable]
         value = variables[self.value.variable] if isinstance(self.value, ValueOf) else self.value
         if type(value) != type(variable):
             if isinstance(value, str) or isinstance(variable, str):
@@ -85,11 +85,11 @@ class ComparisonCondition(Condition):
 
     def __str__(self):
         value = f"the value of {self.value.variable}" if isinstance(self.value, ValueOf) else self.value
-        return f"{self.variable} {comparison_ops.get(self.op)} {value}"
+        return f"{self.variable.variable} {comparison_ops.get(self.op)} {value}"
 
     def to_nl(self):
         value = f"the value of {self.value.variable}" if isinstance(self.value, ValueOf) else self.value
-        return f"variable {self.variable} is {self.op} {value}"
+        return f"variable {self.variable.variable} is {self.op} {value}"
 
     def __eq__(self, other):
         if not isinstance(other, type(self)):

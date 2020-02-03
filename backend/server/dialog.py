@@ -15,7 +15,7 @@ example_procedure = Procedure(name="example", actions=[
     AddToVariableAction("foo", 5),
     SayAction("hello world!"),
     ConditionalAction(
-        ComparisonCondition("foo", "greater than", 10),
+        ComparisonCondition(ValueOf("foo"), "greater than", 10),
         actions=[
             [SayAction("foo is not greater than 10"), CreateVariableAction("bar", 10)],
             [SayAction("foo is greater than 10"), CreateVariableAction("bar", 4), SayAction("random")]
@@ -23,7 +23,7 @@ example_procedure = Procedure(name="example", actions=[
     ),
     LoopAction(
         loop="until",
-        condition=ComparisonCondition("bar", "less than", 15),
+        condition=ComparisonCondition(ValueOf("bar"), "less than", 15),
         actions=[
             SayAction("bar is less than 15"),
             AddToVariableAction("bar", 1)
@@ -36,10 +36,10 @@ sounds_procedure = Procedure(name="dog or cat", actions=[
     SayAction("Do you want to hear a dog or a cat?"),
     GetUserInputAction("input"),
     ConditionalAction(
-        EqualityCondition("input", "dog"),
+        EqualityCondition(ValueOf("input"), "dog"),
         actions=[
             [ConditionalAction(
-                EqualityCondition("input", "cat"),
+                EqualityCondition(ValueOf("input"), "cat"),
                 actions=[
                     [SayAction("You did not say a dog or a cat.")],
                     [PlaySoundAction("meow")]
@@ -56,7 +56,7 @@ infinite_loop_procedure = Procedure(name="infinite loop", actions=[
     CreateVariableAction("bad var", 0),
     LoopAction(
         loop="while",
-        condition=EqualityCondition("bad var", 0),
+        condition=EqualityCondition(ValueOf("bad var"), 0),
         actions=[SayAction("in the loop")]
     )
 ])
