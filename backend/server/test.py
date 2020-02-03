@@ -319,9 +319,11 @@ conditional_test = [
 ]
 
 bugs_test = [
-    "I want to create a procedure called hello world",
-    "create a variable called var and set it to 0",
-    "while var is less than 5 play sound",
+    "create a procedure called pet sounds",
+    "get user input and save it as pet",
+    "if pat is dog play the dog sound",
+    "if pet is dog play the dog sound",
+    "done"
     # "get user input",
     # "input",
     # "done",
@@ -333,7 +335,7 @@ logging.basicConfig(level=logging.DEBUG)
 client = Client("test")
 dm = client.dm
 sleep_time = 1
-for i, message in enumerate(messages):
+for i, message in enumerate(bugs_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

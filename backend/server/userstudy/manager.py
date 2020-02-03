@@ -17,17 +17,19 @@ class UserStudyDialogManager(DialogManager):
         self.reference = DialogManager(sid)
         self.last_parsed_goal = None
         self.backup_context = copy.deepcopy(self.context)
+        self.backup_reference_context = copy.deepcopy(self.reference.context)
         logger.info(f"UserStudyDialogManager created for stage {stage}.")
 
     @property
     def scenario_completed(self):
         return self.step >= len(self.scenario)
 
-    def reset(self, context=None):
-        if context:
-            self.context = copy.deepcopy(context)
-            self.qa = QuestionAnswer(context)
-            self.nlu = SemanticNLU(context)
+    def reset(self, to_backup=False):
+        if to_backup:
+            self.context = copy.deepcopy(self.backup_reference_context)
+            self.qa = QuestionAnswer(self.context)
+            self.nlu = SemanticNLU(self.context)
+            self.last_parsed_goal = None
             response = "Conversation and objective has been reset to previous back up. What do you want to do first?"
         else:
             logger.info(f"Reseting the entire conversation and scenario.")
@@ -37,6 +39,7 @@ class UserStudyDialogManager(DialogManager):
             self.reference.reset()
             self.reference.context.procedures = { }
             self.reference.context.execution = None
+            self.last_parsed_goal = None
             self.step = 0
             response = "Conversation and the objective has been reset. What do you want to do first?"
             sio.emit("stepUpdate", { "step": self.step }, room=str(self.sid))
@@ -59,6 +62,49 @@ class UserStudyDialogManager(DialogManager):
         while current and current.todos:
             current = current.todos[-1]
         return current
+
+    def handle_message(self, message):
+        if not isinstance(self.immediate_goal, GetInputGoal):
+            self.backup_context = copy.deepcopy(self.context)
+            self.backup_reference_context = copy.deepcopy(self.reference.context)
+
+        if self.step >= len(self.scenario):
+            logger.info(f"Finished the goal, so using default handling.")
+            return super().handle_message(message)
+
+        self.context.add_message(message)
+
+        response = self.handle_reset(message)
+        if response is not None:
+            return response
+
+        logger.info(f"Handling help.")
+        response = self.handle_help(message)
+        if response is not None:
+            return response
+
+        if self.context.state == "executing":
+            return self.handle_execution(message)
+
+        logger.info(f"Handling question.")
+        response = self.handle_question(message)
+        if response is not None:
+            return response
+
+        logger.info(f"Handling parsing.")
+        response = self.handle_parse(message)
+        if response is not None:
+            return response
+
+        logger.info(f"Checking goal.")
+        response = self.check_goal(message)
+        if response is not None:
+            return response
+
+        logger.info(f"Handling goal.")
+        response = self.handle_goal()
+
+        return response
 
     def handle_parse(self, message):
         if self.step >= len(self.scenario):
@@ -98,15 +144,12 @@ class UserStudyDialogManager(DialogManager):
         if self.step >= len(self.scenario):
             return super().handle_goal()
 
-        print(self.context.state)
-        backup_reference_context = copy.deepcopy(self.reference.context)
-
         if self.current_goal() is None:
             goal = self.context.parsed
             if goal is None or not isinstance(goal, BaseGoal):
                 return "I didn't understand what you were saying. Please try again."
             elif goal.error:
-                self.reset(copy.deepcopy(self.backup_context))
+                self.reset(to_backup=True)
                 logger.info(f"Current goal had an error.")
                 return "I think your action is slightly wrong. Please try again!"
             elif goal.is_complete:
@@ -119,7 +162,7 @@ class UserStudyDialogManager(DialogManager):
             goal.advance()
 
             if goal.error or self.last_parsed_goal.error:
-                self.reset(copy.deepcopy(self.backup_context))
+                self.reset(to_backup=True)
                 logger.info(f"Current goal had an error.")
                 return "I think your action is slightly wrong. Please follow the instructions and try again."
             elif goal.is_complete:
@@ -136,11 +179,11 @@ class UserStudyDialogManager(DialogManager):
 
         if isinstance(self.immediate_goal, GetActionsGoal):
             wrong_procedure = isinstance(self.last_parsed_goal, CreateProcedureGoal) and self.context.current.name != self.reference.context.current.name
-            wrong_action = self.immediate_goal.actions != self.reference.immediate_goal.actions
+            wrong_action = self.context.current.actions != self.reference.context.current.actions
 
             if wrong_procedure or wrong_action:
-                self.reset(copy.deepcopy(self.backup_context))
-                self.reference.reset(backup_reference_context)
+                self.reset(to_backup=True)
+                self.reference.reset(self.backup_reference_context)
                 self.step = max(self.step - 1, 0)
                 if wrong_procedure:
                     logger.info(f"Procedure with the wrong name was created. Undoing the step update back to step {self.step}.")
@@ -156,48 +199,6 @@ class UserStudyDialogManager(DialogManager):
             else:
                 logger.info(f"Nothing was wrong, so step can be updated.")
                 sio.emit("stepUpdate", { "step": self.step }, room=str(self.sid))
-
-        return response
-
-    def handle_message(self, message):
-        if self.step >= len(self.scenario):
-            logger.info(f"Finished the goal, so using default handling.")
-            return super().handle_message(message)
-
-        self.context.add_message(message)
-
-        response = self.handle_reset(message)
-        if response is not None:
-            return response
-
-        logger.info(f"Handling help.")
-        response = self.handle_help(message)
-        if response is not None:
-            return response
-
-        if self.context.state == "executing":
-            return self.handle_execution(message)
-
-        logger.info(f"Handling question.")
-        response = self.handle_question(message)
-        if response is not None:
-            return response
-
-        logger.info(f"Handling parsing.")
-        response = self.handle_parse(message)
-        if response is not None:
-            return response
-
-        logger.info(f"Checking goal.")
-        response = self.check_goal(message)
-        if response is not None:
-            return response
-
-        if not isinstance(self.immediate_goal, GetInputGoal):
-            self.backup_context = copy.deepcopy(self.context)
-
-        logger.info(f"Handling goal.")
-        response = self.handle_goal()
 
         return response
 
