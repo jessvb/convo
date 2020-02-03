@@ -152,7 +152,9 @@ class ConditionalAction(Action):
 
     def to_nl(self):
         falses, trues = self.actions
-        return f"doing {len(falses) if len(falses) > 0 else 'no'} action(s) when {self.condition.to_nl()} and {len(trues) if len(trues) > 0 else 'no'} action(s) otherwise"
+        num_falses = len(falses) if len(falses) > 0 else 'no'
+        num_trues = len(trues) if len(trues) > 0 else 'no'
+        return f"doing {num_trues} action(s) when {self.condition.to_nl()} and {num_falses} action(s) otherwise"
 
     def __eq__(self, other):
         if not isinstance(other, type(self)):

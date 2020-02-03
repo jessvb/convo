@@ -46,7 +46,11 @@ class EditGoal(HomeGoal):
 
             todo.advance()
             if todo.is_complete:
-                self._message = todo.complete()
+                if isinstance(todo, GetInputGoal):
+                    todo.complete()
+                    return self.edit.message
+                else:
+                    self._message = todo.complete()
             else:
                 self.todos.append(todo)
             return
