@@ -1,6 +1,6 @@
 import copy
 
-from dialog import DialogManager
+from dialog import *
 from manage import sio
 from app import logger
 from goals import *
@@ -25,17 +25,22 @@ class UserStudyDialogManager(DialogManager):
 
     def reset(self, context=None):
         if context:
-            self.context = context
+            self.context = copy.deepcopy(context)
             self.qa = QuestionAnswer(context)
             self.nlu = SemanticNLU(context)
             response = "Conversation and objective has been reset to previous back up. What do you want to do first?"
         else:
             logger.info(f"Reseting the entire conversation and scenario.")
             self.context.reset()
-            self.reference = DialogManager(self.sid)
+            self.context.procedures = { }
+            self.context.execution = None
+            self.reference.reset()
+            self.reference.context.procedures = { }
+            self.reference.context.execution = None
             self.step = 0
             response = "Conversation and the objective has been reset. What do you want to do first?"
             sio.emit("stepUpdate", { "step": self.step }, room=str(self.sid))
+
         self.backup_context = copy.deepcopy(self.context)
         return response
 
@@ -84,10 +89,16 @@ class UserStudyDialogManager(DialogManager):
             logger.info(f"Goal could not be parsed and message was not recognized.")
             return "I didn't quite catch that. Please follow the instructions and try again!"
 
+    def handle_reset(self, message):
+        # Check for reset
+        if message.lower() == "reset":
+            return self.reset()
+
     def handle_goal(self):
         if self.step >= len(self.scenario):
             return super().handle_goal()
 
+        print(self.context.state)
         backup_reference_context = copy.deepcopy(self.reference.context)
 
         if self.current_goal() is None:
@@ -97,7 +108,7 @@ class UserStudyDialogManager(DialogManager):
             elif goal.error:
                 self.reset(copy.deepcopy(self.backup_context))
                 logger.info(f"Current goal had an error.")
-                return "I think your action is slightly wrong. Please follow the instructions and try again!"
+                return "I think your action is slightly wrong. Please try again!"
             elif goal.is_complete:
                 response = goal.complete()
             else:

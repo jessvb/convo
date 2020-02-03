@@ -3,7 +3,11 @@ from models import *
 
 available_sounds = set([
     "dog",
-    "cat"
+    "cat",
+    "horse",
+    "cow",
+    "bird",
+    "cricket"
 ])
 
 class PlaySoundActionGoal(ActionGoal):

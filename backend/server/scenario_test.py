@@ -51,16 +51,24 @@ novice_test2 = [
     "dog"
 ]
 
+novice_test3 = [
+
+]
+
 practice_test = [
     "create a procedure called hello world",
     "say hello world",
-    "done",
-    "run hello world",
-    "create a procedure called hi"
+    "reset",
+    # "done",
+    # "run hello world",
+    "create a procedure called hi",
+    "create a procedure called hello world"
 ]
 
-client = Client("scenario")
-dm = UserStudyDialogManager("scenario", "practice", practice_scenario)
+client = UserStudyClient("scenario")
+scenario = client.inputs["practice"]["voice-text"]
+
+dm = UserStudyDialogManager("scenario", "practice", scenario)
 client.dm = dm
 
 for i, message in enumerate(practice_test):

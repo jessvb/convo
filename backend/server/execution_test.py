@@ -2,6 +2,7 @@ from models import *
 from goals import *
 from userstudy import *
 from dialog import *
+from client import *
 
 def correct_actions(sound_pair, length):
     return [
