@@ -30,12 +30,16 @@ class UserStudyDialogManager(DialogManager):
             self.context = context
             self.qa = QuestionAnswer(context)
             self.nlu = SemanticNLU(context)
+            response = "Conversation and objective has been reset to previous back up. What do you want to do first?"
         else:
+            logger.info(f"Reseting the entire conversation and scenario.")
             self.context.reset()
-            self.reference = DialogManager(sid)
+            self.reference = DialogManager(self.sid)
             self.step = 0
+            response = "Conversation and the objective has been reset. What do you want to do first?"
+            sio.emit("stepUpdate", { "step": self.step }, room=str(self.sid))
         self.backup_context = copy.deepcopy(self.context)
-        return "Conversation has been reset. What do you want to do first?"
+        return response
 
     @property
     def next_message(self):
@@ -153,9 +157,13 @@ class UserStudyDialogManager(DialogManager):
 
         self.context.add_message(message)
 
+        response = self.handle_reset(message)
+        if response is not None:
+            return response
+
         logger.info(f"Handling help.")
         response = self.handle_help(message)
-        if response:
+        if response is not None:
             return response
 
         if self.context.state == "executing":
@@ -163,17 +171,17 @@ class UserStudyDialogManager(DialogManager):
 
         logger.info(f"Handling question.")
         response = self.handle_question(message)
-        if response:
+        if response is not None:
             return response
 
         logger.info(f"Handling parsing.")
         response = self.handle_parse(message)
-        if response:
+        if response is not None:
             return response
 
         logger.info(f"Checking goal.")
         response = self.check_goal(message)
-        if response:
+        if response is not None:
             return response
 
         if not isinstance(self.immediate_goal, GetInputGoal):
