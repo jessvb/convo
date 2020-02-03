@@ -18,10 +18,8 @@ let submitAndGo = () => {
     let agentsOther = $('#agents-textbox').val();
 
     if (age == null || firstLanguage == null || level == null || sex == null || languages == null || agents == null ) {
-        window.alert('There is an unanswered question. Please report this error to the experimenter.');
-        window.alert('Collected answers: ' + age + '; ' + sex + '; ' + genderTextBox +
-            '; ' + firstLanguage + '; ' + level + '; ' + languages + '; ' +
-            languagesOther + '; ' + agents + '; ' + agentsOther);
+        alert('There is an unanswered question. Please report this error to the experimenter.');
+        alert(`Collected answers: ${age}; ${sex}; ${genderTextBox}; ${firstLanguage}; ${level}; ${languages}; ${languagesOther}; ${agents}; ${agentsOther}`);
     } else {
         // set advanced / not advanced in local storage for stages-process.js:
         localStorage.setItem('isAdvanced', JSON.stringify({ value: level == 'advanced' }));

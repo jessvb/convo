@@ -29,10 +29,10 @@ let getUniqueId = () => {
         ]).replace(/ /g, '_');
         let unique = ('' + Math.random()).substr(2);
 
-        localStorage['uid'] = `${os}-${browser}-${unique}`;
+        localStorage.setItem('uid', `${os}-${browser}-${unique}`);
     }
 
-    return localStorage['uid'];
+    return localStorage.getItem('uid');
 };
 
 // Parse user agent string by looking for recognized substring.
