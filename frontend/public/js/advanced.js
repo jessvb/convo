@@ -21,6 +21,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 <ol>
             </div>
         </div>`;
+    document.getElementById('goal').innerHTML = `
+        <div id="goal-heading">
+            <div><b>Advanced Stage Goal</b></div>
+        </div>
+        <div id="goal-container">
+            <p>
+                Watch this video to see the goal for this portion of the study.
+            </p>
+            <iframe width="100%" src="https://www.youtube.com/embed/TiCcaTJJP4Y" frameborder="0" 
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+            </iframe>
+        </div>`;
 
     initial_utter1 = "Great job! Did you notice that I only listened for user input once after you ran the procedure?"
     initial_utter2 = "This time, let’s add a countdown. I will continue to listen for user input until I’ve responded five times."

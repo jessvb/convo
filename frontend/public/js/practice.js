@@ -29,7 +29,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
             <div id="instruction-say"><b>Say</b></div>
             <div id="instruction"></div>
         </div>`;
-    handleStepUpdate({ "step": 0 });
+    document.getElementById('goal').innerHTML = `
+        <div id="goal-heading">
+            <div><b>Practice Stage Goal</b></div>
+        </div>
+        <div id="goal-container">
+            <p>
+                Watch this video to see the goal for this portion of the study.
+            </p>
+            <iframe width="100%" src="https://www.youtube.com/embed/9MPZOaelJ7Y" 
+                frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; 
+                picture-in-picture" allowfullscreen></iframe>
+        </div>`;
+    handleStepUpdate({
+        "step": 0
+    });
 
     initial_utter = "Hello! Let’s create a procedure that says “Hello world!” today. If you ever need help, just say “I need help.”"
     addUtter("agent-utter", initial_utter, false);
