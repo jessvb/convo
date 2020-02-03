@@ -11,11 +11,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     localStorage.setItem('userID', userID);
 
     // set the button url
-    let url = 'demographic-survey';
     let button = document.getElementById('btn-begin');
-    button.onclick = () => {
-        window.open(url, '_self');
-    };
+    button.onclick = () => { window.location.href = "/demographic-survey"; };
 });
 
 // Genrates or remembers a somewhat-unique ID with distilled user-agent info.
@@ -32,10 +29,10 @@ let getUniqueId = () => {
         ]).replace(/ /g, '_');
         let unique = ('' + Math.random()).substr(2);
 
-        localStorage['uid'] = `${os}-${browser}-${unique}`;
+        localStorage.setItem('uid', `${os}-${browser}-${unique}`);
     }
 
-    return localStorage['uid'];
+    return localStorage.getItem('uid');
 };
 
 // Parse user agent string by looking for recognized substring.

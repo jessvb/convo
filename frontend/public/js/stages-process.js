@@ -7,10 +7,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 	let nextBtn = document.getElementById('btn-next-stage');
 	if (nextBtn) {
-		nextBtn.onclick = () => {
-			let url = getNextStageUrl(currStage, completedParts, doneSurvey, isAdvanced);
-			window.open(url, '_self');
-		};
+		nextBtn.onclick = () => { window.location.href = getNextStageUrl(currStage, completedParts, doneSurvey, isAdvanced); };
 	}
 });
 

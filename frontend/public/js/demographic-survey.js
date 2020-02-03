@@ -3,44 +3,52 @@
  * the next page.
  */
 let submitAndGo = () => {
-    // Get the user id for this computer and person:
-    let userID = localStorage.getItem('userID');
-    let uid = localStorage.getItem('uid');
+    let sid = localStorage.getItem('sid');
+    let age = $('#age').val();
+    let sex = $('#sex').val();
+    let genderTextBox = $('#gender-textbox').val();
+    let firstLanguage = $('#firstLanguage').val();
+    let level = $('#level').val();
+    let languages = $('#languages-select').val();
+    let languagesOther = $('#languages-textbox').val();
+    let agents = $('#agents-select').val();
+    let agentsOther = $('#agents-textbox').val();
 
-    let age = document.getElementById('age').value;
-    let sex = document.getElementById('sex').value;
-    let genderTextBox = document.getElementById('gender-textbox').value;
-    let firstLanguage = document.getElementById('firstLanguage').value;
-    let level = document.getElementById('level').value;
-    let programmingLanguages = document.getElementById('languages-select').value;
-    let programmingLanguagesTextBox = document.getElementById('languages-textbox').value;
-    let convAgents = document.getElementById('agents-select').value;
-    let convAgentsTextBox = document.getElementById('agents-textbox').value;
-
-    if (userID == null || uid == null || age == null || sex == null ||
-        firstLanguage == null || level == null ||
-        programmingLanguages == null || convAgents == null) {
-        window.alert('There is an unanswered question. Please report this error to the experimenter.');
-        window.alert('Collected answers: ' + userID + '; ' + age + '; ' + sex + '; ' + genderTextBox +
-            '; ' + firstLanguage + '; ' + level + '; ' + programmingLanguages + '; ' +
-            programmingLanguagesTextBox + '; ' + convAgents + '; ' + convAgentsTextBox);
+    if (sid == null || age == null || firstLanguage == null || level == null || sex == null || languages == null || agents == null ) {
+        alert('There is an unanswered question. Please report this error to the experimenter.');
+        alert(`Collected answers: ${sid}; ${age}; ${sex}; ${genderTextBox}; ${firstLanguage}; ${level}; ${languages}; ${languagesOther}; ${agents}; ${agentsOther}`);
     } else {
         // set advanced / not advanced in local storage for stages-process.js:
-        if (level == 'advanced') {
-            localStorage.setItem('isAdvanced', JSON.stringify({
-                value: true
-            }));
-        } else {
-            localStorage.setItem('isAdvanced', JSON.stringify({
-                value: false
-            }));
+        localStorage.setItem('isAdvanced', JSON.stringify({ value: level == 'advanced' }));
+
+        // if selected "other", add the "other" language
+        if (languages.includes('other') && languagesOther)
+            languages.push(languagesOther);
+
+        // if selected "other", add the "other" agent
+        if (agents.includes('other') && agentsOther)
+            agents.push(agentsOther);
+
+        // if prefer to self-describe, use text box answer
+        if (sex === 'other' && genderTextBox)
+            sex = genderTextBox;
+
+        surveyData = {
+            "age": age,
+            "gender": sex,
+            "first_language": firstLanguage,
+            "level": level,
+            "programming_languages": languages,
+            "conv_agents": agents
         }
 
-        // todo del:
-        window.alert('Survey data is not being stored. TODO: @Kevin store data in server.');
+        socketApi.emit("survey", {
+            "sid": sid,
+            "type": "demographics",
+            "data": surveyData
+        });
 
-        let url = 'practice-info';
-        window.open(url, '_self');
+        window.location.href = '/practice-info';
     }
 };
 
@@ -67,15 +75,13 @@ let showOtherTextBox = (sel, id) => {
         if (opt.value === "other" && opt.selected) {
             ansElm.style.display = 'block';
             // if there's a paired question element, then display it too:
-            if (pairedQuesElm) {
+            if (pairedQuesElm)
                 pairedQuesElm.style.display = 'block';
-            }
         } else if (opt.value === "other" && !opt.selected) {
             ansElm.style.display = 'none';
             // if there's a paired question element, then hide it too:
-            if (pairedQuesElm) {
+            if (pairedQuesElm)
                 pairedQuesElm.style.display = 'none';
-            }
         }
     }
 };
