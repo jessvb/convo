@@ -64,13 +64,13 @@ class UserStudyDialogManager(DialogManager):
         return current
 
     def handle_message(self, message):
-        if not isinstance(self.immediate_goal, GetInputGoal):
-            self.backup_context = copy.deepcopy(self.context)
-            self.backup_reference_context = copy.deepcopy(self.reference.context)
-
         if self.step >= len(self.scenario):
             logger.info(f"Finished the goal, so using default handling.")
             return super().handle_message(message)
+
+        if not isinstance(self.immediate_goal, GetInputGoal):
+            self.backup_context = copy.deepcopy(self.context)
+            self.backup_reference_context = copy.deepcopy(self.reference.context)
 
         self.context.add_message(message)
 

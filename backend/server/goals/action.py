@@ -1,9 +1,8 @@
 import logging
 import re
+from app import logger
 from goals import *
 from models import *
-
-logger = logging.getLogger("gunicorn.error")
 
 class GetActionsGoal(BaseGoal):
     def __init__(self, context, actions):

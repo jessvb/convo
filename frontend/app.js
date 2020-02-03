@@ -96,7 +96,7 @@ const request = {
                 "conditional", "while loop", "until loop", "close loop",
                 "run", "add", "add step", "delete step", "remove step", "change step", "replace step",
                 "if", "is", "greater than", "less than", "equal to", "greater than or equal to", "less than or equal to",
-                "pet", "horse", "cat", "dog", "cricket", "bird", "cow"
+                "pet", "horse", "cat", "dog", "cricket", "bird", "cow", "one to", "1 to"
             ]
         ]
     },
