@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         "step": 0
     });
 
-    initial_utter = "Great job! Now let’s create a procedure that can play cat and dog sounds. Look to the sidebar to see what the end result should look like."
+    initial_utter = "Great job! Now let’s create a procedure that can play sounds of a couple of pets."
     addUtter("agent-utter", initial_utter, false);
     addUtter("agent-utter", "Let’s get started! How would you like to start?", false);
 });

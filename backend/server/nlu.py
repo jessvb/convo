@@ -13,7 +13,7 @@ edit_regex = "(?:open|edit)(?: (.+))?"
 create_list_regex = "(?:make|create)(?: a)? list(?: (?:called|named) (.+)| (.+))?"
 add_to_list_regex = "add(?: (.+))? to list(?: (.+))?"
 say_regex = "say(?: (.+))?"
-get_user_input_regex = "(?:listen for|get|to)(?: user)? input(?: and (?:(?:call it)?|(?:name it)?|(?:save it as)?) (.+))?"
+get_user_input_regex = "(?:listen for|get|listen to)(?: user)? input(?: and (?:(?:call it)?|(?:name it)?|(?:save it as)?) (.+))?"
 value_of_regex = "(?:the )?value of (?:(?:the )?variable )?(.+)"
 play_sound_regex = "play(?: the)?(?: (.+))? sound"
 
