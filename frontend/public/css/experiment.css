@@ -178,9 +178,15 @@
 
 #example-actions,
 #example-programs,
-#instructions {
+#instructions,
+#goal {
     padding-top: 20px;
     text-align: left;
+}
+
+#example-actions-heading,
+#example-programs-heading {
+    cursor: pointer;
 }
 
 #example-actions-heading,
@@ -188,7 +194,6 @@
 #instructions-heading,
 #goal-heading {
     font-size: 18px;
-    cursor: pointer;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
