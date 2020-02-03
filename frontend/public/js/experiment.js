@@ -193,6 +193,7 @@ socketApi.on('response', handleSocketApiResponse);
 socketApi.on('playSound', (data) => {
     let audioPlayer = document.getElementById('audio-player');
     audioPlayer.src = `assets/${data.sound}.mp3`;
+    addUtter("agent-utter", `Playing the ${data.sound} sound.`, false);
     audioPlayer.play();
 });
 
