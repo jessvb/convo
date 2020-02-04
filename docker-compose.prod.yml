@@ -12,7 +12,8 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "10m"
+        max-size: "20m"
+        max-file: "5"
     command: gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:5000 --log-level=info manage:app
   web:
     build: ./frontend
@@ -26,7 +27,8 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "10m"
+        max-size: "20m"
+        max-file: "5"
     command: npm start
   nginx:
     image: nginx:alpine
