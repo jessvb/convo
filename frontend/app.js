@@ -8,6 +8,7 @@ const host = '0.0.0.0';
 const port = 8080;
 const httpServer = require('http').Server(app);
 const io = require('socket.io')(httpServer);
+const wav = require('wav');
 
 app.use(express.static('public'));
 
@@ -103,11 +104,24 @@ const request = {
     interimResults: false
 };
 
+let checkUserStudy = (stage, part) => {
+    if (part !== "voice-text" && part !== "voice")
+        return false;
+
+    if (!["practice", "novice", "advanced"].includes(stage))
+        return false;
+
+    return true;
+}
+
 streams = {};
+writers = {};
 
 io.on('connection', (client) => {
     let sessionId = client.id;
     let sid;
+    let stage;
+    let part;
 
     let startStream = () => {
         streams[sessionId] = speechClient.streamingRecognize(request)
@@ -127,6 +141,10 @@ io.on('connection', (client) => {
     }
 
     let endStream = () => {
+        if (sessionId in writers) {
+            writers[sessionId].end();
+            delete writers[sessionId];
+        }
         if (sessionId in streams) {
             streams[sessionId].end();
             delete streams[sessionId];
@@ -135,8 +153,14 @@ io.on('connection', (client) => {
 
     client.on('join', (data) => {
         if (data) {
-            sid = data;
-            console.log(`[${sid}] Client connected to server.`);
+            sid = data.sid;
+            stage = data.stage;
+            part = data.part;
+            console.log(`[${sid}][${stage},${part}] Client connected to server.`);
+            if (checkUserStudy(stage, part)) {
+                let dir = `audio/${stage}/${part.replace("-", "_")}/${sid}`;
+                fs.mkdirSync(dir, { recursive: true });
+            }
             io.to(`${sessionId}`).emit('joined', sid);
         } else {
             console.log('Client connected without an SID.');
@@ -144,26 +168,41 @@ io.on('connection', (client) => {
     });
 
     client.on('disconnect', () => {
-        console.log(`[${sid}] Client disconnected.`);
+        console.log(`[${sid}][${stage},${part}] Client disconnected.`);
     });
 
-    client.on('startStream', () => {
-        console.log(`[${sid}] Starting stream.`);
+    client.on('startStream', (data) => {
+        console.log(`[${data.sid}][${data.stage},${data.part}] Starting stream.`);
+        if ("sid" in data && "part" in data && "stage" in data) {
+            if (checkUserStudy(data.stage, data.part)) {
+                let audioName = `audio/${data.stage}/${data.part.replace("-", "_")}/${data.sid}/${Date.now()}.wav`;
+                writers[sessionId] = new wav.FileWriter(audioName, {
+                    channels: 1,
+                    sampleRate: 16000,
+                    bitDepth: 16,
+                });
+            }
+        }
+
         startStream();
     });
 
     client.on('endStream', () => {
-        console.log(`[${sid}] Ending stream.`);
+        console.log(`[${sid}][${stage},${part}] Ending stream.`);
         endStream();
     });
 
     client.on('audio', (data) => {
         if (!(sessionId in streams))
-            console.log(`[${sid}] Stream is null.`)
+            console.log(`[${sid}][${stage},${part}] Stream is null.`)
         else if (!streams[sessionId].writable)
-            console.log(`[${sid}] Stream became unwritable.`);
-        else
+            console.log(`[${sid}][${stage},${part}] Stream became unwritable.`);
+        else {
             streams[sessionId].write(data);
+        }
+
+        if (sessionId in writers)
+            writers[sessionId].write(data);
     });
 });
 
