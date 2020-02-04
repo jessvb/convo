@@ -9,6 +9,10 @@ services:
       - FLASK_ENV=development
     ports:
       - 5000:5000
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
     command: gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:5000 --log-level=info manage:app
   web:
     build: ./frontend
@@ -19,6 +23,10 @@ services:
       - NODE_ENV=production
     ports:
       - 8080:8080
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
     command: npm start
   nginx:
     image: nginx:alpine
@@ -31,13 +39,9 @@ services:
     ports:
       - 80:80
       - 443:443
-    logging:
-      driver: none
   certbot:
     image: certbot/certbot
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-    logging:
-      driver: none

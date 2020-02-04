@@ -1,4 +1,4 @@
-import logging
+from app import logger
 from goals import *
 from models import *
 from helpers import *
@@ -20,7 +20,7 @@ class GetInputGoal(BaseGoal):
         return "GetInputGoal completed!" if self.is_complete else self._message
 
     def advance(self):
-        logging.debug(f"Advancing {self.__class__.__name__}...")
+        logger.debug(f"Advancing {self.__class__.__name__}...")
         if self.context.parsed and isinstance(self.context.parsed, ValueOf):
             self.value = self.context.parsed
         else:
@@ -47,7 +47,7 @@ class GetUserInputGoal(BaseGoal):
         return "GetUserInputGoal completed!" if self.is_complete else ""
 
     def advance(self):
-        logging.debug(f"Advancing {self.__class__.__name__}...")
+        logger.debug(f"Advancing {self.__class__.__name__}...")
 
         if self.context.parsed and isinstance(self.context.parsed, ValueOf):
             self.value = self.context.parsed

@@ -1,6 +1,5 @@
 import re
 import string
-import logging
 from word2number import w2n
 
 def to_snake_case(name):
