@@ -9,22 +9,20 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 // Genrates or remembers a somewhat-unique ID with distilled user-agent info.
 let getUniqueId = () => {
-    if (!('uid' in localStorage)) {
+    if (!('sid' in localStorage)) {
         let browser = findFirstString(navigator.userAgent, [
             'Seamonkey', 'Firefox', 'Chromium', 'Chrome', 'Safari', 'OPR', 'Opera',
             'Edge', 'MSIE', 'Blink', 'Webkit', 'Gecko', 'Trident', 'Mozilla'
         ]);
-
         let os = findFirstString(navigator.userAgent, [
             'Android', 'iOS', 'Symbian', 'Blackberry', 'Windows Phone',
             'Windows', 'OS X', 'Linux', 'iOS', 'CrOS'
         ]).replace(/ /g, '_');
         let unique = ('' + Math.random()).substr(2);
-
-        localStorage.setItem('uid', `${os}-${browser}-${unique}`);
+        localStorage.setItem('sid', `${os}_${browser}_${unique}`);
     }
 
-    return localStorage.getItem('uid');
+    return localStorage.getItem('sid');
 };
 
 // Parse user agent string by looking for recognized substring.
@@ -34,5 +32,5 @@ let findFirstString = (str, choices) => {
             return choices[j];
         }
     }
-    return '?';
+    return '0';
 };

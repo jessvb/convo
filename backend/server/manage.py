@@ -1,7 +1,9 @@
+import json
+
 from flask import request
 from flask_socketio import join_room
 
-from app import sio, logger, socket_clients, socket_sessions
+from app import app, sio, logger, socket_clients, socket_sessions
 from dialog import DialogManager
 from userstudy import *
 from client import *
@@ -15,9 +17,7 @@ def join(data):
 
     stage = data.get("stage")
     part = data.get("part")
-    stage_log = f" at {stage} stage" if stage else ""
-    part_log = f" on part {part}" if part else ""
-    logger.info(f"Client {sid} has connected{stage_log}{part_log}.")
+    logger.info(f"[{sid}][{stage},{part}] Client connected.")
 
     join_room(str(sid))
     client = socket_clients.get(sid, UserStudyClient(sid))
@@ -26,12 +26,12 @@ def join(data):
     if stage in ["practice", "novice", "advanced"] and part in ["voice", "text", "voice-text"]:
         scenario = client.inputs[stage][part]
         if stage == "practice":
-            client.dm = UserStudyDialogManager(sid, stage, scenario)
+            client.dm = UserStudyDialogManager(sid, stage, part, scenario)
         elif stage == "novice":
-            client.dm = UserStudyDialogManager(sid, stage, scenario[1])
+            client.dm = UserStudyDialogManager(sid, stage, part, scenario[1])
             sio.emit("noviceInstructions", { "sounds": scenario[0] }, room=str(sid))
         else:
-            client.dm = UserStudyAdvancedDialogManager(sid, scenario[1], advanced_scenario_check)
+            client.dm = UserStudyAdvancedDialogManager(sid, part, scenario[1], advanced_scenario_check)
             sio.emit("advancedInstructions", { "sounds": scenario[0], "iters": len(scenario[1]) }, room=str(sid))
     else:
         client.dm = DialogManager(sid)
@@ -44,7 +44,7 @@ def disconnect():
     sid, stage, part = socket_sessions.get(request.sid)
     if sid:
         del socket_sessions[request.sid]
-        logger.info(f"Client {sid} disconnected from {stage} stage at part {part}.")
+        logger.info(f"[{sid}][{stage},{part}] Client disconnected.")
 
 @sio.on("message")
 def message(data):
@@ -73,8 +73,29 @@ def survey(data):
     sid = data.get("sid")
     survey_type = data.get("type")
     survey_data = data.get("data")
+    if survey_type == "demographics":
+        logging.info(f"[{sid}][survey:demographics] {json.dumps(survey_data)}")
+    elif survey_type == "stage":
+        logging.info(f"[{sid}][survey:stage] {json.dumps(survey_data)}")
+    else:
+        logger.info(json.dumps(data))
 
 @sio.on("email")
 def email(data):
     email = data.get("email")
     advanced = data.get("advanced")
+    logger.info(f"[Amazon Gift Card][{email}][{advanced}]")
+
+@sio.on("displayTextbox")
+def textbox(data):
+    sid = data.get("sid")
+    stage = data.get("currStage")
+    part = data.get("currPart")
+    logger.info(f"[{sid}][{stage},{part}] User's voice couldn't be recognized, so the textbox was displayed.")
+
+@sio.on("displayTextbox")
+def textbox(data):
+    sid = data.get("sid")
+    stage = data.get("currStage")
+    part = data.get("currPart")
+    logger.info(f"[{sid}][{stage},{part}] User could not complete a section, so the next button was displayed.")

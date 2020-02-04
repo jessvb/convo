@@ -112,7 +112,7 @@ io.on('connection', (client) => {
     let startStream = () => {
         streams[sessionId] = speechClient.streamingRecognize(request)
             .on('error', (err) => {
-                console.log(`[${id}] Error occured so restarting stream.`);
+                console.log(`[${sid}] Error occured so restarting stream.`);
                 console.log(err);
                 io.to(`${sessionId}`).emit('streamError', err);
             })
@@ -121,7 +121,7 @@ io.on('connection', (client) => {
                     let transcript = data.results[0].alternatives[0].transcript;
                     io.to(`${sessionId}`).emit('clientUtter', transcript);
                 } else {
-                    console.log(`[${id}] Reached transcription time limit, press Ctrl+C`);
+                    console.log(`[${sid}] Reached transcription time limit, press Ctrl+C`);
                 }
             });
     }
@@ -158,12 +158,12 @@ io.on('connection', (client) => {
     });
 
     client.on('audio', (data) => {
-        if (!(id in streams))
+        if (!(sessionId in streams))
             console.log(`[${sid}] Stream is null.`)
-        else if (!streams[id].writable)
+        else if (!streams[sessionId].writable)
             console.log(`[${sid}] Stream became unwritable.`);
         else
-            streams[sid].write(data);
+            streams[sessionId].write(data);
     });
 });
 

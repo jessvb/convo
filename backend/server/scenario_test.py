@@ -79,7 +79,6 @@ novice_test3 = [
     "no"
 ]
 
-print(novice_test3)
 dm = UserStudyDialogManager("scenario", "novice", scenario)
 client.dm = dm
 

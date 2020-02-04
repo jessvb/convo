@@ -9,16 +9,17 @@ from question import *
 from nlu import *
 
 class UserStudyDialogManager(DialogManager):
-    def __init__(self, sid, stage, scenario):
+    def __init__(self, sid, stage, part, scenario):
         super().__init__(sid)
         self.scenario = scenario
         self.stage = stage
+        self.part = part
         self.step = 0
         self.reference = DialogManager(sid)
         self.last_parsed_goal = None
         self.backup_context = copy.deepcopy(self.context)
         self.backup_reference_context = copy.deepcopy(self.reference.context)
-        logger.info(f"[{sid}][{stage}] Created dialog manager for user studies.")
+        logger.info(f"[{sid}][{stage},{part}] Created dialog manager for user studies.")
 
     @property
     def scenario_completed(self):
@@ -199,9 +200,10 @@ class UserStudyDialogManager(DialogManager):
         return response
 
 class UserStudyAdvancedDialogManager(DialogManager):
-    def __init__(self, sid, inputs, check):
+    def __init__(self, sid, part, inputs, check):
         super().__init__(sid)
         self.stage = "advanced"
+        self.part = part
         self.inputs = inputs
         self.check = check
         logger.info(f"[{sid}][{self.stage}] Created dialog manager for user studies.")
