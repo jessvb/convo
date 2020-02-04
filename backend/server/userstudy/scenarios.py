@@ -4,27 +4,31 @@ from goals import *
 from app import logger
 
 def advanced_scenario_check(execution, response, inputs):
+    logger.debug(f"[ScenarioCheck] Inputs: {inputs}")
+
     if response:
-        logger.info("Execution resulted in an error response.")
+        logger.debug("[ScenarioCheck] Execution resulted in an error response.")
         return False
 
     if not execution.finished:
-        logger.info("Execution did not finish.")
+        logger.debug("[ScenarioCheck] Execution did not finish.")
         return False
 
     get_user_inputs = [emit for emit in execution.emits if emit[0] == "response" and emit[1]["message"] == "Listening for user input..."]
+    logger.debug(f"[ScenarioCheck] Emits: {get_user_inputs}")
     if len(get_user_inputs) != len(inputs):
-        logger.info("Number of times user input is asked is not the same as the number of inputs.")
+        logger.debug("[ScenarioCheck] Number of times user input is asked is not the same as the number of inputs.")
         return False
 
     play_sounds = [emit for emit in execution.emits if emit[0] == "playSound"]
+    logger.debug(f"[ScenarioCheck] Sounds: {play_sounds}")
     if len(play_sounds) != len(inputs):
-        logger.info("Number of sound playing is not the same as the number of inputs.")
+        logger.debug(f"[ScenarioCheck] Number of sound playing is not the same as the number of inputs: {inputs}")
         return False
 
     play_sound_compares = [data[1]["sound"] == inp for (data, inp) in zip(play_sounds, inputs)]
     if not all(play_sound_compares):
-        logger.info(f"The sounds played were not the correct ones: {play_sound_compares}")
+        logger.debug(f"[ScenarioCheck] The sounds played were not the correct ones: {play_sounds}")
         return False
 
     return True

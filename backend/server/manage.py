@@ -43,8 +43,10 @@ def join(data):
 def disconnect():
     sid, stage, part = socket_sessions.get(request.sid)
     if sid:
+        client = socket_clients.get(sid)
         del socket_sessions[request.sid]
         logger.info(f"[{sid}][{stage},{part}] Client disconnected.")
+        logger.info(f"[{sid}][{stage},{part}] Conversation: {client.context.conversation}")
 
 @sio.on("message")
 def message(data):
@@ -56,6 +58,13 @@ def message(data):
         return
 
     dm = client.dm
+    if isinstance(dm, UserStudyDialogManager) or isinstance(dm, UserStudyAdvancedDialogManager):
+        logger.info(f"[{dm.sid}][{dm.stage},{dm.part}][Message] {message}")
+        logger.debug(f"[{dm.sid}][{dm.stage},{dm.part}][State] {dm.context.state}")
+    else:
+        logger.info(f"[{dm.sid}][Message] {message}")
+        logger.debug(f"[{dm.sid}][State] {dm.context.state}")
+
     res = dm.handle_message(message)
     if (res):
         dm.context.add_message(res)
@@ -66,6 +75,13 @@ def message(data):
             "speak": data.get("speak")
         }
 
+        if isinstance(dm, UserStudyDialogManager) or isinstance(dm, UserStudyAdvancedDialogManager):
+            logger.info(f"[{dm.sid}][{dm.stage},{dm.part}][Response] {res}")
+            logger.debug(f"[{dm.sid}][{dm.stage},{dm.part}][State] {dm.context.state}")
+        else:
+            logger.info(f"[{dm.sid}][Response] {res}")
+            logger.debug(f"[{dm.sid}][State] {dm.context.state}")
+
         sio.emit("response", response, room=str(sid))
 
 @sio.on("survey")
@@ -74,11 +90,11 @@ def survey(data):
     survey_type = data.get("type")
     survey_data = data.get("data")
     if survey_type == "demographics":
-        logging.info(f"[{sid}][survey:demographics] {json.dumps(survey_data)}")
+        logger.info(f"[{sid}][survey:demographics] {json.dumps(survey_data)}")
     elif survey_type == "stage":
-        logging.info(f"[{sid}][survey:stage] {json.dumps(survey_data)}")
+        logger.info(f"[{sid}][survey:stage] {json.dumps(survey_data)}")
     else:
-        logger.info(json.dumps(data))
+        logger.debug(json.dumps(data))
 
 @sio.on("email")
 def email(data):

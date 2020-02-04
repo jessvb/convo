@@ -19,7 +19,8 @@ class UserStudyDialogManager(DialogManager):
         self.last_parsed_goal = None
         self.backup_context = copy.deepcopy(self.context)
         self.backup_reference_context = copy.deepcopy(self.reference.context)
-        logger.info(f"[{sid}][{stage},{part}] Created dialog manager for user studies.")
+        logger.debug(f"[{sid}][{stage},{part}] Created dialog manager for user studies.")
+        logger.debug(f"[{sid}][{stage},{part}] Scenario: \n{scenario}")
 
     @property
     def scenario_completed(self):
@@ -27,14 +28,14 @@ class UserStudyDialogManager(DialogManager):
 
     def reset(self, to_backup=False):
         if to_backup:
-            logger.info(f"[{self.sid}][{self.stage}] User did not follow instructions, so resetting to previous back up.")
+            logger.debug(f"[{self.sid}][{self.stage},{self.part}] User did not follow instructions, so resetting to previous back up.")
             self.context = copy.deepcopy(self.backup_reference_context)
             self.qa = QuestionAnswer(self.context)
             self.nlu = SemanticNLU(self.context)
             self.last_parsed_goal = None
             response = "Conversation and objective has been reset to previous back up. What do you want to do first?"
         else:
-            logger.info(f"[{self.sid}][{self.stage}] Resetting the entire conversation and scenario.")
+            logger.debug(f"[{self.sid}][{self.stage},{self.part}] Resetting the entire conversation and scenario.")
             self.context.reset()
             self.context.procedures = { }
             self.context.execution = None
@@ -67,7 +68,7 @@ class UserStudyDialogManager(DialogManager):
 
     def handle_message(self, message):
         if self.step >= len(self.scenario):
-            logger.info(f"[{self.sid}][{self.stage}] Finished the goal, so using default handling.")
+            logger.debug(f"[{self.sid}][{self.stage},{self.part}] Finished the goal, so using default handling.")
             return super().handle_message(message)
 
         if not isinstance(self.immediate_goal, GetInputGoal):
@@ -78,16 +79,21 @@ class UserStudyDialogManager(DialogManager):
 
         response = self.handle_reset(message)
         if response is not None:
+            logger.info(f"[{self.sid}][{self.stage},{self.part}] User resetted.")
             return response
 
         response = self.handle_help(message)
         if response is not None:
+            logger.info(f"[{self.sid}][{self.stage},{self.part}] User needed help.")
             return response
 
+        if self.context.state == "executing":
+            logger.debug(f"[{self.sid}][{self.stage},{self.part}] Program is currently executing.")
             return self.handle_execution(message)
 
         response = self.handle_question(message)
         if response is not None:
+            logger.info(f"[{self.sid}][{self.stage},{self.part}] User asked a question.")
             return response
 
         response = self.handle_parse(message)
@@ -104,31 +110,32 @@ class UserStudyDialogManager(DialogManager):
 
     def handle_parse(self, message):
         if self.step >= len(self.scenario):
+            logger.debug(f"[{self.sid}][{self.stage},{self.part}] User has completed the objective, so parsing normally.")
             return super().handle_parse(message)
 
         try:
             self.context.parsed = self.nlu.parse_message(message)
         except InvalidStateError as e:
-            logger.info(f"[{self.sid}][{self.stage}] Action cannot be done in current state.")
+            logger.debug(f"[{self.sid}][{self.stage},{self.part}] Action cannot be done in current state.")
             return "I cannot do this right now. Please follow instructions and try again!"
 
     def check_goal(self, message):
         goal = self.context.parsed
         if self.scenario[self.step][1] == type(goal):
             self.last_parsed_goal = goal
-            logger.info(f"[{self.sid}][{self.stage}] User goal is the same type of the current objective goal.")
+            logger.debug(f"[{self.sid}][{self.stage},{self.part}] User goal is the same type of the current objective goal.")
             return None
         elif self.immediate_goal and isinstance(self.immediate_goal, GetInputGoal):
-            logger.info(f"[{self.sid}][{self.stage}] Current goal is for getting user input so ignoring.")
+            logger.debug(f"[{self.sid}][{self.stage},{self.part}] Current goal is for getting user input so ignoring.")
             return None
         elif goal:
-            logger.info(f"[{self.sid}][{self.stage}] User goal does not match the current objective goal.")
+            logger.debug(f"[{self.sid}][{self.stage},{self.part}] User goal does not match the current objective goal.")
             return "I think this is the wrong action. Please follow the instructions and try again!"
         elif self.scenario[self.step][1] is None and message == self.scenario[self.step][0]:
-            logger.info(f"[{self.sid}][{self.stage}] User message matches the current objective message.")
+            logger.debug(f"[{self.sid}][{self.stage},{self.part}] User message matches the current objective message: {message}")
             return None
         else:
-            logger.info(f"[{self.sid}][{self.stage}] Goal could not be parsed and message was not recognized.")
+            logger.info(f"[{self.sid}][{self.stage},{self.part}] Did not understand utterance: {self.context.current_message}")
             return "I didn't quite catch that. Please follow the instructions and try again!"
 
     def handle_reset(self, message):
@@ -138,16 +145,18 @@ class UserStudyDialogManager(DialogManager):
 
     def handle_goal(self):
         if self.step >= len(self.scenario):
+            logger.debug(f"[{self.sid}][{self.stage},{self.part}] User has completed the objective, so handling goal normally.")
             return super().handle_goal()
 
         if self.current_goal() is None:
             goal = self.context.parsed
             if goal is None or not isinstance(goal, BaseGoal):
-                logger.info(f"[{self.sid}][{self.stage}] No current goal nor parsed goal so could not understand.")
+                logger.info(f"[{self.sid}][{self.stage},{self.part}] Did not understand utterance: {self.context.current_message}")
+                logger.debug(f"[{self.sid}][{self.stage},{self.part}] No current goal nor parsed goal so could not understand.")
                 return "I didn't understand what you were saying. Please try again."
             elif goal.error:
                 self.reset(to_backup=True)
-                logger.info(f"[{self.sid}][{self.stage}] Current goal had an error.")
+                logger.debug(f"[{self.sid}][{self.stage},{self.part}] Current goal had an error.")
                 return "I think your action is slightly wrong. Please try again!"
             elif goal.is_complete:
                 response = goal.complete()
@@ -160,7 +169,7 @@ class UserStudyDialogManager(DialogManager):
 
             if goal.error or self.last_parsed_goal.error:
                 self.reset(to_backup=True)
-                logger.info(f"[{self.sid}][{self.stage}] Current goal had an error.")
+                logger.debug(f"[{self.sid}][{self.stage},{self.part}] Current goal had an error.")
                 return "I think your action is slightly wrong. Please follow the instructions and try again."
             elif goal.is_complete:
                 response = goal.complete()
@@ -170,7 +179,7 @@ class UserStudyDialogManager(DialogManager):
 
         if not isinstance(self.immediate_goal, GetInputGoal) and not self.last_parsed_goal.error:
             next_message = self.next_message
-            logger.info(f"[{self.sid}][{self.stage}] Tentatively moving on to step {self.step} of the scenario.")
+            logger.debug(f"[{self.sid}][{self.stage},{self.part}] Tentatively moving on to step {self.step} of the scenario.")
             if not next_message.startswith("run"):
                 self.reference.handle_message(next_message)
 
@@ -183,18 +192,18 @@ class UserStudyDialogManager(DialogManager):
                 self.reference.reset(self.backup_reference_context)
                 self.step = max(self.step - 1, 0)
                 if wrong_procedure:
-                    logger.info(f"[{self.sid}][{self.stage}] Procedure with the wrong name was created. Undoing the step update back to step {self.step}.")
+                    logger.debug(f"[{self.sid}][{self.stage},{self.part}] Procedure with the wrong name was created. Undoing the step update back to step {self.step}.")
                     return "Not the right procedure. Please follow the instruction and try again."
                 else:
-                    logger.info(f"[{self.sid}][{self.stage}] Action that was not supposed to be added was added. Undoing the step update back to step {self.step}.")
+                    logger.debug(f"[{self.sid}][{self.stage},{self.part}] Action that was not supposed to be added was added. Undoing the step update back to step {self.step}.")
                     return "Not the right action. Please follow the instruction and try again."
 
         if not isinstance(self.immediate_goal, GetInputGoal) and not self.last_parsed_goal.error:
             if self.scenario_completed:
-                logger.info(f"[{self.sid}][{self.stage}] Completed the stage!")
+                logger.info(f"[{self.sid}][{self.stage},{self.part}] User completed scenario!")
                 sio.emit("stageCompleted", room=str(self.sid))
             else:
-                logger.info(f"[{self.sid}][{self.stage}] Nothing was wrong, so step can be updated.")
+                logger.debug(f"[{self.sid}][{self.stage},{self.part}] Nothing was wrong, so step can be updated.")
                 sio.emit("stepUpdate", { "step": self.step }, room=str(self.sid))
 
         return response
@@ -206,16 +215,17 @@ class UserStudyAdvancedDialogManager(DialogManager):
         self.part = part
         self.inputs = inputs
         self.check = check
-        logger.info(f"[{sid}][{self.stage}] Created dialog manager for user studies.")
+        logger.info(f"[{sid}][{self.stage},{self.part}] Created dialog manager for user studies.")
+        logger.info(f"[{sid}][{self.stage},{self.part}] Inputs: {inputs}")
 
     def reset(self, context=None):
         if context is not None:
-            logger.info(f"[{self.sid}][{self.stage}] Resetting conversation and scenario back to a specific context.")
+            logger.debug(f"[{self.sid}][{self.stage},{self.part}] Resetting conversation and scenario back to a specific context.")
             self.context = context
             self.qa = QuestionAnswer(context)
             self.nlu = SemanticNLU(context)
         else:
-            logger.info(f"[{self.sid}][{self.stage}] Resetting the entire conversation and scenario.")
+            logger.debug(f"[{self.sid}][{self.stage},{self.part}] Resetting the entire conversation and scenario.")
             self.context.reset()
             self.context.procedures = { }
             self.context.execution = None
@@ -225,44 +235,44 @@ class UserStudyAdvancedDialogManager(DialogManager):
         if self.current_goal() is None:
             response = super().handle_goal()
         else:
-            logger.info(f"[{self.sid}][{self.stage}] Handling goal {self.current_goal()}")
+            logger.debug(f"[{self.sid}][{self.stage},{self.part}] Handling goal {self.current_goal()}")
             goal = self.current_goal()
             goal.advance()
             if goal.error:
-                logger.info(f"[{self.sid}][{self.stage}] Error with the goal {goal}.")
+                logger.debug(f"[{self.sid}][{self.stage},{self.part}] Error with the goal {goal}.")
                 response = goal.error
                 self.context.goals.pop()
             elif goal.is_complete:
                 if isinstance(goal, EditGoal) or isinstance(goal, GetProcedureActionsGoal):
-                    logger.info(f"[{self.sid}][{self.stage}] User done with editing or creating goal so checking procedure.")
+                    logger.debug(f"[{self.sid}][{self.stage},{self.part}] User done with editing or creating goal so checking procedure.")
                     valid = self.check_procedure()
                     procedure_name = self.context.current.name
                     if valid:
+                        logger.info(f"[{self.sid}][{self.stage},{self.part}] User completed scenario!")
                         sio.emit("stageCompleted", room=str(self.sid))
                         response = f"Looks like you achieved the goal! You can try running the procedure by saying, \"run {procedure_name}\"."
                     else:
+                        logger.info(f"[{self.sid}][{self.stage},{self.part}] User did have a correct procedure.")
                         response = f"Hmm, I checked your procedure, and it doesn't seem to meet the goal. You can test the procedure by saying, \"run {procedure_name}\", or edit it by saying \"edit {procedure_name}\"."
                     goal.complete()
                     self.context.goals.pop()
                     return response
-                logger.info(f"[{self.sid}][{self.stage}] Goal {goal} was completed.")
                 response = goal.complete()
                 self.context.goals.pop()
             else:
-                logger.info(f"[{self.sid}][{self.stage}] Goal {goal} not completed.")
                 response = goal.message
         return response
 
     def check_procedure(self):
         procedure = self.context.current
-        logger.info(f"[{self.sid}][{self.stage}] Checking procedure {procedure.name} to see if it passes.")
+        logger.debug(f"[{self.sid}][{self.stage},{self.part}] Checking procedure {procedure.name} to see if it passes.")
         execution = InternalExecution(self.context, [copy.copy(a) for a in procedure.actions], self.inputs)
-        logger.info(f"[{self.sid}][{self.stage}] Internally executing procedure {procedure.name}.")
+        logger.debug(f"[{self.sid}][{self.stage},{self.part}] Internally executing procedure {procedure.name}.")
         response = execution.run()
-        logger.info(f"[{self.sid}][{self.stage}] Using the advanced check function for unit testing procedure {procedure.name}.")
+        logger.debug(f"[{self.sid}][{self.stage},{self.part}] Using the advanced check function for unit testing procedure {procedure.name}.")
         valid = self.check(execution, response, self.inputs)
         if valid:
-            logger.info(f"[{self.sid}][{self.stage}] Procedure {procedure.name} met the objectives and passed.")
+            logger.debug(f"[{self.sid}][{self.stage},{self.part}] Procedure {procedure.name} met the objectives and passed.")
         else:
-            logger.info(f"[{self.sid}][{self.stage}] Procedure {procedure.name} did not meet the objectives.")
+            logger.debug(f"[{self.sid}][{self.stage},{self.part}] Procedure {procedure.name} did not meet the objectives.")
         return valid
