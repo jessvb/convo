@@ -1,5 +1,16 @@
+strings_to_replace = {
+    "1/2": "1 to",
+    "wow": "while",
+    "wild": "while",
+    "pat": "pet"
+}
+
 socket.on('clientUtter', (transcript) => {
-    submitMessage(transcript.toLowerCase(), true);
+    let final = transcript.toLowerCase();
+    for (const string in strings_to_replace) {
+        final = final.replace(string, strings_to_replace[string]);
+    }
+    submitMessage(final, true);
 })
 
 AudioContext = window.AudioContext || window.webkitAudioContext;

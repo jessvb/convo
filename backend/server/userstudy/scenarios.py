@@ -1,27 +1,7 @@
-import logging
+import random
+import copy
 from goals import *
-
-logger = logging.getLogger("gunicorn.error")
-
-practice_scenario = [
-    ("create a procedure called hello world", CreateProcedureGoal),
-    ("say hello world", SayActionGoal),
-    ("done", None),
-    ("run hello world", ExecuteGoal)
-]
-
-novice_scenario = [
-    ("create a procedure called pet sounds", CreateProcedureGoal),
-    ("get user input and save it as pet", GetUserInputActionGoal),
-    ("if pet is dog play the bark sound", ConditionalActionGoal),
-    ("done", None),
-    ("no", None),
-    ("if pet is cat, play the meow sound", ConditionalActionGoal),
-    ("done", None),
-    ("no", None),
-    ("done", None),
-    ("run pet sounds", ExecuteGoal)
-]
+from app import logger
 
 def advanced_scenario_check(execution, response, inputs):
     if response:
@@ -31,11 +11,6 @@ def advanced_scenario_check(execution, response, inputs):
     if not execution.finished:
         logger.info("Execution did not finish.")
         return False
-
-    pet_sounds = {
-        "dog": "bark",
-        "cat": "meow"
-    }
 
     get_user_inputs = [emit for emit in execution.emits if emit[0] == "response" and emit[1]["message"] == "Listening for user input..."]
     if len(get_user_inputs) != len(inputs):
@@ -47,16 +22,60 @@ def advanced_scenario_check(execution, response, inputs):
         logger.info("Number of sound playing is not the same as the number of inputs.")
         return False
 
-    play_sound_outputs = [(inp, data[1]["sound"]) for (data, inp) in zip(play_sounds, inputs)]
-    play_sound_compares = [pet in pet_sounds and pet_sounds[pet] == sound for (pet, sound) in play_sound_outputs]
+    play_sound_compares = [data[1]["sound"] == inp for (data, inp) in zip(play_sounds, inputs)]
     if not all(play_sound_compares):
         logger.info(f"The sounds played were not the correct ones: {play_sound_compares}")
         return False
 
     return True
 
-userstudy_scenarios = {
-    "practice": practice_scenario,
-    "novice": novice_scenario,
-    "advanced": (["dog", "cat", "cat", "dog", "dog"], advanced_scenario_check)
-}
+possible_sound_pairs = [("dog", "cat"), ("bird", "cricket"), ("horse", "cow")]
+possible_iterations = [3, 4, 5]
+
+def create_practice_scenarios():
+    practice_scenario = [("create a procedure called hello world", CreateProcedureGoal),
+                         ("say hello world", SayActionGoal),
+                         ("done", None),
+                         ("run hello world", ExecuteGoal)]
+    scenarios = {
+        "voice-text": practice_scenario,
+        "voice": practice_scenario,
+        "text": practice_scenario
+    }
+    return scenarios
+
+def create_novice_scenario(sound_pair):
+    a, b = sound_pair
+    scenario = [
+        ("create a procedure called pet sounds", CreateProcedureGoal),
+        ("get user input and save it as pet", GetUserInputActionGoal),
+        (f"if the value of pet is {a}, play the {a} sound", ConditionalActionGoal),
+        ("done", None),
+        ("no", None),
+        (f"if the value of pet is {b}, play the {b} sound", ConditionalActionGoal),
+        ("done", None),
+        ("no", None),
+        ("done", None),
+        ("run pet sounds", ExecuteGoal)
+    ]
+
+    return scenario
+
+def create_novice_scenarios():
+    random.shuffle(possible_sound_pairs)
+    scenarios = {
+        "voice-text": (possible_sound_pairs[0], create_novice_scenario(possible_sound_pairs[0])),
+        "voice": (possible_sound_pairs[1], create_novice_scenario(possible_sound_pairs[1])),
+        "text": (possible_sound_pairs[2], create_novice_scenario(possible_sound_pairs[2]))
+    }
+    return scenarios
+
+def create_advanced_scenarios():
+    random.shuffle(possible_sound_pairs)
+    random.shuffle(possible_iterations)
+    scenarios = {
+        "voice-text": (possible_sound_pairs[0], [random.choice(possible_sound_pairs[0]) for _ in range(possible_iterations[0])]),
+        "voice": (possible_sound_pairs[1], [random.choice(possible_sound_pairs[1]) for _ in range(possible_iterations[1])]),
+        "text": (possible_sound_pairs[2], [random.choice(possible_sound_pairs[2]) for _ in range(possible_iterations[2])])
+    }
+    return scenarios

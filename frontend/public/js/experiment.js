@@ -1,4 +1,5 @@
 const server = 'https://userstudy.appinventor.mit.edu/api';
+// const server = 'http://localhost:5000';
 const synth = window.speechSynthesis;
 synth.cancel();
 let state = "home";

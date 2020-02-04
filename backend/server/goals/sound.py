@@ -2,8 +2,12 @@ from goals import *
 from models import *
 
 available_sounds = set([
-    "bark",
-    "meow"
+    "dog",
+    "cat",
+    "horse",
+    "cow",
+    "bird",
+    "cricket"
 ])
 
 class PlaySoundActionGoal(ActionGoal):

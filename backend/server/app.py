@@ -7,11 +7,8 @@ from flask_socketio import SocketIO
 app = Flask(__name__)
 CORS(app)
 sio = SocketIO(app, cors_allowed_origins="*")
+logging.basicConfig(level=logging.INFO)
+logger = app.logger
 
 socket_clients = {}
 socket_sessions = {}
-
-if __name__ != "__main__":
-    gunicorn_logger = logging.getLogger("gunicorn.error")
-    app.logger.handlers.extend(gunicorn_logger.handlers)
-    app.logger.setLevel(gunicorn_logger.level)

@@ -3,12 +3,10 @@ import copy
 import threading
 import time
 
-from app import sio
+from app import sio, logger
 from error import *
 from models import *
 from helpers import *
-
-logger = logging.getLogger("gunicorn.error")
 
 class Execution(object):
     def __init__(self, context, actions, to_emit=True):
@@ -175,7 +173,7 @@ class InternalExecution(Execution):
                 return "ExecutionError"
             except StopIteration as e:
                 logger.info(f"Error detected: {str(e)}")
-                return "Stop Iteration"
+                return "StopIteration"
 
             if len(self.actions) > self.original_length * 100:
                 logger.info(f"Detected a potential infinite loop.")

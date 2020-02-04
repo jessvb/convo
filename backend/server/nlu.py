@@ -13,7 +13,7 @@ edit_regex = "(?:open|edit)(?: (.+))?"
 create_list_regex = "(?:make|create)(?: a)? list(?: (?:called|named) (.+)| (.+))?"
 add_to_list_regex = "add(?: (.+))? to list(?: (.+))?"
 say_regex = "say(?: (.+))?"
-get_user_input_regex = "(?:listen for|get)(?: user)? input(?: and (?:(?:call it)?|(?:name it)?|(?:save it as)?) (.+))?"
+get_user_input_regex = "(?:listen to user|(?:listen for|get)(?: user)? input)(?: and (?:(?:call it)?|(?:name it)?|(?:save it as)?) (.+))?"
 value_of_regex = "(?:the )?value of (?:(?:the )?variable )?(.+)"
 play_sound_regex = "play(?: the)?(?: (.+))? sound"
 
@@ -122,10 +122,16 @@ class SemanticNLU(object):
             return CreateVariableActionGoal(self.context, name=group(match, [2, 4]), value=self.parse_value(group(match, 3)))
         elif re.match(add_to_variable_regex, message):
             match = re.match(add_to_variable_regex, message)
-            return AddToVariableActionGoal(self.context, name=self.parse_variable(group(match, 2)), value=self.parse_value(group(match, 1)))
+            variable = self.parse_variable(group(match, 2))
+            if variable == "variable":
+                variable = None
+            return AddToVariableActionGoal(self.context, name=variable, value=self.parse_value(group(match, 1)))
         elif re.match(subtract_from_variable_regex, message):
             match = re.match(subtract_from_variable_regex, message)
-            return SubtractFromVariableActionGoal(self.context, name=self.parse_variable(group(match, 2)), value=self.parse_value(group(match, 1)))
+            variable = self.parse_variable(group(match, 2))
+            if variable == "variable":
+                variable = None
+            return SubtractFromVariableActionGoal(self.context, name=variable, value=self.parse_value(group(match, 1)))
         elif re.match(say_regex, message):
             match = re.match(say_regex, message)
             return SayActionGoal(self.context, phrase=self.parse_value(group(match, 1)))

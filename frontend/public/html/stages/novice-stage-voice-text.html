@@ -62,6 +62,7 @@
 <tail>
     <script>
         localStorage.setItem('currStage', 'novice');
+        localStorage.setItem('currPart', 'voice-text');
         let prevCompletedParts = JSON.parse(localStorage.getItem('completedParts')).parts;
         localStorage.setItem('completedParts', JSON.stringify({
             parts: prevCompletedParts.concat('voice-text')

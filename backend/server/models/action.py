@@ -160,7 +160,7 @@ class ConditionalAction(Action):
         if not isinstance(other, type(self)):
             return NotImplemented
 
-        return self.condition == other.condition and self.actions == other.actions
+        return self.condition == other.condition and self.actions[0] == other.actions[0] and self.actions[1] == other.actions[1]
 
 class LoopAction(Action):
     def __init__(self, loop, condition, actions):

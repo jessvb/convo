@@ -42,10 +42,10 @@ sounds_procedure = Procedure(name="dog or cat", actions=[
                 EqualityCondition(ValueOf("input"), "cat"),
                 actions=[
                     [SayAction("You did not say a dog or a cat.")],
-                    [PlaySoundAction("meow")]
+                    [PlaySoundAction("cat")]
                 ]
             )],
-            [PlaySoundAction("bark")]
+            [PlaySoundAction("dog")]
         ]
     )
 ])
@@ -231,11 +231,9 @@ class DialogManager(object):
 
 class DialogContext(object):
     def __init__(self, sid):
-        example = Class("example")
-        example.add_property(Property(example, "count", "number"))
         self.sid = sid
-        self.classes = { "example": example }
-        self.procedures = { "example": example_procedure, "dog or cat": sounds_procedure, "empty": empty_procedure, "infinite loop": infinite_loop_procedure }
+        self.classes = { }
+        self.procedures = { }
         self.execution = None
         self.reset()
 

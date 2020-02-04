@@ -1,9 +1,8 @@
 import logging
 import re
+from app import logger
 from goals import *
 from models import *
-
-logger = logging.getLogger("gunicorn.error")
 
 class GetActionsGoal(BaseGoal):
     def __init__(self, context, actions):
@@ -114,7 +113,9 @@ class GetLoopActionsGoal(GetActionsGoal):
 
         logger.debug(f"Advancing {self.__class__.__name__}...")
         self._message = None
-        if self.context.current_message in ["close loop", "no", "done"]:
+        if self.context.current_message in ["close loop", "no", "done", "closed loop", "close the loop"]:
+            self.done = True
+        elif re.match("close.{1,6}loop", self.context.current_message):
             self.done = True
         elif not isinstance(self.context.parsed, BaseGoal):
             self._message = "I didn't quite catch that. What action did you want me to add?"

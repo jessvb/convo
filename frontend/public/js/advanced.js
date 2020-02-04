@@ -1,3 +1,15 @@
+socketApi.on('advancedInstructions', (data) => {
+    let instructions = document.getElementById('advanced-instruction-list');
+    let sounds = data.sounds;
+    instructions.innerHTML = `
+        <li>Use a <b>while</b> loop</li>
+        <li>Listen to user input <b>${data.iters}</b> times</li>
+        <li>
+            Every time it listens, if the user input is <b>'${sounds[0]}'</b>, play the <b>${sounds[0]}</b> sound.
+            If the  user input is, <b>'${sounds[1]}'</b>, play the <b>${sounds[1]}</b> sound.
+        </li>
+    `;
+});
 socketApi.on('stageCompleted', () => {
     document.getElementById('instruction-container').innerHTML = `
         <div class="stage-completed">
@@ -14,10 +26,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         <div id="instruction-container">
             <div id="instruction">
                 <div>Create a program that does the following:</div>
-                <ol>
+                <ol id="advanced-instruction-list">
                     <li>Use a <b>while</b> loop</li>
-                    <li>Listen to user input <b>five</b> times</li>
-                    <li>Play corresponding sound <b>five</b> times</li>
                 <ol>
             </div>
         </div>`;

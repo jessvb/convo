@@ -139,16 +139,16 @@ edit_test4 = [
 ]
 
 sound_test = [
-    "create a procedure called bark",
+    "create a procedure called dog",
     "create a variable called foo and set it to 5",
     "get user input",
     "bar",
-    "if bar is equal to dog then play the bark sound",
+    "if bar is equal to dog then play the dog sound",
     "no",
-    "play the meow sound",
+    "play the cat sound",
     "no",
     "done",
-    "run bark",
+    "run dog",
     "cat"
 ]
 
@@ -301,10 +301,10 @@ conditional_test = [
     "create a while loop",
     "while counter is less than 5",
     "get user input and save it as pet",
-    "if pet is dog play the bark sound",
+    "if pet is dog play the dog sound",
     "done",
     "no",
-    "if pet is cat play the meow sound",
+    "if pet is cat play the cat sound",
     "done",
     "no",
     "add 1 to counter",
@@ -319,9 +319,11 @@ conditional_test = [
 ]
 
 bugs_test = [
-    "I want to create a procedure called hello world",
-    "create a variable called var and set it to 0",
-    "while var is less than 5 play sound",
+    "create a procedure called pet sounds",
+    "get user input and save it as pet",
+    "if pat is dog play the dog sound",
+    "if pet is dog play the dog sound",
+    "done"
     # "get user input",
     # "input",
     # "done",
@@ -329,13 +331,11 @@ bugs_test = [
     # "five"
 ]
 
-inputs, check = userstudy_scenarios["advanced"]
 logging.basicConfig(level=logging.DEBUG)
 client = Client("test")
-# client.dm = UserStudyAdvancedDialogManager("test", inputs, check)
 dm = client.dm
 sleep_time = 1
-for i, message in enumerate(messages):
+for i, message in enumerate(bugs_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
