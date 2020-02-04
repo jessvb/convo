@@ -91,7 +91,7 @@ const request = {
         'sampleRateHertz': sampleRateHertz,
         'languageCode': languageCode,
         'speechContexts' : [
-            {'phrases': ['done', 'close loop', 'while', 'create', 'called'], 'boost': 15 },
+            {'phrases': ['done', 'close loop', 'while', 'create a', 'called', 'step'], 'boost': 15 },
             {'phrases': ['create a procedure', 'create a variable', 'make a variable', 'get user input', 'save it as']},
             {'phrases': ['is greater than', 'is less than', 'is equal to', 'is greater than or equal to']},
             {'phrases': ['pet', 'horse', 'cat', 'dog', 'cricket', 'bird', 'cow'], 'boost': 10},
@@ -100,7 +100,7 @@ const request = {
                 'if the value of pet',
                 'run pet sounds',
                 'add one to',
-                'subtract one to',
+                'subtract one from',
                 'hello world'
             ]},
             {'phrases': ['add step', 'change step', 'remove step']}
