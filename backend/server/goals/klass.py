@@ -24,7 +24,7 @@ class CreateClassGoal(HomeGoal):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, "name", "What do you want to call the class?"))
             elif value in self.context.classes:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"Class {value} already exists. Try another name or say cancel."))
+                self.todos.append(GetInputGoal(self.context, self, attr, f"The name, {value}, has already been used. Try another name or say cancel."))
             else:
                 self.klass.name = value
             return
@@ -75,7 +75,7 @@ class GetPropertyGoal(BaseGoal):
 
     def setattr(self, attr, value):
         if (attr == "name") and value in self.klass.properties:
-            self.todos.append(GetInputGoal(self.context, self, attr, f"Property {value} already exists. Try another name."))
+            self.todos.append(GetInputGoal(self.context, self, attr, f"The name, {value}, has already been used. Try another name."))
         elif (attr == "value") and value is None:
             self.todos.append(GetInputGoal(self.context, self, "type", "What is the property type?"))
         setattr(self, attr, value)
@@ -100,17 +100,17 @@ class AddPropertyGoal(BaseGoal):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, "Which class do you want to add the property to?"))
             elif value not in self.context.classes:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"Class {value} does not exist. Try another class or say cancel."))
+                self.todos.append(GetInputGoal(self.context, self, attr, f"Class, {value}, hasn't been created yet. Try another class or say cancel."))
             else:
                 self.klass = self.context.classes[value]
                 if hasattr(self, "name") and self.name in self.klass.properties:
-                    self.todos.append(GetInputGoal(self.context, self, "name", f"Property {self.name} already exists. Try another name or say cancel."))
+                    self.todos.append(GetInputGoal(self.context, self, "name", f"The name, {self.name}, has already been used. Try another name or say cancel."))
             return
         elif (attr == "name"):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, "What do you want to call the property?"))
             elif hasattr(self, "klass") and value in self.klass.properties:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"Property {value} already exists. Try another name or say cancel."))
+                self.todos.append(GetInputGoal(self.context, self, attr, f"The name, {value}, has already been used. Try another name or say cancel."))
                 return
         elif (attr == "type") and value is None:
             self.todos.append(GetInputGoal(self.context, self, "type", "What is the property type?"))

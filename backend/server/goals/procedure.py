@@ -31,7 +31,7 @@ class CreateProcedureGoal(HomeGoal):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, "What do you want to call the procedure?"))
             elif value in self.procedures:
-                self.error = f"Procedure {value} already exists. You can edit the procedure by saying \"edit {value}\"."
+                self.error = f"The name, {value}, has already been used. You can edit the procedure by saying \"edit {value}\"."
             else:
                 self.procedure.name = value
             return
@@ -58,13 +58,13 @@ class AddClassProcedureGoal(CreateProcedureGoal):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, "Which class do you want to add the procedure to?"))
             elif value not in self.context.classes:
-                self.todos.append(GetInputGoal(self.context, self, attr, f"Class {value} does not exist. Try another class or say cancel."))
+                self.todos.append(GetInputGoal(self.context, self, attr, f"Class, {value}, hasn't been created. Try another class or say cancel."))
             else:
                 self.procedure.klass = self.context.classes[value]
                 self.procedures = self.procedure.klass.procedures
                 name = self.procedure.name
                 if name and name in self.procedures:
-                    self.todos.append(GetInputGoal(self.context, self, "name", f"Procedure {name} already exists. Try another name or say cancel."))
+                    self.todos.append(GetInputGoal(self.context, self, "name", f"The name, {name}, has already been used. Try another name or say cancel."))
             return
         setattr(self, attr, value)
 
@@ -96,7 +96,7 @@ class RenameProcedureGoal(HomeGoal):
             if not value:
                 self.todos.append(GetInputGoal(self.context, self, attr, "Which procedure do you want to rename?"))
             elif value not in self.context.procedures:
-                self.error = f"Procedure with the name {value} does not exist."
+                self.error = f"A procedure with the name, {value}, has not been created."
             else:
                 self.name = value
             return
@@ -104,7 +104,7 @@ class RenameProcedureGoal(HomeGoal):
             if not value:
                 self.todos.append(GetInputGoal(self.context, self, attr, "What new name do you want to give the procedure?"))
             elif value in self.context.procedures:
-                self.error = f"A procedure with the name {value} already exists."
+                self.error = f"The name, {value}, has already been used for a procedure."
             else:
                 self.new_name = value
         setattr(self, attr, value)
@@ -122,7 +122,7 @@ class DeleteProcedureGoal(HomeGoal):
         if self._message:
             return self._message
 
-        return f"I deleted the procedure {self.name}. What do you want to do now?" if self.is_complete else self.todos[-1].message
+        return f"I deleted the procedure, {self.name}. What do you want to do now?" if self.is_complete else self.todos[-1].message
 
     def complete(self):
         del self.context.procedures[self.name]
@@ -133,7 +133,7 @@ class DeleteProcedureGoal(HomeGoal):
             if not value:
                 self.todos.append(GetInputGoal(self.context, self, attr, "Which procedure do you want to delete?"))
             elif value not in self.context.procedures:
-                self.error = f"Procedure with the name {value} does not exist."
+                self.error = f"A procedure with the name, {value}, has not been created."
             else:
                 self.name = value
             return

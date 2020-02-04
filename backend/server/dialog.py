@@ -137,7 +137,7 @@ class DialogManager(object):
         try:
             self.context.parsed = self.nlu.parse_message(message)
         except InvalidStateError as e:
-            response = "I cannot do this right now"
+            response = "I can't do this right now"
             if isinstance(e.goal, ActionGoal):
                 logger.debug(f"[{self.sid}] Invalid state to do action because currently not creating or editing a procedure.")
                 response += " because I am currently not creating or editing a procedure"
