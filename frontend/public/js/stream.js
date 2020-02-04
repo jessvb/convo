@@ -23,6 +23,7 @@ let experimentDiv = document.getElementById("experiment-container");
 let handleKeyDown = (event) => {
     btnRecord.onmousedown = null;
     btnRecord.onmouseup = null;
+    synth.cancel();
     let tag = event.target.tagName.toLowerCase();
     if (event.code == 'Space' && tag != 'input' && tag != 'textarea') { startRecording(); }
 }
@@ -37,6 +38,7 @@ let handleKeyUp = (event) => {
 btnRecord.onmousedown = () => {
     document.onkeydown = null;
     document.onkeyup = null;
+    synth.cancel();
     startRecording();
 }
 

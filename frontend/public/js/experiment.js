@@ -213,8 +213,10 @@ let checkQuery = (field, value) => {
 let submitText = () => {
     let textbox = document.getElementById("textbox");
     let text = textbox.value;
-    if (text != "")
+    if (text != "") {
+        synth.cancel();
         submitMessage(text.toLowerCase(), false);
+    }
 
     textbox.value = "";
 }
