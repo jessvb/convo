@@ -61,9 +61,10 @@ def message(data):
     if client is None or message is None:
         return
 
+    voice_or_text = "voice" if data.get("speak", False) else "text"
     dm = client.dm
     if isinstance(dm, UserStudyDialogManager) or isinstance(dm, UserStudyAdvancedDialogManager):
-        logger.info(f"[{dm.sid}][{dm.stage},{dm.part}][Message] {message}")
+        logger.info(f"[{dm.sid}][{dm.stage},{dm.part}][Message]({voice_or_text}) {message}")
         logger.debug(f"[{dm.sid}][{dm.stage},{dm.part}][State] {dm.context.state}")
     else:
         logger.info(f"[{dm.sid}][Message] {message}")
@@ -76,7 +77,7 @@ def message(data):
         response = {
             "message": res,
             "state": dm.context.state,
-            "speak": data.get("speak")
+            "speak": data.get("speak", False)
         }
 
         if isinstance(dm, UserStudyDialogManager) or isinstance(dm, UserStudyAdvancedDialogManager):
