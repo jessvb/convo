@@ -1,4 +1,4 @@
-import logging
+from app import logger
 from goals import *
 from models import *
 
@@ -17,7 +17,7 @@ class ConditionalActionGoal(ActionGoal):
         return super().complete()
 
     def advance(self):
-        logging.debug(f"Advancing {self.__class__.__name__}...")
+        logger.debug(f"Advancing {self.__class__.__name__}...")
         self._message = None
         if self.todos:
             todo = self.todos.pop()
@@ -80,7 +80,7 @@ class GetConditionGoal(BaseGoal):
         return "GetConditionGoal completed!" if self.is_complete else "What's the condition?"
 
     def advance(self):
-        logging.debug(f"Advancing {self.__class__.__name__}...")
+        logger.debug(f"Advancing {self.__class__.__name__}...")
         parsed = self.context.parsed
         if parsed and isinstance(parsed, Condition):
             self.condition = parsed

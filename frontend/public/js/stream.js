@@ -2,7 +2,8 @@ strings_to_replace = {
     "1/2": "1 to",
     "wow": "while",
     "wild": "while",
-    "pat": "pet"
+    "pat": "pet",
+    "crater": "create"
 }
 
 socket.on('clientUtter', (transcript) => {
@@ -22,6 +23,7 @@ let experimentDiv = document.getElementById("experiment-container");
 let handleKeyDown = (event) => {
     btnRecord.onmousedown = null;
     btnRecord.onmouseup = null;
+    synth.cancel();
     let tag = event.target.tagName.toLowerCase();
     if (event.code == 'Space' && tag != 'input' && tag != 'textarea') { startRecording(); }
 }
@@ -36,6 +38,7 @@ let handleKeyUp = (event) => {
 btnRecord.onmousedown = () => {
     document.onkeydown = null;
     document.onkeyup = null;
+    synth.cancel();
     startRecording();
 }
 

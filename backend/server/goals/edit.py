@@ -1,3 +1,4 @@
+from app import logger
 from goals import *
 from models import *
 from word2number import w2n
@@ -36,7 +37,7 @@ class EditGoal(HomeGoal):
         return message
 
     def advance(self):
-        logging.debug(f"Advancing {self.__class__.__name__}...")
+        logger.debug(f"Advancing {self.__class__.__name__}...")
         self._message = None
         if self.todos:
             todo = self.todos.pop()
@@ -113,7 +114,7 @@ class EditContext(object):
         self.actions = actions
         self.step = 0 if self.actions else -1
         self.done = False
-        logging.debug(f"Actions: {[str(a) for a in actions]}")
+        logger.debug(f"Actions: {[str(a) for a in actions]}")
 
     @property
     def current(self):
@@ -273,7 +274,7 @@ class AddStepGoal(StepGoal):
             super().advance()
             return
 
-        logging.debug(f"Advancing {self.__class__.__name__}...")
+        logger.debug(f"Advancing {self.__class__.__name__}...")
         self._message = None
         if not isinstance(self.context.parsed, BaseGoal):
             self._message = "I didn't quite catch that. What action did you want me to add?"
@@ -322,7 +323,7 @@ class ChangeStepGoal(StepGoal):
             super().advance()
             return
 
-        logging.debug(f"Advancing {self.__class__.__name__}...")
+        logger.debug(f"Advancing {self.__class__.__name__}...")
         self._message = None
         if not isinstance(self.context.parsed, BaseGoal):
             self._message = "I didn't quite catch that. What do you want to replace the current step with?"

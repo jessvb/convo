@@ -1,3 +1,4 @@
+from app import logger
 from goals import *
 from models import *
 
@@ -16,7 +17,7 @@ class LoopActionGoal(ActionGoal):
         return super().complete()
 
     def advance(self):
-        logging.debug(f"Advancing {self.__class__.__name__}...")
+        logger.debug(f"Advancing {self.__class__.__name__}...")
         self._message = None
         if self.todos:
             todo = self.todos.pop()

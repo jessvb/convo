@@ -21,11 +21,11 @@ let submitAndGo = () => {
         // set advanced / not advanced in local storage for stages-process.js:
         localStorage.setItem('isAdvanced', JSON.stringify({ value: level == 'advanced' }));
 
-        // if selected "other", add the "other" language
+        // if selected 'other', add the 'other' language
         if (languages.includes('other') && languagesOther)
             languages.push(languagesOther);
 
-        // if selected "other", add the "other" agent
+        // if selected 'other', add the 'other' agent
         if (agents.includes('other') && agentsOther)
             agents.push(agentsOther);
 
@@ -34,25 +34,25 @@ let submitAndGo = () => {
             sex = genderTextBox;
 
         surveyData = {
-            "age": age,
-            "gender": sex,
-            "first_language": firstLanguage,
-            "level": level,
-            "programming_languages": languages,
-            "conv_agents": agents
+            'age': age,
+            'gender': sex,
+            'first_language': firstLanguage,
+            'level': level,
+            'programming_languages': languages,
+            'conv_agents': agents
         }
 
-        socketApi.emit("survey", {
-            "sid": sid,
-            "type": "demographics",
-            "data": surveyData
+        socketApi.emit('survey', {
+            'sid': sid,
+            'type': 'demographics',
+            'data': surveyData
         });
 
         window.location.href = '/practice-info';
     }
 };
 
-// This function creates an Other text box if Other is clicked in a "Select Multiple" question
+// This function creates an Other text box if Other is clicked in a 'Select Multiple' question
 let showOtherTextBox = (sel, id) => {
     let opt;
     let len = sel.options.length;
@@ -72,12 +72,12 @@ let showOtherTextBox = (sel, id) => {
             }
         }
 
-        if (opt.value === "other" && opt.selected) {
+        if (opt.value === 'other' && opt.selected) {
             ansElm.style.display = 'block';
             // if there's a paired question element, then display it too:
             if (pairedQuesElm)
                 pairedQuesElm.style.display = 'block';
-        } else if (opt.value === "other" && !opt.selected) {
+        } else if (opt.value === 'other' && !opt.selected) {
             ansElm.style.display = 'none';
             // if there's a paired question element, then hide it too:
             if (pairedQuesElm)

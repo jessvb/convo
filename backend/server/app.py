@@ -7,7 +7,7 @@ from flask_socketio import SocketIO
 app = Flask(__name__)
 CORS(app)
 sio = SocketIO(app, cors_allowed_origins="*")
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = app.logger
 
 socket_clients = {}

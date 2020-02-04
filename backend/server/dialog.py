@@ -1,65 +1,10 @@
-import logging
 from nlu import SemanticNLU
 from question import QuestionAnswer
 from models import *
 from goals import *
 from error import *
 from helpers import *
-
-example_procedure = Procedure(name="example", actions=[
-    CreateVariableAction("foo", 4),
-    SayAction("I want to get your input."),
-    GetUserInputAction("input"),
-    CreateListAction("groceries"),
-    SetVariableAction("foo", 6),
-    AddToVariableAction("foo", 5),
-    SayAction("hello world!"),
-    ConditionalAction(
-        ComparisonCondition(ValueOf("foo"), "greater than", 10),
-        actions=[
-            [SayAction("foo is not greater than 10"), CreateVariableAction("bar", 10)],
-            [SayAction("foo is greater than 10"), CreateVariableAction("bar", 4), SayAction("random")]
-        ]
-    ),
-    LoopAction(
-        loop="until",
-        condition=ComparisonCondition(ValueOf("bar"), "less than", 15),
-        actions=[
-            SayAction("bar is less than 15"),
-            AddToVariableAction("bar", 1)
-        ]
-    ),
-    AddToListAction("groceries", "\"apples\"")
-])
-
-sounds_procedure = Procedure(name="dog or cat", actions=[
-    SayAction("Do you want to hear a dog or a cat?"),
-    GetUserInputAction("input"),
-    ConditionalAction(
-        EqualityCondition(ValueOf("input"), "dog"),
-        actions=[
-            [ConditionalAction(
-                EqualityCondition(ValueOf("input"), "cat"),
-                actions=[
-                    [SayAction("You did not say a dog or a cat.")],
-                    [PlaySoundAction("cat")]
-                ]
-            )],
-            [PlaySoundAction("dog")]
-        ]
-    )
-])
-
-empty_procedure = Procedure(name="empty", actions=[])
-
-infinite_loop_procedure = Procedure(name="infinite loop", actions=[
-    CreateVariableAction("bad var", 0),
-    LoopAction(
-        loop="while",
-        condition=EqualityCondition(ValueOf("bad var"), 0),
-        actions=[SayAction("in the loop")]
-    )
-])
+from app import logger
 
 state_machine = {
     "home": {
@@ -97,6 +42,7 @@ class DialogManager(object):
         self.context = DialogContext(sid)
         self.qa = QuestionAnswer(self.context)
         self.nlu = SemanticNLU(self.context)
+        logger.debug(f"[{self.sid}] Created dialog manager.")
 
     def reset(self, context=None):
         if context is not None:
@@ -105,6 +51,7 @@ class DialogManager(object):
             self.nlu = SemanticNLU(context)
         else:
             self.context.reset()
+        logger.debug(f"[{self.sid}] Resetting the entire conversation.")
         return "Conversation has been reset. What do you want to do first?"
 
     @property
@@ -122,21 +69,26 @@ class DialogManager(object):
 
         response = self.handle_reset(message)
         if response is not None:
+            logger.debug(f"[{self.sid}] User resetted.")
             return response
 
         response = self.handle_help(message)
         if response is not None:
+            logger.debug(f"[{self.sid}] User needed help.")
             return response
 
         if self.context.state == "executing":
+            logger.debug(f"[{self.sid}] Program is currently executing.")
             return self.handle_execution(message)
 
         response = self.handle_cancel(message)
         if response is not None:
+            logger.debug(f"[{self.sid}] User canceled.")
             return response
 
         response = self.handle_question(message)
         if response is not None:
+            logger.debug(f"[{self.sid}] User asked a question.")
             return response
 
         response = self.handle_parse(message)
@@ -185,28 +137,36 @@ class DialogManager(object):
         try:
             self.context.parsed = self.nlu.parse_message(message)
         except InvalidStateError as e:
-            logging.error(e.message)
             response = "I cannot do this right now"
             if isinstance(e.goal, ActionGoal):
+                logger.debug(f"[{self.sid}] Invalid state to do action because currently not creating or editing a procedure.")
                 response += " because I am currently not creating or editing a procedure"
             elif isinstance(e.goal, StepGoal):
                 if e.state == "editing_action":
+                    logger.debug(f"[{self.sid}] Invalid state to do action because currently adding or editing an action.")
                     response += " because I am currently adding or editing an action"
                 else:
+                    logger.debug(f"[{self.sid}] Invalid state to do action because currently not editing a procedure.")
                     response += " because I am currently not editing a procedure"
             elif isinstance(e.goal, HomeGoal):
                 if e.state == "creating":
+                    logger.debug(f"[{self.sid}] Invalid state to do action because currently creating a procedure.")
                     response += " because I am currently creating a procedure. You can stop by saying \"done\""
                 elif e.state == "editing":
+                    logger.debug(f"[{self.sid}] Invalid state to do action because currently editing a procedure.")
                     response += " because I am currently editing a procedure. You can stop by saying \"done\""
                 elif e.state == "editing_action":
+                    logger.debug(f"[{self.sid}] Invalid state to do action because adding or editing an action.")
                     response += " because I am currently adding or editing an action. Finish editing then you can stop by saying \"done\""
+            else:
+                logger.debug(f"[{self.sid}] Invalid state to do action.")
             return f"{response}."
 
     def handle_goal(self):
         if self.current_goal() is None:
             goal = self.context.parsed
             if goal is None or not isinstance(goal, BaseGoal):
+                logger.debug(f"[{self.sid}] Did not understand utterance: {self.context.current_message}")
                 response = "I didn't understand what you were saying. Please try again."
             elif goal.error is not None:
                 response = goal.error

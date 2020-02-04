@@ -1,4 +1,4 @@
-import logging
+from app import logger
 from models import *
 from goals import *
 
@@ -55,7 +55,7 @@ class GetClassPropertiesGoal(BaseGoal):
             super().advance()
             return
 
-        logging.debug(f"Advancing {self.__class__.__name__}...")
+        logger.debug(f"Advancing {self.__class__.__name__}...")
         if self.context.current_message == "no":
             self.done = True
         else:

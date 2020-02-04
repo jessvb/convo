@@ -1,5 +1,5 @@
 import re
-import logging
+from app import logger
 from helpers import to_snake_case
 from models import *
 
@@ -10,7 +10,7 @@ class BaseGoal(object):
         self.context = context
         self.context.validate_goal(self)
         self._message = None
-        logging.debug(f"Creating {self.__class__.__name__}...")
+        logger.debug(f"Creating {self.__class__.__name__}...")
 
     @property
     def is_complete(self):
@@ -27,7 +27,7 @@ class BaseGoal(object):
         return f"{self.__class__.__name__} completed!" if self.is_complete else self.todos[-1].message
 
     def advance(self):
-        logging.debug(f"Advancing {self.__class__.__name__}...")
+        logger.debug(f"Advancing {self.__class__.__name__}...")
         self._message = None
         if self.todos:
             todo = self.todos.pop()
@@ -42,7 +42,7 @@ class BaseGoal(object):
                 self.todos.append(todo)
 
     def complete(self):
-        logging.debug(f"{self.__class__.__name__} completed!")
+        logger.debug(f"{self.__class__.__name__} completed!")
         return self.message
 
     def setattr(self, attr, value):
