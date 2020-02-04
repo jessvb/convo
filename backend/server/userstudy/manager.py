@@ -117,7 +117,7 @@ class UserStudyDialogManager(DialogManager):
             self.context.parsed = self.nlu.parse_message(message)
         except InvalidStateError as e:
             logger.debug(f"[{self.sid}][{self.stage},{self.part}] Action cannot be done in current state.")
-            return "I cannot do this right now. Please follow instructions and try again!"
+            return "I can't do this right now. Please follow instructions and try again!"
 
     def check_goal(self, message):
         goal = self.context.parsed

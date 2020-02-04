@@ -48,11 +48,11 @@ class ConditionalActionGoal(ActionGoal):
             if value is None:
                 self.todos.append(GetConditionGoal(self.context, self))
             elif value.variable.variable not in self.variables:
-                self.error = f"Variable {value.variable.variable} used in the condition does not exist. Please try again or create the variable first."
+                self.error = f"Variable, {value.variable.variable}, used in the condition hasn't been created. Please try again or create the variable first."
             elif isinstance(value.value, ValueOf) and value.value.variable not in self.variables:
-                self.error = f"Variable {value.value.variable} used in the condition does not exist. Please try again or create the variable first."
+                self.error = f"Variable, {value.value.variable}, used in the condition hasn't been created. Please try again or create the variable first."
             elif isinstance(value, ComparisonCondition) and isinstance(value.value, str):
-                self.error = f"The value {value} is not a number, so I cannot compare. Please try again."
+                self.error = f"The value, {value}, is not a number, so I cannot compare. Please try again."
             else:
                 self.condition = value
             return
@@ -86,7 +86,7 @@ class GetConditionGoal(BaseGoal):
             self.condition = parsed
             self._message = None
         else:
-            self.error = "This is not a valid condition, so the action is canceled. Try again or add another action."
+            self.error = "This doesn't seem like a valid condition to me, so I didn't add it. Please try again or add another action."
 
     def complete(self):
         self.obj.setattr("condition", self.condition)

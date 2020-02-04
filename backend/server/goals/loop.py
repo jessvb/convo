@@ -48,9 +48,9 @@ class LoopActionGoal(ActionGoal):
             if value is None:
                 self.todos.append(GetConditionGoal(self.context, self))
             elif value.variable.variable not in self.variables:
-                self.error = f"Variable {value.variable.variable} used in the condition does not exist. Please try again or create the variable first."
+                self.error = f"Variable {value.variable.variable} used in the condition hasn't been created yet. Please try again or create the variable first."
             elif isinstance(value.value, ValueOf) and value.value.variable not in self.variables:
-                self.error = f"Variable {value.value.variable} used in the condition does not exist. Please try again or create the variable first."
+                self.error = f"Variable {value.value.variable} used in the condition hasn't been created yet. Please try again or create the variable first."
             elif isinstance(value, ComparisonCondition) and isinstance(value.value, str):
                 self.error = f"The value {value} is not a number, so I cannot compare. Please try again."
             else:
