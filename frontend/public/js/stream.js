@@ -67,7 +67,12 @@ let startRecording = () => {
     status.className = "recording";
     isRecording = true;
 
-    socket.emit('startStream');
+    data = {
+        "sid": localStorage.getItem("sid"),
+        "part": localStorage.getItem("currPart"),
+        "stage": localStorage.getItem("currStage")
+    };
+    socket.emit('startStream', data);
     isStreaming = true;
 
     context = new AudioContext();
