@@ -167,7 +167,7 @@ class UserStudyDialogManager(DialogManager):
             goal = self.current_goal()
             goal.advance()
 
-            if goal.error or self.last_parsed_goal.error:
+            if goal.error or (self.last_parsed_goal and not self.last_parsed_goal.error):
                 self.reset(to_backup=True)
                 logger.debug(f"[{self.sid}][{self.stage},{self.part}] Current goal had an error.")
                 return "I think your action is slightly wrong. Please follow the instructions and try again."
@@ -177,7 +177,7 @@ class UserStudyDialogManager(DialogManager):
             else:
                 response = goal.message
 
-        if not isinstance(self.immediate_goal, GetInputGoal) and not self.last_parsed_goal.error:
+        if not isinstance(self.immediate_goal, GetInputGoal) and (self.last_parsed_goal and not self.last_parsed_goal.error):
             next_message = self.next_message
             logger.debug(f"[{self.sid}][{self.stage},{self.part}] Tentatively moving on to step {self.step} of the scenario.")
             if not next_message.startswith("run"):
@@ -198,7 +198,7 @@ class UserStudyDialogManager(DialogManager):
                     logger.debug(f"[{self.sid}][{self.stage},{self.part}] Action that was not supposed to be added was added. Undoing the step update back to step {self.step}.")
                     return "Not the right action. Please follow the instruction and try again."
 
-        if not isinstance(self.immediate_goal, GetInputGoal) and not self.last_parsed_goal.error:
+        if not isinstance(self.immediate_goal, GetInputGoal) and (self.last_parsed_goal and not self.last_parsed_goal.error):
             if self.scenario_completed:
                 logger.info(f"[{self.sid}][{self.stage},{self.part}] User completed scenario!")
                 sio.emit("stageCompleted", room=str(self.sid))
@@ -245,7 +245,7 @@ class UserStudyAdvancedDialogManager(DialogManager):
             elif goal.is_complete:
                 if isinstance(goal, EditGoal) or isinstance(goal, GetProcedureActionsGoal):
                     logger.debug(f"[{self.sid}][{self.stage},{self.part}] User done with editing or creating goal so checking procedure.")
-                    valid = self.check_procedure()
+                    valid, res = self.check_procedure()
                     procedure_name = self.context.current.name
                     if valid:
                         logger.info(f"[{self.sid}][{self.stage},{self.part}] User completed scenario!")
@@ -253,7 +253,13 @@ class UserStudyAdvancedDialogManager(DialogManager):
                         response = f"Looks like you achieved the goal! You can try running the procedure by saying, \"run {procedure_name}\"."
                     else:
                         logger.info(f"[{self.sid}][{self.stage},{self.part}] User did have a correct procedure.")
-                        response = f"Hmm, I checked your procedure, and it doesn't seem to meet the goal. You can test the procedure by saying, \"run {procedure_name}\", or edit it by saying \"edit {procedure_name}\"."
+                        err_res = "Hmm, I checked your procedure, and it doesn't seem to meet the goal."
+                        if res is not None:
+                            if res == "StopIteration":
+                                err_res = "Hmm, I checked your procedure, and it seems to have too many iterations."
+                            elif res == "InfiniteLoop":
+                                err_res = "Hmm, I checked your procedure, and it seems you may have an infinite loop."
+                        response = f"{err_res} You can test the procedure by saying, \"run {procedure_name}\", or edit it by saying \"edit {procedure_name}\"."
                     goal.complete()
                     self.context.goals.pop()
                     return response
@@ -275,4 +281,4 @@ class UserStudyAdvancedDialogManager(DialogManager):
             logger.debug(f"[{self.sid}][{self.stage},{self.part}] Procedure {procedure.name} met the objectives and passed.")
         else:
             logger.debug(f"[{self.sid}][{self.stage},{self.part}] Procedure {procedure.name} did not meet the objectives.")
-        return valid
+        return valid, response
