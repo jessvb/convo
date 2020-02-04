@@ -1,4 +1,4 @@
-FROM node:10-alpine
+FROM node:10-buster-slim
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -13,6 +13,6 @@ RUN npm install
 # RUN npm ci --only=production
 
 # Bundle app source
-COPY . .
+COPY . /usr/src/app
 
 EXPOSE 8080

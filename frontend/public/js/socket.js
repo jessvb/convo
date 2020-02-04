@@ -45,7 +45,11 @@ socketApi.on('joined', (data) => {
 });
 
 socket.on('connect', (data) => {
-    socket.emit('join', getUniqueId());
+    socket.emit('join', {
+        "sid": getUniqueId(),
+        "stage": localStorage.getItem("currStage"),
+        "part": localStorage.getItem("currPart")
+    });
 });
 
 socket.on('joined', (data) => {
