@@ -93,10 +93,10 @@ const request = {
             [
                 "create a procedure", "create", "make",
                 "variable", "class", "property", "procedure",
-                "conditional", "while loop", "until loop", "close loop",
+                "conditional", "while", "until", "close loop",
                 "run", "add", "add step", "delete step", "remove step", "change step", "replace step",
                 "if", "is", "greater than", "less than", "equal to", "greater than or equal to", "less than or equal to",
-                "pet", "horse", "cat", "dog", "cricket", "bird", "cow", "one to", "1 to"
+                "pet", "horse", "cat", "dog", "cricket", "bird", "cow"
             ]
         ]
     },
@@ -106,58 +106,64 @@ const request = {
 streams = {};
 
 io.on('connection', (client) => {
-    let id = client.id;
+    let sessionId = client.id;
+    let sid;
+
     let startStream = () => {
-        streams[id] = speechClient.streamingRecognize(request)
+        streams[sessionId] = speechClient.streamingRecognize(request)
             .on('error', (err) => {
-                console.log("Restarting stream.");
+                console.log(`[${id}] Error occured so restarting stream.`);
                 console.log(err);
-                io.to(`${client.id}`).emit('streamError', err);
+                io.to(`${sessionId}`).emit('streamError', err);
             })
             .on('data', (data) => {
                 if (data.results[0] && data.results[0].alternatives[0]) {
                     let transcript = data.results[0].alternatives[0].transcript;
-                    io.to(`${client.id}`).emit('clientUtter', transcript);
+                    io.to(`${sessionId}`).emit('clientUtter', transcript);
                 } else {
-                    console.log('Reached transcription time limit, press Ctrl+C');
+                    console.log(`[${id}] Reached transcription time limit, press Ctrl+C`);
                 }
             });
     }
 
     let endStream = () => {
-        if (id in streams) {
-            streams[id].end();
-            delete streams[id];
+        if (sessionId in streams) {
+            streams[sessionId].end();
+            delete streams[sessionId];
         }
     }
 
     client.on('join', (data) => {
-        id = data == null ? client.id : data;
-        console.log(`Client ${id} connected to server.`);
-        io.to(`${client.id}`).emit('joined', id);
+        if (data) {
+            sid = data;
+            console.log(`[${sid}] Client connected to server.`);
+            io.to(`${sessionId}`).emit('joined', sid);
+        } else {
+            console.log('Client connected without an SID.');
+        }
     });
 
     client.on('disconnect', () => {
-        console.log(`Client ${id} disconnected.`);
+        console.log(`[${sid}] Client disconnected.`);
     });
 
     client.on('startStream', () => {
-        console.log('Starting stream.');
+        console.log(`[${sid}] Starting stream.`);
         startStream();
     });
 
     client.on('endStream', () => {
-        console.log('Ending stream.');
+        console.log(`[${sid}] Ending stream.`);
         endStream();
     });
 
     client.on('audio', (data) => {
         if (!(id in streams))
-            console.log("Stream is null.")
+            console.log(`[${sid}] Stream is null.`)
         else if (!streams[id].writable)
-            console.log("Stream became unwritable.");
+            console.log(`[${sid}] Stream became unwritable.`);
         else
-            streams[id].write(data);
+            streams[sid].write(data);
     });
 });
 

@@ -2,14 +2,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // generate / store an id for the computer / browser in local storage
     getUniqueId();
 
-    // initialize userID in local storage. This will increment if you use the same
-    // computer / browser
-    if (localStorage.getItem('userID') == null) {
-        localStorage.setItem('userID', 0);
-    }
-    let userID = parseInt(localStorage.getItem('userID')) + 1;
-    localStorage.setItem('userID', userID);
-
     // set the button url
     let button = document.getElementById('btn-begin');
     button.onclick = () => { window.location.href = "/demographic-survey"; };

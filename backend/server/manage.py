@@ -1,14 +1,18 @@
 from flask import request
 from flask_socketio import join_room
 
-from app import app, sio, logger, socket_clients, socket_sessions
+from app import sio, logger, socket_clients, socket_sessions
 from dialog import DialogManager
 from userstudy import *
 from client import *
 
 @sio.on("join")
 def join(data):
-    sid = request.sid if data.get("sid") is None else data.get("sid")
+    sid = data.get("sid")
+    if sid is None:
+        logger.info("Client connected without an SID.")
+        return
+
     stage = data.get("stage")
     part = data.get("part")
     stage_log = f" at {stage} stage" if stage else ""
