@@ -210,6 +210,17 @@ class UserStudyAdvancedDialogManager(DialogManager):
         self.check = check
         logger.info(f"UserStudyDialogManager created for stage {self.stage}.")
 
+    def reset(self, context=None):
+        if context is not None:
+            self.context = context
+            self.qa = QuestionAnswer(context)
+            self.nlu = SemanticNLU(context)
+        else:
+            self.context.reset()
+            self.context.procedures = { }
+            self.context.execution = None
+        return "Conversation has been reset. What do you want to do first?"
+
     def handle_goal(self):
         if self.current_goal() is None:
             response = super().handle_goal()

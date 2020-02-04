@@ -4,7 +4,7 @@ services:
     build: ./backend/server
     restart: on-failure
     volumes:
-      - ./backend/server:/app
+      - ./backend/server:/usr/src/app
     environment:
       - FLASK_ENV=development
     ports:
