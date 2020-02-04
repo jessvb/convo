@@ -50,7 +50,7 @@ def disconnect():
         client = socket_clients.get(sid)
         del socket_sessions[request.sid]
         logger.info(f"[{sid}][{stage},{part}] Client disconnected.")
-        logger.info(f"[{sid}][{stage},{part}] Conversation: {client.context.conversation}")
+        logger.info(f"[{sid}][{stage},{part}] Conversation: {client.dm.context.conversation}")
 
 @sio.on("message")
 def message(data):

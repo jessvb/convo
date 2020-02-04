@@ -105,13 +105,13 @@ class Execution(object):
             self.input_needed = action.variable
             self.emit("response", { "message": "Listening for user input...", "state": self.context.state })
         elif isinstance(action, CreateVariableAction):
-            logger.debug(f"[{self.context.sid}][Execution][Evaluating] Creating variable {action.name} with value {self.variables[action.name]}.")
             self.variables[action.name] = self.variables[action.value.variable] if isinstance(action.value, ValueOf) else action.value
+            logger.debug(f"[{self.context.sid}][Execution][Evaluating] Creating variable {action.name} with value {self.variables[action.name]}.")
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Variables after creating variable: {str(self.variables)}")
         elif isinstance(action, SetVariableAction):
             if action.name in self.variables:
-                logger.debug(f"[{self.context.sid}][Execution][Evaluating] Setting variable {action.name} with value {self.variables[action.name]}.")
                 self.variables[action.name] = self.variables[action.value.variable] if isinstance(action.value, ValueOf) else action.value
+                logger.debug(f"[{self.context.sid}][Execution][Evaluating] Setting variable {action.name} with value {self.variables[action.name]}.")
                 logger.debug(f"[{self.context.sid}][Execution][Evaluating] Variables after setting variable: {str(self.variables)}")
             else:
                 logger.debug(f"[{self.context.sid}][Execution][Evaluating] Variable {action.name} not found.")
