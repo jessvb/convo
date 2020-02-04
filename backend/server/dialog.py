@@ -1,4 +1,3 @@
-import logging
 from nlu import SemanticNLU
 from question import QuestionAnswer
 from models import *

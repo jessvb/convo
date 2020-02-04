@@ -1,4 +1,3 @@
-import logging
 import re
 from app import logger
 from goals import *
