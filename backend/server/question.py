@@ -18,7 +18,7 @@ class QuestionAnswer(object):
             else:
                 return response + f" They are {', '.join(names[:-1])} and {names[-1]}."
         elif re.match(ask_what_which_step_regex, question.lower()) and self.context.state == "editing":
-            edit = self.context.edit
+            edit = self.context.edit[-1]
             if not edit.current:
                 return "You currently do not have any actions."
 
