@@ -310,36 +310,27 @@ conditional_test = [
     "add 1 to counter",
     "close loop",
     "done",
-    # "run hello world",
-    # "dog",
-    # "cat",
-    # "dog",
-    # "dog",
-    # "cat"
 ]
 
 bugs_test = [
-    "create a procedure called pet sounds",
-    "get user input and save it as pet",
-    "if pat is dog play the dog sound",
-    "if pet is dog play the dog sound",
-    "done"
-    # "get user input",
-    # "input",
-    # "done",
-    # "run hello world",
-    # "five"
+    "create a procedure called hello world",
+    "say hi",
+    "create a while loop",
+    "cancel"
+    # "cancel",
+    # "run hello world"
 ]
 
 logging.basicConfig(level=logging.DEBUG)
 client = Client("test")
 dm = client.dm
-sleep_time = 1
+sleep_time = 0.2
 for i, message in enumerate(bugs_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
         logging.info(res)
+        logging.info(dm.context.state)
     if message.startswith("run"):
         sleep_time = 3
     time.sleep(sleep_time)

@@ -12,7 +12,7 @@ class LoopActionGoal(ActionGoal):
         self.setattr("loop", loop)
 
     def complete(self):
-        hasattr(self, "actions")
+        assert hasattr(self, "actions")
         self.actions.append(LoopAction(self.loop, self.condition, self.loop_actions))
         return super().complete()
 
@@ -51,8 +51,12 @@ class LoopActionGoal(ActionGoal):
                 self.error = f"Variable {value.variable.variable} used in the condition hasn't been created yet. Please try again or create the variable first."
             elif isinstance(value.value, ValueOf) and value.value.variable not in self.variables:
                 self.error = f"Variable {value.value.variable} used in the condition hasn't been created yet. Please try again or create the variable first."
-            elif isinstance(value, ComparisonCondition) and isinstance(value.value, str):
-                self.error = f"The value {value} is not a number, so I cannot compare. Please try again."
+            elif isinstance(value, ComparisonCondition):
+                if isinstance(value.value, str) and value.value in self.variables:
+                    value.value = ValueOf(value.value)
+                    self.condition = value
+                else:
+                    self.error = f"The value {value.value} is not a number, so I cannot compare. Please try again."
             else:
                 self.condition = value
             return
