@@ -1,4 +1,4 @@
-strings_to_replace = {
+const strings_to_replace = {
     "1/2": "1 to",
     "wow": "while",
     "wild": "while",
@@ -10,23 +10,37 @@ strings_to_replace = {
     "gun": "done"
 }
 
+const strings_to_replace_at_start = {
+    "save": "say",
+    "it's": "if",
+    "its": "if"
+}
+
 socket.on('clientUtter', (transcript) => {
     let final = transcript.toLowerCase();
-    for (const string in strings_to_replace) {
+    let data = {
+        'sid': localStorage.getItem('sid'),
+        'stage': localStorage.getItem('currStage'),
+        'part': localStorage.getItem('currPart')
+    }
+    for (let string in strings_to_replace) {
         if (final.includes(string)) {
-            let data = {
-                'sid': localStorage.getItem('sid'),
-                'stage': localStorage.getItem('currStage'),
-                'part': localStorage.getItem('currPart'),
-                'original': string,
-                'replacement': strings_to_replace[replace]
-            }
+            data['original'] = string;
+            data['replacement'] = strings_to_replace[string];
             socketApi.emit('wordReplace', data);
+            final = final.replace(string, strings_to_replace[string]);
         }
-        final = final.replace(string, strings_to_replace[string]);
+    }
+    for (let string in strings_to_replace_at_start) {
+        if (final.startsWith(string)) {
+            data['original'] = string;
+            data['replacement'] = strings_to_replace_at_start[string];
+            socketApi.emit('wordReplace', data);
+            final = final.replace(string, strings_to_replace_at_start[string]);
+        }
     }
     submitMessage(final, true);
-})
+});
 
 AudioContext = window.AudioContext || window.webkitAudioContext;
 
