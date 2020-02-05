@@ -12,7 +12,7 @@ class LoopActionGoal(ActionGoal):
         self.setattr("loop", loop)
 
     def complete(self):
-        hasattr(self, "actions")
+        assert hasattr(self, "actions")
         self.actions.append(LoopAction(self.loop, self.condition, self.loop_actions))
         return super().complete()
 

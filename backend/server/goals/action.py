@@ -158,3 +158,7 @@ class GetProcedureActionsGoal(GetActionsGoal):
         self.context.current = None
         logger.debug(f"Procedure: {[str(a) for a in self.procedure.actions]}")
         return super().complete()
+
+    def cancel(self):
+        self.context.transition("complete")
+        self.context.current = None

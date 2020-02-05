@@ -48,6 +48,9 @@ class BaseGoal(object):
     def setattr(self, attr, value):
         setattr(self, attr, value)
 
+    def cancel(self):
+        return
+
     def __str__(self):
         name = self.__class__.__name__
         return to_snake_case(name[:-len("Goal")]) + (f":{str(self.todos[-1])}" if self.todos else "")

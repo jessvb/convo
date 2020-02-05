@@ -36,6 +36,10 @@ class EditGoal(HomeGoal):
         self.context.transition("complete")
         return message
 
+    def cancel(self):
+        self.context.edit = None
+        self.context.transition("complete")
+
     def advance(self):
         logger.debug(f"Advancing {self.__class__.__name__}...")
         self._message = None
@@ -162,16 +166,14 @@ class EditContext(object):
             self.context.current.variables.remove(action.name)
         del self.actions[self.step]
         self.step = new
+        return action
 
-    def add_step(self, action):
-        self.step += 1
-        self.actions[self.step:self.step] = action
-
-    def change_step(self, action):
-        old_action = self.actions[self.step]
-        if isinstance(old_action, CreateVariableAction):
-            self.context.current.variables.remove(old_action.name)
-        self.actions[self.step] = action
+    def add_step(self, action, step=None):
+        if step is not None:
+            self.actions[step:step] = action
+        else:
+            self.step += 1
+            self.actions[self.step:self.step] = action
 
 class GoToStepGoal(StepGoal):
     def __init__(self, context, step=None):
@@ -269,6 +271,9 @@ class AddStepGoal(StepGoal):
         self.context.transition("complete")
         return f"{message} I am at step {self.edit.step + 1} where I am {self.actions[0].to_nl()}."
 
+    def cancel(self):
+        self.context.transition("complete")
+
     def advance(self):
         if self.todos:
             super().advance()
@@ -293,7 +298,11 @@ class AddStepGoal(StepGoal):
 class ChangeStepGoal(StepGoal):
     def __init__(self, context):
         super().__init__(context)
+        if len(self.edit.actions) == 0:
+            self.error = "There are no actions or steps that you can delete."
         self.context.transition(self)
+        self.step = self.edit.step
+        self.original_action = self.edit.remove_current_step()
         self.actions = []
 
     @property
@@ -314,9 +323,13 @@ class ChangeStepGoal(StepGoal):
             return "What action do you want to replace the current step with?"
 
     def complete(self):
-        self.edit.change_step(self.actions[0])
+        self.edit.actions[self.step:self.step] = self.actions[0]
         self.context.transition("complete")
         return f"Changed step {self.edit.step + 1}, where I am now {self.actions[0].to_nl()}."
+
+    def cancel(self):
+        self.edit.actions[self.step:self.step] = self.original_action
+        self.context.transition("complete")
 
     def advance(self):
         if self.todos:

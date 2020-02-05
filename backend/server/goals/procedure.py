@@ -26,6 +26,9 @@ class CreateProcedureGoal(HomeGoal):
         self.context.goals.insert(len(self.context.goals) - 2, GetProcedureActionsGoal(self.context, self.procedure))
         return super().complete()
 
+    def cancel(self):
+        self.context.current = None
+
     def setattr(self, attr, value):
         if (attr == "name"):
             if value is None:
