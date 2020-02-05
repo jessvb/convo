@@ -323,12 +323,14 @@ class ChangeStepGoal(StepGoal):
             return "What action do you want to replace the current step with?"
 
     def complete(self):
-        self.edit.actions[self.step:self.step] = self.actions[0]
+        self.edit.step = self.step
+        self.edit.actions[self.step:self.step] = self.actions
         self.context.transition("complete")
         return f"Changed step {self.edit.step + 1}, where I am now {self.actions[0].to_nl()}."
 
     def cancel(self):
-        self.edit.actions[self.step:self.step] = self.original_action
+        self.edit.step = self.step
+        self.edit.actions[self.step:self.step] = [self.original_action]
         self.context.transition("complete")
 
     def advance(self):
