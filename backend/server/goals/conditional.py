@@ -52,11 +52,14 @@ class ConditionalActionGoal(ActionGoal):
             elif isinstance(value.value, ValueOf) and value.value.variable not in self.variables:
                 self.error = f"Variable, {value.value.variable}, used in the condition hasn't been created. Please try again or create the variable first."
             elif isinstance(value, ComparisonCondition):
-                if isinstance(value.value, str) and value.value in self.variables:
-                    value.value = ValueOf(value.value)
-                    self.condition = value
+                if isinstance(value.value, str):
+                    if value.value in self.variables:
+                        value.value = ValueOf(value.value)
+                        self.condition = value
+                    else:
+                        self.error = f"The value {value.value} is not a number, so I cannot compare. Please try again."
                 else:
-                    self.error = f"The value {value.value} is not a number, so I cannot compare. Please try again."
+                    self.condition = value
             else:
                 self.condition = value
             return
