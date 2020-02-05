@@ -13,7 +13,8 @@ const strings_to_replace = {
 const strings_to_replace_at_start = {
     "save": "say",
     "it's": "if",
-    "its": "if"
+    "its": "if",
+    "well": "while"
 }
 
 socket.on('clientUtter', (transcript) => {
