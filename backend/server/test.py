@@ -312,12 +312,32 @@ conditional_test = [
     "done",
 ]
 
-bugs_test = [
+edit_test_while = [
     "create a procedure called hello world",
-    "say hi",
+    "create a variable called hi and set it to 0",
     "create a while loop",
-    "cancel"
-    # "cancel",
+    "while hi is less than 3",
+    "add 1 to hi",
+    "close loop",
+    "say value of hi",
+    "done",
+    "run hello world",
+    "edit hello world",
+    "step into",
+    "next step",
+    "step into",
+    "say hi",
+    "go to first step",
+    "change step",
+    "add 2 to hi",
+    "next step",
+    "delete step",
+    "delete step",
+    "done",
+    # "step into"
+    # "say value of hi",
+    # "done",
+    # "done",
     # "run hello world"
 ]
 
@@ -325,14 +345,14 @@ logging.basicConfig(level=logging.DEBUG)
 client = Client("test")
 dm = client.dm
 sleep_time = 0.2
-for i, message in enumerate(bugs_test):
+for i, message in enumerate(edit_test_while):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
         logging.info(res)
         logging.info(dm.context.state)
     if message.startswith("run"):
-        sleep_time = 3
+        time.sleep(3)
     time.sleep(sleep_time)
 
-time.sleep(5)
+time.sleep(3)

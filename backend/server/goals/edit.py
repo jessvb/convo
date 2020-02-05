@@ -22,7 +22,7 @@ class EditGoal(HomeGoal):
             return f"Done with editing procedure {self.name}."
 
         if len(self.todos) == 0:
-            return self.current_edit.message
+            return self.edit[-1].message
         else:
             return self.todos[-1].message
 
@@ -68,7 +68,7 @@ class EditGoal(HomeGoal):
                 return
             action = self.edit[-1].current
             if isinstance(action, LoopAction):
-                self.edit.append(Execution(self.context, action.actions, in_loop=True))
+                self.edit.append(EditContext(self.context, action.actions, in_loop=True))
             else:
                 self._message = "You cannot step into this action."
         elif self.context.current_message in ["next step", "continue", "next"]:
@@ -213,7 +213,7 @@ class GoToStepGoal(StepGoal):
             self.current_edit.to_step(self.step)
 
         step_message = f"the {self.step} step" if isinstance(self.step, str) else f"step {self.step + 1}"
-        return f"Going to {step_message}, where I am {self.current_edit.actions[self.current_edit.step].to_nl()}."
+        return f"Going to {step_message} of the {self.scope}, where I am {self.current_edit.actions[self.current_edit.step].to_nl()}."
 
     def setattr(self, attr, value):
         if (attr == "step"):
