@@ -13,6 +13,16 @@ strings_to_replace = {
 socket.on('clientUtter', (transcript) => {
     let final = transcript.toLowerCase();
     for (const string in strings_to_replace) {
+        if (final.includes(string)) {
+            let data = {
+                'sid': localStorage.getItem('sid'),
+                'stage': localStorage.getItem('currStage'),
+                'part': localStorage.get('currPart'),
+                'original': string,
+                'replacement': strings_to_replace[replace]
+            }
+            socketApi.emit('wordReplace', data);
+        }
         final = final.replace(string, strings_to_replace[string]);
     }
     submitMessage(final, true);
