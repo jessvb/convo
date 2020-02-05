@@ -323,6 +323,7 @@ edit_test_while = [
     "done",
     "run hello world",
     "edit hello world",
+    "what step",
     "step into",
     "next step",
     "step into",
@@ -332,13 +333,18 @@ edit_test_while = [
     "add 2 to hi",
     "next step",
     "delete step",
-    "delete step",
+    "step into",
+    "what step",
+    "say value of hi",
     "done",
-    # "step into"
-    # "say value of hi",
-    # "done",
-    # "done",
-    # "run hello world"
+    "done",
+    "run hello world",
+    "edit hello world",
+    "next step",
+    "change step",
+    "say hi",
+    "done",
+    "run hello world"
 ]
 
 logging.basicConfig(level=logging.DEBUG)
