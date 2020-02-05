@@ -25,10 +25,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         </div>
         <div id="instruction-container">
             <div id="instruction">
-                <div>Create a program that does the following:</div>
-                <ol id="advanced-instruction-list">
-                    <li>Use a <b>while</b> loop</li>
-                <ol>
+                <div>Something went wrong. Please refresh the page.</div>
             </div>
         </div>`;
     document.getElementById('goal').innerHTML = `

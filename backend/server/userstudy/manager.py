@@ -19,7 +19,6 @@ class UserStudyDialogManager(DialogManager):
         self.last_parsed_goal = None
         self.backup_context = copy.deepcopy(self.context)
         self.backup_reference_context = copy.deepcopy(self.reference.context)
-        logger.debug(f"[{sid}][{stage},{part}] Created dialog manager for user studies.")
         logger.debug(f"[{sid}][{stage},{part}] Scenario: \n{scenario}")
 
     @property
@@ -215,7 +214,6 @@ class UserStudyAdvancedDialogManager(DialogManager):
         self.part = part
         self.inputs = inputs
         self.check = check
-        logger.info(f"[{sid}][{self.stage},{self.part}] Created dialog manager for user studies.")
         logger.info(f"[{sid}][{self.stage},{self.part}] Inputs: {inputs}")
 
     def reset(self, context=None):
