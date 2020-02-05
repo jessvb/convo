@@ -126,12 +126,15 @@ class DialogManager(object):
                 if isinstance(current.todos[-1], GetInputGoal) or isinstance(current.todos[-1], GetConditionGoal):
                     break
                 previous, current = current, current.todos[-1]
-            current.cancel()
 
+            logger.debug(f"[{self.context.sid}] Canceling the current goal: {current}")
+            current.cancel()
             if current is None:
                 return "You are not doing anything right now. What do you want to do?"
             elif previous is None:
-                return "Canceled! What do you want to do?"
+                assert self.context.state == "home"
+                self.context.goals.pop()
+                return "Canceled! What do you want to do now?"
             else:
                 previous.todos.pop()
                 return f"Canceled! {previous.message}"
@@ -139,8 +142,10 @@ class DialogManager(object):
     def handle_question(self, message):
         # Check if message is a question
         if QuestionAnswer.is_question(message):
+            logger.debug(f"Answering a potential question: {message}")
             answer = self.qa.answer(message)
             if answer is not None:
+                logger.debug(f"Question can be answered with: {answer}")
                 return answer
 
     def handle_parse(self, message):

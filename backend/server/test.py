@@ -313,14 +313,12 @@ conditional_test = [
 ]
 
 bugs_test = [
-    "create a procedure",
-    "hello",
-    "create a variable called a thing",
-    "0",
-    "create a variable called",
-    "var",
-    "9",
-    "if a thing is less than var, say it's less"
+    "create a procedure called hello world",
+    "say hi",
+    "create a while loop",
+    "cancel"
+    # "cancel",
+    # "run hello world"
 ]
 
 logging.basicConfig(level=logging.DEBUG)
@@ -332,6 +330,7 @@ for i, message in enumerate(bugs_test):
     res = dm.handle_message(message)
     if res:
         logging.info(res)
+        logging.info(dm.context.state)
     if message.startswith("run"):
         sleep_time = 3
     time.sleep(sleep_time)
