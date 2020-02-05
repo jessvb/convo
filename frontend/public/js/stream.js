@@ -5,7 +5,9 @@ strings_to_replace = {
     "pat": "pet",
     "crater": "create",
     "closed": "close",
-    "trader": "create"
+    "trader": "create",
+    "dumb": "done",
+    "gun": "done"
 }
 
 socket.on('clientUtter', (transcript) => {
