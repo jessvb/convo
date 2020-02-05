@@ -120,3 +120,12 @@ def textbox(data):
     stage = data.get("currStage")
     part = data.get("currPart")
     logger.info(f"[{sid}][{stage},{part}] User could not complete a section, so the next button was displayed.")
+
+@sio.on("wordReplace")
+def word(data):
+    sid = data.get("sid")
+    stage = data.get("currStage")
+    part = data.get("currPart")
+    original = data.get("original")
+    replacement = data.get("replacement")
+    logger.info(f"[{sid}][{stage},{part}][Replacement] The word, {original}, was replaced with the word, {replacement}.")

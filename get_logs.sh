@@ -3,7 +3,10 @@
 time=$(date +%s)
 mkdir -p "./logs/$time"
 
-for file in `find /var/lib/docker/containers -name '*json.log'`; do
+echo "Logging into ./logs/$time"
+for file in `sudo find /var/lib/docker/containers -name '*json.log'`; do
     filename=$(basename -- "$file")
-    cat $file > "./logs/$time/$filename"
+    sudo cat $file > "./logs/$time/$filename"
+    echo "Logged ./logs/$time/$filename"
 done
+sudo chown -R kevin "./logs/$time"
