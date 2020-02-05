@@ -313,17 +313,14 @@ conditional_test = [
 ]
 
 bugs_test = [
-    "create a procedure called hello",
-    "create a variable called count and set it to 0",
-    "done",
-    "edit hello",
-    "change step",
-    "create a variable called count",
-    "3",
-    "change step",
-    "create a variable",
-    "cancel",
-    "cancel"
+    "create a procedure",
+    "hello",
+    "create a variable called a thing",
+    "0",
+    "create a variable called",
+    "var",
+    "9",
+    "if a thing is less than var, say it's less"
 ]
 
 logging.basicConfig(level=logging.DEBUG)
