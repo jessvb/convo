@@ -25,9 +25,6 @@ let displayTextbox = () => {
 let displayNextBtn = () => {
     var nextBtn = document.getElementById('button-container');
     if (nextBtn) {
-        // TODO: @Kevin please send a log to the server with the userid, timestamp, etc.
-        // stating that the user could not complete a section, so the next button was
-        // displayed
         let data = {
             'sid': getUniqueId(),
             'currPart': localStorage.getItem('currPart'),

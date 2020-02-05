@@ -1,13 +1,16 @@
 socketApi.on('advancedInstructions', (data) => {
-    let instructions = document.getElementById('advanced-instruction-list');
+    let instructions = document.getElementById('instruction');
     let sounds = data.sounds;
     instructions.innerHTML = `
-        <li>Use a <b>while</b> loop</li>
-        <li>Listen to user input <b>${data.iters}</b> times</li>
-        <li>
-            Every time it listens, if the user input is <b>'${sounds[0]}'</b>, play the <b>${sounds[0]}</b> sound.
-            If the  user input is, <b>'${sounds[1]}'</b>, play the <b>${sounds[1]}</b> sound.
-        </li>
+        <div>Create a program that does the following:</div>
+        <ol id="advanced-instruction-list">
+            <li>Use a <b>while</b> loop</li>
+            <li>Listen to user input <b>${data.iters}</b> times</li>
+            <li>
+                Every time it listens, if the user input is <b>'${sounds[0]}'</b>, play the <b>${sounds[0]}</b> sound.
+                If the  user input is, <b>'${sounds[1]}'</b>, play the <b>${sounds[1]}</b> sound.
+            </li>
+        <ol>
     `;
 });
 socketApi.on('stageCompleted', () => {
@@ -25,10 +28,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         </div>
         <div id="instruction-container">
             <div id="instruction">
-                <div>Create a program that does the following:</div>
-                <ol id="advanced-instruction-list">
-                    <li>Use a <b>while</b> loop</li>
-                <ol>
+                <div>Something went wrong. Please refresh the page.</div>
             </div>
         </div>`;
     document.getElementById('goal').innerHTML = `
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         </div>`;
 
     initial_utter1 = "Great job in the novice stage! Did you notice that I only listened for user input once after you ran the procedure?"
-    initial_utter2 = "This time, let’s add a countdown. I will continue to listen for user input until I’ve responded five times."
+    initial_utter2 = "This time, let’s add a counter. I will continue to listen for user input until I've responded an appropriate amount of times. See sidebar for instructions."
     addUtter("agent-utter", initial_utter1, false);
     addUtter("agent-utter", initial_utter2, false);
     addUtter("agent-utter", "Let’s get started! How would you like to start?", false);

@@ -17,6 +17,7 @@ def join(data):
 
     stage = data.get("stage")
     part = data.get("part")
+    socket_sessions[request.sid] = (sid, stage, part)
     logger.info(f"[{sid}][{stage},{part}] Client connected.")
 
     join_room(str(sid))
@@ -31,16 +32,18 @@ def join(data):
             client.dm = UserStudyDialogManager(sid, stage, part, scenario[1])
             sio.emit("noviceInstructions", { "sounds": scenario[0] }, room=str(sid))
             logger.info(f"[{sid}][{stage},{part}] Sounds: {scenario[0]}")
+            logger.info(f"[{sid}][{stage},{part}] Created dialog manager for user studies.")
         else:
             client.dm = UserStudyAdvancedDialogManager(sid, part, scenario[1], advanced_scenario_check)
             logger.info(f"[{sid}][{stage},{part}] Sounds: {scenario[0]}")
             logger.info(f"[{sid}][{stage},{part}] Iterations: {len(scenario[1])}")
             logger.info(f"[{sid}][{stage},{part}] Inputs: {scenario[1]}")
+            logger.debug(f"[{sid}][{stage},{part}] Created dialog manager for user studies.")
             sio.emit("advancedInstructions", { "sounds": scenario[0], "iters": len(scenario[1]) }, room=str(sid))
     else:
         client.dm = DialogManager(sid)
+        logger.debug(f"[{sid}] Created default dialog manager.")
 
-    socket_sessions[request.sid] = (sid, stage, part)
     sio.emit("joined", sid, room=str(sid))
 
 @sio.on("disconnect")
@@ -114,8 +117,8 @@ def textbox(data):
     part = data.get("currPart")
     logger.info(f"[{sid}][{stage},{part}] User's voice couldn't be recognized, so the textbox was displayed.")
 
-@sio.on("displayTextbox")
-def textbox(data):
+@sio.on("displayButton")
+def next_button(data):
     sid = data.get("sid")
     stage = data.get("currStage")
     part = data.get("currPart")

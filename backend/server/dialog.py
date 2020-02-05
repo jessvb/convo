@@ -42,7 +42,6 @@ class DialogManager(object):
         self.context = DialogContext(sid)
         self.qa = QuestionAnswer(self.context)
         self.nlu = SemanticNLU(self.context)
-        logger.debug(f"[{self.sid}] Created dialog manager.")
 
     def reset(self, context=None):
         if context is not None:
