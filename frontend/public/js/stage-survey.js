@@ -182,7 +182,7 @@ let createDOM = () => {
 
         let additionalLikertQs = [
             'I think programming with just voice is easier than programming with just text.',
-            'I think programming with just text is easier than programming with just both voice and text.',
+            'I think programming with just text is easier than programming with both voice and text.',
             'I think programming with just voice is easier than programming with both voice and text.',
             'I think programming with just text is frustrating or hard.',
             'I think programming with just voice is frustrating or hard.',
