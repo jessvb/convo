@@ -167,7 +167,7 @@ class UserStudyDialogManager(DialogManager):
             goal = self.current_goal()
             goal.advance()
 
-            if goal.error or (self.last_parsed_goal and not self.last_parsed_goal.error):
+            if goal.error or (self.last_parsed_goal and self.last_parsed_goal.error):
                 self.reset(to_backup=True)
                 logger.debug(f"[{self.sid}][{self.stage},{self.part}] Current goal had an error.")
                 return "I think your action is slightly wrong. Please follow the instructions and try again."
