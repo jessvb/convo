@@ -314,13 +314,14 @@ class ChangeStepGoal(StepGoal):
         if self.error:
             return self.error
 
+        res = "What action do you want to replace the current step with?"
         if self._message:
-            return self._message
+            return f"{self._message} {res}"
 
         if self.todos:
             return self.todos[-1].message
         else:
-            return "What action do you want to replace the current step with?"
+            return res
 
     def complete(self):
         self.edit.step = self.step
@@ -341,7 +342,7 @@ class ChangeStepGoal(StepGoal):
         logger.debug(f"Advancing {self.__class__.__name__}...")
         self._message = None
         if not isinstance(self.context.parsed, BaseGoal):
-            self._message = "I didn't quite catch that. What do you want to replace the current step with?"
+            self._message = "I didn't quite catch that."
         elif self.context.parsed.error is not None:
             self._message = self.context.parsed.error
         elif self.context.parsed._message is not None:
