@@ -14,7 +14,7 @@ services:
       options:
         max-size: "20m"
         max-file: "5"
-    command: gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:5000 manage:app
+    command: gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:5000 --log-level=info manage:app
   web:
     build: ./frontend
     restart: on-failure
