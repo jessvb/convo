@@ -17,7 +17,7 @@ socket.on('clientUtter', (transcript) => {
             let data = {
                 'sid': localStorage.getItem('sid'),
                 'stage': localStorage.getItem('currStage'),
-                'part': localStorage.get('currPart'),
+                'part': localStorage.getItem('currPart'),
                 'original': string,
                 'replacement': strings_to_replace[replace]
             }
