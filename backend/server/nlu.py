@@ -50,8 +50,6 @@ class SemanticNLU(object):
 
     def parse_message(self, message):
         message = message.lower()
-        if message.startswith(("what")):
-            return self.try_parse_question(message)
         for parse in [self.parse_home_goal, self.parse_action_goal, self.parse_step_goal, self.parse_condition, self.parse_value_of]:
             parsed = parse(message)
             if parsed is not None:

@@ -12,7 +12,7 @@ const wav = require('wav');
 
 app.use(express.static('public'));
 
-if (process.env.NODE_ENV && process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV && process.env.NODE_ENV === 'production') {
     // Simple password protection:
     // From https://stackoverflow.com/questions/23616371/basic-http-authentication-with-node-and-express-4
     app.use((req, res, next) => {
@@ -86,29 +86,35 @@ const encoding = 'LINEAR16';
 const sampleRateHertz = 16000;
 const languageCode = 'en-US';
 const request = {
-    config: {
-        encoding: encoding,
-        sampleRateHertz: sampleRateHertz,
-        languageCode: languageCode,
-        speech_contexts: [
-            [
-                "create a procedure", "create", "make",
-                "variable", "class", "property", "procedure",
-                "conditional", "while", "until", "close loop",
-                "run", "add", "add step", "delete step", "remove step", "change step", "replace step",
-                "if", "is", "greater than", "less than", "equal to", "greater than or equal to", "less than or equal to",
-                "pet", "horse", "cat", "dog", "cricket", "bird", "cow"
-            ]
-        ]
+    'config': {
+        'encoding': encoding,
+        'sampleRateHertz': sampleRateHertz,
+        'languageCode': languageCode,
+        'speechContexts' : [
+            {'phrases': ['done', 'close loop', 'while', 'create a', 'called', 'step'], 'boost': 15 },
+            {'phrases': ['create a procedure', 'create a variable', 'make a variable', 'get user input', 'save it as']},
+            {'phrases': ['is greater than', 'is less than', 'is equal to', 'is greater than or equal to']},
+            {'phrases': ['pet', 'horse', 'cat', 'dog', 'cricket', 'bird', 'cow'], 'boost': 10},
+            {'phrases': [
+                'get user input and save it as pet',
+                'if the value of pet',
+                'run pet sounds',
+                'add one to',
+                'subtract one from',
+                'hello world'
+            ]},
+            {'phrases': ['add step', 'change step', 'remove step']}
+        ],
+        'model': 'command_and_search'
     },
-    interimResults: false
+    'interimResults': false
 };
 
 let checkUserStudy = (stage, part) => {
-    if (part !== "voice-text" && part !== "voice")
+    if (part !== 'voice-text' && part !== 'voice')
         return false;
 
-    if (!["practice", "novice", "advanced"].includes(stage))
+    if (!['practice', 'novice', 'advanced'].includes(stage))
         return false;
 
     return true;
@@ -158,7 +164,7 @@ io.on('connection', (client) => {
             part = data.part;
             console.log(`[${sid}][${stage},${part}] Client connected to server.`);
             if (checkUserStudy(stage, part)) {
-                let dir = `audio/${stage}/${part.replace("-", "_")}/${sid}`;
+                let dir = `audio/${stage}/${part.replace('-', '_')}/${sid}`;
                 fs.mkdirSync(dir, { recursive: true });
             }
             io.to(`${sessionId}`).emit('joined', sid);
@@ -173,9 +179,9 @@ io.on('connection', (client) => {
 
     client.on('startStream', (data) => {
         console.log(`[${data.sid}][${data.stage},${data.part}] Starting stream.`);
-        if ("sid" in data && "part" in data && "stage" in data) {
+        if ('sid' in data && 'part' in data && 'stage' in data) {
             if (checkUserStudy(data.stage, data.part)) {
-                let audioName = `audio/${data.stage}/${data.part.replace("-", "_")}/${data.sid}/${Date.now()}.wav`;
+                let audioName = `audio/${data.stage}/${data.part.replace('-', '_')}/${data.sid}/${Date.now()}.wav`;
                 writers[sessionId] = new wav.FileWriter(audioName, {
                     channels: 1,
                     sampleRate: 16000,

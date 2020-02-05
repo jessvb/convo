@@ -180,7 +180,7 @@ class InternalExecution(Execution):
                 logger.debug(f"[{self.context.sid}][Execution] ExecutionError: {e.message}")
                 return "ExecutionError"
             except StopIteration as e:
-                logger.debug(f"[{self.context.sid}][Execution] StopIteration: {e.message}")
+                logger.debug(f"[{self.context.sid}][Execution] StopIteration: Too many inputs needed.")
                 return "StopIteration"
 
             if len(self.actions) > self.original_length * 100:

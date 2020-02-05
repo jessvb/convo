@@ -3,7 +3,11 @@ strings_to_replace = {
     "wow": "while",
     "wild": "while",
     "pat": "pet",
-    "crater": "create"
+    "crater": "create",
+    "closed": "close",
+    "trader": "create",
+    "dumb": "done",
+    "gun": "done"
 }
 
 socket.on('clientUtter', (transcript) => {
