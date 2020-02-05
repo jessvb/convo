@@ -68,7 +68,7 @@ class EditGoal(HomeGoal):
                 return
             action = self.edit[-1].current
             if isinstance(action, LoopAction):
-                self.edit.append(Execution(self.context, action.actions, in_loop=action.loop))
+                self.edit.append(Execution(self.context, action.actions, in_loop=True))
             else:
                 self._message = "You cannot step into this action."
         elif self.context.current_message in ["next step", "continue", "next"]:
@@ -122,13 +122,12 @@ class EditGoal(HomeGoal):
         setattr(self, attr, value)
 
 class EditContext(object):
-    def __init__(self, context, actions, in_loop=None):
+    def __init__(self, context, actions, in_loop=False):
         self.context = context
         self.actions = actions
         self.step = 0 if self.actions else -1
         self.done = False
-        self.in_loop = in_loop
-        if in_loop is not None:
+        if in_loop:
             self.scope = f"loop"
         else:
             self.scope = f"procedure"
@@ -157,7 +156,6 @@ class EditContext(object):
                     step_message += " which is the last step"
             return f"{step_message} of the {self.scope}, where I am {self.current.to_nl()}. What do you want to do? You can say 'done' if you are finished editing."
         else:
-            loop_message = f" in the {self.in_loop} loop" if self.in_loop is not None else ""
             return f"There are currently no actions in the {self.scope}. What do you want to do?"
 
     def next_step(self):
