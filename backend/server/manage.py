@@ -127,8 +127,8 @@ def next_button(data):
 @sio.on("wordReplace")
 def word(data):
     sid = data.get("sid")
-    stage = data.get("currStage")
-    part = data.get("currPart")
+    stage = data.get("stage")
+    part = data.get("part")
     original = data.get("original")
     replacement = data.get("replacement")
     logger.info(f"[{sid}][{stage},{part}][Replacement] The word, {original}, was replaced with the word, {replacement}.")
