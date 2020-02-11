@@ -156,6 +156,12 @@ const example_commands = {
                 "change step",
                 "replace step"
             ]
+        },
+        {
+            "title": "Step Into Loop",
+            "example": [
+                "step into"
+            ]
         }
     ].concat(action_commands),
     "executing": [{

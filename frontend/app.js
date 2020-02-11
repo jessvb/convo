@@ -17,8 +17,8 @@ if (process.env.NODE_ENV && process.env.NODE_ENV === 'production') {
     // From https://stackoverflow.com/questions/23616371/basic-http-authentication-with-node-and-express-4
     app.use((req, res, next) => {
         const auth = {
-            login: 'feb5',
-            password: 'letsdothis!'
+            login: 'admin',
+            password: 'appinv'
         };
 
         // parse login and password from headers
