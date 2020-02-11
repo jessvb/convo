@@ -67,6 +67,12 @@ const action_commands = [{
             "get user input",
             "get user input and call it foo"
         ]
+    },
+    {
+        "title": "Cancel the Current Action",
+        "examples": [
+            "cancel"
+        ]
     }
 ]
 
@@ -112,8 +118,9 @@ const example_commands = {
         ]
     }].concat(action_commands),
     "editing_action": action_commands,
-    "editing": [{
-            "title": "Finish Editing",
+    "editing": [
+        {
+            "title": "Finish Editing Procedure or Leave Loop",
             "examples": [
                 "done"
             ]
@@ -148,6 +155,12 @@ const example_commands = {
             "examples": [
                 "change step",
                 "replace step"
+            ]
+        },
+        {
+            "title": "Step Into Loop",
+            "example": [
+                "step into"
             ]
         }
     ].concat(action_commands),

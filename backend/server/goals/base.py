@@ -80,3 +80,5 @@ class StepGoal(BaseGoal):
     def __init__(self, context):
         super().__init__(context)
         self.edit = self.context.edit
+        self.current_edit = self.context.edit[-1]
+        self.scope = self.current_edit.scope
