@@ -2,6 +2,11 @@ from goals import *
 from models import *
 
 class CreateProcedureGoal(HomeGoal):
+    """
+    Goal for creating a new procedure
+
+    Note that once this goal is complete, a new goal is automatically added to ask user to add actions to the newly created procedure
+    """
     def __init__(self, context, name=None):
         super().__init__(context)
         self.procedure = Procedure(name, [])
@@ -20,6 +25,14 @@ class CreateProcedureGoal(HomeGoal):
         return f"What do you want to happen in the procedure first? You could make me say something. See the sidebar for more options." if self.is_complete else self.todos[-1].message
 
     def complete(self):
+        """
+        Completes the goal
+
+        Completion of goal involves:
+        1. Add procedure to list of procedures
+        2. Transitions from "home" state to "creating" state
+        3. Add agent goal for getting actions to add to the procedure
+        """
         self.procedures[self.procedure.name] = self.procedure
         self.context.transition(self)
         self.context.current = self.procedure

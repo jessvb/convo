@@ -2,6 +2,7 @@ from models import *
 from goals import *
 
 class SayActionGoal(ActionGoal):
+    """Goal for adding a say action"""
     def __init__(self, context, phrase=None):
         super().__init__(context)
         self.setattr("phrase", phrase)

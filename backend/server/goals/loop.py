@@ -3,6 +3,7 @@ from goals import *
 from models import *
 
 class LoopActionGoal(ActionGoal):
+    """Goal for adding a loop action"""
     def __init__(self, context, loop=None, condition=None, action=None):
         super().__init__(context)
         self.loop_actions = []

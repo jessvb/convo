@@ -4,6 +4,7 @@ from models import *
 from helpers import *
 
 class GetInputGoal(BaseGoal):
+    """Goal for getting user input"""
     def __init__(self, context, obj, attr, message):
         super().__init__(context)
         self.obj = obj
@@ -33,6 +34,7 @@ class GetInputGoal(BaseGoal):
         return super().complete()
 
 class GetUserInputGoal(BaseGoal):
+    """Goal for getting user input during execution of a procedure"""
     def __init__(self, context, variable):
         super().__init__(context)
         self.variable = variable
@@ -62,6 +64,7 @@ class GetUserInputGoal(BaseGoal):
         return super().complete()
 
 class GetUserInputActionGoal(ActionGoal):
+    """Goal for adding action to get user input"""
     def __init__(self, context, variable):
         super().__init__(context)
         self.variables = self.procedure.variables

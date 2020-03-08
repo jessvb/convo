@@ -37,6 +37,7 @@ allowed_goals = {
 }
 
 class DialogManager(object):
+    """Represents a dialog manager for a client"""
     def __init__(self, sid):
         self.sid = sid
         self.context = DialogContext(sid)
@@ -44,7 +45,9 @@ class DialogManager(object):
         self.nlu = SemanticNLU(self.context)
 
     def reset(self, context=None):
+        """Resets the context either entirely or to a snapshot of another context"""
         if context is not None:
+            # If a context is provided, set the context to the provided context
             self.context = context
             self.qa = QuestionAnswer(context)
             self.nlu = SemanticNLU(context)
@@ -55,41 +58,50 @@ class DialogManager(object):
 
     @property
     def immediate_goal(self):
+        """Returns the immediate, lowest-level current goal"""
         current = self.context.current_goal
         while current and current.todos:
             current = current.todos[-1]
         return current
 
     def current_goal(self):
+        """Returns the current high-level goal, may contain other goals in its todos"""
         return self.context.current_goal
 
     def handle_message(self, message):
+        """Handle messages by the client"""
         self.context.add_message(message)
 
+        # Handle message indicating a reset
         response = self.handle_reset(message)
         if response is not None:
             logger.debug(f"[{self.sid}] User resetted.")
             return response
 
+        # If message indicates client needed help, return appropriate response
         response = self.handle_help(message)
         if response is not None:
             logger.debug(f"[{self.sid}] User needed help.")
             return response
 
+        # Handle messages received by server during program execution
         if self.context.state == "executing":
             logger.debug(f"[{self.sid}] Program is currently executing.")
             return self.handle_execution(message)
 
+        # Handle message indicating a canceling of the immediate goal
         response = self.handle_cancel(message)
         if response is not None:
             logger.debug(f"[{self.sid}] User canceled.")
             return response
 
+        # Handle message that may be question and answer it
         response = self.handle_question(message)
         if response is not None:
             logger.debug(f"[{self.sid}] User asked a question.")
             return response
 
+        # If none of the above, parse the message for either a goal or slot-filling value
         response = self.handle_parse(message)
         if response is not None:
             return response
@@ -97,28 +109,36 @@ class DialogManager(object):
         return self.handle_goal()
 
     def handle_reset(self, message):
-        # Check for reset
+        """Check for reset"""
         if message.lower() == "reset":
             return self.reset()
 
     def handle_help(self, message):
-        # Check for help
+        """Check for help"""
         if message.lower() in ["help", "i need help"]:
             return "Raise your hand and help will be on the way!"
 
     def handle_execution(self, message):
-        # Check if running program
+        """Check if DM in stage of execution"""
         execution = self.context.execution
         if message.lower() in ["stop", "cancel"]:
+            # Stop execution if user commands it
             execution.finish("Procedure has been stopped.")
         elif execution.input_needed:
+            # If execution was paused to ask for user input, continue the execution with provided input
             execution.run(message)
         else:
+            # Do not allow any other action besides the two cases above
             return "Procedure is still executing."
         return
 
     def handle_cancel(self, message):
-        # Check if desire to cancel goal
+        """
+        Check for cancellation
+
+        If cancel, cancels the lowest-level goal that is not a "Get Input" or "Get Condition" goal
+        For example, if the goal chain is "Add Step" -> "Create Variable" -> "Get Input", it will cancel "Create Variable"
+        """
         if message.lower() == "cancel":
             previous = None
             current = self.context.current_goal
@@ -140,7 +160,7 @@ class DialogManager(object):
                 return f"Canceled! {previous.message}"
 
     def handle_question(self, message):
-        # Check if message is a question
+        """Check if message is a question and answer if it is"""
         if QuestionAnswer.is_question(message):
             logger.debug(f"Answering a potential question: {message}")
             answer = self.qa.answer(message)
@@ -149,6 +169,7 @@ class DialogManager(object):
                 return answer
 
     def handle_parse(self, message):
+        """Parses the message"""
         try:
             self.context.parsed = self.nlu.parse_message(message)
         except InvalidStateError as e:
@@ -178,25 +199,35 @@ class DialogManager(object):
             return f"{response}."
 
     def handle_goal(self):
+        """
+        Advances and updates the context based on the current received message
+        """
         if self.current_goal() is None:
+            # If a current goal does not exist at the moment current message is received
             goal = self.context.parsed
             if goal is None or not isinstance(goal, BaseGoal):
                 logger.debug(f"[{self.sid}] Did not understand utterance: {self.context.current_message}")
                 response = "I didn't understand what you were saying. Please try again."
             elif goal.error is not None:
+                # If parsed goal has an error, respond to client
                 response = goal.error
             elif goal.is_complete:
+                # If parsed goal can already be completed, complete the goal and respond to client
                 response = goal.complete()
             else:
+                # Add parsed goal to the current context and respond to client about the goal
                 response = goal.message
                 self.context.add_goal(goal)
         else:
+            # If there is a current goal, advance the current goal
             goal = self.current_goal()
             goal.advance()
             if goal.error is not None:
+                # If current goal has an error, remove the goal and respond to client
                 response = goal.error
                 self.context.goals.pop()
             elif goal.is_complete:
+                # If current goal can be completed, complete the goal and respond to client
                 response = goal.complete()
                 self.context.goals.pop()
             else:
@@ -205,6 +236,12 @@ class DialogManager(object):
         return response
 
 class DialogContext(object):
+    """
+    Contains context and information needed to process messages and maintain conversations
+
+    More specifically, contains the classes, procedures, state, conversation, goals
+    and execution/editing subcontexts for the client
+    """
     def __init__(self, sid):
         self.sid = sid
         self.classes = { }
@@ -214,13 +251,16 @@ class DialogContext(object):
 
     @property
     def current_message(self):
+        """Retrieves the latest message of the conversation"""
         return self.conversation[-1].lower() if self.conversation else None
 
     @property
     def current_goal(self):
+        """Retrives the current top-level goal"""
         return self.goals[-1] if self.goals else None
 
     def reset(self):
+        """Resets the context"""
         if self.execution is not None:
             self.execution.finish()
         self.state = "home"
@@ -246,9 +286,11 @@ class DialogContext(object):
         return self.classes.get(name)
 
     def validate_goal(self, goal):
+        """Check if goal is allowed in the current state of the context"""
         allowed = any([type(goal) == goaltype or isinstance(goal, goaltype) for goaltype in allowed_goals[self.state]])
         if not allowed:
             raise InvalidStateError(goal, self.state)
 
     def transition(self, action):
+        """Transition state given the action"""
         self.state = state_machine[self.state][str(action)]
