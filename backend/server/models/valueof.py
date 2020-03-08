@@ -1,4 +1,5 @@
 class ValueOf(object):
+    """Represents the value of a variable at a moment or time in execution""""
     def __init__(self, variable):
         self.variable = variable
 

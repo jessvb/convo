@@ -2,6 +2,7 @@ from helpers import to_snake_case
 tab = "    "
 
 class Procedure(object):
+    """Represents a procedure"""
     def __init__(self, name, actions=None, klass=None):
         self.name = name
         self.actions = [] if actions is None else actions
