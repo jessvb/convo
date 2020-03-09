@@ -2,6 +2,11 @@ from goals import *
 from models import *
 
 class ExecuteGoal(HomeGoal):
+    """
+    Goal for executing a procedure
+
+    Note that the execution actually happens once the goal is completed.
+    """
     def __init__(self, context, name=None):
         super().__init__(context)
         self.context = context
@@ -27,11 +32,20 @@ class ExecuteGoal(HomeGoal):
                 self.error = f"The procedure, {value}, hasn't been created, so we can't run it. You can create it by saying, \"create a procedure called {value}.\""
             else:
                 self.procedure = self.context.procedures[value]
+
+                # Create the execution with the actions from the desired procedure
                 self.execution = Execution(self.context, [copy.copy(a) for a in self.procedure.actions])
                 self.context.execution = self.execution
             return
         setattr(self, attr, value)
 
     def complete(self):
+        """
+        Complete the goal
+
+        Completion of goal involves:
+        1. Transition from "home" state to "executing" state
+        2. Execute the procedure
+        """
         self.context.transition(self)
         self.execution.run()

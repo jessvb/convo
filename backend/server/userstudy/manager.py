@@ -9,6 +9,22 @@ from question import *
 from nlu import *
 
 class UserStudyDialogManager(DialogManager):
+    """
+    Special dialog manager used for practice and novice scenarios in user study.
+
+    The main difference between this dialog manager and the default is the check that occurs after each message from client.
+    The manager checks if the user is properly going towards the goal given each message.
+
+    The manager allows for slot-filling in conversations if it goes towards the next goal.
+    For example, if instruction was to say "Create a variable called count", the dialog manager would accept "Create a variable"
+    followed by "count". However if the second message was not "count" it will still flag as not going towards goal.
+
+    If user strays from scenario completion, the dialog manager resets back to the last state/context that was going towards scenario completion.
+    This is done by referencing a default reference dialog manager that is fed the next instruction of the scenario whenever user completes each
+    instruction.
+
+    Once scenario is completed, the dialog manager switches to default behavior where user can do whatever.
+    """
     def __init__(self, sid, stage, part, scenario):
         super().__init__(sid)
         self.scenario = scenario
@@ -23,10 +39,13 @@ class UserStudyDialogManager(DialogManager):
 
     @property
     def scenario_completed(self):
+        """Check if scenario is completed"""
         return self.step >= len(self.scenario)
 
     def reset(self, to_backup=False):
+        """Resets the dialog manager"""
         if to_backup:
+            # If a backup is provided, resets to the backup
             logger.debug(f"[{self.sid}][{self.stage},{self.part}] User did not follow instructions, so resetting to previous back up.")
             self.context = copy.deepcopy(self.backup_reference_context)
             self.qa = QuestionAnswer(self.context)
@@ -51,6 +70,7 @@ class UserStudyDialogManager(DialogManager):
 
     @property
     def next_message(self):
+        """Retrives the next instruction message of the scenario"""
         if self.step >= len(self.scenario):
             return None
 
@@ -60,6 +80,7 @@ class UserStudyDialogManager(DialogManager):
 
     @property
     def immediate_goal(self):
+        """Returns the immediate, lowest-level current goal"""
         current = self.context.current_goal
         while current and current.todos:
             current = current.todos[-1]
@@ -109,6 +130,7 @@ class UserStudyDialogManager(DialogManager):
 
     def handle_parse(self, message):
         if self.step >= len(self.scenario):
+            # If scenario is completed, use the default dialog manager to manage conversation
             logger.debug(f"[{self.sid}][{self.stage},{self.part}] User has completed the objective, so parsing normally.")
             return super().handle_parse(message)
 
@@ -119,18 +141,22 @@ class UserStudyDialogManager(DialogManager):
             return "I can't do this right now. Please follow instructions and try again!"
 
     def check_goal(self, message):
+        """Check if message or parsed goal is valid in the scenario"""
         goal = self.context.parsed
         if self.scenario[self.step][1] == type(goal):
             self.last_parsed_goal = goal
             logger.debug(f"[{self.sid}][{self.stage},{self.part}] User goal is the same type of the current objective goal.")
             return None
         elif self.immediate_goal and isinstance(self.immediate_goal, GetInputGoal):
+            # It's fine if currently slot-filling
             logger.debug(f"[{self.sid}][{self.stage},{self.part}] Current goal is for getting user input so ignoring.")
             return None
         elif goal:
+            # Parsed goal was not the same as scenario at that step
             logger.debug(f"[{self.sid}][{self.stage},{self.part}] User goal does not match the current objective goal.")
             return "I think this is the wrong action. Please follow the instructions and try again!"
         elif self.scenario[self.step][1] is None and message == self.scenario[self.step][0]:
+            # If current instruction was simply a message like "done" or "close loop", just check if message is the same as the instruction
             logger.debug(f"[{self.sid}][{self.stage},{self.part}] User message matches the current objective message: {message}")
             return None
         else:
@@ -138,12 +164,13 @@ class UserStudyDialogManager(DialogManager):
             return "I didn't quite catch that. Please follow the instructions and try again!"
 
     def handle_reset(self, message):
-        # Check for reset
+        """Check for reset"""
         if message.lower() == "reset":
             return self.reset()
 
     def handle_goal(self):
         if self.step >= len(self.scenario):
+            # If scenario is completed, handle goal like in default dialog manager
             logger.debug(f"[{self.sid}][{self.stage},{self.part}] User has completed the objective, so handling goal normally.")
             return super().handle_goal()
 
@@ -177,16 +204,20 @@ class UserStudyDialogManager(DialogManager):
                 response = goal.message
 
         if not isinstance(self.immediate_goal, GetInputGoal) and (self.last_parsed_goal and not self.last_parsed_goal.error):
+            # If not slot-filling and there's no error in the goal, feed the instruction to the reference dialog manager unless it's to run the program
             next_message = self.next_message
             logger.debug(f"[{self.sid}][{self.stage},{self.part}] Tentatively moving on to step {self.step} of the scenario.")
             if not next_message.startswith("run"):
+                # Do not feed a "run" command to reference DM or else program will run twice (one from reference DM and one by the user)
                 self.reference.handle_message(next_message)
 
         if isinstance(self.immediate_goal, GetActionsGoal):
+            # Check if current lowest-level goal is to get actions for a procedure, if so, check if the actions are correct as the ones in the reference DM's procedure
             wrong_procedure = isinstance(self.last_parsed_goal, CreateProcedureGoal) and self.context.current.name != self.reference.context.current.name
             wrong_action = self.context.current.actions != self.reference.context.current.actions
 
             if wrong_procedure or wrong_action:
+                # If actions are not the same, reset to the last usable backup for context and undoing the instruction command in the reference DM
                 self.reset(to_backup=True)
                 self.reference.reset(self.backup_reference_context)
                 self.step = max(self.step - 1, 0)
@@ -208,6 +239,12 @@ class UserStudyDialogManager(DialogManager):
         return response
 
 class UserStudyAdvancedDialogManager(DialogManager):
+    """
+    Special dialog manager used for advanced scenarios in user study
+
+    The main difference between this dialog manager and the default is the addition of a procedure check after user is done creating or editing a procedure.
+    The DM checks if the completed procedure completes the scenario using the check function
+    """
     def __init__(self, sid, part, inputs, check):
         super().__init__(sid)
         self.stage = "advanced"
@@ -250,6 +287,7 @@ class UserStudyAdvancedDialogManager(DialogManager):
                         sio.emit("stageCompleted", room=str(self.sid))
                         response = f"Looks like you achieved the goal! You can try running the procedure by saying, \"run {procedure_name}\"."
                     else:
+                        # Procedure does not match behavior of reference or encountered an error during execution
                         logger.info(f"[{self.sid}][{self.stage},{self.part}] User did have a correct procedure.")
                         err_res = "Hmm, I checked your procedure, and it doesn't seem to meet the goal."
                         if res is not None:
@@ -268,6 +306,7 @@ class UserStudyAdvancedDialogManager(DialogManager):
         return response
 
     def check_procedure(self):
+        """Check procedure to see if it meets the objective and completes the advanced scenario"""
         procedure = self.context.current
         logger.debug(f"[{self.sid}][{self.stage},{self.part}] Checking procedure {procedure.name} to see if it passes.")
         execution = InternalExecution(self.context, [copy.copy(a) for a in procedure.actions], self.inputs)

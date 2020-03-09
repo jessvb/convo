@@ -3,11 +3,16 @@ from goals import *
 from models import *
 
 class ConditionalActionGoal(ActionGoal):
+    """Goal for adding a conditional action"""
     def __init__(self, context, condition=None, action=None):
         super().__init__(context)
         self.conditional_actions = [[], []]
+
+        # Todo involve getting actions for both the True and False conditions of the conditional
         self.todos = [GetConditionalActionsGoal(self.context, self.conditional_actions[0], False),
                       GetConditionalActionsGoal(self.context, self.conditional_actions[1], True)]
+
+        # User can provide an initial action to the conditional through the command - if <condition> <action>
         self.setattr("action", action)
         self.setattr("condition", condition)
 
@@ -36,6 +41,7 @@ class ConditionalActionGoal(ActionGoal):
 
     def setattr(self, attr, value):
         if (attr == "action") and value:
+            # Add the initial action to the action list that is associated with condition being True
             setattr(value, "actions", self.conditional_actions[1])
             if value.error:
                 self.error = value.error
@@ -45,6 +51,7 @@ class ConditionalActionGoal(ActionGoal):
                 self.todos[1].todos.append(value)
             return
         elif (attr == "condition"):
+            # If no condition was provided, ask for condition, else set the condition
             if value is None:
                 self.todos.append(GetConditionGoal(self.context, self))
             elif value.variable.variable not in self.variables:
@@ -66,6 +73,7 @@ class ConditionalActionGoal(ActionGoal):
         setattr(self, attr, value)
 
 class GetConditionGoal(BaseGoal):
+    """Goal for getting a condition"""
     def __init__(self, context, obj, message=None):
         super().__init__(context)
         self.obj = obj
@@ -88,6 +96,7 @@ class GetConditionGoal(BaseGoal):
 
     def advance(self):
         logger.debug(f"Advancing {self.__class__.__name__}...")
+        # Check if user actually provided a condition recognized by the NLU
         parsed = self.context.parsed
         if parsed and isinstance(parsed, Condition):
             self.condition = parsed

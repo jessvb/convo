@@ -4,9 +4,12 @@ from goals import *
 from models import *
 
 class GetActionsGoal(BaseGoal):
+    """Agent goal to get actions from user"""
     def __init__(self, context, actions):
         super().__init__(context)
         self.done = False
+
+        # The list that actions should be added to when associated goal is completed
         self.actions = actions
 
     @property
@@ -37,6 +40,7 @@ class GetActionsGoal(BaseGoal):
         logger.debug(f"Advancing {self.__class__.__name__}...")
         self._message = None
         if self.context.current_message in ["done", "nothing", "no"]:
+            # Check if user indicated that they are done with adding actions
             self.done = True
         elif not isinstance(self.context.parsed, BaseGoal):
             self._message = "I didn't quite catch that. What action did you want me to add?"
@@ -46,6 +50,8 @@ class GetActionsGoal(BaseGoal):
             self._message = self.context.parsed._message
         else:
             action = self.context.parsed
+
+            # Set the property "actions" for the ActionGoal so the ActionGoal can add its corresponding Action to the list
             setattr(action, "actions", self.actions)
             if action.is_complete:
                 action.complete()
@@ -54,8 +60,11 @@ class GetActionsGoal(BaseGoal):
                 self.todos.append(action)
 
 class GetConditionalActionsGoal(GetActionsGoal):
+    """Agent goal to get actions that are in a conditional from user"""
     def __init__(self, context, actions, condition):
         super().__init__(context, actions)
+
+        # Either True or False, meaning which part of the conditional is the actions in
         self.condition = condition
 
     @property
@@ -109,6 +118,7 @@ class GetConditionalActionsGoal(GetActionsGoal):
                 self.todos.append(action)
 
 class GetLoopActionsGoal(GetActionsGoal):
+    """Agent goal to get actions that are in a loop from user"""
     @property
     def message(self):
         if self.error is not None:
@@ -159,8 +169,11 @@ class GetLoopActionsGoal(GetActionsGoal):
                 self.todos.append(action)
 
 class GetProcedureActionsGoal(GetActionsGoal):
+    """Agent goal to get actions for procedure from user"""
     def __init__(self, context, procedure):
         super().__init__(context, procedure.actions)
+
+        # The procedure that actions are being added to
         self.procedure = procedure
 
     @property
@@ -183,6 +196,13 @@ class GetProcedureActionsGoal(GetActionsGoal):
             return self.todos[-1].message
 
     def complete(self):
+        """
+        Completes the goal
+
+        Completion of this goal involves:
+        1. Transition from "creating" state to "home" state
+        2. Setting current back to None
+        """
         self.context.transition("complete")
         self.context.current = None
         logger.debug(f"Procedure: {[str(a) for a in self.procedure.actions]}")

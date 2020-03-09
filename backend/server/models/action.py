@@ -4,6 +4,7 @@ from models.valueof import ValueOf
 tab = "    "
 
 class Action(object):
+    """Represents an action in a procedure"""
     def __init__(self):
         raise NotImplementedError
 

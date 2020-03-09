@@ -2,6 +2,7 @@ from error import *
 from models import *
 
 class Condition(object):
+    """Represents a condition"""
     def __init__(self):
         pass
 
@@ -32,12 +33,24 @@ comparison_ops = {
 }
 
 class EqualityCondition(Condition):
+    """Represents an equality condition"""
+
     def __init__(self, variable, value, negation=False):
+        # Variable to retrieve when evaluating
         self.variable = variable
+
+        # Value to compare against
         self.value = value
+
+        # Whether is is == or !=
         self.negation = negation
 
     def eval(self, variables):
+        """
+        Evaluate the variable
+
+        Assumes that the variable to evaluate is in variables
+        """
         variable = variables[self.variable.variable]
         value = variables[self.value.variable] if isinstance(self.value, ValueOf) else self.value
         if type(value) != type(variable):
@@ -61,12 +74,23 @@ class EqualityCondition(Condition):
         return self.variable == other.variable and self.value == other.value and self.negation == other.negation
 
 class ComparisonCondition(Condition):
+    """Represents an comparison condition"""
     def __init__(self, variable, op, value):
+        # Variable to retrieve when evaluating
         self.variable = variable
+
+        # Value to compare against
         self.value = value
+
+        # Operator to evaluate with - includes >, >=, <, <=
         self.op = op
 
     def eval(self, variables):
+        """
+        Evaluate the variable
+
+        Assumes that the variable to evaluate is in variables
+        """
         variable = variables[self.variable.variable]
         value = variables[self.value.variable] if isinstance(self.value, ValueOf) else self.value
         if type(value) != type(variable):

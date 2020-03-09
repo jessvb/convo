@@ -8,6 +8,14 @@ from models import *
 from helpers import *
 
 class Execution(object):
+    """
+    Represents an execution of a procedure
+
+    Executes the procedure in a child thread such that the server does not have to
+    wait for execution to finish before performing other actions - this way multiple users
+    can send messages at once and allow for users to stop execution of a procedure before it
+    finishes - allowing for stopping of infinite loops.
+    """
     def __init__(self, context, actions, to_emit=True):
         self.context = context
         self.actions = actions
@@ -20,12 +28,22 @@ class Execution(object):
         self.first_message_emitted = False
 
     def run(self, message=None):
+        """
+        Starts execution
+
+        Execution starts essentially from two different states:
+        1. From the beginning of a procedure
+        2. After asking for user input, execution starts again with user's next message as input
+        """
         if self.input_needed and message:
+            # If input was needed, try to parse message and if it's a number try to parse number
             number = parse_number(message)
             self.variables[self.input_needed] = number if number is not None else message
             logger.debug(f"[{self.context.sid}][Execution] Variables after getting input: {str(self.variables)}")
             self.input_needed = None
         self.thread = threading.Thread(target=self.advance)
+
+        # Means if the main thread stops (the server), this thread will also stop
         self.thread.daemon = True
         self.thread_running = True
 
@@ -38,11 +56,15 @@ class Execution(object):
         self.thread.start()
 
     def stop(self):
+        """Stop execution"""
         self.thread_running = False
 
     def finish(self, message=None):
+        """Finish up execution"""
         self.stop()
         self.finished = True
+
+        # Transition from "running" state to "home" state
         self.context.transition("finish")
         self.context.execution = None
         if message is not None:
@@ -50,20 +72,25 @@ class Execution(object):
             self.emit("response", { "message": message, "state": self.context.state })
 
     def advance(self):
+        """Continue execution"""
         while self.thread_running and not self.finished and self.step < len(self.actions):
             action = self.actions[self.step]
             try:
+                # Tries to evaluate action
                 self.evaluate_action(action)
                 self.step += 1
                 sio.sleep(0.1)
                 if self.input_needed:
+                    # If input is needed (i.e. reaches a GetUserInputAction), stop execution and ask user for input
                     self.stop()
                     return
             except KeyError as e:
+                # Error when variable referenced does not exist
                 logger.debug(f"[{self.context.sid}][Execution] KeyError: {e.args[0]}")
                 self.finish(f"Error occured while running. Variable {e.args[0]} did not exist when I was {action.to_nl()}.")
                 return
             except ExecutionError as e:
+                # Error that happens during execution like infinite loops, etc.
                 logger.debug(f"[{self.context.sid}][Execution] ExecutionError: {e.message}")
                 self.finish(e.message)
                 return
@@ -75,6 +102,7 @@ class Execution(object):
             self.finish("Procedure finished running.")
 
     def emit(self, event, data):
+        """Emit or send message to user via sockets"""
         if not self.to_emit:
             return
 
@@ -88,6 +116,7 @@ class Execution(object):
                 raise e
 
     def evaluate_action(self, action):
+        """Evaluates an action"""
         logger.debug(f"[{self.context.sid}][Execution][Evaluating] Evaluating action {str(action)} on step {self.step}.")
         if isinstance(action, SayAction):
             phrase = action.phrase
@@ -154,6 +183,7 @@ class Execution(object):
             raise NotImplementedError
 
 class InternalExecution(Execution):
+    """Execution that is ran internally without user knowing - used in user study to check advanced scenarios"""
     def __init__(self, context, actions, inputs):
         super().__init__(context, actions)
         self.inputs = inputs
@@ -202,4 +232,5 @@ class InternalExecution(Execution):
         self.finished = True
 
     def emit(self, event, data):
+        """Add to list of emits instead of actually sending responses to user"""
         self.emits.append((event, data))

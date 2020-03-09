@@ -10,21 +10,28 @@ from client import *
 
 @sio.on("join")
 def join(data):
+    """Connect to the backend server of Convo"""
     sid = data.get("sid")
     if sid is None:
         logger.info("Client connected without an SID.")
         return
 
-    stage = data.get("stage")
-    part = data.get("part")
+    stage = data.get("stage", "sandbox")
+    part = data.get("part", "sandbox")
+
+    # Keep track of all connected clients
     socket_sessions[request.sid] = (sid, stage, part)
     logger.info(f"[{sid}][{stage},{part}] Client connected.")
 
+    # Join room with the SID as the name such that each "room" only contains a single user with the corresponding SID
     join_room(str(sid))
+
+    # Grab client associated with SID, if not exist, create one
     client = socket_clients.get(sid, UserStudyClient(sid))
     socket_clients[sid] = client
 
     if stage in ["practice", "novice", "advanced"] and part in ["voice", "text", "voice-text"]:
+        # If (stage, part) corresponds to stages/parts of user study, create special dialog manaager
         scenario = client.inputs[stage][part]
         if stage == "practice":
             client.dm = UserStudyDialogManager(sid, stage, part, scenario)
@@ -41,6 +48,7 @@ def join(data):
             logger.debug(f"[{sid}][{stage},{part}] Created dialog manager for user studies.")
             sio.emit("advancedInstructions", { "sounds": scenario[0], "iters": len(scenario[1]) }, room=str(sid))
     else:
+        # Default client and dialog manager
         client.dm = DialogManager(sid)
         logger.debug(f"[{sid}] Created default dialog manager.")
 
@@ -48,8 +56,11 @@ def join(data):
 
 @sio.on("disconnect")
 def disconnect():
+    """Disconnect from server"""
     sid, stage, part = socket_sessions.get(request.sid)
     if sid:
+        # Remove client from the list of connected clients in socket_sessions but keep the client object in socket_clients
+        # This way if client reconnects, no work is lost
         client = socket_clients.get(sid)
         del socket_sessions[request.sid]
         logger.info(f"[{sid}][{stage},{part}] Client disconnected.")
@@ -75,6 +86,7 @@ def message(data):
 
     res = dm.handle_message(message)
     if (res):
+        # If there is response message, log and send to client
         dm.context.add_message(res)
         state = dm.context.state
         response = {
@@ -94,6 +106,7 @@ def message(data):
 
 @sio.on("survey")
 def survey(data):
+    """Log survey data from user study"""
     sid = data.get("sid")
     survey_type = data.get("type")
     survey_data = data.get("data")
@@ -106,12 +119,14 @@ def survey(data):
 
 @sio.on("email")
 def email(data):
+    """Log email and level for gift card for user study"""
     email = data.get("email")
     advanced = data.get("advanced")
     logger.info(f"[Amazon Gift Card][{email}][{advanced}]")
 
 @sio.on("displayTextbox")
 def textbox(data):
+    """Log when the textbox was manually displayed in a voice-only stage"""
     sid = data.get("sid")
     stage = data.get("currStage")
     part = data.get("currPart")
@@ -119,6 +134,7 @@ def textbox(data):
 
 @sio.on("displayButton")
 def next_button(data):
+    """Log when the "Next" button was manually displayed"""
     sid = data.get("sid")
     stage = data.get("currStage")
     part = data.get("currPart")
@@ -126,6 +142,7 @@ def next_button(data):
 
 @sio.on("wordReplace")
 def word(data):
+    """Log a word replacement"""
     sid = data.get("sid")
     stage = data.get("stage")
     part = data.get("part")

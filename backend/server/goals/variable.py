@@ -2,6 +2,7 @@ from models import *
 from goals import *
 
 class CreateVariableActionGoal(ActionGoal):
+    """Goal for adding a create variable action"""
     def __init__(self, context, name=None, value=None):
         super().__init__(context)
         self.setattr("value", value)
@@ -36,6 +37,7 @@ class CreateVariableActionGoal(ActionGoal):
         setattr(self, attr, value)
 
 class SetVariableActionGoal(ActionGoal):
+    """Goal for adding a set variable action"""
     def __init__(self, context, name=None, value=None):
         super().__init__(context)
         self.setattr("value", value)
@@ -69,6 +71,7 @@ class SetVariableActionGoal(ActionGoal):
         setattr(self, attr, value)
 
 class AddToVariableActionGoal(ActionGoal):
+    """Goal for adding a add to variable action"""
     def __init__(self, context, name=None, value=None):
         super().__init__(context)
         self.setattr("value", value)
@@ -103,6 +106,7 @@ class AddToVariableActionGoal(ActionGoal):
             return
 
 class SubtractFromVariableActionGoal(ActionGoal):
+    """Goal for adding a subtract from variable action"""
     def __init__(self, context, name=None, value=None):
         super().__init__(context)
         self.setattr("value", value)

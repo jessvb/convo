@@ -4,10 +4,18 @@ from models import *
 from word2number import w2n
 
 class EditGoal(HomeGoal):
+    """Goal for editing procedure"""
     def __init__(self, context, name=None):
         super().__init__(context)
+
+        # Transition from "home" state to "editing" state
         self.context.transition(self)
+
+        # List of editing contexts - representing different scopes
+        # For example, there are editing contexts for editing in the top-level procedure and for editing actions in a conditional
         self.edit = []
+
+        # Name of procedure
         self.setattr("name", name)
 
     @property
@@ -63,11 +71,13 @@ class EditGoal(HomeGoal):
         if self.context.current_message == "done":
             self.edit.pop()
         elif self.context.current_message in ["step into"]:
+            # Step into editing actions in another action like a loop action
             if not self.edit[-1].current:
                 self._message = f"There are no steps in the {self.scope} so I cannot do this."
                 return
             action = self.edit[-1].current
             if isinstance(action, LoopAction):
+                # Currently, only support stepping into a loop action
                 self.edit.append(EditContext(self.context, action.actions, in_loop=True))
             else:
                 self._message = "You cannot step into this action."
@@ -122,11 +132,23 @@ class EditGoal(HomeGoal):
         setattr(self, attr, value)
 
 class EditContext(object):
+    """
+    Context for editing
+
+    Currently, EditContext only supports stepping into loops so the two types of EditContexts are
+    within loops and within the overall procedure
+    """
     def __init__(self, context, actions, in_loop=False):
+        # Dialog context"""
         self.context = context
+
+        # Action list in which all editing will be done
         self.actions = actions
+
+        # Step in the action list
         self.step = 0 if self.actions else -1
         self.done = False
+
         if in_loop:
             self.scope = f"loop"
         else:
@@ -159,18 +181,22 @@ class EditContext(object):
             return f"There are currently no actions in the {self.scope}. What do you want to do?"
 
     def next_step(self):
+        """Go to next step"""
         if len(self.actions) != 0 and not self.at_last_step:
             self.step += 1
 
     def prev_step(self):
+        """Go to previous step"""
         if len(self.actions) != 0 and not self.at_first_step:
             self.step -= 1
 
     def to_step(self, step):
+        """Go to a specified step"""
         assert isinstance(step, int) and step >= -1 and step <= len(self.actions) - 1
         self.step = len(self.actions) - 1 if step == -1 else step
 
     def remove_current_step(self):
+        """Remove the current step"""
         new = self.step
         if self.step == len(self.actions) - 1:
             new = self.step - 1
@@ -182,6 +208,7 @@ class EditContext(object):
         return action
 
     def add_step(self, action, step=None):
+        """Add a new step after the current step"""
         if step is not None:
             self.actions[step:step] = action
         else:
@@ -189,6 +216,7 @@ class EditContext(object):
             self.actions[self.step:self.step] = action
 
 class GoToStepGoal(StepGoal):
+    """Go to step during editing"""
     def __init__(self, context, step=None):
         super().__init__(context)
         if not self.current_edit.current:
@@ -238,6 +266,7 @@ class GoToStepGoal(StepGoal):
         setattr(self, attr, value)
 
 class DeleteStepGoal(StepGoal):
+    """Delete step during editing"""
     def __init__(self, context):
         super().__init__(context)
         if len(self.current_edit.actions) == 0:
@@ -253,6 +282,7 @@ class DeleteStepGoal(StepGoal):
         return message
 
 class AddStepGoal(StepGoal):
+    """Add step during editing"""
     def __init__(self, context):
         super().__init__(context)
         self.context.transition(self)
@@ -309,6 +339,7 @@ class AddStepGoal(StepGoal):
                 self.todos.append(action)
 
 class ChangeStepGoal(StepGoal):
+    """Change step during editing"""
     def __init__(self, context):
         super().__init__(context)
         if len(self.current_edit.actions) == 0:

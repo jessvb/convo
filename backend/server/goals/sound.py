@@ -11,6 +11,7 @@ available_sounds = set([
 ])
 
 class PlaySoundActionGoal(ActionGoal):
+    """Goal for adding a play sound action"""
     def __init__(self, context, sound=None):
         super().__init__(context)
         self.setattr("sound", sound)
