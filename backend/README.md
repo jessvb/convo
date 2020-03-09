@@ -1,5 +1,5 @@
 # Backend
-Currently, the backend of *convercode* contains a Python Flask server that represents the NLU, program editor and the dialog manager. Most, if not all, communications with the Flask server will be through API requests.
+Currently, the backend of *Convo* contains a Python Flask server that represents the NLU, program editor and the dialog manager. Most, if not all, communications with the Flask server will be through API requests.
 
 ## Setup
 Install Python 3.7, if not on machine. If on MacOS, I recommend installing through [Homebrew](https://brew.sh/)
