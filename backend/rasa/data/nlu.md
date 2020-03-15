@@ -56,13 +56,12 @@
 - can you set a variable
 - set a variable
 
-## intent:create_variable+set_variable
-- create a variable and set it to 5
-- make a variable and set it to hello
-
 ## intent:add_to_variable
 - add [5](value) to variable
-- increment variable by [1]
+- increment variable by [1](value)
+- add [20](value) to variable
+- add [10](value)
+- can you add [5](value) to variable
 
 ## intent:subtract_from_variable
 - subtract [5](value) from variable
@@ -81,6 +80,8 @@
 ## intent:delete_step
 - delete step
 - delete current step
+- remove a step
+- please remove the step
 
 ## intent:add_step
 - add step

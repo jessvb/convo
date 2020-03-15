@@ -2,7 +2,11 @@
 # https://rasa.com/docs/rasa/nlu/components/
 language: en
 pipeline:
-  - name: WhitespaceTokenizer
+  - name: HFTransformersNLP
+    # model_name: "bert"
+    model_name: "openai-gpt"
+  - name: LanguageModelTokenizer
+  - name: LanguageModelFeaturizer
   - name: RegexFeaturizer
   - name: LexicalSyntacticFeaturizer
   - name: CountVectorsFeaturizer
