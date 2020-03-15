@@ -4,7 +4,7 @@ language: en
 pipeline:
   - name: HFTransformersNLP
     # model_name: "bert"
-    model_name: "openai-gpt"
+    model_name: "bert"
   - name: LanguageModelTokenizer
   - name: LanguageModelFeaturizer
   - name: RegexFeaturizer

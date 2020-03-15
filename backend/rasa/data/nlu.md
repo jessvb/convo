@@ -65,17 +65,17 @@
 
 ## intent:subtract_from_variable
 - subtract [5](value) from variable
-- decrement variable by [1]
+- decrement variable by [1](value)
 - can you subtract [10](value) from variable
 
 ## intent:go_to_step
-- go to step [4](value)
-- go to [next](value) step
-- go to [previous](value) step
-- [next](value) step
-- can you go to step [5](value)
-- [first](value) step
-- [last](value) step
+- go to step [4](step)
+- go to [next](step) step
+- go to [previous](step) step
+- [next](step) step
+- can you go to step [5](step)
+- [first](step) step
+- [last](step) step
 
 ## intent:delete_step
 - delete step

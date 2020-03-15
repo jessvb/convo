@@ -1,4 +1,5 @@
 from nlu import SemanticNLU
+from rasa_nlu import RasaNLU
 from question import QuestionAnswer
 from models import *
 from goals import *
@@ -43,6 +44,7 @@ class DialogManager(object):
         self.context = DialogContext(sid)
         self.qa = QuestionAnswer(self.context)
         self.nlu = SemanticNLU(self.context)
+        self.rasa = RasaNLU(self.context)
 
     def reset(self, context=None):
         """Resets the context either entirely or to a snapshot of another context"""
@@ -171,7 +173,10 @@ class DialogManager(object):
     def handle_parse(self, message):
         """Parses the message"""
         try:
-            self.context.parsed = self.nlu.parse_message(message)
+            goal = self.rasa.parse_message(message)
+            if goal is None:
+                goal = self.nlu.parse_message(message)
+            self.context.parsed = goal
         except InvalidStateError as e:
             response = "I can't do this right now"
             if isinstance(e.goal, ActionGoal):
