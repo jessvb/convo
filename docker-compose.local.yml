@@ -1,5 +1,12 @@
 version: '3.0'
 services:
+  rasa:
+    image: rasa/rasa:1.8.1
+    ports:
+      - 5005:5005
+    volumes:
+      - ./backend/rasa:/app
+    command: run
   server:
     build: ./backend/server
     restart: on-failure
