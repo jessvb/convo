@@ -20,3 +20,7 @@ cd convercode/backend/flask
 flask run
 ```
 Once the server starts, to verify that server is running, head to `http://localhost:5000/` and you should see `"Hello world!"`.
+
+## Further Reading
+1. Check out `goals/README.md` for information about `Goals` and how they work in Convo.
+2. Check out `models/README.md` for information about the different models are used in Convo, especially `Actions`
