@@ -88,7 +88,7 @@ To add and support a new action in Convo (let's call it `CustomAction`), here ar
 ### Intent Recognition of `Action`s
 To allow Convo to recognize that user wants to add a certain action to their program, you must add support to the natural language understanding (NLU) modules. There are two NLUs, one is regex-based semantic parser and the other is the Rasa NLU. You can add support to either or both (recommended) of the NLUs.
 
-### Regex-based Semantic NLU
+#### Regex-based Semantic NLU
 To add support for `CustomAction` in the regex-based semantic NLU (everything is done in `server/nlu.py`)
 1. Add the regex for phrases that user will say to tell Convo they want to want to add `CustomAction` in the top of the file
 2. Add the regex variable to `action_regexes`
