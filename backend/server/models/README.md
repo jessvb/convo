@@ -97,7 +97,7 @@ To add support for `CustomAction` in the regex-based semantic NLU (everything is
     - Use helper function `group` to extract any captured groups from the regex that will be used for arguments to constructor parameters for the `CustomActionGoal`
 
 #### Rasa NLU
-Before working with the Rasa NLU be sure to read `~/backend/rasa/README.md`. To add support for `CustomAction` in Rasa NLU
+Before working with the Rasa NLU be sure to read `backend/rasa/README.md`. To add support for `CustomAction` in Rasa NLU
 1. Add the corresponding `CustomActionGoal` to `intent_goal` in `server/rasa_nlu.py`.
-2. In `~/backend/rasa/data/nlu.md`, add a new intent with training examples that the user would say to tell Convo to create this new action
-3. Train the Rasa NLU such that the newest model include this new intent
+2. In `backend/rasa/data/nlu.md`, add a new intent with training examples that the user would say to tell Convo to create this new action
+3. Train the Rasa NLU such that the newest model include this new intent with commands `rasa train nlu`

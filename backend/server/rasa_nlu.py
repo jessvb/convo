@@ -38,6 +38,7 @@ class RasaNLU(object):
         payload = json.dumps({"text": message.lower()})
         res = requests.post("http://localhost:5005/model/parse", data=payload)
 
+        # If no response from Rasa NLU server, return None
         if (res.status_code != 200):
             return None
 

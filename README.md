@@ -32,9 +32,10 @@ Docker version 19.03.2, build 6a30dfc
 docker-compose version 1.24.1, build 4667896b
 ```
 
-Docker Compose automatically runs the `web` and `server` services that are defined in the `docker-compose.yml`.
+Docker Compose automatically runs the `web`, `server` and `rasa` services that are defined in the `docker-compose.yml`.
 1. `server` - Backend server
-3. `web` - Frontend server that allows clients to interface with the backend
+2. `web` - Frontend server that allows clients to interface with the backend
+3. `rasa` - Rasa server containing a trained model
 
 There are actually three YAML files that can be used with `docker-compose` - `docker-compose.yml` and `docker-compose.prod.yml` and `docker-compose.local.yml`
 - `docker-compose.prod.yml` is used in the case where an admin username and password is required to enter the website
