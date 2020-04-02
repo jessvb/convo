@@ -23,7 +23,4 @@ Once the server starts, to verify that server is running, head to `http://localh
 
 If you want to use Rasa with Convo locally, follow the installation steps detailed in `rasa/README.md` to train a model and start a server with the model.
 
-## Further Reading
-1. Check out `goals/README.md` for information about `Goals` and how they work in Convo.
-2. Check out `models/README.md` for information about the different models are used in Convo, especially `Actions`
-3. Check out `rasa/README.md` for information about Rasa NLU
+Read more about Convo and Rasa in their READMEs located in their respective directorys `server` and `rasa`.
