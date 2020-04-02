@@ -17,8 +17,8 @@ get_user_input_regex = "(?:listen to user|(?:listen for|get)(?: user)? input)(?:
 value_of_regex = "(?:the )?value of (?:(?:the )?variable )?(.+)"
 play_sound_regex = "play(?: the)?(?: (.+))? sound"
 
-set_variable_regex = "(?!change step$)(?:set|change)(?:(?: the)? value of)?(?:(?: (.+))? to (.+)| (.+))"
 create_variable_regex = "(?:create|make)(?: a)?(?: (.+))? variable(?: called| named)?(?:(?: (.+))? and set(?: it)? to (.+)| (.+))?"
+set_variable_regex = "(?!change step$)(?:set|change)(?:(?: the)? value of)?(?:(?: (.+))? to (.+)| (.+))"
 add_to_variable_regex = "add(?: (.+))? to (.+)"
 subtract_from_variable_regex = "subtract(?: (.+))? from (.+)"
 

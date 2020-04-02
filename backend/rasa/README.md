@@ -1,56 +1,55 @@
-# Backend
-The backend of *convercode* is implemented using the [Rasa](https://rasa.com/) dialog manager and NLU system.
+# Rasa
+Rasa is an open-source conversational AI framework for building context assistants. Rasa includes [Rasa Core](https://rasa.com/docs/rasa/core/about/) which handles their logic and conversation manager and [Rasa NLU](https://rasa.com/docs/rasa/nlu/about/) which does user intent recognition and entity extraction.
 
-## Setup
-Install [Rasa](https://rasa.com/docs/rasa/user-guide/installation/), if not on machine.
+Because Convo will be handling the logic and conversation tracking and managing, only the Rasa NLU is needed in our case. The Rasa NLU trains a model (whether from scratch or on top of a pre-trained model like BERT) given training examples that we define. The model is hosted on a Python server where you input text using REST API and the model outputs intent and possible detected entities.
+
+## Installation
+Install Rasa using their [guide](https://rasa.com/docs/rasa/user-guide/installation/). On the guide, you have to option to install spacCy and MITIE but it's not necessary. 
+
+## Introduction
+The Rasa installation comes with a series of CLI (command-line interface) commands that you can use. You can view all the commands [here](https://rasa.com/docs/rasa/user-guide/command-line-interface/). We will use CLI commands to get Rasa up, so Convo can use it.
+
+To initialize a Rasa project, you can run
 ```bash
-pip3 install rasa-x --extra-index-url https://pypi.rasa.com/simple
+rasa init
+```
+but we have set up the project already at `backend/rasa`. Because we are only using the Rasa NLU, the relevant files are `data/nlu.md` and `config.yml`. 
+
+File `nlu.md` contain the training examples that are used to train a model. Read about the training data format [here](https://rasa.com/docs/rasa/nlu/training-data-format/). Each intent in the training examples corresponds to a `Goal` in Convo. 
+
+File `config.yml` contains the pipeline that Rasa will use to preprocess and ingest the training data to produce the pipeline. Read about pipelines in general [here](https://rasa.com/docs/rasa/nlu/choosing-a-pipeline/) and all the differnt possible componenets you can use [here](https://rasa.com/docs/rasa/nlu/components). Note the component [`HFTransformersNLP`](https://rasa.com/docs/rasa/nlu/components/#hftransformersnlp). This is what allows Rasa to leverage existing language models like BERT or GPT-2 to train a model. You can specify the language model via the parameter `model_name` and specify the particular weights to use via parameter `model_weights`. Below (taken from [here](https://rasa.com/docs/rasa/nlu/components/#hftransformersnlp)) are some of the different model and weights you can use.
+```
++----------------+--------------+-------------------------+
+| Language Model | Parameter    | Default value for       |
+|                | "model_name" | "model_weights"         |
++----------------+--------------+-------------------------+
+| BERT           | bert         | bert-base-uncased       |
++----------------+--------------+-------------------------+
+| GPT            | gpt          | openai-gpt              |
++----------------+--------------+-------------------------+
+| GPT-2          | gpt2         | gpt2                    |
++----------------+--------------+-------------------------+
+| XLNet          | xlnet        | xlnet-base-cased        |
++----------------+--------------+-------------------------+
+| DistilBERT     | distilbert   | distilbert-base-uncased |
++----------------+--------------+-------------------------+
+| RoBERTa        | roberta      | roberta-base            |
++----------------+--------------+-------------------------+
 ```
 
-## Running Rasa
-To run the Rasa shell or server, you must have a Rasa model trained. To train a model, run
+## Training and Running with Convo
+Now, to start using Rasa with Convo, we need to train a NLU-only model. To train and test a NLU-only model, read the guide [here](https://rasa.com/docs/rasa/nlu/using-nlu-only/). The guide tells you how to train and test a model using CLI commands. Created and trained models are added to the `models` directory in `rasa`. To interact with and use your newly trained model, you have to start a server with the model, like so
 ```bash
-rasa train
+rasa run --enable-api
 ```
-The command will train a model and output into the `models` directory, where it will be automatically referenced. Note that Rasa will by default use the latest trained model in `models`.
-
-To run the Rasa server (which is what you need to do if you want to connect the frontend client to Rasa), run
+If you have multiple models, you can specify a model
 ```bash
-rasa run
+rasa run --enable-api -m models/<name>.tar.gz
 ```
-which starts at server at `http://localhost:5005`.
-
-Because we use custom actions with our Rasa model, you have to run the Rasa actions server in a separate terminal as well, with
+With the server running, you can request predictions from your model using the `/model/parse` endpoint of the server like so
 ```bash
-rasa run actions --actions actions.actions
+curl localhost:5005/model/parse -d '{"text":"hello"}'
 ```
+The guide referenced above contains more information about running the NLU server.
 
-You can view the full list of possible CLI commands [here](https://rasa.com/docs/rasa/user-guide/command-line-interface/).
-
-## Connecting with Frontend
-If you have the frontend server running, the Node server should automatically connect to the Rasa server through sockets. You should see a set of messages like the ones below to confirm that your client has connected to the Rasa server.
-```bash
-2019-10-03 11:35:27 INFO     engineio.server  - 2a568fc901e14f39911be81f461e7a31: Sending packet OPEN data {'sid': '2a568fc901e14f39911be81f461e7a31', 'upgrades': ['websocket'], 'pingTimeout': 60000, 'pingInterval': 25000}
-2019-10-03 11:35:27 INFO     engineio.server  - 2a568fc901e14f39911be81f461e7a31: Sending packet MESSAGE data 0
-2019-10-03 11:35:27 INFO     engineio.server  - 2a568fc901e14f39911be81f461e7a31: Received request to upgrade to websocket
-2019-10-03 11:35:27 INFO     engineio.server  - 2a568fc901e14f39911be81f461e7a31: Upgrade to websocket successful
-```
-
-## Communicating with Rasa
-Besides using the UI included in the frontend, you can also communicate with the Rasa model using the built-in Rasa run. To run the Rasa shell, run
-```bash
-rasa shell
-```
-The shell allows you to interact with Rasa through messages.
-
-Rasa also provides a REST endpoint to post messages to and Rasa will respond back with a repsonse. To send a message, send a `POST` request to `/webhooks/rest/webhook`. For example, through curl
-```bash
-curl -d '{"sender":"user", "message":"Tell me a story at 9PM."}' -H "Content-Type: application/json" -X POST http://localhost:5005/webhooks/rest/webhook
-```
-Rasa will send a response back in the form of a JSON
-```json
-[{
-    "recipient_id":"user",
-    "text":"I will read a story at 9PM."
-}]
-```
+This is how Convo interacts with Rasa (through the endpoint). Convo has a file called `rasa_nlu.py` in `server` where this takes place.

@@ -347,11 +347,15 @@ edit_test_while = [
     "run hello world"
 ]
 
+rasa_test = [
+    "create a procedure"
+]
+
 logging.basicConfig(level=logging.DEBUG)
 client = Client("test")
 dm = client.dm
 sleep_time = 0.2
-for i, message in enumerate(edit_test_while):
+for i, message in enumerate(rasa_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
