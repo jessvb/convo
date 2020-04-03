@@ -5,7 +5,7 @@ class Client(object):
     """Represent a client with a dialog manager connected to the server"""
 
     def __init__(self, sid):
-        self.id = id
+        self.id = sid
         self.dm = DialogManager(sid)
 
 class UserStudyClient(Client):
