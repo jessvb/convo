@@ -9,14 +9,14 @@ brew install python
 
 After installing Python, install the packages necessary to run the Flask server
 ```
-cd convercode/backend/flask
+cd backend/server
 pip install -r requirements.txt
 ```
 
 ## Running the Server
-Navigate to directory `backend/flask` and start the app
+Navigate to directory `server` and start the app
 ```bash
-cd convercode/backend/flask
+cd server
 flask run
 ```
 Once the server starts, to verify that server is running, head to `http://localhost:5000/` and you should see `"Hello world!"`.

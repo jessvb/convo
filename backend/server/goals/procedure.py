@@ -9,7 +9,7 @@ class CreateProcedureGoal(HomeGoal):
     """
     def __init__(self, context, name=None):
         super().__init__(context)
-        self.procedure = Procedure(name, [])
+        self.procedure = Procedure(name)
         self.context.current = self.procedure
         self.procedures = self.context.procedures
         self.setattr("name", name)
