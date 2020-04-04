@@ -16,7 +16,7 @@ def get_user(sid):
     return User.query.filter_by(sid=sid).first()
 
 def add_user(client):
-    user = User(client.id)
+    user = User(sid=client.id)
     db.session.add(user)
     db.session.commit()
     return user.id
@@ -32,15 +32,24 @@ def get_procedures(sid):
     procedures = [(program.name, from_db_program(program)) for program in programs]
     return dict(procedures)
 
-def add_procedure(sid, proc):
-    encoded = json.dumps(proc, default=convert_to_dict)
-    program = Program(sid, proc.name, encoded)
-    db.session.add(program)
+def add_or_update_procedure(sid, procedure):
+    encoded = json.dumps(procedure, default=convert_to_dict)
+
+    if procedure.id is None:
+        program = Program(sid=sid, name=procedure.name, encoded=encoded)
+        db.session.add(program)
+    else:
+        program = Program.query.filter_by(id=procedure.id).first()
+        program.encoded = encoded
+
     db.session.commit()
+    procedure.id = program.id
     return program.id
 
-def update_procedure(pid, proc):
-    program = Program.query.filter_by(id=pid).first()
-    program.encoded = json.dumps(proc, default=convert_to_dict)
+def remove_procedure(procedure):
+    program = Program.query.filter_by(id=procedure.id).first()
+    if not program:
+        return
+
+    db.session.delete(program)
     db.session.commit()
-    return program.id

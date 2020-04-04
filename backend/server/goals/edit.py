@@ -2,7 +2,7 @@ from app import logger
 from goals import *
 from models import *
 from word2number import w2n
-from db_manage import update_procedure
+from db_manage import add_or_update_procedure
 
 class EditGoal(HomeGoal):
     """Goal for editing procedure"""
@@ -41,7 +41,8 @@ class EditGoal(HomeGoal):
 
     def complete(self):
         message = super().complete()
-        update_procedure(procedure.pid, self.procedure)
+        add_or_update_procedure(self.context.sid, self.procedure)
+
         self.context.edit = None
         self.context.current = None
         self.context.transition("complete")

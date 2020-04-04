@@ -3,7 +3,7 @@ import json
 from flask import request
 from flask_socketio import join_room
 
-from app import app, db, sio, logger, socket_clients, socket_sessions
+from app import app, sio, logger, socket_clients, socket_sessions
 from dialog import DialogManager
 from userstudy import *
 from client import *

@@ -1,4 +1,5 @@
 from goals import *
+from app import logger
 import requests
 import json
 
@@ -36,10 +37,16 @@ class RasaNLU(object):
 
     def parse_message(self, message):
         payload = json.dumps({"text": message.lower()})
-        res = requests.post("http://localhost:5005/model/parse", data=payload)
+        res = None
+
+        try:
+            res = requests.post("http://localhost:5005/model/parse", data=payload)
+        except requests.ConnectionError:
+            logger.info("Cannot connect to Rasa server.")
+            return None
 
         # If no response from Rasa NLU server, return None
-        if (res.status_code != 200):
+        if (res is None or res.status_code != 200):
             return None
 
         intents = res.json()

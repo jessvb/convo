@@ -78,7 +78,7 @@ app.get('/text-and-conversation', (req, res) => res.sendFile(path.resolve('publi
 app.get('/voice-and-program', (req, res) => res.sendFile(path.resolve('public/html/experiment-templates/voice-and-program.html')));
 app.get('/voice-and-text', (req, res) => res.sendFile(path.resolve('public/html/experiment-templates/voice-and-text.html')));
 app.get('/voice-only', (req, res) => res.sendFile(path.resolve('public/html/experiment-templates/voice-only.html')));
-app.get('/demo', (req, res) => res.sendFile(path.resolve('public/html/demo.html')));
+app.get('/debug', (req, res) => res.sendFile(path.resolve('public/html/debug.html')));
 
 const speech = require('@google-cloud/speech');
 const speechClient = new speech.SpeechClient();
