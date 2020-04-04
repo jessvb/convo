@@ -3,10 +3,11 @@ import json
 from flask import request
 from flask_socketio import join_room
 
-from app import app, sio, logger, socket_clients, socket_sessions
+from app import app, db, sio, logger, socket_clients, socket_sessions
 from dialog import DialogManager
 from userstudy import *
 from client import *
+from db_manage import add_user, get_user, get_procedures
 
 @sio.on("join")
 def join(data):
@@ -28,6 +29,9 @@ def join(data):
 
     # Grab client associated with SID, if not exist, create one
     client = socket_clients.get(sid, UserStudyClient(sid))
+    if get_user(client.id) is None:
+        add_user(client)
+
     socket_clients[sid] = client
 
     if stage in ["practice", "novice", "advanced"] and part in ["voice", "text", "voice-text"]:
@@ -49,7 +53,7 @@ def join(data):
             sio.emit("advancedInstructions", { "sounds": scenario[0], "iters": len(scenario[1]) }, room=str(sid))
     else:
         # Default client and dialog manager
-        client.dm = DialogManager(sid)
+        client.dm = DialogManager(sid, get_procedures(sid))
         logger.debug(f"[{sid}] Created default dialog manager.")
 
     sio.emit("joined", sid, room=str(sid))
