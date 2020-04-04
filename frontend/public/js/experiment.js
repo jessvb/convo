@@ -159,7 +159,7 @@ const example_commands = {
         },
         {
             "title": "Step Into Loop",
-            "example": [
+            "examples": [
                 "step into"
             ]
         }

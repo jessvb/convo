@@ -1,5 +1,6 @@
 from goals import *
 from models import *
+from db_manage import add_or_update_procedure, remove_procedure
 
 class CreateProcedureGoal(HomeGoal):
     """
@@ -9,7 +10,7 @@ class CreateProcedureGoal(HomeGoal):
     """
     def __init__(self, context, name=None):
         super().__init__(context)
-        self.procedure = Procedure(name, [])
+        self.procedure = Procedure(name)
         self.context.current = self.procedure
         self.procedures = self.context.procedures
         self.setattr("name", name)
@@ -34,6 +35,8 @@ class CreateProcedureGoal(HomeGoal):
         3. Add agent goal for getting actions to add to the procedure
         """
         self.procedures[self.procedure.name] = self.procedure
+        add_or_update_procedure(self.context.sid, self.procedure)
+
         self.context.transition(self)
         self.context.current = self.procedure
         self.context.goals.insert(len(self.context.goals) - 2, GetProcedureActionsGoal(self.context, self.procedure))
@@ -103,6 +106,8 @@ class RenameProcedureGoal(HomeGoal):
     def complete(self):
         procedure = self.context.procedures[self.name]
         procedure.name = self.new_name
+        add_or_update_procedure(self.context.sid, procedure)
+
         self.context.procedures[procedure.name] = procedure
         del self.context.procedures[self.name]
         return super().complete()
@@ -141,7 +146,9 @@ class DeleteProcedureGoal(HomeGoal):
         return f"I deleted the procedure, {self.name}. What do you want to do now?" if self.is_complete else self.todos[-1].message
 
     def complete(self):
+        procedure = self.context.procedures[self.name]
         del self.context.procedures[self.name]
+        remove_procedure(procedure)
         return super().complete()
 
     def setattr(self, attr, value):
