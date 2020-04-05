@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const vars = require('dotenv').config();
-const axios = require('axios');
 const express = require('express');
 const app = express();
 const host = '0.0.0.0';

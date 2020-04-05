@@ -9,6 +9,10 @@ from userstudy import *
 from client import *
 from db_manage import add_user, get_user, get_procedures
 
+@app.route('/')
+def healthcheck():
+    return 'Hello, World!'
+
 @sio.on("join")
 def join(data):
     """Connect to the backend server of Convo"""

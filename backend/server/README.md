@@ -4,15 +4,29 @@ This directory contains the main components of Convo that make up the NLU, the d
 Convo is deployed on a Flask Python server that utilizes WebSocket connections to communicate through a [Python port](https://flask-socketio.readthedocs.io/en/latest/) of the Javascript library [socket.io](https://socket.io/) as well the standard HTTP REST API.
 
 # Implementation
-The application is defined and managed in `app.py` and `manage.py`. More specifically, `app.py` implements the Flask application with WebSocket support and `manage.py` defines the routes and socket events that the application support. A client first connects to the socket opened by Convo and triggers the `join` event in `manage.py`. After successful connection, the client can send a message to Convo, starting a conversation, by sending a message with the `message` event. 
+The application is defined and managed in `app.py` and `manage.py`. More specifically, `app.py` implements the Flask application with WebSocket support and `manage.py` defines the routes and socket events that the application support. A client first connects to the socket opened by Convo and triggers the `join` event in `manage.py`. After successful connection, the client can send a message to Convo, starting a conversation, by sending a message with the `message` event.
 
-The dialog manager of Convo is implemented in `dialog.py`. There are two NLU modules implemented. One is the regex-based semantic NLU in `nlu.py` while the other is ML-based Rasa NLU in `rasa_nlu.py`. 
+The dialog manager of Convo is implemented in `dialog.py`. There are two NLU modules implemented. One is the regex-based semantic NLU in `nlu.py` while the other is ML-based Rasa NLU in `rasa_nlu.py`.
 
 Other files include:
+- `db_manage.py` contains any database schemas, models and functions that are used in Convo
 - `error.py` contains custom `Error`s for errors that pop up during Convo.
 - `helpers.py` contains useful helper functions.
 - `client.py` define `Client`s that represent client connections to Convo. There are two clients implemented, one is the general `Client` and the other is a client `UserStudyClient` specifically made for the user study performed in February. It included details and information needed for the user study.
 - `question.py` contains a simple question-and-answering module that Convo uses.
+
+## Database
+Convo currently uses a SQLite3 database which doesn't require a server. The database is simply stored in a DB file in `db`. You can interact with the database (say `test.db`) if you have `sqlite3` installed by running
+```bash
+sqlite3 test.db
+```
+To interact with the database in Python, Convo uses [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/), which provides an interface on top of the database so you don't have to write SQL queries. To setup a local database for Convo, check out `db/README.md`.
+
+There are currently two tables in the database that are defined by `db.Model`s in `db_manage.py`
+1. `user` - contains all users connected to Convo - defined by `User`
+2. `program` - contains all procedures created in Convo - defined by `Program`
+
+To store `Procedure` objects in the database, Convo essentially transforms the object into a dictionary of values before encoding it into JSON and storing the JSON string in the database. The opposite happens when retrieving a procedure from the database.
 
 ## Goals
 The `goals` directory contains all classes that inherit the base `BaseGoal` class, which represent the user and agent goals used in Convo. All `Goal` classes have the same inherent structure and standard methods. To see the basic structure, checkout out `BaseGoal` in `base.py`.
@@ -130,7 +144,14 @@ To add and support a new action in Convo (let's call it `CustomAction`), here ar
     - Located in `evaluate_action` of the `Execution` class in `models/execution.py`
     - To add, check for type using `isinstance(action, CustomAction)`
     - Define what `CustomAction` should do. For example, if the `CustomAction` should say something to the user, you can call `self.emit` to send something to the user. See the execution of the `SayAction` for an example of this.
-4. Add intent recognition for `CustomAction` in the NLUs (see next section).
+4. Add intent recognition for `CustomAction` in the NLUs (see section "Intent Recognition of `Action`s" below).
+
+### Testing New Actions
+To test out the new action, go to `http(s):/<host>/debug` of the website (whether Docker or local)
+1. Say or enter *"create a procedure called test"*. Convo should respond with something starting with *"What do you want to happen in the procedure first?"*
+2. Say the utterance that you have Convo recognize to trigger the adding of the new action. For example, if you want to add a `CreateVariableAction`, say or enter *"create a variable"* to tell Convo you want to add the action. If the action is successfully added to the procedure, Convo should say something on the lines of *"Added action to the procedure!"*.
+3. Once action is added to the procedure, say *"done"* to finish creating the procedure.
+4. Now to test the execution of the new action, say *"run test"* to run the newly created procedure and make sure the action does what you wanted it to do.
 
 ### Intent Recognition of `Action`s
 To allow Convo to recognize that user wants to add a certain action to their program, you must add support to the natural language understanding (NLU) modules. There are two NLUs, one is regex-based semantic parser and the other is the Rasa NLU. You can add support to either or both (recommended) of the NLUs.
