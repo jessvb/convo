@@ -24,9 +24,9 @@ class Action(object):
     def __eq__(self, other):
         raise NotImplementedError
 
-class SayHelloWorldAction(Action):
-    def __init__(self):
-        self.phrase = "Hello World"
+class GreetHelloWorldAction(Action):
+    def __init__(self, phrase):
+        self.phrase = phrase
 
     def json(self):
         return {
@@ -51,7 +51,7 @@ class SayHelloWorldAction(Action):
     def to_nl(self):
         # The "natural language" representation of the action
         # Essentially, what is this action doing in simple terms?
-        return "saying hello world to the user"
+        return "greeting the user with a given or preset phrase"
 
 
 class SetPropertyAction(Action):

@@ -26,12 +26,23 @@ class SayActionGoal(ActionGoal):
             return
         setattr(self, attr, value)
 
-class SayHelloWorldActionGoal(ActionGoal):
+class GreetHelloWorldActionGoal(ActionGoal):
     """Goal for adding a say action"""
-    def __init__(self, context):
+    def __init__(self, context, phrase="Hello World"):
         super().__init__(context)
+        self.setattr("phrase", phrase)
+
 
     def complete(self):
         assert hasattr(self, "actions")
-        self.actions.append(SayHelloWorldAction())
+        self.actions.append(GreetHelloWorldAction(self.phrase))
         return super().complete()
+
+    def setattr(self, attr, value):
+        if attr == "phrase":
+            if value is None:
+                self.phrase = "Hello World"
+            else:
+                self.phrase = value
+            return
+        setattr(self, attr, value)

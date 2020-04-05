@@ -118,10 +118,11 @@ class Execution(object):
     def evaluate_action(self, action):
         """Evaluates an action"""
         logger.debug(f"[{self.context.sid}][Execution][Evaluating] Evaluating action {str(action)} on step {self.step}.")
-        if isinstance(action, SayHelloWorldAction):
-            logger.debug(f"[{self.context.sid}][Execution][Evaluating] Saying 'Hello World'")
-            self.emit("response", { "message": "Hello World", "state": self.context.state })
-            self.context.add_message("Hello World")
+        if isinstance(action, GreetHelloWorldAction):
+            phrase = action.phrase
+            logger.debug(f"[{self.context.sid}][Execution][Evaluating] Greeting the user with a phrase")
+            self.emit("response", { "message": phrase, "state": self.context.state })
+            self.context.add_message(action.phrase)
         elif isinstance(action, SayAction):
             phrase = action.phrase
             if isinstance(action.phrase, ValueOf):
