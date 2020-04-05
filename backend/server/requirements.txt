@@ -1,6 +1,7 @@
 Flask==1.1.1
 Flask-Cors==3.0.8
 Flask-SocketIO==4.2.1
+Flask-SQLAlchemy==2.4.1
 gunicorn==20.0.4
 eventlet==0.25.1
 word2number==1.1

@@ -2,6 +2,7 @@ import re
 from app import logger
 from goals import *
 from models import *
+from db_manage import add_or_update_procedure
 
 class GetActionsGoal(BaseGoal):
     """Agent goal to get actions from user"""
@@ -203,8 +204,10 @@ class GetProcedureActionsGoal(GetActionsGoal):
         1. Transition from "creating" state to "home" state
         2. Setting current back to None
         """
-        self.context.transition("complete")
+        add_or_update_procedure(self.context.sid, self.procedure)
+
         self.context.current = None
+        self.context.transition("complete")
         logger.debug(f"Procedure: {[str(a) for a in self.procedure.actions]}")
         return super().complete()
 

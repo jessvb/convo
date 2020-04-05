@@ -1,5 +1,8 @@
+// Connect to Convo server on production
 const server = 'https://userstudy.appinventor.mit.edu/api';
+// Connect to Convo server on local
 // const server = 'http://localhost:5000';
+
 const synth = window.speechSynthesis;
 synth.cancel();
 let state = "home";
@@ -159,7 +162,7 @@ const example_commands = {
         },
         {
             "title": "Step Into Loop",
-            "example": [
+            "examples": [
                 "step into"
             ]
         }

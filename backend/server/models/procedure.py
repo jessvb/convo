@@ -3,12 +3,13 @@ tab = "    "
 
 class Procedure(object):
     """Represents a procedure"""
-    def __init__(self, name, actions=None, klass=None):
+    def __init__(self, name, actions=[], variables=[], lists={}, id=None, klass=None):
         self.name = name
-        self.actions = [] if actions is None else actions
-        self.variables = set()
-        self.lists = {}
+        self.actions = actions
+        self.variables = set(variables)
+        self.lists = lists
         self.klass = klass
+        self.id = id
 
     def __str__(self):
         return f"Procedure {self.name}: {len(self.actions)}"
