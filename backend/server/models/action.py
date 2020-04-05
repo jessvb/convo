@@ -24,6 +24,36 @@ class Action(object):
     def __eq__(self, other):
         raise NotImplementedError
 
+class SayHelloWorldAction(Action):
+    def __init__(self):
+        self.phrase = "Hello World"
+
+    def json(self):
+        return {
+            "name": str(self),
+            "phrase": self.phrase
+        }
+
+    def __str__(self):
+        # String representation of the class
+        name = self.__class__.__name__
+        # Default is the just converting to snake case and removing "Action"
+        # For AnotherCustomAction, the __str__ would return "another_custom"
+        return to_snake_case(name[:-len("Action")])
+
+
+    def python(self):
+        # String representation of potential corresponding Python code
+        # Currently not too important, since no Python support yet
+        return ["print('hello world')"]
+
+
+    def to_nl(self):
+        # The "natural language" representation of the action
+        # Essentially, what is this action doing in simple terms?
+        return "saying hello world to the user"
+
+
 class SetPropertyAction(Action):
     def __init__(self, property, value):
         self.property = property

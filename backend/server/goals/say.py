@@ -25,3 +25,13 @@ class SayActionGoal(ActionGoal):
                 self.phrase = value
             return
         setattr(self, attr, value)
+
+class SayHelloWorldActionGoal(ActionGoal):
+    """Goal for adding a say action"""
+    def __init__(self, context):
+        super().__init__(context)
+
+    def complete(self):
+        assert hasattr(self, "actions")
+        self.actions.append(SayHelloWorldAction())
+        return super().complete()

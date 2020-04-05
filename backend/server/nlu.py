@@ -36,7 +36,10 @@ equality_condition_regex = "(?!.*less|.*greater)(?:if |while |until )?(.+) is(?:
 variable_regex = "(?:(?:a|the) variable)(?: (.+))?|variable (.+)"
 procedure_regex = "(?:(?:a|the) procedure|procedure)(?: called)?(?: (.+))?"
 
+say_hello_world_regex = "\bhello world\b"
+
 action_regexes = [
+    say_hello_world_regex,
     say_regex, play_sound_regex,
     set_variable_regex, create_variable_regex, add_to_variable_regex, subtract_from_variable_regex,
     get_user_input_regex,
@@ -81,6 +84,9 @@ class SemanticNLU(object):
         elif re.search(delete_procedure_regex, message):
             match = re.search(delete_procedure_regex, message)
             return DeleteProcedureGoal(self.context, name=self.parse_procedure(group(match, 1)))
+        elif message == "hello world"
+            return SayHelloWorldActionGoal(self.context)
+
 
     def parse_step_goal(self, message):
         """Parse function for goals and intents that relate to editing"""
@@ -176,6 +182,8 @@ class SemanticNLU(object):
             # Getting user input
             match = re.match(get_user_input_regex, message)
             return GetUserInputActionGoal(self.context, variable=group(match, 1))
+        elif message == "hello world"
+            return SayHelloWorldActionGoal(self.context)
 
     def parse_condition(self, message):
         """Parse condition"""
