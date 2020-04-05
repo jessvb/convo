@@ -172,3 +172,43 @@ Before working with the Rasa NLU be sure to read `backend/rasa/README.md`. To ad
 
 ## Tests
 No concrete testing framework has been developed for testing methods used in Convo but there are simple tests that were written while developing Convo in the `tests` directory
+
+You can create a new test file in the directory `tests`. In the top of the file, add
+```python
+import sys
+from os import path
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+```
+if you encounter any import errors when importing classes from the parent directory `server` or a sibling directory (e.g. `models`).
+
+To import everything from `goals` and `models`, you can use
+```python
+from goals import *
+from models import *
+```
+
+To test Convo's backend, you can create a `Client` and then use its dialog manager and call the `handle_message` like so
+```python
+client = Client("test")
+dm = client.dm
+response = dm.handle_message("hello")
+print(response)
+```
+
+You can quickly enumerate through a list of messages to test an entire converstation
+```python
+messages = ["create a procedure", "test", "say hello world", "done", "run test"]
+client = Client("test")
+dm = client.dm
+
+for i, message in enumerate(messages):
+    response = dm.handle_message(message)
+    print(response)
+```
+
+For logging and debugging, you can use `print` statements or `logger.debug` (like `logger.debug("log message")`), if you do
+use the latter, make sure to import `logging` and set the config
+```
+import logging
+logging.basicConfig(level=logging.DEBUG)
+```
