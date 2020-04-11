@@ -45,7 +45,7 @@ class GreetHelloWorldAction(Action):
     def python(self):
         # String representation of potential corresponding Python code
         # Currently not too important, since no Python support yet
-        return ["print('hello world')"]
+        return [f"greet(\"{self.phrase}\")"]
 
 
     def to_nl(self):
