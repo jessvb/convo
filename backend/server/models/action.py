@@ -49,63 +49,63 @@ class SetPropertyAction(Action):
         return self.property == other.property and self.value == other.value
 
 class VariableAction(Action):
-    def __init__(self, name, value):
-        self.name = name
+    def __init__(self, variable, value):
+        self.variable = variable
         self.value = value
 
     def json(self):
         return {
             "name": str(self),
-            "variable": self.name,
+            "variable": self.variable,
             "value": self.value
         }
 
     def python(self):
-        return [f"{self.name} = {self.value}"]
+        return [f"{self.variable} = {self.value}"]
 
     def __eq__(self, other):
         if not isinstance(other, type(self)):
             return NotImplemented
 
-        return self.name == other.name and self.value == other.value
+        return self.variable == other.variable and self.value == other.value
 
 class CreateVariableAction(VariableAction):
-    def __init__(self, name, value):
-        super().__init__(name, value)
+    def __init__(self, variable, value):
+        super().__init__(variable, value)
 
     def to_nl(self):
         value = self.value.to_nl() if isinstance(self.value, ValueOf) else self.value
-        return f"creating a variable called {self.name} and setting its value to {self.value}"
+        return f"creating a variable called {self.variable} and setting its value to {self.value}"
 
 class SetVariableAction(VariableAction):
-    def __init__(self, name, value):
-        super().__init__(name, value)
+    def __init__(self, variable, value):
+        super().__init__(variable, value)
 
     def to_nl(self):
         value = self.value.to_nl() if isinstance(self.value, ValueOf) else self.value
-        return f"setting the value of variable {self.name} to {self.value}"
+        return f"setting the value of variable {self.variable} to {self.value}"
 
 class AddToVariableAction(VariableAction):
-    def __init__(self, name, value):
-        super().__init__(name, value)
+    def __init__(self, variable, value):
+        super().__init__(variable, value)
 
     def python(self):
-        return [f"{self.name} += {self.value}"]
+        return [f"{self.variable} += {self.value}"]
 
     def to_nl(self):
         value = self.value.to_nl() if isinstance(self.value, ValueOf) else self.value
-        return f"adding {value} to variable {self.name}"
+        return f"adding {value} to variable {self.variable}"
 
 class SubtractFromVariableAction(VariableAction):
-    def __init__(self, name, value):
-        super().__init__(name, value)
+    def __init__(self, variable, value):
+        super().__init__(variable, value)
 
     def python(self):
-        return [f"{self.name} -= {self.value}"]
+        return [f"{self.variable} -= {self.value}"]
 
     def to_nl(self):
         value = self.value.to_nl() if isinstance(self.value, ValueOf) else self.value
-        return f"subtracting {value} from variable {self.name}"
+        return f"subtracting {value} from variable {self.variable}"
 
 class SayAction(Action):
     def __init__(self, phrase):
