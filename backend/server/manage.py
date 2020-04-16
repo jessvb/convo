@@ -7,7 +7,7 @@ from app import app, sio, logger, socket_clients, socket_sessions
 from dialog import DialogManager
 from userstudy import *
 from client import *
-from db_manage import add_user, get_user, get_procedures
+from db_manage import get_or_create_user, get_procedures
 
 @app.route('/')
 def healthcheck():
@@ -33,8 +33,7 @@ def join(data):
 
     # Grab client associated with SID, if not exist, create one
     client = socket_clients.get(sid, UserStudyClient(sid))
-    if get_user(client.id) is None:
-        add_user(client)
+    get_or_create_user(client)
 
     socket_clients[sid] = client
 
