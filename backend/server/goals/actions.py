@@ -82,7 +82,11 @@ class GetConditionalActionsGoal(GetActionsGoal):
         if len(self.todos) == 0:
             if self.condition:
                 if len(self.actions) > 0:
-                    return "Anything else if condition is true? You can say 'done' if you are finished."
+                    return """
+                        Anything else if condition is true?
+                        You can say 'done' to move on to adding actions if the condition is false.
+                        You can say 'close' if you are entirely finished.
+                    """
                 else:
                     return "What do you want to do first if the condition is true?"
             else:

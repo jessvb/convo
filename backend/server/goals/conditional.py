@@ -26,6 +26,10 @@ class ConditionalActionGoal(ActionGoal):
         self._message = None
         if self.todos:
             todo = self.todos.pop()
+            if isinstance(todo, GetConditionalActionsGoal) and self.context.current_message == "close":
+                self.todos = []
+                return
+
             todo.advance()
             if todo.error:
                 if isinstance(todo, GetConditionGoal):
