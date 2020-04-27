@@ -84,7 +84,7 @@ class GetConditionalActionsGoal(GetActionsGoal):
                 if len(self.actions) > 0:
                     return """
                         Anything else if condition is true?
-                        You can say 'done' to move on to adding actions if the condition is false.
+                        You can say 'done' to move on to adding actions when the condition is false.
                         You can say 'close' if you are entirely finished.
                     """
                 else:
