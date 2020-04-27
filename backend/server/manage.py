@@ -61,6 +61,18 @@ def join(data):
 
     sio.emit("joined", sid, room=str(sid))
 
+    intro = '''
+        Hi, I'm Convo! What would you like to do?
+        To get started, you can create a new procedure by saying "Create a new procedure".
+        If you want to run a procedure, say "Run" and then the name of the procedure.
+    '''
+    response = {
+        "message": intro,
+        "state": client.dm.context.state,
+        "speak": False
+    }
+    sio.emit("response", response, room=str(sid))
+
 @sio.on("disconnect")
 def disconnect():
     """Disconnect from server"""

@@ -172,7 +172,10 @@ class Execution(object):
             self.actions[self.step:self.step + 1] = action.actions[res]
             self.step -= 1
         elif isinstance(action, LoopAction):
-            res = action.condition.eval(self.variables)
+            if (action.loop == "until" and isinstance(action.condition, UntilStopCondition)):
+                res = True
+            else:
+                res = action.condition.eval(self.variables)
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Evaluating condition for {action.loop} loop.")
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Variables when evaluating condition: {str(self.variables)}")
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Condition for {action.loop} loop ({str(action.condition)}) is " + ("true" if res else "false"))

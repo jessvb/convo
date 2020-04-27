@@ -32,6 +32,7 @@ create_loop_regex = "(.+) (while|until) (.+)|(while|until) (.+)"
 
 comparison_condition_regex = "(?:if |while |until )?(.+) is ((?:(?:less|greater) than(?: or equal to)?)) (.+)"
 equality_condition_regex = "(?!.*less|.*greater)(?:if |while |until )?(.+) is(?: (not))?(?: equal to)? (.+)"
+until_stop_condition_regex = "i say stop"
 
 variable_regex = "(?:(?:a|the) variable)(?: (.+))?|variable (.+)"
 procedure_regex = "(?:(?:a|the) procedure|procedure)(?: called)?(?: (.+))?"
@@ -181,6 +182,8 @@ class SemanticNLU(object):
         """Parse condition"""
         if message is None:
             return message
+        elif re.match(until_stop_condition_regex, messsage):
+            return UntilStopCondition()
         elif re.match(comparison_condition_regex, message):
             # Comparison conditions which includes >, =>, <, <=
             match = re.match(comparison_condition_regex, message)
