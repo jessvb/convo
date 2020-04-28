@@ -65,14 +65,15 @@ class GetUserInputGoal(BaseGoal):
 
 class GetUserInputActionGoal(ActionGoal):
     """Goal for adding action to get user input"""
-    def __init__(self, context, variable):
+    def __init__(self, context, variable, prompt=None):
         super().__init__(context)
         self.variables = self.procedure.variables
         self.setattr("variable", variable)
+        self.setattr("prompt", prompt)
 
     def complete(self):
         assert hasattr(self, "actions")
-        self.actions.append(GetUserInputAction(self.variable))
+        self.actions.append(GetUserInputAction(self.variable, self.prompt))
         self.variables.add(self.variable)
         return super().complete()
 
@@ -82,5 +83,11 @@ class GetUserInputActionGoal(ActionGoal):
                 self.todos.append(GetInputGoal(self.context, self, attr, f"What variable name do you want to save the input as?"))
             else:
                 self.variable = value
+            return
+        elif attr == "prompt":
+            if value is None:
+                self.todos.append(GetInputGoal(self.context, self, attr, f"What do you want me to say when asking for input?"))
+            else:
+                self.prompt = None if value == "nothing" else value
             return
         setattr(self, attr, value)

@@ -262,23 +262,25 @@ class AddToListPropertyAction(Action):
         return self.property == other.property and self.value == other.value
 
 class GetUserInputAction(Action):
-    def __init__(self, variable):
+    def __init__(self, variable, prompt):
         self.variable = variable
+        self.prompt = prompt
 
     def json(self):
         return {
             "name": str(self),
-            "variable": self.variable
+            "variable": self.variable,
+            "prompt": self.prompt
         }
 
     def to_nl(self):
-        return f"getting input from user and saving it as variable {self.variable}"
+        return f"listening for input and saving it as variable {self.variable}"
 
     def __eq__(self, other):
         if not isinstance(other, type(self)):
             return NotImplemented
 
-        return self.variable == other.variable
+        return self.variable == other.variable and self.prompt == other.prompt
 
 class PlaySoundAction(Action):
     def __init__(self, sound):

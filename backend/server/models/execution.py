@@ -132,7 +132,8 @@ class Execution(object):
         elif isinstance(action, GetUserInputAction):
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Getting user input and setting as {action.variable}.")
             self.input_needed = action.variable
-            self.emit("response", { "message": "Listening for user input...", "state": self.context.state })
+            if action.prompt:
+                self.emit("response", { "message": action.prompt, "state": self.context.state })
         elif isinstance(action, CreateVariableAction):
             self.variables[action.name] = self.variables[action.value.variable] if isinstance(action.value, ValueOf) else action.value
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Creating variable {action.name} with value {self.variables[action.name]}.")
