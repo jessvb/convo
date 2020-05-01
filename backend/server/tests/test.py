@@ -360,11 +360,24 @@ until_stop_test = [
     "stop"
 ]
 
+conditional_test = [
+    "create a procedure called conditional",
+    "create a variable called count and set it to 0",
+    "say the value of count",
+    "if count is less than 4, add 4 to count",
+    "close",
+    "say the value of count",
+    "done",
+    "run conditional",
+    "edit conditional",
+    "go to step 3"
+]
+
 logging.basicConfig(level=logging.DEBUG)
 client = Client("test")
 dm = client.dm
 sleep_time = 0.2
-for i, message in enumerate(until_stop):
+for i, message in enumerate(conditional_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:

@@ -135,36 +135,36 @@ class Execution(object):
             if action.prompt:
                 self.emit("response", { "message": action.prompt, "state": self.context.state })
         elif isinstance(action, CreateVariableAction):
-            self.variables[action.name] = self.variables[action.value.variable] if isinstance(action.value, ValueOf) else action.value
-            logger.debug(f"[{self.context.sid}][Execution][Evaluating] Creating variable {action.name} with value {self.variables[action.name]}.")
+            self.variables[action.variable] = self.variables[action.value.variable] if isinstance(action.value, ValueOf) else action.value
+            logger.debug(f"[{self.context.sid}][Execution][Evaluating] Creating variable {action.variable} with value {self.variables[action.variable]}.")
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Variables after creating variable: {str(self.variables)}")
         elif isinstance(action, SetVariableAction):
-            if action.name in self.variables:
-                self.variables[action.name] = self.variables[action.value.variable] if isinstance(action.value, ValueOf) else action.value
-                logger.debug(f"[{self.context.sid}][Execution][Evaluating] Setting variable {action.name} with value {self.variables[action.name]}.")
+            if action.variable in self.variables:
+                self.variables[action.variable] = self.variables[action.value.variable] if isinstance(action.value, ValueOf) else action.value
+                logger.debug(f"[{self.context.sid}][Execution][Evaluating] Setting variable {action.variable} with value {self.variables[action.variable]}.")
                 logger.debug(f"[{self.context.sid}][Execution][Evaluating] Variables after setting variable: {str(self.variables)}")
             else:
-                logger.debug(f"[{self.context.sid}][Execution][Evaluating] Variable {action.name} not found.")
-                raise KeyError(action.name)
+                logger.debug(f"[{self.context.sid}][Execution][Evaluating] Variable {action.variable} not found.")
+                raise KeyError(action.variable)
         elif isinstance(action, AddToVariableAction) or isinstance(action, SubtractFromVariableAction):
-            value = self.variables.get(action.name)
-            if action.name in self.variables:
-                old = self.variables[action.name]
+            value = self.variables.get(action.variable)
+            if action.variable in self.variables:
+                old = self.variables[action.variable]
                 factor = 1 if isinstance(action, AddToVariableAction) else -1
                 if isinstance(value, float) or isinstance(value, int):
-                    self.variables[action.name] += factor * action.value
+                    self.variables[action.variable] += factor * action.value
                 elif isinstance(value, ValueOf):
-                    self.variables[action.name] += factor * self.variables[action.value.variable]
-                new = self.variables[action.name]
+                    self.variables[action.variable] += factor * self.variables[action.value.variable]
+                new = self.variables[action.variable]
                 if isinstance(action, AddToVariableAction):
-                    logger.debug(f"[{self.context.sid}][Execution][Evaluating] Incrementing variable {action.name} from {old} to {new}.")
+                    logger.debug(f"[{self.context.sid}][Execution][Evaluating] Incrementing variable {action.variable} from {old} to {new}.")
                     logger.debug(f"[{self.context.sid}][Execution][Evaluating] Variables after incrementing variable: {str(self.variables)}")
                 else:
-                    logger.debug(f"[{self.context.sid}][Execution][Evaluating] Decrementing variable {action.name} from {old} to {new}.")
+                    logger.debug(f"[{self.context.sid}][Execution][Evaluating] Decrementing variable {action.variable} from {old} to {new}.")
                     logger.debug(f"[{self.context.sid}][Execution][Evaluating] Variables after decrementing variable: {str(self.variables)}")
             else:
-                logger.debug(f"[{self.context.sid}][Execution][Evaluating] Variable {action.name} not found.")
-                raise KeyError(action.name)
+                logger.debug(f"[{self.context.sid}][Execution][Evaluating] Variable {action.variable} not found.")
+                raise KeyError(action.variable)
         elif isinstance(action, ConditionalAction):
             res = action.condition.eval(self.variables)
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Evaluating condition for if statement.")
