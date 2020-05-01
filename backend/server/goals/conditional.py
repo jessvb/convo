@@ -26,6 +26,10 @@ class ConditionalActionGoal(ActionGoal):
         self._message = None
         if self.todos:
             todo = self.todos.pop()
+            if isinstance(todo, GetConditionalActionsGoal) and self.context.current_message == "close":
+                self.todos = []
+                return
+
             todo.advance()
             if todo.error:
                 if isinstance(todo, GetConditionGoal):
@@ -54,6 +58,8 @@ class ConditionalActionGoal(ActionGoal):
             # If no condition was provided, ask for condition, else set the condition
             if value is None:
                 self.todos.append(GetConditionGoal(self.context, self))
+            elif isinstance(value, UntilStopCondition):
+                self.error = f"You cannot use this condition in a conditional."
             elif value.variable.variable not in self.variables:
                 self.error = f"Variable, {value.variable.variable}, used in the condition hasn't been created. Please try again or create the variable first."
             elif isinstance(value.value, ValueOf) and value.value.variable not in self.variables:

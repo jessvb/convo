@@ -153,6 +153,16 @@ class ConditionalAction(Action):
 
     def to_nl(self):
         falses, trues = self.actions
+
+        if len(trues) == 1 and \
+            not isinstance(trues[0], ConditionalAction) and \
+            (len(falses) == 0 or (len(falses) == 1 and not isinstance(falses[0], ConditionalAction))):
+
+            nl = f"{trues[0].to_nl()} if {self.condition.to_nl()}"
+            if len(falses) == 1:
+                nl += f" else I am {falses[0].to_nl()}"
+            return nl
+
         num_falses = len(falses) if len(falses) > 0 else 'no'
         num_trues = len(trues) if len(trues) > 0 else 'no'
         return f"doing {num_trues} action(s) when {self.condition.to_nl()} and {num_falses} action(s) otherwise"
@@ -179,7 +189,7 @@ class LoopAction(Action):
 
     def to_nl(self):
         num_actions = str(len(self.actions)) if len(self.actions) > 0 else 'no'
-        return f"doing {num_actions} action{'s' if num_actions != '1' else ''} {self.loop} {self.condition.to_nl()}"
+        return f"doing {num_actions} action{'s' if num_actions != '1' else ''} in a loop {self.loop} {self.condition.to_nl()}"
 
     def python(self):
         if self.loop == "while":
@@ -262,23 +272,25 @@ class AddToListPropertyAction(Action):
         return self.property == other.property and self.value == other.value
 
 class GetUserInputAction(Action):
-    def __init__(self, variable):
+    def __init__(self, variable, prompt):
         self.variable = variable
+        self.prompt = prompt
 
     def json(self):
         return {
             "name": str(self),
-            "variable": self.variable
+            "variable": self.variable,
+            "prompt": self.prompt
         }
 
     def to_nl(self):
-        return f"getting input from user and saving it as variable {self.variable}"
+        return f"listening for input and saving it as {self.variable}"
 
     def __eq__(self, other):
         if not isinstance(other, type(self)):
             return NotImplemented
 
-        return self.variable == other.variable
+        return self.variable == other.variable and self.prompt == other.prompt
 
 class PlaySoundAction(Action):
     def __init__(self, sound):

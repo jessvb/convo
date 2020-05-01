@@ -32,6 +32,7 @@ create_loop_regex = "(.+) (while|until) (.+)|(while|until) (.+)"
 
 comparison_condition_regex = "(?:if |while |until )?(.+) is ((?:(?:less|greater) than(?: or equal to)?)) (.+)"
 equality_condition_regex = "(?!.*less|.*greater)(?:if |while |until )?(.+) is(?: (not))?(?: equal to)? (.+)"
+until_stop_condition_regex = "i say stop"
 
 variable_regex = "(?:(?:a|the) variable)(?: (.+))?|variable (.+)"
 procedure_regex = "(?:(?:a|the) procedure|procedure)(?: called)?(?: (.+))?"
@@ -181,6 +182,8 @@ class SemanticNLU(object):
         """Parse condition"""
         if message is None:
             return message
+        elif re.match(until_stop_condition_regex, message):
+            return UntilStopCondition()
         elif re.match(comparison_condition_regex, message):
             # Comparison conditions which includes >, =>, <, <=
             match = re.match(comparison_condition_regex, message)
@@ -211,6 +214,21 @@ class SemanticNLU(object):
         from the start of the message to the start of part where the action was parsed.
         """
         message = strip_punctuation(message)
+
+        # Special until stop case
+        if re.search(until_stop_condition_regex, message):
+            match = re.search(until_stop_condition_regex, message)
+            front = message[:match.start()]
+            back = message[match.end():]
+            for rgx in action_regexes:
+                match = re.search(rgx, front)
+                if match:
+                    return UntilStopCondition(), self.parse_action_goal(match.group(0))
+                match = re.search(rgx, back)
+                if match:
+                    return UntilStopCondition(), self.parse_action_goal(match.group(0))
+            return None, None
+
         for rgx in action_regexes:
             match = re.search(rgx, message)
             if not match:

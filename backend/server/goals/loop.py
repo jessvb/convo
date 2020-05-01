@@ -48,6 +48,9 @@ class LoopActionGoal(ActionGoal):
         elif attr == "condition":
             if value is None:
                 self.todos.append(GetConditionGoal(self.context, self))
+            elif isinstance(value, UntilStopCondition):
+                self.loop = "until"
+                self.condition = value
             elif value.variable.variable not in self.variables:
                 self.error = f"Variable {value.variable.variable} used in the condition hasn't been created yet. Please try again or create the variable first."
             elif isinstance(value.value, ValueOf) and value.value.variable not in self.variables:

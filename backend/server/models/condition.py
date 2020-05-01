@@ -32,6 +32,24 @@ comparison_ops = {
     "less than or equal to": "<="
 }
 
+class UntilStopCondition(Condition):
+    """Loop-only condition that stops the loop only if user says stop"""
+
+    def eval(self):
+        return True
+
+    def __str__(self):
+        return "you say 'stop'"
+
+    def to_nl(self):
+        return self.__str__()
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return True
+
 class EqualityCondition(Condition):
     """Represents an equality condition"""
 
