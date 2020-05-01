@@ -153,6 +153,16 @@ class ConditionalAction(Action):
 
     def to_nl(self):
         falses, trues = self.actions
+
+        if len(trues) == 1 and \
+            not isinstance(trues[0], ConditionalAction) and \
+            (len(falses) == 0 or (len(falses) == 1 and not isinstance(falses[0], ConditionalAction))):
+
+            nl = f"{trues[0].to_nl()} if {self.condition.to_nl()}"
+            if len(falses) == 1:
+                nl += f" else I am {falses[0].to_nl()}"
+            return nl
+
         num_falses = len(falses) if len(falses) > 0 else 'no'
         num_trues = len(trues) if len(trues) > 0 else 'no'
         return f"doing {num_trues} action(s) when {self.condition.to_nl()} and {num_falses} action(s) otherwise"
@@ -274,7 +284,7 @@ class GetUserInputAction(Action):
         }
 
     def to_nl(self):
-        return f"listening for input and saving it as variable {self.variable}"
+        return f"listening for input and saving it as {self.variable}"
 
     def __eq__(self, other):
         if not isinstance(other, type(self)):

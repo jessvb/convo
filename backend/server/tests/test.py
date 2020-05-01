@@ -1,3 +1,7 @@
+import sys
+from os import path
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
 import logging
 import time
 import copy
@@ -347,15 +351,20 @@ edit_test_while = [
     "run hello world"
 ]
 
-rasa_test = [
-    "create a procedure"
+until_stop_test = [
+    "create a procedure called loop",
+    "until i say stop say hello world",
+    "close loop",
+    "done",
+    "run loop",
+    "stop"
 ]
 
 logging.basicConfig(level=logging.DEBUG)
 client = Client("test")
 dm = client.dm
 sleep_time = 0.2
-for i, message in enumerate(rasa_test):
+for i, message in enumerate(until_stop):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
