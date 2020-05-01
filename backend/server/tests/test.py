@@ -373,11 +373,27 @@ conditional_test = [
     "go to step 3"
 ]
 
+user_input_test = [
+    "create a procedure called inputting",
+    "listen for user input",
+    "nothing",
+    "input1",
+    "say the value of input1",
+    "listen for user input",
+    "give me an input",
+    "input2",
+    "say the value of input2",
+    "done",
+    "run inputting",
+    "hello",
+    "bye"
+]
+
 logging.basicConfig(level=logging.DEBUG)
 client = Client("test")
 dm = client.dm
 sleep_time = 0.2
-for i, message in enumerate(conditional_test):
+for i, message in enumerate(user_input_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
