@@ -176,6 +176,130 @@ const example_commands = {
     }]
 }
 
+const example_analysis_tutorial_commands = {
+    "home": [{
+            "title": "Create a Procedure or Program",
+            "examples": [
+                "create a procedure",
+                "make a procedure called AskForCompliment"
+            ]
+        },
+        {
+            "title": "Get User Input to ask for a compliment and give it a name so we can analyze it later on",
+            "examples": [
+                "get user input",
+                "get user input and call it userinput"
+            ]
+        },
+        {
+            "title": "Analyze the Phrase - Note that analyze a phrase creates a variable <i>toxvar</i> to store the toxicity score",
+            "examples": [
+                "analyze the value of the variable userinput"
+            ]
+        },
+        {
+            "title": "Make a While Loop",
+            "examples": [
+                "make a while loop"
+            ]
+        },
+        {
+            "title": "Give while loop conditions",
+            "examples": [
+                "while toxvar is greater than 0.5",
+            ]
+        },
+        {
+            "title": "Give next steps in loop conditions",
+            "examples": [
+                "say 'Your phrase is not nice enough. Enter a new one.'",
+                "get user input and call it userinput",
+                "analyze the value of the variale userinut",
+            ]
+        },
+        {
+            "title": "Close the loop",
+            "examples": [
+                "close loop",
+            ]
+        },
+        {
+            "title": "Make Me Say Something",
+            "examples": [
+                "say 'Here is your compliment!'",
+                "say the value of the variable userinput",
+                "say the value of the variable toxvar"
+
+            ]
+        },
+        {
+            "title": "Run a Procedure or Program",
+            "examples": [
+                "run AskForCompliment"
+            ]
+        },
+    ],
+    "creating": [{
+        "title": "Finish Creating",
+        "examples": [
+            "done"
+        ]
+    }].concat(action_commands),
+    "editing_action": action_commands,
+    "editing": [
+        {
+            "title": "Finish Editing Procedure or Leave Loop",
+            "examples": [
+                "done"
+            ]
+        },
+        {
+            "title": "Navigate Through Procedure",
+            "examples": [
+                "next step",
+                "previous step",
+                "go to step 5",
+                "go to the first step",
+                "go to the last step"
+            ]
+        },
+        {
+            "title": "Add a New Action",
+            "examples": [
+                "add step",
+                "make a new step",
+                "create a new step"
+            ]
+        },
+        {
+            "title": "Delete Current Action",
+            "examples": [
+                "remove step",
+                "delete step"
+            ]
+        },
+        {
+            "title": "Change or Replace Current Action",
+            "examples": [
+                "change step",
+                "replace step"
+            ]
+        },
+        {
+            "title": "Step Into Loop",
+            "examples": [
+                "step into"
+            ]
+        }
+    ].concat(action_commands),
+    "executing": [{
+        "title": "Stop Currently Running Procedure",
+        "examples": [
+            "stop",
+            "cancel"
+        ]
+    }]
+}
 let handleStateChange = (newState) => {
     state = newState;
     let examples = document.getElementById('example-actions-list');
@@ -191,7 +315,25 @@ let handleStateChange = (newState) => {
             })
             examples.appendChild(node);
         })
-    }
+    } 
+}
+
+let handleAnalysisTutorialChange = (newState) => {
+    state = newState;
+    let examples = document.getElementById('example-analysis-tutorial-actions-list');
+    examples.innerHTML = "";
+    if (state != null && state in example_analysis_tutorial_commands) {
+        let commands = example_analysis_tutorial_commands[state];
+        commands.forEach(action => {
+            let node = document.createElement('div');
+            node.className = "example-analysis-tutorial-action"
+            node.innerHTML = `<div class="action-title"><b>${action.title}</b></div>`;
+            action.examples.forEach(ex => {
+                node.innerHTML += `<div class="action-example"><em>${ex}</em></div>`;
+            })
+            examples.appendChild(node);
+        })
+    } 
 }
 
 let handleSocketApiResponse = (data) => {
@@ -327,6 +469,23 @@ let addExampleActions = () => {
     handleStateChange("home");
 }
 
+let addExampleAnalysisTutorialActions = () => {
+    document.getElementById('example-analysis-tutorial-actions').innerHTML = `
+        <div id="example-analysis-tutorial-actions-heading">
+            <div><b>Anaylsis Tutorial: Here are your commands</b></div>
+            <div id="example-analysis-tutorial-actions-direction">&#9660</div>
+        </div>
+        <div id="example-analysis-tutorial-actions-list"></div>`;
+    document.getElementById('example-analysis-tutorial-actions-heading').onclick = () => {
+        let actionsList = document.getElementById('example-analysis-tutorial-actions-list');
+        let displ = actionsList.style.display === 'block' ? 'none' : 'block';
+        document.getElementById('example-analysis-tutorial-actions-direction').innerHTML = displ === 'none' ? "&#9660" : "&#9650";
+        actionsList.style.display = displ;
+    }
+
+    handleAnalysisTutorialChange("home");
+}
+
 let addAudioPlayer = () => {
     let audioPlayer = document.createElement('audio');
     audioPlayer.id = 'audio-player';
@@ -339,6 +498,76 @@ let addAudioPlayer = () => {
             return voice.name == 'Google US English' || voice.name == 'Samantha';
         })[0];
     };
+}
+
+let populateModalInitial = () => { 
+    document.getElementById("modal-content-paragraph").innerHTML = `
+    <ol>
+        <li>When you think of the phrase ‘artificial intelligence’ or ‘ai,’ what do you think of? 
+            <ul>
+                <li><i>Making decisions</i></li>
+                <li><i>Learning from patterns</i></li>
+                <li><i>Alexa, Google Home, Siri</i></li>
+                <li><i>Smart computers</i></li>
+            </ul>
+        </li>
+        <li>When it comes to learning about AI, here are some big AI concepts that you will want to keep in mind. 
+            <ol>
+                <li><b>Computers perceive the world using sensors.</b> Computers need to take input from you, your friend, or the environment to know what’s going on.</li>
+                <li><b>Agents maintain models of the world using representations.</b> It is important to realize that any ‘smart computer’ you know of uses representations or models to depict their own world. </li>
+                <li><b>Computers can learn from data.</b> Computers make a decision or know things because they can process a TON of data and learn from patterns in the data.</li>
+                <li><b>Making agents interact comfortably with users.</b> It is crucial that any AI agent that interacts with you knows what you want and makes you feel comfortable.</li>
+                <li><b>Ethics of AI.</b> Whatever happens with AI, we want to make sure that it is making a good impact on the community. AI can impact society in negative and positive ways, so thinking about the impacts of an application is crucial.</li>
+            </ol>
+            We will be focusing on <b>maintaining models using representations, computers learning from data to create machine models</b> to learn from data to represent how toxic a statement can be.
+            Then, we will be <b>evaluating the ethics of the ML model usage</b> along the way in the tutorial sidebar.
+
+        </li>
+    </ol>
+`
+}
+
+let populateModalNext = () => { 
+    document.getElementById("modal-content-paragraph").innerHTML = `
+    In this tutorial, you will be learning that a machine learning model takes in a sentence you write and outputs how “toxic” the sentence is on a scale of 0 to 1. We are aiming to have the user type in a sentence with a low toxicity rate to be nice to each other! 
+        <ol>
+            <li>First, we will be using an API. <b>What is an API?<b>
+                
+            </li>
+            <li><b>What is machine learning?</b>
+
+            </li>
+        </ol>
+    To begin, we’ll guide you through the tutorial to write your own Convo code!
+    `
+}
+
+let populateAndDisplayModal = () => {
+    populateModalInitial();
+    var modal = document.getElementById("myModal");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // Open the modal 
+    modal.style.display = "block";
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+    modal.style.display = "none";
+    }
+
+    var nextButton = document.getElementById("modal-next");
+    nextButton.onclick = function() {
+        populateModalNext();
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }   
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -361,5 +590,12 @@ document.addEventListener("DOMContentLoaded", () => {
         addExamplePrograms();
     }
 
+    let exampleAnalysisTutorial = document.getElementById('example-analysis-tutorial-actions');
+    if (exampleAnalysisTutorial != null) {
+        addExampleAnalysisTutorialActions();
+    }
+
+    populateAndDisplayModal();
+ 
     addAudioPlayer();
 });

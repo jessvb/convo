@@ -178,6 +178,7 @@
 
 #example-actions,
 #example-programs,
+#example-analysis-tutorial-actions,
 #instructions,
 #goal {
     padding-top: 20px;
@@ -185,12 +186,14 @@
 }
 
 #example-actions-heading,
-#example-programs-heading {
+#example-programs-heading,
+#example-analysis-tutorial-actions-heading {
     cursor: pointer;
 }
 
 #example-actions-heading,
 #example-programs-heading,
+#example-analysis-tutorial-actions-heading,
 #instructions-heading,
 #goal-heading {
     font-size: 18px;
@@ -223,17 +226,20 @@
 }
 
 #example-actions-list,
-#example-programs-list {
+#example-programs-list,
+#example-analysis-tutorial-actions-list {
     display: none;
 }
 
 .example-action,
-.example-program {
+.example-program,
+.example-analysis-tutorial-action {
     padding-top: 10px;
 }
 
 #example-actions-direction,
-#example-programs-direction {
+#example-programs-direction,
+#example-analysis-tutorial-actions-direction {
     font-size: 12px;
 }
 
@@ -242,3 +248,49 @@
     justify-content: center;
     margin: 2rem;
 }
+
+
+
+
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  
+  /* Modal Content */
+  .modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    text-align: left;
+  }
+  
+.modal-content-button {
+    text-align: right;
+  }
+  /* The Close Button */
+  .close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
