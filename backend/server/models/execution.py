@@ -7,6 +7,38 @@ from error import *
 from models import *
 from helpers import *
 
+import json 
+import requests 
+# from monkeylearn import MonkeyLearn
+
+def analyze_sentiment(phrase):
+    API_KEY = 'AIzaSyB8r5YkOdcBh2hWFSs2BlnH1iu7_zvn7G0'
+    API_URL = ('https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze' +    
+        '?key=' + API_KEY)
+    data_dict = {
+        'comment': {'text': phrase},
+        'languages': ['en'],
+        'requestedAttributes': {'TOXICITY': {}}
+    }
+    logger.debug("this is the phrase: " + phrase)
+    logger.debug("trying to send data to sentiment analysis")
+    response = requests.post(url=API_URL, data=json.dumps(data_dict))
+    logger.debug("showing sentiment analysis response return")
+    logger.debug(response)
+    response_dict = json.loads(response.content) 
+    print(json.dumps(response_dict, indent=2))
+    toxicity_probability = response_dict['attributeScores']['TOXICITY']['summaryScore']['value']
+    return toxicity_probability
+
+# def analyze_sentiment(phrase):
+#     MONKEYLEARN_API_KEY = '1e3e19e99f343804b39ecda1c0ac9f1fe5a89d7f'
+#     ml = MonkeyLearn(MONKEYLEARN_API_KEY)
+#     data = [phrase]
+#     model_id = 'cl_pi3C7JiL' # indicates that this is the sentiment analysis model
+#     result = ml.classifiers.classify(model_id, data)
+#     logger.debug(result.body)
+#     return "positive"
+
 class Execution(object):
     """
     Represents an execution of a procedure
@@ -19,7 +51,7 @@ class Execution(object):
     def __init__(self, context, actions, to_emit=True):
         self.context = context
         self.actions = actions
-        self.variables = {}
+        self.variables = {"toxvar": ""}
         self.step = 0
         self.input_needed = None
         self.thread_running = False
@@ -118,7 +150,18 @@ class Execution(object):
     def evaluate_action(self, action):
         """Evaluates an action"""
         logger.debug(f"[{self.context.sid}][Execution][Evaluating] Evaluating action {str(action)} on step {self.step}.")
-        if isinstance(action, SayAction):
+        if isinstance(action, AnalyzeSentimentAnalysisAction):
+            phrase = action.phrase 
+            if isinstance(action.phrase, ValueOf):
+                variable = action.phrase.variable 
+                phrase = self.variables[variable]
+            analyze_sentiment_prob_result = analyze_sentiment(phrase)
+            self.variables["toxvar"] = analyze_sentiment_prob_result
+            return_message = f"The phrase '{phrase}' has a toxicity probability of {analyze_sentiment_prob_result}"
+            logger.debug(f"[{self.context.sid}][Execution][Evaluating] Analyze Sentiment Analysis of '{phrase}'")
+            self.emit("response", { "message": return_message, "state": self.context.state }) # dictates the analysis that will be returned
+            # self.context.add_message(action.phrase)
+        elif isinstance(action, SayAction):
             phrase = action.phrase
             if isinstance(action.phrase, ValueOf):
                 variable = action.phrase.variable

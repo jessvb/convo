@@ -50,24 +50,24 @@ class SetPropertyAction(Action):
 
 class VariableAction(Action):
     def __init__(self, variable, value):
-        self.variable = variable
+        self.name = variable
         self.value = value
 
     def json(self):
         return {
             "name": str(self),
-            "variable": self.variable,
+            "name": self.name,
             "value": self.value
         }
 
     def python(self):
-        return [f"{self.variable} = {self.value}"]
+        return [f"{self.name} = {self.value}"]
 
     def __eq__(self, other):
         if not isinstance(other, type(self)):
             return NotImplemented
 
-        return self.variable == other.variable and self.value == other.value
+        return self.name == other.name and self.value == other.value
 
 class CreateVariableAction(VariableAction):
     def __init__(self, variable, value):
@@ -106,6 +106,35 @@ class SubtractFromVariableAction(VariableAction):
     def to_nl(self):
         value = self.value.to_nl() if isinstance(self.value, ValueOf) else self.value
         return f"subtracting {value} from variable {self.variable}"
+
+class AnalyzeSentimentAnalysisAction(Action):
+    def __init__(self, phrase):
+        self.phrase = phrase
+
+    def json(self):
+        return {
+            "name": str(self),
+            "phrase": self.phrase
+        }
+
+    def python(self):
+        return [f"analyze phrase of(\"{self.phrase}\")"]
+
+    def to_nl(self):
+        if isinstance(self.phrase, ValueOf):
+            return f"analyzing the sentiment analysis value of the variable {self.phrase.variable}"
+        return f"analyzing the sentiment analysis of the phrase \"{self.phrase}\""
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return self.phrase.lower() == other.phrase.lower()
+
+    def __eq__(self, other):
+        # Define equality between two CustomActions
+        # Usually it's a check that all properties are equal in value
+        pass
 
 class SayAction(Action):
     def __init__(self, phrase):

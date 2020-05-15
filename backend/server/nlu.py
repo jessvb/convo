@@ -36,7 +36,10 @@ equality_condition_regex = "(?!.*less|.*greater)(?:if |while |until )?(.+) is(?:
 variable_regex = "(?:(?:a|the) variable)(?: (.+))?|variable (.+)"
 procedure_regex = "(?:(?:a|the) procedure|procedure)(?: called)?(?: (.+))?"
 
+analyze_sentiment_regex = "analyze(?: (.+))?"
+
 action_regexes = [
+    analyze_sentiment_regex,
     say_regex, play_sound_regex,
     set_variable_regex, create_variable_regex, add_to_variable_regex, subtract_from_variable_regex,
     get_user_input_regex,
@@ -160,6 +163,10 @@ class SemanticNLU(object):
             # Telling Convo to say something
             match = re.match(say_regex, message)
             return SayActionGoal(self.context, phrase=self.parse_value(group(match, 1)))
+        elif re.match(analyze_sentiment_regex, message):
+            # Telling Convo to analyze the sentiment of something
+            match = re.match(analyze_sentiment_regex, message)
+            return AnalyzeSentimentAnalysisActionGoal(self.context, phrase=self.parse_value(group(match, 1)))
         elif re.match(create_list_regex, message):
             # Creating a list
             match = re.match(create_list_regex, message)

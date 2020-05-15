@@ -3,7 +3,7 @@ tab = "    "
 
 class Procedure(object):
     """Represents a procedure"""
-    def __init__(self, name, actions=[], variables=[], lists={}, klass=None):
+    def __init__(self, name, actions=[], variables=["toxvar"], lists={}, klass=None):
         self.name = name
         self.actions = actions
         self.variables = set(variables)
