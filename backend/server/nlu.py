@@ -37,7 +37,11 @@ until_stop_condition_regex = "i say stop"
 variable_regex = "(?:(?:a|the) variable)(?: (.+))?|variable (.+)"
 procedure_regex = "(?:(?:a|the) procedure|procedure)(?: called)?(?: (.+))?"
 
-action_regexes = [
+greet_welcome_regex = "greet(?: (.+))?"
+
+weather_regex = "check weather(?: (.+))?"
+
+action_regexes = [ weather_regex,greet_welcome_regex,
     say_regex, play_sound_regex,
     set_variable_regex, create_variable_regex, add_to_variable_regex, subtract_from_variable_regex,
     get_user_input_regex,
@@ -82,6 +86,13 @@ class SemanticNLU(object):
         elif re.search(delete_procedure_regex, message):
             match = re.search(delete_procedure_regex, message)
             return DeleteProcedureGoal(self.context, name=self.parse_procedure(group(match, 1)))
+        elif re.search(greet_welcome_regex, message):
+            match = re.search(greet_welcome_regex, message)
+            return GreetWelcomeActionGoal(self.context, phrase=self.parse_value(group(match,1)))
+        elif re.search(weather_regex, message):
+            match = re.search(weather_regex, message)
+            logger.debug("Reached")
+            return WeatherActionGoal(self.context, phrase=self.parse_value(group(match,1)))
 
     def parse_step_goal(self, message):
         """Parse function for goals and intents that relate to editing"""
@@ -105,6 +116,7 @@ class SemanticNLU(object):
             return ChangeStepGoal(self.context)
 
     def parse_action_goal(self, message):
+        print("Reached")
         """Parse function for goals and intents that lead to adding actions to procedures"""
         if message is None:
             return message
@@ -177,7 +189,12 @@ class SemanticNLU(object):
             # Getting user input
             match = re.match(get_user_input_regex, message)
             return GetUserInputActionGoal(self.context, variable=group(match, 1))
-
+        elif re.search(greet_welcome_regex, message):
+            match = re.search(greet_welcome_regex, message)
+            return GreetWelcomeActionGoal(self.context, phrase=self.parse_value(group(match,1)))
+        elif re.search(weather_regex, message):
+            match = re.search(weather_regex, message)
+            return WeatherActionGoal(self.context, phrase=self.parse_value(group(match,1)))
     def parse_condition(self, message):
         """Parse condition"""
         if message is None:

@@ -310,3 +310,39 @@ class PlaySoundAction(Action):
             return NotImplemented
 
         return self.sound == other.sound
+
+class GreetWelcomeAction(Action):
+    def __init__(self, phrase):
+        self.phrase = phrase
+    
+    def json(self):
+        return {"name":str(self),
+                "phrase":self.phrase}
+    
+    def to_nl(self):
+        return f"greeting the user with a phrase"
+    
+    def __str__(self):
+        name = self.__class__.__name__
+        return to_snake_case(name[:-len("Action")])
+    
+    def python(self):
+        return [f"greet(\"{self.phrase}\")"]
+
+class WeatherAction(Action):
+    def __init__(self, phrase):
+        self.phrase = phrase
+    
+    def json(self):
+        return {"name":str(self), "phrase":self.phrase}
+    
+    def to_nl(self):
+        return f"greeting the user with the weather"
+    
+    def __str__(self):
+        name = self.__class__.__name__
+        return to_snake_case(name[:-len("Action")])
+    
+    def python(self):
+        return [f"greet(\"{self.phrase}\")"]
+
