@@ -389,18 +389,29 @@ user_input_test = [
     "bye"
 ]
 
+bug_test = [
+    "create a procedure called test",
+    "say hello",
+    "done",
+    "run test",
+    "create a procedure called test1",
+    "say hello",
+    "done",
+    "run test1"
+]
+
 logging.basicConfig(level=logging.DEBUG)
 client = Client("test")
 dm = client.dm
 sleep_time = 0.2
-for i, message in enumerate(user_input_test):
+for i, message in enumerate(bug_test):
     logging.info(message)
     res = dm.handle_message(message)
     if res:
         logging.info(res)
         logging.info(dm.context.state)
     if message.startswith("run"):
-        time.sleep(3)
+        time.sleep(2)
     time.sleep(sleep_time)
 
-time.sleep(3)
+time.sleep(2)
