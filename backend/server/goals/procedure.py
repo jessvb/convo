@@ -148,7 +148,7 @@ class DeleteProcedureGoal(HomeGoal):
     def complete(self):
         procedure = self.context.procedures[self.name]
         del self.context.procedures[self.name]
-        remove_procedure(procedure)
+        remove_procedure(self.context.sid, procedure)
         return super().complete()
 
     def setattr(self, attr, value):

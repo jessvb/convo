@@ -65,11 +65,13 @@ def add_or_update_procedure(sid, procedure):
         program.updated_on = datetime.utcnow()
 
     db.session.commit()
+    procedure.id = program.id
+
     return program
 
-def remove_procedure(procedure):
+def remove_procedure(sid, procedure):
     '''Removes a procedure from database'''
-    program = Program.query.filter_by(id=procedure.id).first()
+    program = Program.query.filter_by(sid=sid, name=procedure.name).first()
     if not program:
         return
 
