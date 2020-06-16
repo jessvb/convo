@@ -7,4 +7,4 @@ An interactive conversational programming agent.
 ![Convo's four modules](./figs/system_modules.png?raw=true "Convo's four modules")
 
 ## Wiki
-For detailed and most up-to-date information and setup instructions, please visit the [Convo Wiki](https://github.com/jessvb/convo/wiki).
+For detailed and up-to-date information and setup instructions, please visit the [Convo Wiki](https://github.com/jessvb/convo/wiki), including the [setup page](https://github.com/jessvb/convo/wiki/Setup).
