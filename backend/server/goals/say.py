@@ -33,30 +33,10 @@ class SayActionGoal(ActionGoal):
             return
         setattr(self, attr, value)
 
-class GreetWelcomeActionGoal(ActionGoal):
-    """Adding a welcome action"""
-    def __init__(self, context, phrase = "Welcome to Programming"):
-        super().__init__(context)
-        self.setattr("phrase", phrase)
-    
-    def complete(self):
-        assert hasattr(self, "actions")
-        self.actions.append(GreetWelcomeAction(self.phrase))
-        return super().complete()
-    
-    def setattr(self, attr, value):
-        if attr == "phrase":
-            if value is None:
-                self.phrase = "Welcome to Programming"
-            else:
-                self.phrase = value
-            return
-        setattr(self, attr, value)
-
 class WeatherActionGoal(ActionGoal):
     def __init__(self, context, phrase):
         super().__init__(context)
-        self.setattr("city", self.check_weather(phrase, None))
+        self.setattr("city", phrase)
     
     def complete(self):
         assert hasattr(self, "actions")
@@ -64,25 +44,39 @@ class WeatherActionGoal(ActionGoal):
         return super().complete()
     
     def setattr(self, attr, value):
+        logger.debug("attr: ",attr)
+        logger.debug("Value: ", value)
         if attr == "city":
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, f"Which city?"))
             else:
                 self.city = value
-                self.todos.append(GetInputGoal(self.context, self, "phrase", f"Choose a value [Humidity, Temperature, Date, Pressure]"))
+                self.todos.append(GetInputGoal(self.context, self, "phrase", f"Would you like to check the humidity, temperature or pressure?"))
             return
         if attr == "phrase":
-            logger.debug("Reached")
-            if value is None or value not in ["humidity","date", "weather","pressure","temperature"]:
-                self.todos.append(GetInputGoal(self.context, self, "phrase", f"Wrong value make sure the value is one of the following [Humidity, Temperature, Date, Pressure]"))
+            if value is None or value not in ["humidity", "weather","pressure","temperature"]:
+                self.todos.append(GetInputGoal(self.context, self, "phrase", f"I didn't quite catch that. Did you want to check the temperature, humidity or pressure?"))
             else:
-                self.phrase = self.check_weather(self.city, value)
+                if value == "temperature":
+                    self.phrase = value
+                    self.todos.append(GetInputGoal(self.context, self, "format", f"Do you want the temperature in Celsius or Fahrenheit?"))
+                else:
+                    self.phrase = self.check_weather(self.city, value, None)
+            return
+        if attr == "format":
+            if value not in ['celsius', 'fahrenheit']:
+                self.todos.append(GetInputGoal(self.context, self, "format", f"I did not catch that. Do you want the temperature in Celsius or Fahrenheit?"))
+            else:
+                self.phrase = self.check_weather(self.city, self.phrase, value)
             return
         setattr(self, attr, value)
     
-    def check_weather(self, phrase, spec):
+    def check_weather(self, phrase, spec, temp):
         if phrase == None:
             return None
+        # logger.debug("Phrase: ", phrase)
+        # logger.debug("Spec: ", spec)
+        # logger.debug("Temp: ", temp)
         api_key = "ae0dc43f65cd3e7408eee9948d09ea7f"#api key
         url = 'http://api.openweathermap.org/data/2.5/weather?q={}&appid=ae0dc43f65cd3e7408eee9948d09ea7f&units=metric'.format(phrase)
         res = requests.get(url)
@@ -99,7 +93,6 @@ class WeatherActionGoal(ActionGoal):
         else:
             text = " AM"
         x = str(new_date).split(" ")
-        current_temp = "The temperature is " + str(data['main']['temp']) + " Celsius" # get current temp
         current_time = x[1]
         count = 0
         final_time = "The time is "
@@ -111,20 +104,19 @@ class WeatherActionGoal(ActionGoal):
                 final_time += part
             count += 1
         final_time += text
-        current_time = final_time #assign final time
-        current_date = "The date is " + x[0]
-        current_weather= "The weather is looking like " + str(data['weather'][0]['description']) # assign weather
-        current_local_humidity = "The humidity is " + str(data['main']['humidity']) +"%" # assgin humidity
-        current_local_pressure = "The pressure is " + str(data['main']['pressure']) + " hPa"# assign pressure text 
-        if spec == "temperature": 
-            final += "Current Temperature: " + str(current_temp) + "\n"
-        # final += "Current Time: " + str(current_time) + "\n"
-        if spec == "date": 
-            final += "Current Date: " + str(current_date)+ "\n"
+        current_weather= str(data['weather'][0]['description']) # assign weather
+        current_local_humidity = str(data['main']['humidity']) +"%" # assgin humidity
+        current_local_pressure = str(data['main']['pressure']) + " hPa"# assign pressure text 
+        if spec == "temperature":
+            if temp == "fahrenheit":
+                current_temp = "The temperature in " + self.city +  " is " + str(float(data['main']['temp'])*9/5 + 32) + " Fahrenheit"
+                final += current_temp + "\n"
+            else:
+                final += "The temperature in " + self.city + " is " + str(data['main']['temp']) + " Celsius"
         if spec == "weather":
-            final += "Current Weather: " + str(current_weather)+ "\n"
+            final += "The Weather in " + self.city + " is " + str(current_weather)+ "\n"
         if spec == "humidity":
-            final += "Current Local Humidity: "+ str(current_local_humidity)+ "\n"
+            final += "The humidity in " + self.city + " is " + str(current_local_humidity)+ "\n"
         if spec == "pressure":
-            final += "Current Local Pressure: "+ str(current_local_pressure)+ "\n"
+            final += "The pressure in " + self.city + " is " + str(current_local_pressure)+ "\n"
         return final
