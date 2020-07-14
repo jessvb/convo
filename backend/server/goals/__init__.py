@@ -6,6 +6,7 @@ from goals.lists import *
 from goals.klass import *
 from goals.procedure import *
 from goals.say import *
+from goals.greet import *
 from goals.conditional import *
 from goals.loop import *
 from goals.edit import *

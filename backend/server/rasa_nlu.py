@@ -10,6 +10,7 @@ intent_goal = {
     "run_procedure": ExecuteGoal,
     "edit_procedure": EditGoal,
     "say": SayActionGoal,
+    "greet": GreetActionGoal,
     "get_user_input": GetInputGoal,
     "play_sound": PlaySoundActionGoal,
     "create_variable": CreateVariableActionGoal,

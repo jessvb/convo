@@ -1,9 +1,9 @@
 // Connect to servers on production
-const socket = io.connect("https://userstudy.appinventor.mit.edu");
-const socketApi = io.connect("https://userstudy.appinventor.mit.edu", { path: '/api/socket.io' })
+//const socket = io.connect("https://userstudy.appinventor.mit.edu");
+//const socketApi = io.connect("https://userstudy.appinventor.mit.edu", { path: '/api/socket.io' })
 // Connect to servers on local
-// const socket = io.connect('http://localhost:8080');
-// const socketApi = io.connect('http://localhost:5000');
+const socket = io.connect('http://localhost:8080');
+const socketApi = io.connect('http://localhost:5000');
 
 // Genrates or remembers a somewhat-unique ID with distilled user-agent info.
 let getUniqueId = () => {

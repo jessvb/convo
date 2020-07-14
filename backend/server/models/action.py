@@ -24,6 +24,40 @@ class Action(object):
     def __eq__(self, other):
         raise NotImplementedError
 
+class GreetAction(Action):
+    def __init__(self):
+        return
+        #self.phrase = phrase <- don't need to init anything here, since there's
+        # nothing to set! see SayAction for an example where you do set 
+        # something
+
+    def json(self):
+        return {
+            "name": str(self),
+            #"phrase": self.phrase <- since we don't have any attributes, we 
+            # don't need this (see SayAction for an example with an attribute)
+        }
+
+    def __str__(self):
+        # String representation of the class
+        name = self.__class__.__name__
+        # Default is the just converting to snake case and removing "Action"
+        # For AnotherCustomAction, the __str__ would return "another_custom"
+        return to_snake_case(name[:-len("Action")])
+
+
+    def python(self):
+        # String representation of potential corresponding Python code
+        # Currently not too important, since no Python support yet
+        return [f"greet(\"Hello world!\")"]
+
+
+    def to_nl(self):
+        # The "natural language" representation of the action
+        # Essentially, what is this action doing in simple terms:
+        return "greeting the user with \"Hello world!\""
+
+
 class SetPropertyAction(Action):
     def __init__(self, property, value):
         self.property = property

@@ -17,6 +17,9 @@ get_user_input_regex = "(?:listen to user|(?:listen for|get)(?: user)? input)(?:
 value_of_regex = "(?:the )?value of (?:(?:the )?variable )?(.+)"
 play_sound_regex = "play(?: the)?(?: (.+))? sound"
 
+# go to https://regexr.com/ to test your regex :)
+greet_regex = "(?:greeting)|(?:(?:greet)(?: me)*)|(?:do a greeting)|(?:send (?:your )*greetings*)"
+
 create_variable_regex = "(?:create|make)(?: a)?(?: (.+))? variable(?: called| named)?(?:(?: (.+))? and set(?: it)? to (.+)| (.+))?"
 set_variable_regex = "(?!change step$)(?:set|change)(?:(?: the)? value of)?(?:(?: (.+))? to (.+)| (.+))"
 add_to_variable_regex = "add(?: (.+))? to (.+)"
@@ -38,7 +41,7 @@ variable_regex = "(?:(?:a|the) variable)(?: (.+))?|variable (.+)"
 procedure_regex = "(?:(?:a|the) procedure|procedure)(?: called)?(?: (.+))?"
 
 action_regexes = [
-    say_regex, play_sound_regex,
+    say_regex, play_sound_regex, greet_regex,
     set_variable_regex, create_variable_regex, add_to_variable_regex, subtract_from_variable_regex,
     get_user_input_regex,
     create_list_regex, add_to_list_regex
@@ -161,6 +164,10 @@ class SemanticNLU(object):
             # Telling Convo to say something
             match = re.match(say_regex, message)
             return SayActionGoal(self.context, phrase=self.parse_value(group(match, 1)))
+        elif re.match(greet_regex, message):
+            # Telling Convo to greet with "Hello world!"
+            match = re.match(greet_regex, message)
+            return GreetActionGoal(self.context)
         elif re.match(create_list_regex, message):
             # Creating a list
             match = re.match(create_list_regex, message)
