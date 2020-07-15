@@ -4,7 +4,7 @@ from goals import *
 from models import *
 from helpers import *
 
-create_procedure_regex = "(?:make|create)(?: a)? (?:procedure|program)(?: (?:called|named) (.+))?$"
+create_procedure_regex = "(?:make|create)(?: a)?(?:new)? (?:procedure|program)(?: (?:called|named) (.+))?$"
 rename_procedure_regex = "rename(?: (.+) to (.+)| (.+))"
 delete_procedure_regex = "(?!.*step)delete(?: (.+))"
 execute_regex = "run(?: (.+))?"
