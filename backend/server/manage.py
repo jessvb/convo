@@ -63,7 +63,7 @@ def join(data):
 
     intro = '''
         Hi, I'm Convo! What would you like to do?
-        To get started, you can create a new procedure by saying "Create a new procedure".
+        To get started, you can create a procedure by saying "Create a procedure".
         If you want to run a procedure, say "Run" and then the name of the procedure.
     '''
     response = {
