@@ -139,3 +139,41 @@ class SubtractFromVariableActionGoal(ActionGoal):
             else:
                 self.value = value
             return
+
+class GenerateTextActionGoal(ActionGoal):
+    '''Goal for generating text action'''
+    def __init__(self,context,style=None,length=None,prefix=None):
+        super.__init__(context)
+        self.setattr("book style",style)
+        self.setattr("length",length)
+        self.setattr("prefix",prefix)
+
+    def complete(self):
+        assert hasattr(self,"actions")
+        self.actions.append(GenerateTextAction(self.style, self.length,self.prefix))
+        return super().complete()
+    
+    def setattr(self, attr, value):
+        if attr == "book style":
+            if value is None: # is this the right way to do the setattr? Not sure what does isInstance mean
+                self.todos.append(GetInputGoal(self.context, self, attr, f'''What style would you like your text to be? 
+                You could choose from Harry Porter, Narnia, and Anne of Green Gables!'''))
+            else:
+                self.style = value
+            return
+        if attr == "length":
+            if value is None:
+                self.todos.append(GetInputGoal(self.context,self,attr,f'''How long would you like your text be? 
+                Say "a sentence" or "a paragraph" '''))
+            else:
+                self.style = style
+            return
+        if attr == "prefix":
+            if value is None:
+                self.todos.append(GetInputGoal(self.context,self,attr,f'''How do you want to start the text? 
+                Give me a few words or phrases.'''))
+            else:
+                self.style = style
+            return
+        setattr(self, attr, value)
+

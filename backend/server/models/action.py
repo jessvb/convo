@@ -310,3 +310,37 @@ class PlaySoundAction(Action):
             return NotImplemented
 
         return self.sound == other.sound
+
+class TextAction(Action):
+    def __init__(self,style,length,prefix):
+        self.style = style
+        self.length = length
+        self.prefix = prefix
+
+    def json(self):
+        return {
+            "style":self.style,
+            "length":self.length,
+            "prefix":str(prefix)
+
+        }
+    
+    def python(self):#what's the purpose for this function?
+        return [f"generate text based on {self.style} that is {self.length} long with prefix {self.prefix}"]
+
+    def to_nl(self):
+        return f"generate text based on {self.style} that is {self.length} long with prefix {self.prefix}"
+
+    def __eq__(self,other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        return self.style == other.style and self.length == other.length and self.prefix == other.prefix
+    
+
+class GenerateTextAction(TextAction):
+    def __init__(self,style,length,prefix):
+        super.__init__(style,length,prefix)
+
+    def to_nl(self):
+        return f"generate text based on {self.style} that is {self.length} long with prefix {self.prefix}"

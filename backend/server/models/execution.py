@@ -138,6 +138,11 @@ class Execution(object):
             self.variables[action.variable] = self.variables[action.value.variable] if isinstance(action.value, ValueOf) else action.value
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Creating variable {action.variable} with value {self.variables[action.variable]}.")
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Variables after creating variable: {str(self.variables)}")
+        elif isinstance(action,GenerateTextAction):
+            logger.debug(f"[{self.context.sid}][Execution][Evaluating] Generate text in {action.style} style with {action.prefix} to start with")
+            logger.debug(f"[{self.context.sid}][Execution][Evaluating] Text length: {action.length}")
+            phrase = f"When I get the model working, I will generate {action.length} of {action.style} styled text that begins with {action.prefix}. Stay tuned! "
+            self.emit("response", {"message":phrase,"state":self.context.state})
         elif isinstance(action, SetVariableAction):
             if action.variable in self.variables:
                 self.variables[action.variable] = self.variables[action.value.variable] if isinstance(action.value, ValueOf) else action.value

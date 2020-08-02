@@ -4,7 +4,7 @@ from goals import *
 from models import *
 from helpers import *
 
-create_procedure_regex = "(?:make)(?: a)?(?:new)?(?:procedure|program)(?: (?:called|named) (.+))?$"
+create_procedure_regex = "(?:make|create)(?: a)? (?:procedure|program)(?: (?:called|named) (.+))?$"
 rename_procedure_regex = "rename(?: (.+) to (.+)| (.+))"
 delete_procedure_regex = "(?!.*step)delete(?: (.+))"
 execute_regex = "run(?: (.+))?"
@@ -21,6 +21,8 @@ create_variable_regex = "(?:create|make)(?: a)?(?: (.+))? variable(?: called| na
 set_variable_regex = "(?!change step$)(?:set|change)(?:(?: the)? value of)?(?:(?: (.+))? to (.+)| (.+))"
 add_to_variable_regex = "add(?: (.+))? to (.+)"
 subtract_from_variable_regex = "subtract(?: (.+))? from (.+)"
+
+generate_text_regex = "generate text "
 
 go_to_step_regex = "(?:go to step(?: (.+))?|go to(?: the)? (.+) step)"
 delete_step_regex = "(?:delete|remove)(?: the)? step"
@@ -41,7 +43,7 @@ action_regexes = [
     say_regex, play_sound_regex,
     set_variable_regex, create_variable_regex, add_to_variable_regex, subtract_from_variable_regex,
     get_user_input_regex,
-    create_list_regex, add_to_list_regex
+    create_list_regex, add_to_list_regex, generate_text_regex
 ]
 condition_regexes = [comparison_condition_regex, equality_condition_regex]
 
@@ -137,6 +139,11 @@ class SemanticNLU(object):
             # Setting value of an existing variable
             match = re.match(set_variable_regex, message)
             return SetVariableActionGoal(self.context, name=self.parse_variable(group(match, [1, 3])), value=self.parse_value(group(match, 2)))
+        elif re.match(generate_text_regex,message):
+            #generate a piece of text based on user preference
+            match = re.match(generate_text_regex,message)
+            return GenerateTextActionGoal(self.context,style=None,length=None,prefix=None) #needs to modify the regex & change this line!
+        
         elif re.match(create_variable_regex, message):
             # Creating a new variable
             match = re.match(create_variable_regex, message)
