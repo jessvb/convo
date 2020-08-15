@@ -126,6 +126,11 @@ class Execution(object):
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Saying '{phrase}'")
             self.emit("response", { "message": phrase, "state": self.context.state })
             self.context.add_message(action.phrase)
+        elif isinstance(action, GreetAction):
+            greeting = "Hello world!"
+            logger.debug(f"[{self.context.sid}][Execution][Evaluating] Greeting with '{greeting}'")
+            self.emit("response", { "message": greeting, "state": self.context.state })
+            self.context.add_message(greeting)
         elif isinstance(action, PlaySoundAction):
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Playing sound file {action.sound}.")
             self.emit("playSound", { "sound": action.sound, "state": self.context.state })
@@ -139,6 +144,7 @@ class Execution(object):
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Creating variable {action.variable} with value {self.variables[action.variable]}.")
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Variables after creating variable: {str(self.variables)}")
         elif isinstance(action,GenerateTextAction):
+            logger.debug(f"Inside execution.py")
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Generate text in {action.style} style with {action.prefix} to start with")
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Text length: {action.length}")
             phrase = f"When I get the model working, I will generate {action.length} of {action.style} styled text that begins with {action.prefix}. Stay tuned! "

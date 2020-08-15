@@ -1,5 +1,6 @@
 from helpers import to_snake_case
 from models.valueof import ValueOf
+from app import logger
 
 tab = "    "
 
@@ -131,6 +132,39 @@ class SayAction(Action):
 
         return self.phrase.lower() == other.phrase.lower()
 
+class GreetAction(Action):
+    def __init__(self):
+        return
+        #self.phrase = phrase <- don't need to init anything here, since there's
+        # nothing to set! see SayAction for an example where you do set 
+        # something
+
+    def json(self):
+        return {
+            "name": str(self),
+            #"phrase": self.phrase <- since we don't have any attributes, we 
+            # don't need this (see SayAction for an example with an attribute)
+        }
+
+    def __str__(self):
+        # String representation of the class
+        name = self.__class__.__name__
+        # Default is the just converting to snake case and removing "Action"
+        # For AnotherCustomAction, the __str__ would return "another_custom"
+        return to_snake_case(name[:-len("Action")])
+
+
+    def python(self):
+        # String representation of potential corresponding Python code
+        # Currently not too important, since no Python support yet
+        return [f"greet(\"Hello world!\")"]
+
+
+    def to_nl(self):
+        # The "natural language" representation of the action
+        # Essentially, what is this action doing in simple terms:
+        return "greeting the user with \"Hello world!\""
+        
 class ConditionalAction(Action):
     def __init__(self, condition, actions):
         self.condition = condition
@@ -313,6 +347,7 @@ class PlaySoundAction(Action):
 
 class TextAction(Action):
     def __init__(self,style,length,prefix):
+        logger.debug(f"reaching the textAction class")
         self.style = style
         self.length = length
         self.prefix = prefix
@@ -340,6 +375,7 @@ class TextAction(Action):
 
 class GenerateTextAction(TextAction):
     def __init__(self,style,length,prefix):
+        logger.debug(f"hitting the generate text action class")
         super.__init__(style,length,prefix)
 
     def to_nl(self):

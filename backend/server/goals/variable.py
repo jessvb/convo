@@ -1,5 +1,6 @@
 from models import *
 from goals import *
+from app import logger
 
 class CreateVariableActionGoal(ActionGoal):
     """Goal for adding a create variable action"""
@@ -142,7 +143,8 @@ class SubtractFromVariableActionGoal(ActionGoal):
 
 class GenerateTextActionGoal(ActionGoal):
     '''Goal for generating text action'''
-    def __init__(self,context,style=None,length=None,prefix=None):
+    logger.debug(f"Invoking generateTextActionGoal... ")
+    def __init__(self,context,style,length,prefix):
         super.__init__(context)
         self.setattr("book style",style)
         self.setattr("length",length)
@@ -154,26 +156,38 @@ class GenerateTextActionGoal(ActionGoal):
         return super().complete()
     
     def setattr(self, attr, value):
+        logger.debug("attr: ",attr)
+        logger.debug("Value: ", value)
         if attr == "book style":
             if value is None: # is this the right way to do the setattr? Not sure what does isInstance mean
                 self.todos.append(GetInputGoal(self.context, self, attr, f'''What style would you like your text to be? 
                 You could choose from Harry Porter, Narnia, and Anne of Green Gables!'''))
             else:
                 self.style = value
+                self.todos.append(GetInputGoal(self.context, self, "length", f'''How long would you like your text be? 
+                Say "a sentence" or "a paragraph"'''))
             return
         if attr == "length":
-            if value is None:
-                self.todos.append(GetInputGoal(self.context,self,attr,f'''How long would you like your text be? 
+            if value is None or value not in ["a sentence","a paragraph"]:
+                self.todos.append(GetInputGoal(self.context,self,"length",f'''I didn't quite catch that. How long would you like your text be? 
                 Say "a sentence" or "a paragraph" '''))
             else:
-                self.style = style
+                if value == "a sentence":
+                    self.actions.append(SayAction("Generate a sentence for you.")) #just a placeholder change needed
+                    self.todos.append(GetInputGoal(self.context,self,"prefix",f'''How do you want to start the text? 
+                Give me a few words or phrases.'''))
+                else:
+                    self.actions.append(SayAction("Generate a paragraph for you."))
+                    self.todos.append(GetInputGoal(self.context,self,"prefix",f'''How do you want to start the text? 
+                Give me a few words or phrases.'''))
             return
         if attr == "prefix":
             if value is None:
-                self.todos.append(GetInputGoal(self.context,self,attr,f'''How do you want to start the text? 
+                self.todos.append(GetInputGoal(self.context,self,"prefix",f'''Sorry didn't quite catch that. How do you want to start the text? 
                 Give me a few words or phrases.'''))
             else:
-                self.style = style
+                self.prefix = value
+                self.actions.append(SayAction("Generate text based on prefix" + self.prefix))
             return
         setattr(self, attr, value)
 

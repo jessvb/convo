@@ -19,7 +19,8 @@ intent_goal = {
     "go_to_step": GoToStepGoal,
     "delete_step": DeleteStepGoal,
     "add_step": AddStepGoal,
-    "change_step": ChangeStepGoal
+    "change_step": ChangeStepGoal,
+    "generate_text":GenerateTextActionGoal
 }
 
 class RasaNLU(object):
