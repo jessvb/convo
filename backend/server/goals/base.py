@@ -89,6 +89,11 @@ class HomeGoal(BaseGoal):
     def __init__(self, context):
         super().__init__(context)
 
+# class TutorialGoal(BaseGoal):
+#     """Base goal class for goals that can be done in the tutorial state"""
+#     def __init__(self, context):
+#         super().__init__(context)
+
 class ActionGoal(BaseGoal):
     """Base goal class for goals that involve adding actions to procedures"""
     def __init__(self, context):

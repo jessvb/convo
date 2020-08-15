@@ -2,6 +2,7 @@ import re
 import string
 from goals import *
 from models import *
+from app import logger
 from helpers import *
 
 create_procedure_regex = "(?:make|create)(?: a)? (?:procedure|program)(?: (?:called|named) (.+))?$"
@@ -37,11 +38,15 @@ until_stop_condition_regex = "i say stop"
 variable_regex = "(?:(?:a|the) variable)(?: (.+))?|variable (.+)"
 procedure_regex = "(?:(?:a|the) procedure|procedure)(?: called)?(?: (.+))?"
 
-greet_welcome_regex = "greet(?: (.+))?"
+tutorial_welcome_regex = "tutorial(?: (.+))?"
 
-weather_regex = "(?:check|get)(?:.*weather)(?: in|)(.+|)"
+say_weather_regex = "(?:say)(?:.*weather)(?: in|)(.+|)"
 
-action_regexes = [ weather_regex,greet_welcome_regex,
+get_weather_regex = "(?:check|get)((?:.*weather)|(.*temperature|.*humidity|.*pressure))(?: in|)(.+|)"
+
+
+
+action_regexes = [ say_weather_regex, get_weather_regex,
     say_regex, play_sound_regex,
     set_variable_regex, create_variable_regex, add_to_variable_regex, subtract_from_variable_regex,
     get_user_input_regex,
@@ -61,7 +66,7 @@ class SemanticNLU(object):
     def parse_message(self, message):
         """Parse and try to extract goal from input messages using various specific functions"""
         message = message.lower()
-        for parse in [self.parse_home_goal, self.parse_action_goal, self.parse_step_goal, self.parse_condition, self.parse_value_of]:
+        for parse in [self.parse_home_goal, self.parse_action_goal, self.parse_tutorial_goal, self.parse_step_goal, self.parse_condition, self.parse_value_of]:
             # Try to parse with each parse function and returns the first object that is not None
             parsed = parse(message)
             if parsed is not None:
@@ -86,9 +91,26 @@ class SemanticNLU(object):
         elif re.search(delete_procedure_regex, message):
             match = re.search(delete_procedure_regex, message)
             return DeleteProcedureGoal(self.context, name=self.parse_procedure(group(match, 1)))
-        elif re.search(weather_regex, message):
-            match = re.search(weather_regex, message)
+        elif re.search(say_weather_regex, message):
+            match = re.search(say_weather_regex, message)
             return WeatherActionGoal(self.context, phrase=self.parse_value(group(match,1)))
+        elif re.search(get_weather_regex, message):
+            logger.debug("Hello")
+            match = re.search(get_weather_regex, message)
+            typeofWeather = self.parse_value(group(match,1)).split(" ")[-1]
+            obj = GetWeatherActionGoal(self.context, self.parse_value(group(match,3)), typeofWeather, None, None)
+            logger.debug(obj.context)
+            logger.debug(obj.var_name)
+            logger.debug(obj.check_weather(obj.city ,obj.typeofWeather, obj.temptype))
+            return CreateVariableActionGoal(obj.context, name=obj.var_name, value=obj.check_weather(obj.city ,obj.typeofWeather, obj.temptype))
+    
+    def parse_tutorial_goal(self, message):
+        """Parse function for goal and intents that happen in the tutorial state"""
+        if message is None:
+            return message
+        elif re.search(tutorial_welcome_regex ,message):
+            match = re.search(tutorial_welcome_regex, message)
+            return None
 
     def parse_step_goal(self, message):
         """Parse function for goals and intents that relate to editing"""
@@ -184,9 +206,17 @@ class SemanticNLU(object):
             # Getting user input
             match = re.match(get_user_input_regex, message)
             return GetUserInputActionGoal(self.context, variable=group(match, 1))
-        elif re.search(weather_regex, message):
-            match = re.search(weather_regex, message)
+        elif re.search(say_weather_regex, message):
+            match = re.search(say_weather_regex, message)
             return WeatherActionGoal(self.context, phrase=self.parse_value(group(match,1)))
+        elif re.search(get_weather_regex, message):
+            match = re.search(get_weather_regex, message)
+            typeofWeather = self.parse_value(group(match,1)).split(" ")[-1]
+            obj = GetWeatherActionGoal(self.context, self.parse_value(group(match,3)), typeofWeather, None, None)
+            logger.debug(obj.context)
+            logger.debug(obj.var_name)
+            logger.debug(obj.check_weather(obj.city ,obj.typeofWeather, obj.temptype))
+            return CreateVariableActionGoal(obj.context, name=obj.var_name, value=obj.check_weather(obj.city ,obj.typeofWeather, obj.temptype))
     def parse_condition(self, message):
         """Parse condition"""
         if message is None:

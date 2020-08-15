@@ -1,5 +1,7 @@
 from models import *
 from goals import *
+from helpers import *
+from app import logger
 
 class CreateVariableActionGoal(ActionGoal):
     """Goal for adding a create variable action"""

@@ -26,6 +26,9 @@ state_machine = {
     },
     "editing_action": {
         "complete": "editing"
+    },
+    "tutorial": {
+        "complete": "home"
     }
 }
 

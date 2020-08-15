@@ -329,6 +329,7 @@ class GreetWelcomeAction(Action):
     def python(self):
         return [f"greet(\"{self.phrase}\")"]
 
+
 class WeatherAction(Action):
     def __init__(self, phrase):
         self.phrase = phrase

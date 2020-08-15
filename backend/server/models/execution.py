@@ -123,11 +123,6 @@ class Execution(object):
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Greeting User")
             self.emit("response", {"message": phrase, "state": self.context.state})
             self.context.add_message(action.phrase)
-        elif isinstance(action, GreetWelcomeAction):
-            phrase = action.phrase
-            logger.debug(f"[{self.context.sid}][Execution][Evaluating] Greeting User")
-            self.emit("response", {"message": phrase, "state": self.context.state})
-            self.context.add_message(action.phrase)
         elif isinstance(action, SayAction):
             phrase = action.phrase
             if isinstance(action.phrase, ValueOf):
