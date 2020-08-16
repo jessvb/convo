@@ -147,7 +147,7 @@ class SemanticNLU(object):
             #generate a piece of text based on user preference
             match = re.match(generate_text_regex,message)
             logger.debug(f"In NLU.py, reaching the stage where we invoke the action goal class.")
-            return GenerateTextActionGoal(self.context,style="Anne of Green Gables",length="a paragraph",prefix="Once upon a time") #needs to modify the regex & change this line!
+            return GenerateTextActionGoal(self.context,None,None,None) #needs to modify the regex & change this line!
         
         elif re.match(create_variable_regex, message):
             # Creating a new variable

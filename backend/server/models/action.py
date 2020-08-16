@@ -164,7 +164,7 @@ class GreetAction(Action):
         # The "natural language" representation of the action
         # Essentially, what is this action doing in simple terms:
         return "greeting the user with \"Hello world!\""
-        
+
 class ConditionalAction(Action):
     def __init__(self, condition, actions):
         self.condition = condition
@@ -356,7 +356,7 @@ class TextAction(Action):
         return {
             "style":self.style,
             "length":self.length,
-            "prefix":str(prefix)
+            "prefix":str(self.prefix)
 
         }
     
@@ -376,7 +376,7 @@ class TextAction(Action):
 class GenerateTextAction(TextAction):
     def __init__(self,style,length,prefix):
         logger.debug(f"hitting the generate text action class")
-        super.__init__(style,length,prefix)
+        super().__init__(style,length,prefix)
 
     def to_nl(self):
         return f"generate text based on {self.style} that is {self.length} long with prefix {self.prefix}"
