@@ -6,8 +6,6 @@ from helpers import *
 from app import logger
 
 # go to https://regexr.com/ to test your regex :)
-greet_regex = "(?:greeting)|(?:(?:greet)(?: me)*)|(?:do a greeting)|(?:send (?:your )*greetings*)"
-
 create_procedure_regex = "(?:make|create)(?: a)? (?:procedure|program)(?: (?:called|named) (.+))?$"
 rename_procedure_regex = "rename(?: (.+) to (.+)| (.+))"
 delete_procedure_regex = "(?!.*step)delete(?: (.+))"
@@ -44,8 +42,9 @@ variable_regex = "(?:(?:a|the) variable)(?: (.+))?|variable (.+)"
 procedure_regex = "(?:(?:a|the) procedure|procedure)(?: called)?(?: (.+))?"
 
 action_regexes = [
-    say_regex, play_sound_regex, greet_regex,
-    set_variable_regex, create_variable_regex, add_to_variable_regex, subtract_from_variable_regex,
+    say_regex, play_sound_regex,
+    set_variable_regex, create_variable_regex, add_to_variable_regex, 
+    subtract_from_variable_regex,
     get_user_input_regex,
     create_list_regex, add_to_list_regex, generate_text_regex
 ]
@@ -173,10 +172,6 @@ class SemanticNLU(object):
             # Telling Convo to say something
             match = re.match(say_regex, message)
             return SayActionGoal(self.context, phrase=self.parse_value(group(match, 1)))
-        elif re.match(greet_regex, message):
-            # Telling Convo to greet with "Hello world!"
-            match = re.match(greet_regex, message)
-            return GreetActionGoal(self.context)
         elif re.match(create_list_regex, message):
             # Creating a list
             match = re.match(create_list_regex, message)

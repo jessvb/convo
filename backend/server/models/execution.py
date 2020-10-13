@@ -126,11 +126,6 @@ class Execution(object):
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Saying '{phrase}'")
             self.emit("response", { "message": phrase, "state": self.context.state })
             self.context.add_message(action.phrase)
-        elif isinstance(action, GreetAction):
-            greeting = "Hello world!"
-            logger.debug(f"[{self.context.sid}][Execution][Evaluating] Greeting with '{greeting}'")
-            self.emit("response", { "message": greeting, "state": self.context.state })
-            self.context.add_message(greeting)
         elif isinstance(action, PlaySoundAction):
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Playing sound file {action.sound}.")
             self.emit("playSound", { "sound": action.sound, "state": self.context.state })
