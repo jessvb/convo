@@ -69,19 +69,19 @@ class SemanticNLU(object):
             return message
         elif re.search(create_procedure_regex, message):
             match = re.search(create_procedure_regex, message)
-            return CreateProcedureGoal(self.context, name=group(match, 1))
+            return CreateProcedureGoal(self.context, procedure_name=group(match, 1))
         elif re.search(execute_regex, message):
             match = re.search(execute_regex, message)
-            return ExecuteGoal(self.context, name=self.parse_procedure(group(match, 1)))
+            return ExecuteGoal(self.context, procedure_name=self.parse_procedure(group(match, 1)))
         elif re.search(edit_regex, message):
             match = re.search(edit_regex, message)
-            return EditGoal(self.context, name=self.parse_procedure(group(match, 1)))
+            return EditGoal(self.context, procedure_name=self.parse_procedure(group(match, 1)))
         elif re.search(rename_procedure_regex, message):
             match = re.search(rename_procedure_regex, message)
-            return RenameProcedureGoal(self.context, name=self.parse_procedure(group(match, [1, 3])), new_name=group(match, 2))
+            return RenameProcedureGoal(self.context, procedure_name=self.parse_procedure(group(match, [1, 3])), new_procedure_name=group(match, 2))
         elif re.search(delete_procedure_regex, message):
             match = re.search(delete_procedure_regex, message)
-            return DeleteProcedureGoal(self.context, name=self.parse_procedure(group(match, 1)))
+            return DeleteProcedureGoal(self.context, procedure_name=self.parse_procedure(group(match, 1)))
 
     def parse_step_goal(self, message):
         """Parse function for goals and intents that relate to editing"""
@@ -160,7 +160,7 @@ class SemanticNLU(object):
         elif re.match(say_regex, message):
             # Telling Convo to say something
             match = re.match(say_regex, message)
-            return SayActionGoal(self.context, phrase=self.parse_value(group(match, 1)))
+            return SayActionGoal(self.context, say_phrase=self.parse_value(group(match, 1)))
         elif re.match(create_list_regex, message):
             # Creating a list
             match = re.match(create_list_regex, message)

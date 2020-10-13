@@ -8,12 +8,12 @@ class CreateProcedureGoal(HomeGoal):
 
     Note that once this goal is complete, a new goal is automatically added to ask user to add actions to the newly created procedure
     """
-    def __init__(self, context, name=None):
+    def __init__(self, context, procedure_name=None):
         super().__init__(context)
-        self.procedure = Procedure(name)
+        self.procedure = Procedure(procedure_name)
         self.context.current = self.procedure
         self.procedures = self.context.procedures
-        self.setattr("name", name)
+        self.setattr("name", procedure_name)
 
     @property
     def message(self):
@@ -88,10 +88,10 @@ class AddClassProcedureGoal(CreateProcedureGoal):
         setattr(self, attr, value)
 
 class RenameProcedureGoal(HomeGoal):
-    def __init__(self, context, name=None, new_name=None):
+    def __init__(self, context, procedure_name=None, new_procedure_name=None):
         super().__init__(context)
-        self.setattr("new_name", new_name)
-        self.setattr("name", name)
+        self.setattr("new_name", new_procedure_name)
+        self.setattr("name", procedure_name)
 
     @property
     def message(self):
@@ -131,9 +131,9 @@ class RenameProcedureGoal(HomeGoal):
         setattr(self, attr, value)
 
 class DeleteProcedureGoal(HomeGoal):
-    def __init__(self, context, name=None):
+    def __init__(self, context, procedure_name=None):
         super().__init__(context)
-        self.setattr("name", name)
+        self.setattr("name", procedure_name)
 
     @property
     def message(self):

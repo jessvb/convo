@@ -22,6 +22,15 @@ intent_goal = {
     "change_step": ChangeStepGoal
 }
 
+intent_entities = {
+    "create_procedure": ["procedure_name"],
+    "rename_procedure": ["procedure_name", "new_procedure_name"],
+    "delete_procedure": ["procedure_name"],
+    "run_procedure": ["procedure_name"],
+    "edit_procedure": ["procedure_name"],
+    "say": ["say_phrase"]
+}
+
 class RasaNLU(object):
     """
     NLU that connects with Rasa server to parse messages
@@ -65,6 +74,6 @@ class RasaNLU(object):
         goal = intent_goal[intent["name"]]
         entities = {}
         if intents["entities"]:
-            entities.update({e["entity"]: e["value"] for e in intents["entities"]})
+            entities.update({e["entity"]: e["value"] for e in intents["entities"] if e["entity"] in intent_entities[intent["name"]]})
 
         return goal(self.context, **entities)
