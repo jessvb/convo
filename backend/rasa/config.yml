@@ -8,6 +8,8 @@ pipeline:
   - name: LanguageModelFeaturizer
   - name: LexicalSyntacticFeaturizer
   - name: CountVectorsFeaturizer
+    OOV_token: oov
+    token_pattern: (?u)\b\w+\b
   - name: CountVectorsFeaturizer
     analyzer: "char_wb"
     min_ngram: 1
