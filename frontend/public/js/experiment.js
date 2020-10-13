@@ -248,7 +248,8 @@ let handleSubmit = (message, speak) => {
     socketApi.emit('message', {
         message: message,
         sid: localStorage.getItem('sid'),
-        speak: speak
+        speak: speak,
+        isUnconstrained: document.getElementById("switchValue").checked
     })
 };
 
