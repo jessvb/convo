@@ -1,10 +1,14 @@
-FROM python:3.7-slim-buster
+FROM tensorflow/tensorflow:1.15.0-py3
 
 WORKDIR /usr/src/app
 
 COPY requirements.txt ./
 
-RUN pip install -r requirements.txt
+# install pip3
+RUN apt -y install python3-pip
+RUN pip3 --version
+
+RUN pip3 install -r requirements.txt
 
 COPY . .
 
