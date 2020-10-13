@@ -7,6 +7,12 @@ from error import *
 from models import *
 from helpers import *
 
+# For text generation:
+import gpt_2_simple as gpt2
+model_name = "124M"  # model is saved to curr dir under /models/124M/
+# need to run only once. comment out once done.
+# gpt2.download_gpt2(model_name=model_name)
+
 class Execution(object):
     """
     Represents an execution of a procedure
@@ -142,7 +148,16 @@ class Execution(object):
             logger.debug(f"Inside execution.py")
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Generate text in {action.style} style with {action.prefix} to start with")
             logger.debug(f"[{self.context.sid}][Execution][Evaluating] Text length: {action.length}")
-            phrase = f"When I get the model working, I will generate {action.length} of {action.style} styled text that begins with {action.prefix}. Stay tuned! "
+
+            # run gpt-2 using tensorflow
+            sess = gpt2.start_tf_sess()
+            gpt2.load_gpt2(sess)
+            text = gpt2.generate(sess, length=39, include_prefix=False,
+                temperature=0.1, top_k=1, top_p=0.9, run_name='run1', 
+                prefix="Once upon a time", return_as_list=True)
+            logger.debug(text)
+
+            phrase = f"When I get the model working, I will generate {action.length} of {action.style} styled text that begins with {action.prefix}. Stay tuned! Here's an example: {text}"
             self.emit("response", {"message":phrase,"state":self.context.state})
         elif isinstance(action, SetVariableAction):
             if action.variable in self.variables:

@@ -25,4 +25,3 @@ class SayActionGoal(ActionGoal):
                 self.phrase = value
             return
         setattr(self, attr, value)
-        
