@@ -53,6 +53,14 @@
                     <button type="button" onclick="submitText()" id="btn-textbox">Enter</button>
                 </div>
             </div>
+            <div id="voice-input-container">
+                <div class="microphone">
+                    <button type="button" id="btn-record">
+                        <div>Hold Spacebar to Talk</div>
+                        <div id="recording-status"></div>
+                    </button>
+                </div>
+            </div>
         </div>
         <div id="visuals-container" class="grid-container">
             <div id="visuals">
@@ -74,6 +82,7 @@
     <script src="js/socket.js"></script>
     <script src="js/experiment.js"></script>
     <script src="js/experiment-utils.js"></script>
+    <script src="js/stream.js"></script>
 </tail>
 
 </html>
