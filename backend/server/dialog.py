@@ -53,6 +53,7 @@ class DialogManager(object):
             self.context = context
             self.qa = QuestionAnswer(context)
             self.nlu = SemanticNLU(context)
+            self.rasa = RasaNLU(context)
         else:
             self.context.reset()
         logger.debug(f"[{self.sid}] Resetting the entire conversation.")
@@ -70,7 +71,7 @@ class DialogManager(object):
         """Returns the current high-level goal, may contain other goals in its todos"""
         return self.context.current_goal
 
-    def handle_message(self, message):
+    def handle_message(self, message, isUnconstrained):
         """Handle messages by the client"""
         self.context.add_message(message)
 
@@ -104,7 +105,7 @@ class DialogManager(object):
             return response
 
         # If none of the above, parse the message for either a goal or slot-filling value
-        response = self.handle_parse(message)
+        response = self.handle_parse(message, isUnconstrained)
         if response is not None:
             return response
 
@@ -170,11 +171,14 @@ class DialogManager(object):
                 logger.debug(f"Question can be answered with: {answer}")
                 return answer
 
-    def handle_parse(self, message):
+    def handle_parse(self, message, isUnconstrained):
         """Parses the message"""
         try:
-            goal = self.rasa.parse_message(message)
-            if goal is None:
+            if isUnconstrained:
+                goal = self.rasa.parse_message(message)
+                if goal is None:
+                    goal = self.nlu.parse_message(message)
+            else:
                 goal = self.nlu.parse_message(message)
             self.context.parsed = goal
         except InvalidStateError as e:

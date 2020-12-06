@@ -22,6 +22,15 @@ intent_goal = {
     "change_step": ChangeStepGoal
 }
 
+intent_entities = {
+    "create_procedure": ["procedure_name"],
+    "rename_procedure": ["procedure_name", "new_procedure_name"],
+    "delete_procedure": ["procedure_name"],
+    "run_procedure": ["procedure_name"],
+    "edit_procedure": ["procedure_name"],
+    "say": ["say_phrase"]
+}
+
 class RasaNLU(object):
     """
     NLU that connects with Rasa server to parse messages
@@ -36,12 +45,13 @@ class RasaNLU(object):
         self.confidence_threshold = confidence_threshold
 
     def parse_message(self, message):
+        logger.debug("Rasa parsing message")
         payload = json.dumps({"text": message.lower()})
         res = None
 
         try:
-            res = requests.post("http://localhost:5005/model/parse", data=payload)
-        except requests.ConnectionError:
+            res = requests.post("http://rasa:5005/model/parse", data=payload)
+        except requests.ConnectionError as e:
             logger.info("Cannot connect to Rasa server.")
             return None
 
@@ -54,14 +64,16 @@ class RasaNLU(object):
 
         if intent["confidence"] < self.confidence_threshold:
             # If confidence is less than threshold, do not use intent
+            logger.debug("confidence is less than threshold")
             return None
         if intent["name"] not in intent_goal:
             # If intent is not supported currently by the NLU
+            logger.debug("intent not supported by NLU")
             return None
 
         goal = intent_goal[intent["name"]]
         entities = {}
         if intents["entities"]:
-            entities.update({e["entity"]: e["value"] for e in intents["entities"]})
+            entities.update({e["entity"]: e["value"] for e in intents["entities"] if e["entity"] in intent_entities[intent["name"]]})
 
         return goal(self.context, **entities)

@@ -89,6 +89,7 @@ def disconnect():
 def message(data):
     message = data.get("message")
     sid = data.get("sid")
+    isUnconstrained = data.get("isUnconstrained")
 
     client = socket_clients.get(sid)
     if client is None or message is None:
@@ -103,7 +104,7 @@ def message(data):
         logger.info(f"[{dm.sid}][Message] {message}")
         logger.debug(f"[{dm.sid}][State] {dm.context.state}")
 
-    res = dm.handle_message(message)
+    res = dm.handle_message(message, isUnconstrained)
     if (res):
         # If there is response message, log and send to client
         dm.context.add_message(res)
@@ -111,7 +112,8 @@ def message(data):
         response = {
             "message": res,
             "state": dm.context.state,
-            "speak": data.get("speak", False)
+            "speak": data.get("speak", False),
+            "isUnconstrained": data.get("isUnconstrained")
         }
 
         if isinstance(dm, UserStudyDialogManager) or isinstance(dm, UserStudyAdvancedDialogManager):

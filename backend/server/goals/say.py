@@ -3,9 +3,9 @@ from goals import *
 
 class SayActionGoal(ActionGoal):
     """Goal for adding a say action"""
-    def __init__(self, context, phrase=None):
+    def __init__(self, context, say_phrase=None):
         super().__init__(context)
-        self.setattr("phrase", phrase)
+        self.setattr("phrase", say_phrase)
 
     def complete(self):
         assert hasattr(self, "actions")

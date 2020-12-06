@@ -7,11 +7,11 @@ class ExecuteGoal(HomeGoal):
 
     Note that the execution actually happens once the goal is completed.
     """
-    def __init__(self, context, name=None):
+    def __init__(self, context, procedure_name=None):
         super().__init__(context)
         self.context = context
         self.execution = None
-        self.setattr("name", name)
+        self.setattr("name", procedure_name)
 
     @property
     def message(self):

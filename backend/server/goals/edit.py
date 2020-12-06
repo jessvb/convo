@@ -6,7 +6,7 @@ from db_manage import add_or_update_procedure
 
 class EditGoal(HomeGoal):
     """Goal for editing procedure"""
-    def __init__(self, context, name=None):
+    def __init__(self, context, procedure_name=None):
         super().__init__(context)
 
         # Transition from "home" state to "editing" state
@@ -17,7 +17,7 @@ class EditGoal(HomeGoal):
         self.edit = []
 
         # Name of procedure
-        self.setattr("name", name)
+        self.setattr("name", procedure_name)
 
     @property
     def message(self):

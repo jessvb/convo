@@ -31,6 +31,16 @@
                 <div><em>Stuck? If stuck for 5 minutes, say "I need help".</em></div>
                 <div id="example-programs"></div>
                 <div id="example-actions"></div>
+                <hr class="solid">
+                <div>
+                    <div>Toggle to turn on unconstrained NL.</div>
+                    <div>
+                        <label class="switch">
+                            <input id="switchValue" type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
         <div id="text-container" class="grid-container">
@@ -42,6 +52,19 @@
                     <input type="text" id="textbox" placeholder="Type here..."/>
                     <button type="button" onclick="submitText()" id="btn-textbox">Enter</button>
                 </div>
+            </div>
+            <div id="voice-input-container">
+                <div class="microphone">
+                    <button type="button" id="btn-record">
+                        <div>Hold Spacebar to Talk</div>
+                        <div id="recording-status"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="visuals-container" class="grid-container">
+            <div id="visuals">
+                <div><b>Visualizations go here</b></div>
             </div>
         </div>
     </div>
@@ -59,6 +82,7 @@
     <script src="js/socket.js"></script>
     <script src="js/experiment.js"></script>
     <script src="js/experiment-utils.js"></script>
+    <script src="js/stream.js"></script>
 </tail>
 
 </html>
