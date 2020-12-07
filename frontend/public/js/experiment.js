@@ -207,6 +207,16 @@ let handleSocketApiResponse = (data) => {
 
 socketApi.on('response', handleSocketApiResponse);
 
+socketApi.on('trained', () => {
+    let nluContainer = document.getElementById('nlu-container');
+    let doneTraining = document.createElement('div');
+    let text = document.createElement('div');
+    text.innerHTML = "Done Training";
+
+    doneTraining.append(text);
+    nluContainer.append(doneTraining);
+});
+
 socketApi.on('playSound', (data) => {
     let audioPlayer = document.getElementById('audio-player');
     audioPlayer.src = `assets/${data.sound}.mp3`;
@@ -235,6 +245,38 @@ let submitText = () => {
     }
 
     textbox.value = "";
+}
+
+let trainNLU = () => {
+    let intentElements = document.getElementsByClassName("intent");
+    let trainingElements = document.getElementsByClassName("training");
+    let intents = [];
+    let trainingData = [];
+    for (var i=0; i < intentElements.length; i++) {
+        let intent = intentElements[i].value;
+        if (intent != "") {
+            intents.push(intent);
+            trainingData.push(trainingElements[i].value);
+        }
+    }
+    if (intents != []) {
+        socketApi.emit('train', {
+            intents: intents,
+            trainingData: trainingData,
+        })
+    }
+}
+
+let addIntent = () => {
+    let nluContainer = document.getElementById('nlu');
+    let newIntent = document.createElement('div');
+    newIntent.innerHTML = `<div><b>INTENT</b>: What do you want Convo to understand?</div>
+    <input class="intent" type="text" id="intent" placeholder="keep a recipe book"/>`;
+    let newTrainingData = document.createElement('div');
+    newTrainingData.innerHTML = `<div><b>TRAINING DATA</b>: How might you say this?</div>
+    <input class="training" type="text" id="training_data" placeholder="I want to save a recipe"/>`;
+    nluContainer.append(newIntent);
+    nluContainer.append(newTrainingData);
 }
 
 let submitMessage = (message, speak) => {

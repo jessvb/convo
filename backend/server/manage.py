@@ -1,3 +1,4 @@
+import requests
 import json
 
 from flask import request
@@ -84,6 +85,126 @@ def disconnect():
         del socket_sessions[request.sid]
         logger.info(f"[{sid}][{stage},{part}] Client disconnected.")
         logger.info(f"[{sid}][{stage},{part}] Conversation: {client.dm.context.conversation}")
+
+@sio.on("train")
+def train(data):
+    intents = data.get("intents")
+    trainingData = data.get("trainingData")
+    training_data = format_training_data(intents, trainingData)
+    res = None
+
+    try:
+        res = requests.post("http://rasa:5005/model/train", json=training_data)
+    except requests.ConnectionError as e:
+        logger.info("Cannot connect to Rasa server.")
+        return None
+
+    # If no response from Rasa NLU server, return None
+    if (res is None or res.status_code != 200):
+        logger.info("No response from the Rasa server.")
+        return None
+
+    sio.emit("trained")
+    logger.debug("Finished training Rasa.")
+
+def create_rasa_nlu_data(intents, trainingData):
+    common_examples = [
+                {
+                    "entities": [],
+                    "text": "hey",
+                    "intent": "greet"
+                },
+                {
+                    "entities": [],
+                    "text": "hello",
+                    "intent": "greet"
+                },
+                {
+                    "entities": [],
+                    "text": "hi",
+                    "intent": "greet"
+                },
+                {
+                    "entities": [],
+                    "text": "hello there",
+                    "intent": "greet"
+                },
+                {
+                    "entities": [],
+                    "text": "hey what's up",
+                    "intent": "greet"
+                },
+                {
+                    "entities": [],
+                    "text": "Hello",
+                    "intent": "greet"
+                },
+            ]
+    for i in range(len(intents)):
+        intent = intents[i]
+        intent = intent.replace(" ", "_")
+        trainingDatas = trainingData[i].split(",")
+    
+        for data in trainingDatas:
+            text, entities = extract_entities(data)
+            common_examples.append(
+                {
+                    "text": text,
+                    "intent": intent,
+                    "entities": entities
+                }
+            )
+
+    return json.dumps({
+        "rasa_nlu_data": {
+            "regex_features": [],
+            "entity_synonyms": [],
+            "common_examples": common_examples,
+
+        }
+    })
+
+def extract_entities(training_data):
+    entities = []
+    text, entity = extract_entity(training_data)
+    while entity != []:
+        entities.append(entity)
+        text, entity = extract_entity(text)
+
+    return (text, entities)
+
+def extract_entity(text):
+    try:
+        start = text.index("[")
+        end = text.index("]", start)
+        entity_value = text[start+1:end]
+
+        entity_start = text.index("(", end)
+        entity_end = text.index(")", entity_start)
+        entity = text[entity_start+1:entity_end]
+
+        # remove brackets and entity from text
+        new_text = text[:start] + text[start+1:]
+        new_end = new_text.index("]")
+        new_text = new_text[:new_end] + new_text[new_end+1:]
+
+        new_entity_start = new_text.index("(")
+        new_entity_end = new_text.index(")", new_entity_start)
+        new_text = new_text[:new_entity_start] + new_text[new_entity_end+1:]
+
+        return (new_text, {"start": start, "end": end - 1, "value": entity_value, "entity": entity, "role": "", "extractor": "DIETClassifier",})
+
+    except ValueError:
+        return (text, [])
+
+def format_training_data(intents, training_datas):
+    data = {
+    "config": "language: en\r\npipeline:\r\n  - name: HFTransformersNLP\r\n    model_name: \"bert\"\r\n  - name: LanguageModelTokenizer\r\n  - name: LanguageModelFeaturizer\r\n  - name: LexicalSyntacticFeaturizer\r\n  - name: CountVectorsFeaturizer\r\n    OOV_token: oov\r\n    token_pattern: (?u)\\b\\w+\\b\r\n  - name: CountVectorsFeaturizer\r\n    analyzer: \"char_wb\"\r\n    min_ngram: 1\r\n    max_ngram: 4\r\n  - name: DIETClassifier\r\n    epochs: 100\r\n  - name: EntitySynonymMapper",
+    "nlu": create_rasa_nlu_data(intents, training_datas),
+    "force": False, 
+    "save_to_default_model_directory": True
+    }
+    return data
 
 @sio.on("message")
 def message(data):
