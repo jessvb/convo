@@ -39,6 +39,16 @@
 - i want to make a procedure named [say_something](procedure_name)
 - make new function called [function](procedure_name)
 - create a new function called [function2](procedure_name)
+- create a procedure called [hello world](procedure_name)
+- create a procedure called [my program](procedure_name)
+- create a procedure called [bob's program](procedure_name)
+- create a procedure called [tell me the weather](procedure_name)
+- create a procedure called [book app](procedure_name)
+- create a procedure called [my first program](procedure_name)
+- create a procedure called [farm animals](procedure_name)
+- create a procedure called [friend](procedure_name)
+
+<!-- add examples w multiple words to support speech -->
 
 ## intent:rename_procedure
 - i want to rename a procedure
@@ -90,6 +100,13 @@
 - rename my program [sophias_first_program](procedure_name)
 - rename [hello](procedure_name)
 - rename [my_function](procedure_name)
+- rename [function one](procedure_name) to [function two](new_procedure_name)
+- rename [function two](procedure_name) to [function one](new_procedure_name)
+- rename [some other function](procedure_name) to [test function](new_procedure_name)
+- rename [procedure red](procedure_name) to [procedure green](new_procedure_name)
+- rename [procedure green](procedure_name) to [blue](new_procedure_name)
+- rename [story game](procedure_name) to [walking through the forest](new_procedure_name)
+- rename [the best app in the world](procedure_name) to [my favorite thing](new_procedure_name)
 
 ## intent:delete_procedure
 - remove procedure
@@ -123,6 +140,13 @@
 - delete program called [recursive](procedure_name)
 - delete program named [recursive](procedure_name)
 - delete program named [subproblem](procedure_name)
+- delete [my function](procedure_name)
+- delete [my procedure](procedure_name)
+- delete [the most fun game ever](procedure_name)
+- delete [example method](procedure_name)
+- delete [water bottles are nice things](procedure_name)
+- delete [daily reminders](procedure_name)
+- delete [say this four times](procedure_name)
 
 ## intent:run_procedure
 - i want to run the procedure
@@ -179,6 +203,14 @@
 - execute the function now
 - execute the method please
 - start the program called [start](procedure_name) now
+- run [cute socks](procedure_name)
+- run [hello world](procedure_name)
+- run [my favorite dog](procedure_name)
+- run [my pet dog](procedure_name)
+- run [farm animals](procedure_name)
+- run [daisy goes to school](procedure_name)
+- run [add together](procedure_name)
+- run [product function](procedure_name)
 
 ## intent:edit_procedure
 - edit procedure
@@ -216,6 +248,12 @@
 - change program named [copyMe](procedure_name)
 - change procedure named [thepizza](procedure_name)
 - edit method named [myfavorites](procedure_name)
+- edit [a random name](procedure_name)
+- edit [some thing goes here](procedure_name)
+- edit [add five to variable](procedure_name)
+- edit [ask my name](procedure_name)
+- edit [what's your name](procedure_name)
+- edit [what's the weather](procedure_name)
 
 <!-- END OF PROCEDURE TRAINING DATA -->
 
@@ -247,6 +285,16 @@
 - say [start of loop](say_phrase)
 - say [about to start the counting](say_phrase)
 - say [ready to start now](say_phrase)
+- say [the value of x](say_phrase)
+- say [the value of y](say_phrase)
+- say [the value of hello](say_phrase)
+- say [the value of var](say_phrase)
+- say [the value of foo](say_phrase)
+- say [the value of temp](say_phrase)
+- say [x](say_phrase)
+- say [y](say_phrase)
+- say [hello world](say_phrase)
+- say [you're cool](say_phrase)
 
 ## intent:go_to_step
 - go to step [4](step)
@@ -354,7 +402,7 @@
 - i want to do something different here
 - i want this to be a different step
 
-<!-- ## lookup:sound
+## lookup:sound
 - dog
 - cat
 - horse
@@ -371,7 +419,354 @@
 - play [a](sound) sound
 - play [any](sound) sound
 - play a [random](sound) sound
-- make an [animal](sound) sound -->
+- make an [animal](sound) sound
+- make [a](sound) sound
+- make [any](sound) sound
+- make a [dog](sound) sound
+- play a [dog](sound) sound
+- make [dog](sound) sound
+- play [dog](sound) sound
+- bark like a [dog](sound)
+- woof like a [dog](sound)
+- [dog](sound) sound
+- [dog](sound)
+- make a [cat](sound) sound
+- play a [cat](sound) sound
+- play [cat](sound) sound
+- make [cat](sound) sound
+- meow like a [cat](sound)
+- purr like a [cat](sound)
+- [cat](sound)
+- [cat](sound) sound
+- make a [horse](sound) sound
+- play a [horse](sound) sound
+- make [horse](sound) sound
+- play [horse](sound) sound
+- neigh like a [horse](sound)
+- make sounds like a [horse](sound)
+- [horse](sound)
+- [horse](sound) sound
+- play a [cow](sound) sound
+- make a [cow](sound) sound
+- play [cow](sound) sound
+- make [cow](sound) sound
+- moo like a [cow](sound)
+- make noise like a [cow](sound)
+- [cow](sound)
+- [cow](sound) sound
+- make a [bird](sound) sound
+- play a [bird](sound) sound
+- make [bird](sound) sound
+- play [bird](sound) sound
+- chirp like a [bird](sound)
+- make noise like a [bird](sound)
+- [bird](sound) sound
+- [bird](sound)
+- make a [cricket](sound) sound
+- play a [cricket](sound) sound
+- make [cricket](sound) sound
+- play [cricket](sound) sound
+- chirp like a [cricket](sound)
+- cricket like a [cricket](sound)
+- [cricket](sound) sound
+- [cricket](sound)
+- make noise like [any](sound) animal
+- [any](sound) animal noise
+- [a](sound) noise
+- [random](sound) noise
+- make [a](sound) noise
+- make [a](sound) sound
+
+<!-- START OF VARIABLE TRAINING DATA -->
+
+## intent:create_variable
+- create a variable
+- can you create a variable
+- make a variable
+- i want to make a variable
+- make a variable
+- initialize a variable
+- initialize variable
+- new variable
+- create variable
+- make a variable called [x](variable_name)
+- make a variable called [foo](variable_name)
+- make variable called [y](variable_name)
+- make variable called [something](variable_name)
+- make variable called [max_so_far](variable_name)
+- make variable called [GreetAction](variable_name)
+- make variable called [name](variable_name)
+- make variable [jessica](variable_name)
+- make variable [x2](variable_name)
+- make variable [X](variable_name)
+- make variable [Y](variable_name)
+- make variable [x](variable_name)
+- create variable [temp](variable_name)
+- create variable [temp2](variable_name)
+- create variable [x](variable_name)
+- create variable [weather](variable_name)
+- create variable [list_of_things](variable_name)
+- create variable [sorted](variable_name)
+- initialize [count](variable_name)
+- initialize variable [x](variable_name)
+- initialize variable [hello](variable_name)
+- initialize variable [world](variable_name)
+- initialize variable [species](variable_name)
+- initialize [bags](variable_name)
+- initialize [workers](variable_name)
+- initialize [steps](variable_name)
+- initialize [red_balls](variable_name)
+- make a variable [x](variable_name) and initialize it to [0](variable_value)
+- make a variable [index](variable_name) and initialize it to [1](variable_value)
+- make a variable [name](variable_name) and initialize it to [sally](variable_value)
+- make a variable [isUnconstrained](variable_name) and initialize it to [true](variable_value)
+- make a variable [b](variable_name) and initialize it to [100](variable_value)
+- make a variable [temp](variable_name) and set it to [4](variable_value)
+- make a variable [mood](variable_name) and set it to [happy](variable_value)
+- make a variable [time](variable_name) and set it to [midnight](variable_value)
+- make a variable [number_of_petals](variable_name) and set it to [14](variable_value)
+- make a variable [r](variable_name) and set it to [5433](variable_value)
+- create a variable [x](variable_name) and set it to [3](variable_value)
+- create a variable [time](variable_name) and set it to [12](variable_value)
+- create a variable [fav](variable_name) and set it to [amazon](variable_value)
+- create a variable [weather](variable_name) and set it to [sunny](variable_value)
+- create a variable [x2](variable_name) and set it to [41](variable_value)
+- create a variable [x](variable_name) and give it a value of [5](variable_value)
+- create a variable [today](variable_name) and give it a value of [monday](variable_value)
+- create a variable [dinner](variable_name) and give it a value of [sushi](variable_value)
+- create a variable [price](variable_name) and give it a value of [40](variable_value)
+- create a variable [boo](variable_name) and give it a value of [foo](variable_value)
+- initialize [x](variable_name) to [9](variable_value)
+- initialize [n](variable_name) to [3](variable_value)
+- initialize [first_element](variable_name) to [socks](variable_value)
+- initialize [asdf](variable_name) to [qwerew](variable_value)
+- initialize [u](variable_name) to [v](variable_value)
+- initialize [name](variable_name) with a value of [peter](variable_value)
+- initialize [seen_so_far](variable_name) with a value of [0](variable_value)
+- initialize [visited](variable_name) with a value of [-234](variable_value)
+- initialize [options](variable_name) with a value of [3](variable_value)
+- initialize [bob](variable_name) with a value of [743](variable_value)
+- make [x](variable_name) and set it to [33](variable_value)
+- make [a](variable_name) and set it to [3](variable_value)
+- make [yesOrno](variable_name) and set it to [yes](variable_value)
+- make [done](variable_name) and set it to [false](variable_value)
+- make [rounds](variable_name) and set it to [89](variable_value)
+- assign value of [43](variable_value) to [foo](variable_name)
+- assign value of [12](variable_value) to [phone_number](variable_name)
+- assign value of [red](variable_value) to [color](variable_name)
+- assign value of [bird](variable_value) to [sound](variable_name)
+- assign value of [2](variable_value) to [y](variable_name)
+- assign [3](variable_value) to [counter](variable_name)
+- assign [-3.2](variable_value) to [price](variable_name)
+- assign [horse](variable_value) to [animal](variable_name)
+- assign [90](variable_value) to [age](variable_name)
+- assign [san francisco](variable_value) to [city](variable_name)
+- let [x](variable_name) be [4](variable_value)
+- let [name](variable_name) be [charleen](variable_value)
+- let [choice](variable_name) be [false](variable_value)
+- let [k](variable_name) be [75](variable_value)
+- let [a](variable_name) be [0](variable_value)
+- initialize [variable a](variable_name) to [4](variable_value)
+- initialize []
+
+## intent:set_variable
+- set a variable
+- can i set the value of a variable
+- set variable
+- I want to set a variable
+- can you set a variable
+- set the variable
+- assign a value to the variable
+- let the variable have a value
+- set the value of the variable
+- i want to set the value of the variable
+- i want to assign a value to the variable
+- i want to assign the variable's value
+- set variable's value
+- set value of [variable](variable_name)
+- set value of [emitter](variable_name)
+- set value of [why](variable_name)
+- set value of [someVariable](variable_name)
+- set value of [num_of_cats](variable_name)
+- set value of [temperature](variable_name)
+- set [temperature](variable_name)
+- set [helloworld](variable_name)
+- set [j](variable_name)
+- set [temp](variable_name)
+- set [num_of_items](variable_name)
+- set variable to [5](variable_value)
+- set variable to [congratulations](variable_value)
+- set variable to [a random string](variable_value)
+- set variable to [some Sentence with punctiona'n!](variable_value)
+- set variable to value of [10](variable_value)
+- set variable to value of [200](variable_value)
+- set variable to value of [some words](variable_value)
+- set veriable to value of [jessica](variable_value)
+- let variable be [3](variable_value)
+- let variable be [5](variable_value)
+- let variable be [true](variable_value)
+- let variable be [you won!](variable_value)
+- let variable have a value of [-1](variable_value)
+- let variable have a value of [20](variable_value)
+- let variable have a value of [some thing](variable_value)
+- let variable have a value of [3.0](variable_value)
+- set [x](variable_name) to [5](variable_value)
+- set [index](variable_name) to [0](variable_value)
+- set [index](variable_name) to [index](variable_value)
+- set [index](variable_name) to [hello](variable_value)
+- set [j](variable_name) to [0.0](variable_value)
+- set [hello1](variable_name) to [13](variable_value)
+- set [num_lists](variable_name) to [0.4](variable_value)
+- set [hello](variable_name) to [1](variable_value)
+- set the value of [hello](variable_name) to [0](variable_value)
+- set the value of [count](variable_name) to [0](variable_value)
+- set the value of [temp](variable_name) to [100](variable_value)
+- set the value of [x_y](variable_name) to [some_value_string](variable_value)
+- set the value of [name](variable_name) to [jessica](variable_value)
+- set the value of [title](variable_name) to [some book title](variable_value)
+- set the value of [x](variable_name) to [3](variable_value)
+- set [count](variable_name) to the value of [0](variable_value)
+- set [INDEX](variable_name) to the value of [1.3](variable_value)
+- set [index](variable_name) to the value of [my name is](variable_value)
+- set [food](variable_name) to the value of [pasta](variable_value)
+- set [y](variable_name) to the value of [5](variable_value)
+- set [a](variable_name) to the value of [6](variable_value)
+- assign value of [30](variable_value) to [count](variable_name)
+- assign value of [hello world](variable_value) to [greeting](variable_name)
+- assign value of [jessica](variable_value) to [my_name](variable_name)
+- assign value of [-2](variable_value) to [amount_owed](variable_name)
+- assign value of [20](variable_value) to [cost](variable_name)
+- assign value of [0](variable_value) to [some_name](variable_name)
+- let [x](variable_name) be [3](variable_value)
+- let [price](variable_name) be [100](variable_value)
+- let [price](variable_name) be [expensive](variable_value)
+- let [index](variable_name) be [1](variable_value)
+- let [x](variable_name) be [y](variable_value)
+- let [book](variable_name) be [catcher in the rye](variable_value)
+- let [favorite_author](variable_name) be [dr. seuss](variable_value)
+- let the value of [harry_potter_author](variable_name) be [j k rowling](variable_value)
+- let the value of [counter](variable_name) be [1](variable_value)
+- let the value of [life](variable_name) be [42](variable_value)
+- let the value of [apples](variable_name) be [50](variable_value)
+- let the value of [i](variable_name) be [0](variable_value)
+- assign [hello](variable_value) to [hello](variable_name)
+- assign [hello1](variable_value) to [another_hello](variable_name)
+- assign [2](variable_value) to [my_favorite_number](variable_name)
+- assign [33](variable_value) to [x](variable_name)
+- assign [5](variable_value) to [z](variable_name)
+- assign [12342](variable_value) to [abc](variable_name)
+
+## intent:add_to_variable
+- add to variable
+- add value to variable
+- increment variable by an amount
+- increment variable
+- increase variable value
+- increase variable
+- increase value of variable
+- add [1](add_value) to variable
+- add [5](add_value) to variable
+- add [100](add_value) to variable
+- add [33](add_value) to variable
+- add [hello](add_value) to variable
+- add [not a number](add_value) to variable
+- increment variable by [1](add_value)
+- increment variable by [-3](add_value)
+- increment variable with [hi](add_value)
+- increment variable by [2](add_value)
+- add [20](add_value) to variable
+- add [10](add_value)
+- add [2](add_value)
+- add [3](add_value)
+- add [ly](add_value)
+- can you add [5](add_value) to variable
+- can you add [13](add_value) to the variable
+- add [5](add_value) to [x](variable_name)
+- add [0](add_value) to [count](variable_name)
+- add [3.3](add_value) to [temp_variable](variable_name)
+- add [prefix](add_value) to [hello world](variable_name)
+- add [foo](add_value) to [boo](variable_name)
+- add [2](add_value) to value of [hello](variable_name)
+- add [3](add_value) to value of [number_of_grapes](variable_name)
+- add [10000](add_value) to value of [my_favorite_number](variable_name)
+- add [not_a_number](add_value) to value of [a](variable_name)
+- add [3](add_value) to value of [y](variable_name)
+- increase [zz](variable_name) by [10](add_value)
+- increase [b](variable_name) by [30](add_value)
+- increase [c](variable_name) by [41](add_value)
+- increase [temperature](variable_name) by [degree](add_value)
+- increase [price](variable_name) by [three](add_value)
+- increment [counter](variable_name) by [0](add_value)
+- increment [hello](variable_name) by [2](add_value)
+- increment [x](variable_name) by [-3](add_value)
+- increment [sentence](variable_name) by [false](add_value)
+- increment [r](variable_name) by [main](add_value)
+- make [j](variable_name) bigger by [2](add_value)
+- make [k](variable_name) bigger by [5](add_value)
+- make [xyz](variable_name) bigger by [33](add_value)
+- make [foo](variable_name) bigger by [boo](add_value)
+- make [jessica](variable_name) bigger by [growing](add_value)
+- make [count](variable_name) bigger by [1](add_value)
+- make value of [counter](variable_name) larger by [24](add_value)
+- make value of [z](variable_name) larger by [1](add_value)
+- make value of [num_lines](variable_name) larger by [90](add_value)
+- make value of [convo](variable_name) larger by [adding_more_letters](add_value)
+- make value of [index](variable_name) larger by [2](add_value)
+
+## intent:subtract_from_variable
+- subtract from variable
+- decrease variable
+- decrease value of variable
+- i want to subtract from variable
+- decrement variable
+- can you subtract from the variable
+- subtract [5](subtract_value)from variable
+- subtract [0](subtract_value) from variable
+- subtract [10](subtract_value) from variable
+- subtract [hello](subtract_value) from variable
+- decrement variable by [2](subtract_value)
+- decrement variable by [foo](subtract_value)
+- decrement variable by [1](subtract_value)
+- can you subtract [10](subtract_value) from variable
+- can you subtract [3](subtract_value) from the variable
+- variable minus [2](subtract_value)
+- variable minus [5](subtract_value)
+- subtract [1](subtract_value) from [x](variable_name)
+- subtract [34](subtract_value) from [ab](variable_name)
+- subtract [22](subtract_value) from [foo](variable_name)
+- subtract [pencil](subtract_value) from [table](variable_name)
+- subtract [hands](subtract_value) from [arms](variable_name)
+- subtract [34234](subtract_value) from [y](variable_name)
+- decrease [x](variable_name) by [3](subtract_value)
+- decrease [num_birds](variable_name) by [15](subtract_value)
+- decrease [buckets](variable_name) by [2](subtract_value)
+- decrease [price](variable_name) by [half](subtract_value)
+- decrease [price](variable_name) by [50](subtract_value)
+- decrement [cost](variable_name) by [28](subtract_value)
+- decrement [author](variable_name) by [title](subtract_value)
+- decrement [x](variable_name) by [3](subtract_value)
+- decrement [i](variable_name) by [1](subtract_value)
+- make [index](variable_name) smaller by [0](subtract_value)
+- make [counter](variable_name) smaller by [1](subtract_value)
+- make [counter](variable_name) smaller by [two](subtract_value)
+- make [j](variable_name) smaller by [three](subtract_value)
+- make [boo](variable_name) smaller by [4](subtract_value)
+- make the value of [colors](variable_name) smaller by [2](subtract_value)
+- make the value of [favorite_number](variable_name) smaller by [45](subtract_value)
+- make the value of [x4](variable_name) smaller by [42](subtract_value)
+- make the value of [monday](variable_name) smaller by [true](subtract_value)
+- make the value of [false](variable_name) smaller by [1](subtract_value)
+- [books](variable_name) minus [3](subtract_value)
+- [x](variable_name) minus [55](subtract_value)
+- [y](variable_name) minus [32](subtract_value)
+- [the_max](variable_name) minus [4](subtract_value)
+- [largest](variable_name) minus [67](subtract_value)
+- decrease the value of [foo](variable_name) by [6423](subtract_value)
+- decrease the value of [date](variable_name) by [234](subtract_value)
+- decrease the value of [counter](variable_name) by [0.4](subtract_value)
+- decrease the value of [today](variable_name) by [0](subtract_value)
+
+<!-- END OF VARIABLE TRAINING DATA -->
 
 <!-- ## regex:list_name
 - [a-zA-Z]{1}[0-9A-Z_a-z]*
@@ -400,34 +795,6 @@
 - value of
 - get the value of
 - return value
-
-## intent:create_variable
-- create a variable
-- can you create a variable
-- make a varible
-- create a variable
-- i want to make a variable
-- make a variable
-
-## intent:set_variable
-- set a variable
-- can i set the value of a variable
-- set variable
-- I want to set a variable
-- can you set a variable
-- set a variable
-
-## intent:add_to_variable
-- add [5](value) to variable
-- increment variable by [1](value)
-- add [20](value) to variable
-- add [10](value)
-- can you add [5](value) to variable
-
-## intent:subtract_from_variable
-- subtract [5](value) from variable
-- decrement variable by [1](value)
-- can you subtract [10](value) from variable
 
 ## intent:create_conditional
 - if this then that
