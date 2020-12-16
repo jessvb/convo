@@ -92,7 +92,6 @@ def train(data):
     trainingData = data.get("trainingData")
     training_data = format_training_data(intents, trainingData)
     res = None
-
     try:
         res = requests.post("http://rasa:5005/model/train", json=training_data)
     except requests.ConnectionError as e:
@@ -104,8 +103,29 @@ def train(data):
         logger.info("No response from the Rasa server.")
         return None
 
-    sio.emit("trained")
     logger.debug("Finished training Rasa.")
+
+    # Replace the currently trained model
+    model_file = res.headers["filename"]
+    model_file_absolute = "/app/models/" + model_file
+    request = {
+        "model_file": model_file_absolute
+    }
+
+    payload = json.dumps(request)
+    replace_res = None
+    try:
+        replace_res = requests.put("http://rasa:5005/model", data=payload)
+    except requests.ConnectionError as e:
+        logger.info("Rasa server is restarting.")
+        return None
+
+    if (replace_res is None or replace_res.status_code != 204):
+        logger.info("No response from the Rasa server when replacing the model.")
+        return None
+
+    logger.debug("Finished updating the trained model of Rasa.")
+    sio.emit("trained")
 
 def create_rasa_nlu_data(intents, trainingData):
     common_examples = [
