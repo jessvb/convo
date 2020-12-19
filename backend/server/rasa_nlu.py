@@ -61,6 +61,7 @@ class RasaNLU(object):
 
         intents = res.json()
         intent = intents["intent"]
+        logger.debug(intents)
 
         if intent["confidence"] < self.confidence_threshold:
             # If confidence is less than threshold, do not use intent

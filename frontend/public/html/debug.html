@@ -62,9 +62,18 @@
                 </div>
             </div>
         </div>
-        <div id="visuals-container" class="grid-container">
-            <div id="visuals">
-                <div><b>Visualizations go here</b></div>
+        <div id="nlu-container" class="grid-container">
+            <div>
+                <div id="nlu">
+                    <div><b>INTENT</b>: What do you want Convo to understand?</div>
+                    <input class="intent" type="text" id="intent" placeholder="keep a recipe book"/>
+                    <div><b>TRAINING DATA</b>: How might you say this?</div>
+                    <input class="training" type="text" id="training_data" placeholder="I want to save a recipe"/>
+                </div> 
+                <div id="nlu-buttons">
+                    <div><button type="button" onclick="addIntent()" id="btn-train">Add More</button></div>
+                    <div><button type="button" onclick="trainNLU()" id="btn-train">Train</button></div>
+                </div>
             </div>
         </div>
     </div>
