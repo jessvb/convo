@@ -11,3 +11,4 @@ from goals.loop import *
 from goals.edit import *
 from goals.sound import *
 from goals.execution import *
+from goals.intent import *

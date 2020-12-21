@@ -146,7 +146,6 @@
 }
 
 #nlu {
-    /* display: flex; */
     padding: 2rem;
     flex-direction: column;
 }

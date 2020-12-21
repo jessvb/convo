@@ -37,6 +37,9 @@ until_stop_condition_regex = "i say stop"
 variable_regex = "(?:(?:a|the) variable)(?: (.+))?|variable (.+)"
 procedure_regex = "(?:(?:a|the) procedure|procedure)(?: called)?(?: (.+))?"
 
+intent_to_procedure_regex1 = "connect (?:(?:a|the|an) intent)(?: (.+)) (?:to|with) (?:(?:a|the) procedure)(?: (.+))"
+intent_to_procedure_regex2 = "connect (?:(?:a|the) procedure)(?: (.+)) (?:to|with) (?:(?:a|the|an) intent)(?: (.+))"
+
 action_regexes = [
     say_regex, play_sound_regex,
     set_variable_regex, create_variable_regex, add_to_variable_regex, subtract_from_variable_regex,
@@ -82,6 +85,12 @@ class SemanticNLU(object):
         elif re.search(delete_procedure_regex, message):
             match = re.search(delete_procedure_regex, message)
             return DeleteProcedureGoal(self.context, procedure_name=self.parse_procedure(group(match, 1)))
+        elif re.search(intent_to_procedure_regex1, message):
+            match = re.search(intent_to_procedure_regex1, message)
+            return ConnectIntentGoal(self.context, intent_name=self.parse_procedure(group(match, 1)), procedure_name=group(match, 2))
+        elif re.search(intent_to_procedure_regex2, message):
+            match = re.search(intent_to_procedure_regex2, message)
+            return ConnectIntentGoal(self.context, intent_name=self.parse_procedure(group(match, 2)), procedure_name=group(match, 1))
 
     def parse_step_goal(self, message):
         """Parse function for goals and intents that relate to editing"""

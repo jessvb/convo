@@ -19,7 +19,8 @@ intent_goal = {
     "go_to_step": GoToStepGoal,
     "delete_step": DeleteStepGoal,
     "add_step": AddStepGoal,
-    "change_step": ChangeStepGoal
+    "change_step": ChangeStepGoal,
+    "run_intent": RunIntentGoal
 }
 
 intent_entities = {
@@ -28,7 +29,8 @@ intent_entities = {
     "delete_procedure": ["procedure_name"],
     "run_procedure": ["procedure_name"],
     "edit_procedure": ["procedure_name"],
-    "say": ["say_phrase"]
+    "say": ["say_phrase"],
+    "run_intent": ["intent_name", "entities"]
 }
 
 class RasaNLU(object):
@@ -67,10 +69,9 @@ class RasaNLU(object):
             # If confidence is less than threshold, do not use intent
             logger.debug("confidence is less than threshold")
             return None
-        if intent["name"] not in intent_goal:
-            # If intent is not supported currently by the NLU
-            logger.debug("intent not supported by NLU")
-            return None
+        original_intent = intent["name"].replace("_", " ")
+        if original_intent in self.context.intents:
+            return RunIntentGoal(self.context, original_intent)
 
         goal = intent_goal[intent["name"]]
         entities = {}
