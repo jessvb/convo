@@ -258,6 +258,7 @@ class DialogContext(object):
         self.execution = None
         self.intents = {} # maps intent name to a list of required entities
         self.intent_to_procedure = {} # maps intent name to a procedure that it is linked to
+        self.entities = {} # maps entities to their respective values, if given
         self.reset()
 
     @property
@@ -295,6 +296,11 @@ class DialogContext(object):
 
     def add_intent(self, intent, entities):
         self.intents[intent] = entities
+        for entity in entities:
+            self.entities[entity] = None
+
+    def add_entity(self, entity, value):
+        self.entities[entity] = value
 
     def get_class(self, name):
         return self.classes.get(name)

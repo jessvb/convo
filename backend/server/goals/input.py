@@ -63,6 +63,37 @@ class GetUserInputGoal(BaseGoal):
         variables[self.variable] = variables[self.value.variable] if isinstance(self.value, ValueOf) else self.value
         return super().complete()
 
+class GetEntityInputGoal(HomeGoal):
+    """Goal for getting user entity input during recognition of an intent"""
+    def __init__(self, context, entity, message):
+        super().__init__(context)
+        self.entity = entity
+        self._message = message
+        self.value = None
+
+    @property
+    def is_complete(self):
+        return self.value is not None
+
+    @property
+    def message(self):
+        return "GetEntityInputGoal completed!" if self.is_complete else self._message
+
+    def advance(self):
+        logger.debug(f"Advancing {self.__class__.__name__}...")
+
+        if self.context.parsed and isinstance(self.context.parsed, ValueOf):
+            self.value = self.context.parsed
+        else:
+            message = self.context.current_message
+            number = parse_number(message)
+            self.value = number if number is not None else message
+
+    def complete(self):
+        logger.debug(self.context.entities)
+        self.context.entities[self.entity] = self.context.execution.variables[self.value.variable] if isinstance(self.value, ValueOf) else self.value
+        return super().complete()
+
 class GetUserInputActionGoal(ActionGoal):
     """Goal for adding action to get user input"""
     def __init__(self, context, variable, prompt=None):
