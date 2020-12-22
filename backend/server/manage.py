@@ -88,8 +88,18 @@ def disconnect():
 
 @sio.on("train")
 def train(data):
+    sid = data.get("sid")
     intents = data.get("intents")
     trainingData = data.get("trainingData")
+    # First, add all intents and respective entities to the context.
+    client = socket_clients.get(sid)
+    if client is None:
+        return
+    dm = client.dm
+    add_intents_and_entities(dm.context, intents, trainingData)
+    logger.debug("finished adding all intents and entities")
+
+    # Then, train the NLU model using this new data.
     training_data = format_training_data(intents, trainingData)
     res = None
     try:
@@ -126,6 +136,23 @@ def train(data):
 
     logger.debug("Finished updating the trained model of Rasa.")
     sio.emit("trained")
+
+def add_intents_and_entities(context, intents, trainingData):
+    logger.debug("starting to add intents and entities")
+    for i in range(len(intents)):
+        intent = intents[i]
+        intent = intent.replace(" ", "_")
+        entities = set([])
+
+        trainingDatas = trainingData[i].split(",")
+        for data in trainingDatas:
+            _, extracted_entities = extract_entities(data)
+            for entity in extracted_entities:
+                entities.add(entity["entity"])
+        original_intent = intent.replace("_", " ")
+        context.add_intent(original_intent, list(entities))
+    return
+
 
 def create_rasa_nlu_data(intents, trainingData):
     common_examples = [
