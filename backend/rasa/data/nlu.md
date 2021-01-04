@@ -248,6 +248,112 @@
 - say [about to start the counting](say_phrase)
 - say [ready to start now](say_phrase)
 
+## intent:go_to_step
+- go to step [4](step)
+- go to [next](step) step
+- go to [previous](step) step
+- [next](step) step
+- can you go to step [5](step)
+- [first](step) step
+- [last](step) step
+- go to step [1](step)
+- go to step [2](step)
+- go to the [next](step) step
+- go to step number [five](step)
+- go to step number [1](step)
+- go to step number [3](step)
+- [3rd](step) step
+- i want to go to the [first](step) step
+- i want to go to step number [2](step)
+- i want to go to step [8](step)
+- i am going to go to step [3](step)
+- i am going to go to step number [4](step)
+- i am going to go to the [eigth](step) step
+- [8th](step) step
+- can you go to the [last](step) step
+- can you go to step number [5](step)
+- can you go to step number [65](step)
+- can you go to step number [thirteen](step)
+- can you go to step [four](step)
+- can you go to step [seven](step)
+- can you go to step [forty](step)
+- can you go to step [22](step)
+- can you go to the [next](step) step
+- go to the [next](step) step
+- go to the [previous](step) step
+- go back to the [previous](step) step
+- [previous](step) step
+- the step [before](step) this
+- the step [after](step) this
+- go to the step [after](step) this
+- go to the step [before](step) this
+
+## intent:delete_step
+- delete step
+- delete current step
+- remove a step
+- please remove the step
+- delete this step
+- remove this step
+- remove current step
+- i want to delete this step
+- can you delete this step
+- can you remove this step
+- can you get rid of this step
+- get rid of this step
+- please delete step
+- take out this step
+- cancel this step
+- can you cancel this step
+- take out step
+- can you take out this step
+- i am going to delete this step
+
+## intent:add_step
+- add step
+- make a new step
+- new step
+- please create a new step
+- add new step
+- create new step
+- can you add a new step
+- can you add a step
+- can you add a step here
+- can you make a new step here
+- please create a new step
+- add a new step
+- create a new step
+- make a new step here
+- add a new step here
+- create a new step here
+- i want to add a new step
+- i want to create a new step here
+- i want to add a new step here
+- make new step
+- i am going to add a step here
+- i am going to create a new step here
+
+## intent:change_step
+- change this step
+- change step
+- replace step
+- edit this step
+- i want to change this step
+- can you change this step
+- replace this step with another
+- can you change this step
+- i want to edit this step
+- can you edit this step
+- edit step
+- replace this step
+- i am going to change this step
+- i want to replace this step
+- can you replace this step
+- can you edit this step here
+- i want to do something different
+- i want to do something different here
+- i want this to be a different step
+
 <!-- ## lookup:sound
 - dog
 - cat
@@ -322,33 +428,6 @@
 - subtract [5](value) from variable
 - decrement variable by [1](value)
 - can you subtract [10](value) from variable
-
-## intent:go_to_step
-- go to step [4](step)
-- go to [next](step) step
-- go to [previous](step) step
-- [next](step) step
-- can you go to step [5](step)
-- [first](step) step
-- [last](step) step
-
-## intent:delete_step
-- delete step
-- delete current step
-- remove a step
-- please remove the step
-
-## intent:add_step
-- add step
-- make a new step
-- new step
-- please create a new step
-- add new step
-
-## intent:change_step
-- change this step
-- change step
-- replace step
 
 ## intent:create_conditional
 - if this then that
