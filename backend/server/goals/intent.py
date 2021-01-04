@@ -73,6 +73,12 @@ class RunIntentGoal(HomeGoal):
             elif value in self.context.intents and value not in self.context.intent_to_procedure:
                 self.error = f"The intent, {value}, has been created but hasn't been connected to a procedure, so we can't run it. You can connect it by saying, \"connect the intent {value} to the procedure [procedure name].\""
             else:
+                required_entities = self.context.intents[value]
+                for entity in required_entities:
+                    if entity not in self.context.entities:
+                        self.error = f"The entity, {entity}, has not yet been initialized."
+                    elif self.context.entities[entity] == None:
+                        self.todos.append(GetEntityInputGoal(self.context, entity, f"What is the {entity}?"))
                 self.procedure = self.context.intent_to_procedure[value]
             return
         setattr(self, attr, value)

@@ -71,11 +71,13 @@ class RasaNLU(object):
             return None
         original_intent = intent["name"].replace("_", " ")
         if original_intent in self.context.intents:
+            for e in intents["entities"]:
+                self.context.add_entity(e["entity"], e["value"])
             return RunIntentGoal(self.context, original_intent)
+        else:
+            goal = intent_goal[intent["name"]]
+            entities = {}
+            if intents["entities"]:
+                entities.update({e["entity"]: e["value"] for e in intents["entities"] if e["entity"] in intent_entities[intent["name"]]})
 
-        goal = intent_goal[intent["name"]]
-        entities = {}
-        if intents["entities"]:
-            entities.update({e["entity"]: e["value"] for e in intents["entities"] if e["entity"] in intent_entities[intent["name"]]})
-
-        return goal(self.context, **entities)
+            return goal(self.context, **entities)

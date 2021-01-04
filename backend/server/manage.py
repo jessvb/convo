@@ -138,7 +138,7 @@ def train(data):
     sio.emit("trained")
 
 def add_intents_and_entities(context, intents, trainingData):
-    logger.debug("starting to add intents and entities")
+    context.add_intent("greet", [])
     for i in range(len(intents)):
         intent = intents[i]
         intent = intent.replace(" ", "_")
