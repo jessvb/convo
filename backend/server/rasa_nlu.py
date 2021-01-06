@@ -40,7 +40,7 @@ class RasaNLU(object):
     Uses the main function parse_message to connect to Rasa NLU and retrieve intent and entity
     """
 
-    def __init__(self, context, confidence_threshold=0.3):
+    def __init__(self, context, confidence_threshold=0.7):
         self.context = context
 
         # Threshold for the confidence returned by the Rasa NLU for the top intent

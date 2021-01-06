@@ -11,7 +11,8 @@ state_machine = {
     "home": {
         "create_procedure": "creating",
         "execute": "executing",
-        "edit": "editing"
+        "edit": "editing",
+        "connect_intent": "editing"
     },
     "creating": {
         "complete": "home"
@@ -248,7 +249,7 @@ class DialogContext(object):
     """
     Contains context and information needed to process messages and maintain conversations
 
-    More specifically, contains the classes, procedures, state, conversation, goals
+    More specifically, contains the classes, procedures, intents (and entities), state, conversation, goals
     and execution/editing subcontexts for the client
     """
     def __init__(self, sid, procedures={}):

@@ -3,7 +3,9 @@ from models import *
 
 class ConnectIntentGoal(HomeGoal):
     """
-    Goal is to connect an intent to a procedure. 
+    Goal is to connect an intent to a procedure. If the intent has associated entities, creates those 
+    variables (set to a default value of 0) if they do not already exist for use in the procedure by adding 
+    a CreateVariable command to the list of actions in the procedure.
 
     """
     def __init__(self, context, intent_name=None, procedure_name=None):
@@ -12,6 +14,7 @@ class ConnectIntentGoal(HomeGoal):
         self.execution = None
         self.setattr("intent_name", intent_name)
         self.setattr("procedure_name", procedure_name)
+        self.new_variables = {} # maps an entity to the index of its variable creation in the procedure's actions
 
     @property
     def message(self):
@@ -21,7 +24,16 @@ class ConnectIntentGoal(HomeGoal):
         if self._message:
             return self._message
 
-        return f"I connected the intent {self.intent_name} to the procedure {self.procedure_name}. What do you want to do now?" if self.is_complete else self.todos[-1].message
+        return_message = f"I connected the intent {self.intent_name} to the procedure {self.procedure_name}."
+
+        if self.context.intents[self.intent_name]:
+            for entity in self.context.intents[self.intent_name]:
+                if entity in self.new_variables:
+                    return_message += f" I created a variable for the entity {entity} that is set to a value of 0 at step {self.new_variables[entity]}. This default value will be overriden if I detect a different value for this entity when I recognize this intent."
+
+        return_message += f" What do you want to do now?"
+
+        return return_message if self.is_complete else self.todos[-1].message
 
     def setattr(self, attr, value):
         if (attr == "intent_name"):
@@ -48,11 +60,35 @@ class ConnectIntentGoal(HomeGoal):
     def complete(self):
         procedure = self.context.procedures[self.procedure_name]
         self.context.intent_to_procedure[self.intent_name] = procedure
+        self.context.current = procedure
+        # Transition from "home" state to "editing" state
+        self.context.transition(self)
+
+        for entity in self.context.intents[self.intent_name]:
+            entity_index = self.entity_already_exists(entity, procedure)
+            if entity_index == -1:
+                create_variable = CreateVariableActionGoal(self.context, entity, 0, True)
+                create_variable.actions = procedure.actions
+                create_variable.variables = procedure.variables
+                create_variable.complete()
+                self.new_variables[entity] = len(procedure.actions) - 1
+        self.context.transition("complete")
         return super().complete()
+
+    def entity_already_exists(self, entity, procedure):
+        for index in range(len(procedure.actions)):
+            action = procedure.actions[index]
+            if type(action) is CreateVariableAction:
+                if action.variable == entity:
+                    return index
+        return -1
 
 class RunIntentGoal(HomeGoal):
     """
-    Goal is to run the procedure connected to an intent when the intent is recognized. The goal is only complete when all slots/entities have been filled.
+    Goal is to run the procedure connected to an intent when the intent is recognized. The goal is only complete when all slots/entities 
+    have been filled. Entities are recognized in the procedure by deleting the original action where the entity was first created and set
+    to a default value of 0 and then adding in a new action in the same place where the entity is created as a variable again and then 
+    set to the value given by the user.
     """
     def __init__(self, context, intent_name=None):
         super().__init__(context)
@@ -74,12 +110,21 @@ class RunIntentGoal(HomeGoal):
                 self.error = f"The intent, {value}, has been created but hasn't been connected to a procedure, so we can't run it. You can connect it by saying, \"connect the intent {value} to the procedure [procedure name].\""
             else:
                 required_entities = self.context.intents[value]
+                self.procedure = self.context.intent_to_procedure[value]
                 for entity in required_entities:
                     if entity not in self.context.entities:
                         self.error = f"The entity, {entity}, has not yet been initialized."
                     elif self.context.entities[entity] == None:
-                        self.todos.append(GetEntityInputGoal(self.context, entity, f"What is the {entity}?"))
-                self.procedure = self.context.intent_to_procedure[value]
+                        self.todos.append(GetEntityInputGoal(self.context, value, entity, f"What is the {entity}?"))
+                    else:
+                        # Replace the original CreateVariableAction with a new CreateVariableAction at the same index with the entity set to the 
+                        # correct value given by the user.
+                        for i in range(len(self.procedure.actions)):
+                            action = self.procedure.actions[i]
+                            if type(action) is CreateVariableAction:
+                                if action.variable == entity:
+                                    self.procedure.actions[i] = CreateVariableAction(entity, self.context.entities[entity])  
+                
             return
         setattr(self, attr, value)
 
