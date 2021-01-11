@@ -65,11 +65,13 @@ class GetUserInputGoal(BaseGoal):
 
 class GetEntityInputGoal(HomeGoal):
     """Goal for getting user entity input during recognition of an intent"""
-    def __init__(self, context, entity, message):
+    def __init__(self, context, intent, entity, message):
         super().__init__(context)
+        self.intent = intent
         self.entity = entity
         self._message = message
         self.value = None
+        self.procedure = self.context.intent_to_procedure[self.intent]
 
     @property
     def is_complete(self):
@@ -92,6 +94,12 @@ class GetEntityInputGoal(HomeGoal):
     def complete(self):
         logger.debug(self.context.entities)
         self.context.entities[self.entity] = self.context.execution.variables[self.value.variable] if isinstance(self.value, ValueOf) else self.value
+        for i in range(len(self.procedure.actions)):
+            action = self.procedure.actions[i]
+            if type(action) is CreateVariableAction:
+                if action.variable == self.entity:
+                    # replace this action
+                    self.procedure.actions[i] = CreateVariableAction(self.entity, self.context.entities[self.entity])
         return super().complete()
 
 class GetUserInputActionGoal(ActionGoal):

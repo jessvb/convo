@@ -3,14 +3,18 @@ from goals import *
 
 class CreateVariableActionGoal(ActionGoal):
     """Goal for adding a create variable action"""
-    def __init__(self, context, name=None, value=None):
+    def __init__(self, context, name=None, value=None, prepend=False):
         super().__init__(context)
         self.setattr("value", value)
         self.setattr("name", name)
+        self.prepend = prepend
 
     def complete(self):
         assert hasattr(self, "actions")
-        self.actions.append(CreateVariableAction(self.name, self.value))
+        if self.prepend:
+            self.actions.insert(0, CreateVariableAction(self.name, self.value))
+        else:
+            self.actions.append(CreateVariableAction(self.name, self.value))
         self.variables.add(self.name)
         return super().complete()
 
