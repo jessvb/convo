@@ -213,12 +213,13 @@ let handleSocketApiResponse = (data) => {
 
 socketApi.on('response', handleSocketApiResponse);
 
-socketApi.on('trained', () => {
+socketApi.on('trained', (data) => {
     let nluContainer = document.getElementById('nlu-container');
     let doneTraining = document.createElement('div');
     let text = document.createElement('div');
     text.innerHTML = "Done Training";
 
+    addUtter("agent-utter", data.message, false);
     doneTraining.append(text);
     nluContainer.append(doneTraining);
 });

@@ -135,7 +135,14 @@ def train(data):
         return None
 
     logger.debug("Finished updating the trained model of Rasa.")
-    sio.emit("trained")
+
+    res = dm.handle_train(intents)
+    # If there is response message, log and send to client
+    dm.context.add_message(res)
+    response = {
+        "message": res,
+    }
+    sio.emit("trained", response, room=str(sid))
 
 def add_intents_and_entities(context, intents, trainingData):
     context.add_intent("greet", [])
