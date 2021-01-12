@@ -3,18 +3,19 @@ from models import *
 
 class ConnectIntentGoal(HomeGoal):
     """
-    Goal is to connect an intent to a procedure. If the intent has associated entities, creates those 
-    variables (set to a default value of 0) if they do not already exist for use in the procedure by adding 
-    a CreateVariable command to the list of actions in the procedure.
-
+    Goal is to connect an intent to a procedure. If the procedure does not yet exist, creates one. 
+    If the intent has associated entities, creates those variables (set to a default value of 0) 
+    if they do not already exist for use in the procedure by adding a CreateVariable command to the 
+    beginning of the list of actions in the procedure.
     """
     def __init__(self, context, intent_name=None, procedure_name=None):
         super().__init__(context)
         self.context = context
         self.execution = None
+        self.new_variables = {} # maps an entity to the index of its variable creation in the procedure's actions
+        self.created_new_procedure = False
         self.setattr("intent_name", intent_name)
         self.setattr("procedure_name", procedure_name)
-        self.new_variables = {} # maps an entity to the index of its variable creation in the procedure's actions
 
     @property
     def message(self):
@@ -25,6 +26,9 @@ class ConnectIntentGoal(HomeGoal):
             return self._message
 
         return_message = f"I connected the intent {self.intent_name} to the procedure {self.procedure_name}."
+
+        if self.created_new_procedure:
+            return_message += f" The procedure, {self.procedure_name}, did not exist previously, so I created a new procedure."
 
         if self.context.intents[self.intent_name]:
             for entity in self.context.intents[self.intent_name]:
@@ -40,8 +44,6 @@ class ConnectIntentGoal(HomeGoal):
             if not value:
                 self.todos.append(GetInputGoal(self.context, self, attr, "Which intent do you want to connect?"))
             elif value not in self.context.intents:
-                logger.debug("context intents")
-                logger.debug(self.context.intents)
                 self.error = f"An intent with the name, {value}, has not been created."
             else:
                 self.intent_name = value
@@ -49,11 +51,12 @@ class ConnectIntentGoal(HomeGoal):
         elif (attr == "procedure_name"):
             if not value:
                 self.todos.append(GetInputGoal(self.context, self, attr, "Which procedure do you want to connect?"))
-            elif value not in self.context.procedures:
-                logger.debug(value)
-                logger.debug(self.context.procedures)
-                self.error = f"The procedure with the name, {value}, has not been created."
             else:
+                if value not in self.context.procedures:
+                    procedure_to_create = Procedure(value)
+                    self.context.procedures[value] = procedure_to_create
+                    add_or_update_procedure(self.context.sid, procedure_to_create)
+                    self.created_new_procedure = True                  
                 self.procedure_name = value
         setattr(self, attr, value)
 
