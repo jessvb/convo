@@ -1,6 +1,7 @@
 import re
 import string
 from word2number import w2n
+from app import logger
 
 def to_snake_case(name):
     """Convert string to snakecase"""
@@ -31,12 +32,37 @@ def parse_number(message):
         # Cast float into an integer if it can
         return int(value) if value.is_integer() else value
 
-    # If it doesn't contain just numeric characters, try to convert string to a numbr using word_to_num
+    # If it doesn't contain just numeric characters, try to convert string to a number using word_to_num
     # which converts word-representation of numbers into a number, i.e "two" -> 2 or "twenty-five" -> 25
     try:
-        return factor * w2n.word_to_num(negation_removed)
+        current_value = factor * w2n.word_to_num(negation_removed)
     except ValueError as e:
         return None
+
+    # This is kind of a hack. To make sure we don't convert phrases that aren't just a number to a number, 
+    # (e.g. I have seven cats should not return 7) we try removing certain words from the phrase to see if it changes
+    # the outcome of the number. For example, removing 'twenty' from 'twenty two' would result in a different 
+    # numerical value (22 to 2), whereas removing 'I' from 'I have seven cats' would still return 7, making it
+    # not a phrase that should be numerically converted.
+    words_in_negation = negation_removed.split(" ")
+    if len(words_in_negation) > 1:
+        for i in range(len(words_in_negation)):
+            new_string = recreate_string(words_in_negation, i)
+            try:
+                new_value = factor * w2n.word_to_num(new_string)
+                if new_value == current_value:
+                    return None
+            except ValueError as e:
+                continue
+    return current_value
+
+def recreate_string(words, index_to_exclude):
+    new_string = ""
+    for i in range(len(words)):
+        if i != index_to_exclude:
+            new_string += words[i]
+            new_string += " "
+    return new_string
 
 def convert_to_dict(obj):
     """
