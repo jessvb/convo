@@ -145,11 +145,11 @@ class SemanticNLU(object):
         elif re.match(set_variable_regex, message):
             # Setting value of an existing variable
             match = re.match(set_variable_regex, message)
-            return SetVariableActionGoal(self.context, name=self.parse_variable(group(match, [1, 3])), value=self.parse_value(group(match, 2)))
+            return SetVariableActionGoal(self.context, variable_name=self.parse_variable(group(match, [1, 3])), variable_value=self.parse_value(group(match, 2)))
         elif re.match(create_variable_regex, message):
             # Creating a new variable
             match = re.match(create_variable_regex, message)
-            return CreateVariableActionGoal(self.context, name=group(match, [2, 4]), value=self.parse_value(group(match, 3)))
+            return CreateVariableActionGoal(self.context, variable_name=group(match, [2, 4]), variable_value=self.parse_value(group(match, 3)))
         elif re.match(add_to_variable_regex, message):
             # Adding to a variable
             match = re.match(add_to_variable_regex, message)
@@ -157,7 +157,7 @@ class SemanticNLU(object):
             if variable == "variable":
                 # If parsed value of variable string is just "variable", assume that name of variable was not given
                 variable = None
-            return AddToVariableActionGoal(self.context, name=variable, value=self.parse_value(group(match, 1)))
+            return AddToVariableActionGoal(self.context, variable_name=variable, add_value=self.parse_value(group(match, 1)))
         elif re.match(subtract_from_variable_regex, message):
             # Subtracting from a variable
             match = re.match(subtract_from_variable_regex, message)
@@ -165,7 +165,7 @@ class SemanticNLU(object):
             if variable == "variable":
                 # If parsed value of variable string is just "variable", assume that name of variable was not given
                 variable = None
-            return SubtractFromVariableActionGoal(self.context, name=variable, value=self.parse_value(group(match, 1)))
+            return SubtractFromVariableActionGoal(self.context, variable_name=variable, subtract_value=self.parse_value(group(match, 1)))
         elif re.match(say_regex, message):
             # Telling Convo to say something
             match = re.match(say_regex, message)

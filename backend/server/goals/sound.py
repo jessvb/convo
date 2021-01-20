@@ -1,5 +1,6 @@
 from goals import *
 from models import *
+import random
 
 available_sounds = set([
     "dog",
@@ -8,6 +9,13 @@ available_sounds = set([
     "cow",
     "bird",
     "cricket"
+])
+
+random_sound_words = set([
+    "random",
+    "any",
+    "a",
+    "animal",
 ])
 
 class PlaySoundActionGoal(ActionGoal):
@@ -26,7 +34,10 @@ class PlaySoundActionGoal(ActionGoal):
             if value is None:
                 self.todos.append(GetInputGoal(self.context, self, attr, "What sound do you want me to play?"))
             else:
-                sound = value.replace("sound", "").replace("the", "").strip()
+                if value in random_sound_words:
+                    sound = random.choice(list(available_sounds))
+                else:
+                    sound = value.replace("sound", "").replace("the", "").strip()
                 if sound not in available_sounds:
                     self.error = f"I cannot play the {value} sound. I might not have this sound file."
                 else:
