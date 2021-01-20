@@ -38,3 +38,14 @@ services:
         max-size: "20m"
         max-file: "5"
     command: npm start
+  react:
+    build: ./react
+    restart: on-failure
+    volumes:
+      - ./react:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - 3000:3000
+    command: yarn start
