@@ -245,6 +245,13 @@ class DialogManager(object):
 
         return response
 
+    def handle_train(self, intents):
+        """
+        Prompts the user to connect or create procedures for each intent that was trained.
+        """
+        logger.debug(f"[{self.sid}] Finished training the following intents: {intents}.")
+        return f"You've finished training the intents: {intents}! Please connect it to the procedure you want to execute when the intent is recognized by saying \"connect the intent [intent name] to the procedure [procedure name]\"."
+
 class DialogContext(object):
     """
     Contains context and information needed to process messages and maintain conversations
