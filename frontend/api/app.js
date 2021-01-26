@@ -5,8 +5,8 @@ const http = require("http");
 const app = express();
 const host = '0.0.0.0';
 const port = 8080;
-const server = http.createServer(app);
-const io = require('socket.io')(server);
+const httpServer = require('http').Server(app);
+const io = require('socket.io')(httpServer);
 const wav = require('wav');
 
 var cors = require("cors");
@@ -218,6 +218,6 @@ io.on('connection', (client) => {
     });
 });
 
-server.listen(port, host, () => {
-    console.log(`Httpserver started at http://${host}:${port}/.`)
+httpServer.listen(port, host, () => {
+    console.log(`HTTP server started at http://${host}:${port}/.`)
 });
