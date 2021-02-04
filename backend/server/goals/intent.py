@@ -12,7 +12,7 @@ class ConnectIntentGoal(HomeGoal):
         super().__init__(context)
         self.context = context
         self.execution = None
-        self.new_variables = {} # maps an entity to the index of its variable creation in the procedure's actions
+        self.new_variables = [] # list of new variables/entities created in the procedure
         self.created_new_procedure = False
         self.setattr("intent_name", intent_name)
         self.setattr("procedure_name", procedure_name)
@@ -31,9 +31,10 @@ class ConnectIntentGoal(HomeGoal):
             return_message += f" The procedure, {self.procedure_name}, did not exist previously, so I created a new procedure."
 
         if self.context.intents[self.intent_name]:
-            for entity in self.context.intents[self.intent_name]:
+            for entity in self.context.intents[self.intent_name][::-1]:
                 if entity in self.new_variables:
-                    return_message += f" I created a variable for the entity {entity} that is set to a value of 0 at step {self.new_variables[entity]}. This default value will be overriden if I detect a different value for this entity when I recognize this intent."
+                    new_variable_index = self.entity_already_exists(entity, self.procedure) + 1
+                    return_message += f" I created a variable for the entity {entity} that is set to a value of 0 at step {new_variable_index}. This default value will be overriden if I detect a different value for this entity when I recognize this intent."
 
         return_message += f" What do you want to do now?"
 
@@ -61,20 +62,20 @@ class ConnectIntentGoal(HomeGoal):
         setattr(self, attr, value)
 
     def complete(self):
-        procedure = self.context.procedures[self.procedure_name]
-        self.context.intent_to_procedure[self.intent_name] = procedure
-        self.context.current = procedure
+        self.procedure = self.context.procedures[self.procedure_name]
+        self.context.intent_to_procedure[self.intent_name] = self.procedure
+        self.context.current = self.procedure
         # Transition from "home" state to "editing" state
         self.context.transition(self)
 
         for entity in self.context.intents[self.intent_name]:
-            entity_index = self.entity_already_exists(entity, procedure)
+            entity_index = self.entity_already_exists(entity, self.procedure)
             if entity_index == -1:
                 create_variable = CreateVariableActionGoal(self.context, entity, 0, True)
-                create_variable.actions = procedure.actions
-                create_variable.variables = procedure.variables
+                create_variable.actions = self.procedure.actions
+                create_variable.variables = self.procedure.variables
                 create_variable.complete()
-                self.new_variables[entity] = len(procedure.actions) - 1
+                self.new_variables.append(entity)
         self.context.transition("complete")
         return super().complete()
 
