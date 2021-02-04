@@ -115,20 +115,24 @@ class RunIntentGoal(HomeGoal):
             else:
                 required_entities = self.context.intents[value]
                 self.procedure = self.context.intent_to_procedure[value]
-                for entity in required_entities:
-                    if entity not in self.context.entities:
-                        self.error = f"The entity, {entity}, has not yet been initialized."
-                    elif self.context.entities[entity] == None:
-                        self.todos.append(GetEntityInputGoal(self.context, value, entity, f"What is the {entity}?"))
-                    else:
-                        # Replace the original CreateVariableAction with a new CreateVariableAction at the same index with the entity set to the 
-                        # correct value given by the user.
-                        for i in range(len(self.procedure.actions)):
-                            action = self.procedure.actions[i]
-                            if type(action) is CreateVariableAction:
-                                if action.variable == entity:
-                                    self.procedure.actions[i] = CreateVariableAction(entity, self.context.entities[entity])  
-                
+                # Check to see if the procedure still exists (has not been deleted)
+                if self.procedure.name in self.context.procedures:
+                    for entity in required_entities:
+                        if entity not in self.context.entities:
+                            self.error = f"The entity, {entity}, has not yet been initialized."
+                        elif self.context.entities[entity] == None:
+                            self.todos.append(GetEntityInputGoal(self.context, value, entity, f"What is the {entity}?"))
+                        else:
+                            # Replace the original CreateVariableAction with a new CreateVariableAction at the same index with the entity set to the 
+                            # correct value given by the user.
+                            for i in range(len(self.procedure.actions)):
+                                action = self.procedure.actions[i]
+                                if type(action) is CreateVariableAction:
+                                    if action.variable == entity:
+                                        self.procedure.actions[i] = CreateVariableAction(entity, self.context.entities[entity])
+                else:
+                    self.error = f"I detected the intent {value}, but the procedure it was connected to, {self.procedure.name}, has been renamed or deleted."
+                    
             return
         setattr(self, attr, value)
 
