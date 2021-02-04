@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const vars = require('dotenv').config();
 const express = require('express');
+const http = require("http");
 const app = express();
 const host = '0.0.0.0';
 const port = 8080;
@@ -9,7 +9,10 @@ const httpServer = require('http').Server(app);
 const io = require('socket.io')(httpServer);
 const wav = require('wav');
 
-app.use(express.static('public'));
+var cors = require("cors");
+app.use(cors());
+
+app.use(express.static("public"));
 
 if (process.env.NODE_ENV && process.env.NODE_ENV === 'production') {
     // Simple password protection:
@@ -77,9 +80,11 @@ app.get('/text-and-conversation', (req, res) => res.sendFile(path.resolve('publi
 app.get('/voice-and-program', (req, res) => res.sendFile(path.resolve('public/html/experiment-templates/voice-and-program.html')));
 app.get('/voice-and-text', (req, res) => res.sendFile(path.resolve('public/html/experiment-templates/voice-and-text.html')));
 app.get('/voice-only', (req, res) => res.sendFile(path.resolve('public/html/experiment-templates/voice-only.html')));
+
 app.get('/debug', (req, res) => res.sendFile(path.resolve('public/html/debug.html')));
 
 const speech = require('@google-cloud/speech');
+const { debug } = require('console');
 const speechClient = new speech.SpeechClient();
 const encoding = 'LINEAR16';
 const sampleRateHertz = 16000;
@@ -123,11 +128,13 @@ streams = {};
 writers = {};
 
 io.on('connection', (client) => {
+    // Check socket connection to react server
+    client.emit('reactconnection', null);
+
     let sessionId = client.id;
     let sid;
     let stage;
     let part;
-
     let startStream = () => {
         streams[sessionId] = speechClient.streamingRecognize(request)
             .on('error', (err) => {

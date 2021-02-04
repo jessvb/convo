@@ -24,10 +24,10 @@ services:
         max-file: "5"
     command: gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:5000 --log-level=info manage:app
   web:
-    build: ./frontend
+    build: ./frontend/api
     restart: on-failure
     volumes:
-      - ./frontend:/usr/src/app
+      - ./frontend/api:/usr/src/app
     environment:
       - NODE_ENV=development
     ports:
@@ -38,3 +38,14 @@ services:
         max-size: "20m"
         max-file: "5"
     command: npm start
+  react:
+    build: ./frontend/react
+    restart: on-failure
+    volumes:
+      - ./frontend/react:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - 3000:3000
+    command: yarn start

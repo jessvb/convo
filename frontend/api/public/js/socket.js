@@ -5,7 +5,7 @@
 const socket = io.connect('http://localhost:8080');
 const socketApi = io.connect('http://localhost:5000');
 
-// Genrates or remembers a somewhat-unique ID with distilled user-agent info.
+// Generates or remembers a somewhat-unique ID with distilled user-agent info.
 let getUniqueId = () => {
     if (!('sid' in localStorage)) {
         let browser = findFirstString(navigator.userAgent, [

@@ -77,14 +77,15 @@ def join(data):
 @sio.on("disconnect")
 def disconnect():
     """Disconnect from server"""
-    sid, stage, part = socket_sessions.get(request.sid)
-    if sid:
-        # Remove client from the list of connected clients in socket_sessions but keep the client object in socket_clients
-        # This way if client reconnects, no work is lost
-        client = socket_clients.get(sid)
-        del socket_sessions[request.sid]
-        logger.info(f"[{sid}][{stage},{part}] Client disconnected.")
-        logger.info(f"[{sid}][{stage},{part}] Conversation: {client.dm.context.conversation}")
+    if request.sid:
+        sid, stage, part = socket_sessions.get(request.sid)
+        if sid:
+            # Remove client from the list of connected clients in socket_sessions but keep the client object in socket_clients
+            # This way if client reconnects, no work is lost
+            client = socket_clients.get(sid)
+            del socket_sessions[request.sid]
+            logger.info(f"[{sid}][{stage},{part}] Client disconnected.")
+            logger.info(f"[{sid}][{stage},{part}] Conversation: {client.dm.context.conversation}")
 
 @sio.on("train")
 def train(data):
