@@ -48,7 +48,7 @@ services:
       - CHOKIDAR_USEPOLLING=true
     ports:
       - 3000:3000
-    command: yarn start
+    command: npm start
   nginx:
     image: nginx:alpine
     restart: unless-stopped
