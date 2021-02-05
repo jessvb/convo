@@ -322,14 +322,70 @@ const Styles = styled.div`
 `;
 
  
-
 const ProgramPage = (props) => {
     const [state, setState] = useState('home');
     const [userMessage, setUserMessage] = useState("");
     const [chatMessages, setChatMessages] = useState([]); // list of chat messages with the label of either convo or the user
 
     useEffect(() => {
-        props.socketFlask.on('response', handleSocketFlaskResponse);
+        addAudioPlayer();
+        const addMessage = (text, className, speak = true) => {
+            if (className === "agent-utter" && speak === true) {
+                speakMessage(text);
+            }
+            let messageToAdd = {'text': text, 'className': className, 'speak': speak};
+            setChatMessages(chatMessages => [...chatMessages, messageToAdd]);
+        }
+    
+        const speakMessage = (message) => {
+            console.log('inside speak message');
+            let audio = new SpeechSynthesisUtterance(message);
+            audio.voice = synth.getVoices().filter((voice) => {
+                return voice.name === 'Google US English' || voice.name === 'Samantha';
+            })[0];
+            audio.volume = 1;
+            audio.rate = 0.9;
+            audio.pitch = 1.0;
+            audio.lang = 'en-US';
+            synth.speak(audio);
+        }
+        
+        props.socketFlask.on('response', (data) => {
+            const handleSocketFlaskResponse = (data) => {
+                let audioPlayer = document.getElementById('audio-player');
+                if (audioPlayer.src && !audioPlayer.ended) {
+                    setTimeout(() => handleSocketFlaskResponse(data), 500);
+                } else {
+                    if ('state' in data)
+                        setState(data.state);
+                    addMessage(data.message, "agent-utter", data.speak);
+                }
+            }
+            handleSocketFlaskResponse(data);
+        });
+
+        props.socketFlask.on('playSound', (data) => {
+            const handlePlaySound = (data) => {
+                let audioPlayer = document.getElementById('audio-player');
+                if (audioPlayer.src && !audioPlayer.ended) {
+                    setTimeout(() => handlePlaySound(data), 500);
+                } else {
+                    audioPlayer.src = `/sounds/${data.sound}.mp3`;
+                    addMessage(`Playing ${data.sound} sound.`, "agent-utter", false);
+                    const audioPromise = audioPlayer.play();
+                    if (audioPromise !== undefined) {
+                        audioPromise
+                        .then(_ => {
+                            // autoplay starts here
+                        })
+                        .catch(err => {
+                            console.info(err);
+                        });
+                    }
+                }
+            }
+            handlePlaySound(data);
+        });
       }, [props.socketFlask]
     );
 
@@ -337,12 +393,13 @@ const ProgramPage = (props) => {
         document.querySelector('.conversation').scrollTop = document.querySelector('.conversation').scrollHeight;
       }
     );
-    
-    const handleSocketFlaskResponse = (data) => {
-        if ('state' in data)
-            setState(data.state);
-        let messageToAdd = {'text': data.message, 'className': 'agent-utter', 'speak': false};
-        setChatMessages(chatMessages => [...chatMessages, messageToAdd]);
+
+    const addAudioPlayer = () => {
+        let audioPlayer = document.createElement('audio');
+        audioPlayer.id = 'audio-player';
+        audioPlayer.preload = 'none';
+        audioPlayer.style = "display: none";
+        document.body.appendChild(audioPlayer);
     }
 
     const submitText = (target) => {
