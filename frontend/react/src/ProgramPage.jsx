@@ -402,7 +402,7 @@ const ProgramPage = (props) => {
         document.body.appendChild(audioPlayer);
     }
 
-    const submitText = (target) => {
+    const submitText = () => {
         if (userMessage !== "") {
             synth.cancel();
             submitMessage(userMessage.toLowerCase(), false);
