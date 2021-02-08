@@ -11,6 +11,7 @@ import { Layout } from './components/Layout';
 import { NavigationBar } from './components/NavigationBar';
 import socketIOClient from 'socket.io-client';
 
+const ENDPOINT = "http://localhost:3000";
 const NODE_ENDPOINT = "http://localhost:8080";
 const FLASK_ENDPOINT = "http://localhost:5000"; 
 
@@ -25,6 +26,7 @@ const findFirstString = (str, choices) => {
 };
 
 const getUniqueId = () => {
+  if (!('sid' in localStorage)) {
     let browser = findFirstString(navigator.userAgent, [
         'Seamonkey', 'Firefox', 'Chromium', 'Chrome', 'Safari', 'OPR', 'Opera',
         'Edge', 'MSIE', 'Blink', 'Webkit', 'Gecko', 'Trident', 'Mozilla'
@@ -34,9 +36,10 @@ const getUniqueId = () => {
         'Windows', 'OS X', 'Linux', 'iOS', 'CrOS'
     ]).replace(/ /g, '_');
     let unique = ('' + Math.random()).substr(2);
-    let sid = `${os}_${browser}_${unique}_react`;
+    localStorage.setItem('sid', `${os}_${browser}_${unique}_react`);
+  }
 
-    return sid;
+  return localStorage.getItem('sid');
 };
 
 class App extends Component {
@@ -45,12 +48,15 @@ class App extends Component {
 
       this.state = {
           sid: getUniqueId(),
+          socket: socketIOClient(ENDPOINT),
           socketNode: socketIOClient(NODE_ENDPOINT),
           socketFlask: socketIOClient(FLASK_ENDPOINT)
       }
   }
   componentDidMount() {
     this.configureSocket();
+    localStorage.setItem('currPart', 'sandbox');
+    localStorage.setItem('currStage', 'sandbox');
   }
 
   configureSocket = () => {    
@@ -62,8 +68,8 @@ class App extends Component {
         console.log('Connected to the Flask backend');
         this.state.socketFlask.emit('join', {
             "sid": this.state.sid,
-            "stage": "sandbox",
-            "part": "sandbox"
+            "stage": localStorage.getItem('currStage'),
+            "part": localStorage.getItem('currPart')
         });
     });
 
@@ -87,7 +93,7 @@ class App extends Component {
             <Switch>
               <Route exact path="/" component={Info} />
               <Route path="/create-intents" component={CreateIntentPage} />
-              <Route path="/program" render={() => <ProgramPage sid={this.state.sid} socketFlask={this.state.socketFlask} />} />
+              <Route path="/program" render={() => <ProgramPage sid={this.state.sid} socket = {this.state.socket} socketNode={this.state.socketNode} socketFlask={this.state.socketFlask} />} />
               <Route path="/talk-to-convo" component={TalkToConvoPage} />
               <Route component={NoMatch} />
             </Switch>
