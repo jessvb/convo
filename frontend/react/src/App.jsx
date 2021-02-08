@@ -11,7 +11,6 @@ import { Layout } from './components/Layout';
 import { NavigationBar } from './components/NavigationBar';
 import socketIOClient from 'socket.io-client';
 
-const ENDPOINT = "http://localhost:3000";
 const NODE_ENDPOINT = "http://localhost:8080";
 const FLASK_ENDPOINT = "http://localhost:5000"; 
 
@@ -48,7 +47,6 @@ class App extends Component {
 
       this.state = {
           sid: getUniqueId(),
-          socket: socketIOClient(ENDPOINT),
           socketNode: socketIOClient(NODE_ENDPOINT),
           socketFlask: socketIOClient(FLASK_ENDPOINT)
       }
@@ -92,9 +90,9 @@ class App extends Component {
           <Layout>
             <Switch>
               <Route exact path="/" component={Info} />
-              <Route path="/create-intents" component={CreateIntentPage} />
-              <Route path="/program" render={() => <ProgramPage sid={this.state.sid} socket = {this.state.socket} socketNode={this.state.socketNode} socketFlask={this.state.socketFlask} />} />
-              <Route path="/talk-to-convo" render={() => <TalkToConvoPage sid={this.state.sid} socket = {this.state.socket} socketNode={this.state.socketNode} socketFlask={this.state.socketFlask} />} />
+              <Route path="/create-intents" render={() => <CreateIntentPage sid={this.state.sid} socketFlask={this.state.socketFlask} />} />
+              <Route path="/program" render={() => <ProgramPage sid={this.state.sid} socketFlask={this.state.socketFlask} />} />
+              <Route path="/talk-to-convo" render={() => <TalkToConvoPage sid={this.state.sid} socketFlask={this.state.socketFlask} />} />
               <Route component={NoMatch} />
             </Switch>
           </Layout>
