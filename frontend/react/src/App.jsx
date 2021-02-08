@@ -91,8 +91,8 @@ class App extends Component {
             <Switch>
               <Route exact path="/" component={Info} />
               <Route path="/create-intents" render={() => <CreateIntentPage sid={this.state.sid} socketFlask={this.state.socketFlask} />} />
-              <Route path="/program" render={() => <ProgramPage sid={this.state.sid} socketFlask={this.state.socketFlask} />} />
-              <Route path="/talk-to-convo" render={() => <TalkToConvoPage sid={this.state.sid} socketFlask={this.state.socketFlask} />} />
+              <Route path="/program" render={() => <ProgramPage sid={this.state.sid} socketNode={this.state.socketNode} socketFlask={this.state.socketFlask} />} />
+              <Route path="/talk-to-convo" render={() => <TalkToConvoPage sid={this.state.sid} socketNode={this.state.socketNode} socketFlask={this.state.socketFlask} />} />
               <Route component={NoMatch} />
             </Switch>
           </Layout>

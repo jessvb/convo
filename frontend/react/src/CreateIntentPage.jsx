@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Container } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Button, Container, Spinner } from 'react-bootstrap';
 import IntentCard from './components/IntentCard';
 import styled from 'styled-components';
 
@@ -46,6 +46,16 @@ const Styles = styled.div`
 
 const CreateIntentPage = props => {
     const [intents, setIntents] = useState(['']);
+    const [isTraining, setIsTraining] = useState(false);
+    const [finishedTraining, setFinishedTraining] = useState(false); // stays true if finished training even once
+
+    useEffect(() => {
+            props.socketFlask.on('trained', () => {
+                setIsTraining(false);
+                setFinishedTraining(true);
+            });
+        }, [props.socketFlask]
+    );
 
     const handleAddMoreIntents = () => {
         let oneMoreIntent = intents.concat([''])
@@ -63,12 +73,63 @@ const CreateIntentPage = props => {
         );
     };
 
+    const formatTrainingData = (intentPhrases) => {
+        let formattedPhrase = "";
+        for (var i = 0; i < intentPhrases.length; i++) {
+            let intentPhrase = intentPhrases[i].value;
+            formattedPhrase += intentPhrase;
+            if (i !== intentPhrases.length - 1) {
+                formattedPhrase += ",";
+            }
+        }
+        return formattedPhrase;
+    }
+
+    const handleTrain = () => {
+        let intentElements = document.getElementsByName("intent");
+        let intents = [];
+        let phrases = [];
+        for (var i=0; i < intentElements.length; i++) {
+            let intent = intentElements[i].value;
+            if (intent !== "") {
+                intents.push(intent);
+                let phraseElements = document.getElementsByName(intent);
+                phrases.push(formatTrainingData(phraseElements));
+            }
+        }
+
+        if (intents !== []) {
+            props.socketFlask.emit('train', {
+                sid: localStorage.getItem('sid'),
+                intents: intents,
+                trainingData: phrases,
+            });
+        }
+        setIsTraining(true);
+    }
+
+    const renderTrainButton = () => {
+        return (
+            <div style={{ paddingLeft: 25, alignItems: "center", display: "flex" }}>
+                <Button 
+                    variant="info"
+                    onClick={handleTrain}
+                    style={{ marginRight: 8 }}>
+                    Train!
+                </Button>
+                { isTraining && <Spinner animation="border" variant="info" /> }
+                { finishedTraining && !isTraining && <div>Done!</div> }
+            </div>
+        )
+    }
+
     return (     
         <Styles>
             <div className="intent-page">
-                {intents.map(() => (<IntentCard/>))}
+                {intents.map(() => (<IntentCard />))}
                 {renderIntentCardAddMoreButton()}
             </div>
+            {renderTrainButton()}
         </Styles>
     )
 }

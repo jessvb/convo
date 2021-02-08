@@ -402,7 +402,7 @@ const ProgramPage = (props) => {
                 <div className="example-action" style={{ marginBottom: '10px' }}>
                     <div className="action-title"><b>{action.title}</b></div>
                     {action.examples.map(ex => {
-                        return (<div class="action-example"><em>{ex}</em></div>)
+                        return (<div><em>{ex}</em></div>)
                     })}
                 </div>
             )
@@ -423,7 +423,7 @@ const ProgramPage = (props) => {
         <Styles>
             <div className="experiment-container">
                 {renderSidebar()}
-                <ChatBox sid={props.sid} isUnconstrained={true} state={state} parentCallback={callbackFunction} socketNode={props.socketNode} socketFlask={props.socketFlask}/>
+                <ChatBox sid={props.sid} isUnconstrained={false} pageId={"program"} state={state} parentCallback={callbackFunction} socketNode={props.socketNode} socketFlask={props.socketFlask}/>
             </div>
         </Styles>
     )
