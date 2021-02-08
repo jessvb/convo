@@ -5,7 +5,7 @@ import Switch from 'react-router-dom/Switch';
 import { Info } from './Info';
 import CreateIntentPage from './CreateIntentPage';
 import ProgramPage from './ProgramPage';
-import { TalkToConvoPage } from './TalkToConvoPage';
+import TalkToConvoPage from './TalkToConvoPage';
 import { NoMatch } from './NoMatch';
 import { Layout } from './components/Layout';
 import { NavigationBar } from './components/NavigationBar';
@@ -94,7 +94,7 @@ class App extends Component {
               <Route exact path="/" component={Info} />
               <Route path="/create-intents" component={CreateIntentPage} />
               <Route path="/program" render={() => <ProgramPage sid={this.state.sid} socket = {this.state.socket} socketNode={this.state.socketNode} socketFlask={this.state.socketFlask} />} />
-              <Route path="/talk-to-convo" component={TalkToConvoPage} />
+              <Route path="/talk-to-convo" render={() => <TalkToConvoPage sid={this.state.sid} socket = {this.state.socket} socketNode={this.state.socketNode} socketFlask={this.state.socketFlask} />} />
               <Route component={NoMatch} />
             </Switch>
           </Layout>
