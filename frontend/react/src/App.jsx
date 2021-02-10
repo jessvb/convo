@@ -54,9 +54,9 @@ class App extends Component {
       }
   }
   componentDidMount() {
-    this.configureSocket();
     localStorage.setItem('currPart', 'sandbox');
     localStorage.setItem('currStage', 'sandbox');
+    this.configureSocket();
   }
 
   configureSocket = () => {    
