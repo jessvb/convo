@@ -1,14 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
-const http = require("http");
 const app = express();
 const host = '0.0.0.0';
 const port = 8080;
 const httpServer = require('http').Server(app);
 const io = require('socket.io')(httpServer);
 const wav = require('wav');
-
+require('dotenv').config();
 var cors = require("cors");
 app.use(cors());
 
