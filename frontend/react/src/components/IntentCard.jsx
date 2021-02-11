@@ -20,7 +20,19 @@ const HEX_TO_COLOR = {
     '#ffe3c7': 'orange',
 }
 
-const ORDERED_COLORS = [COLORS.yellow, COLORS.blue, COLORS.red, COLORS.green, COLORS.purple, COLORS.orange];
+const HIGHLIGHT_SPAN_TAGS = 
+    [`<span style="background-color: rgb(255, 254, 197);">`,
+     `<span style="background-color: rgb(199, 255, 255);">`,
+     `<span style="background-color: rgb(255, 199, 199);">`,
+     `<span style="background-color: rgb(199, 255, 199);">`,
+     `<span style="background-color: rgb(227, 199, 255);">`,
+     `<span style="background-color: rgb(255, 227, 199);">`
+    ];
+
+    const ORDERED_COLORS = [COLORS.yellow, COLORS.blue, COLORS.red, COLORS.green, COLORS.purple, COLORS.orange];
+
+const synth = window.speechSynthesis;
+synth.cancel();
 
 const Styles = styled.div`
     .card {
@@ -186,11 +198,13 @@ class IntentCard extends Component {
         super(props);
 
         this.state = {
+            intent: '',
             phrases: [''],
             entities: [''],
             showEntities: false,
             highlightColor: '',
             highlightColorClass: 'label-input',
+            isHighlighting: false
         };
     }
 
@@ -208,13 +222,38 @@ class IntentCard extends Component {
         this.setState({ entities: moreEntities });
     }
 
-    turnOnHighlighting = (color) => {
-        console.log(color);
-        let color_name = HEX_TO_COLOR[color];
-        this.setState({ highlightColorClass: `label-input-${color_name}`, highlightColor: color });
+    handleIntentChange = e => {
+        this.setState({ intent: e.target.value });
     }
 
-    mouseUp = () => {
+    handleEntityChange = (e, idx) => {
+        let newEntities = this.state.entities.slice();
+        newEntities[idx] = e.target.value;
+        this.setState({ entities: newEntities });
+    }
+
+    handlePhraseChange = (e, idx) => {
+        let newPhrases = this.state.phrases.slice();
+        newPhrases[idx] = e.target.value;
+        this.setState({ phrases: newPhrases });
+    }
+
+    turnOnHighlighting = (color) => {
+        let color_name = HEX_TO_COLOR[color];
+        this.setState({ 
+            highlightColorClass: `label-input-${color_name}`,
+            highlightColor: color,
+            isHighlighting: true });
+    }
+
+    doneHighlighting = () => {
+        this.rewriteIntentPhrases();
+        this.setState({
+            isHighlighting: false
+        });
+    }
+
+    clearHighlighting = () => {
         let selectedText = '';
         if (window.getSelection) {
             selectedText = window.getSelection();
@@ -225,40 +264,96 @@ class IntentCard extends Component {
         else if (document.selection) {
             selectedText = document.selection.createRange().text;
         }
-        console.log(selectedText);
+        selectedText.removeAllRanges();
     }
 
-    renderEntity = (color) => {
+    mouseUp = () => {
+        if (this.state.isHighlighting) {
+            let selectedText = '';
+            if (window.getSelection) {
+                selectedText = window.getSelection();
+            }
+            else if (document.getSelection) {
+                selectedText = document.getSelection();
+            }
+            if (selectedText.toString().length > 0) {
+                // wrap the selected text in a 'highlight' the same color as the entity
+                let span = document.createElement("span");
+                span.style.backgroundColor = this.state.highlightColor;
+                if (selectedText.rangeCount) {
+                    let range = selectedText.getRangeAt(0).cloneRange();
+                    // make sure there's no overlap with a previous highlight
+                    if (range.toString().indexOf("<span") === -1 && range.toString().indexOf("</span>") === -1) {
+                        try {
+                            range.surroundContents(span);
+                            selectedText.removeAllRanges();
+                            selectedText.addRange(range);
+                        } catch (err) {
+                            console.log("not a valid highlight");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    rewriteIntentPhrases = () => {
+        let newPhrases = [];
+        let phraseElements = document.getElementsByName("span-phrase");
+        for (var i=0; i < phraseElements.length; i++) {
+            let phraseElement = phraseElements[i].innerHTML;
+            // replace the highlighted portions with the actual syntax for entities
+            for (var j=0; j < HIGHLIGHT_SPAN_TAGS.length; j++) {
+                let span_start_tag = HIGHLIGHT_SPAN_TAGS[j];
+                while (phraseElement.indexOf(span_start_tag) > -1) {
+                    let tag_index = phraseElement.indexOf(span_start_tag);
+                    phraseElement = phraseElement.replace(span_start_tag, "[");
+                    if (phraseElement.indexOf("</span>", tag_index) > -1) {
+                        let replace_phrase = "]";
+                        replace_phrase += "(" + this.state.entities[j] + ")";
+                        phraseElement = phraseElement.replace("</span>", replace_phrase);
+                    }
+                }
+            }
+            
+            newPhrases.push(phraseElement);
+        }
+        this.setState({ phrases: newPhrases });
+    }
+
+    renderEntity = (index) => {
         return (
-            <div className="entity" style={{ background: color }}>
+            <div className="entity" style={{ background: ORDERED_COLORS[index] }}>
                 <label className="label">
                     Entity Name:
-                    <input className="label-input" type="text" name="entity-name" placeholder="city"/>
+                    <input 
+                        className="label-input"
+                        type="text"
+                        name="entity-name"
+                        placeholder="city"
+                        value={this.state.entities[index]}
+                        onChange={e => {this.handleEntityChange(e, index)}}
+                    />
                 </label>
-                <div className="highlight-entities-button" onClick={() => this.turnOnHighlighting(color)}>Highlight Entities</div>
+                <div className="highlight-entities-button" onClick={() => this.turnOnHighlighting(ORDERED_COLORS[index])}>Highlight Entities</div>
             </div>
         )
     }   
 
     renderEntitiesCard() {
-        // cap the number of entities for one intent to be 6
-        if (this.state.entities.length < 6) {
-            return (
-                <div className="intent-card grey-color" style={{width: 207}}>
-                    <Container className="entities-entry" style={{padding: 8}}>
-                        {this.state.entities.map((val, index) => (this.renderEntity(ORDERED_COLORS[index])))}
-                    </Container>
-                    <div className="add-more-button" onClick={this.handleAddMoreEntities}>⊕</div>
-                </div>
-            )
-        }
-
-        // remove the add more entities button
+        // cap the number of entities for one intent to be 6 by removing the 
+        // add more entities button when there are 6 or more entities
         return (
             <div className="intent-card grey-color" style={{width: 207}}>
+                { this.state.isHighlighting &&
+                    <div className="entity-buttons">
+                        <div className="highlight-entities-button" onClick={() => this.doneHighlighting()}>Done Highlighting</div>
+                    </div> }
                 <Container className="entities-entry" style={{padding: 8}}>
-                    {this.state.entities.map((val, index) => (this.renderEntity(ORDERED_COLORS[index])))}
+                    {this.state.entities.map((val, index) => (this.renderEntity(index)))}
                 </Container>
+                { this.state.entities.length < 6 &&
+                    <div className="add-more-button" onClick={this.handleAddMoreEntities}>⊕</div> }
             </div>
         )
         
@@ -272,17 +367,53 @@ class IntentCard extends Component {
         )
     }
 
+    renderIntentPhrase(idx) {
+        return (
+            <div>
+                { this.state.isHighlighting ?
+                    <div>
+                        -&nbsp;
+                        <span name="span-phrase"
+                            className={this.state.highlightColorClass} 
+                            onMouseUp={this.mouseUp}
+                            style={{ fontWeight: "normal", cursor: "text" }}
+                        >
+                                {this.state.phrases[idx]}
+                        </span>
+                    </div>
+                :
+                    <input
+                        style={{ marginTop: 8 }} 
+                        type="text"
+                        name={this.state.intent}
+                        placeholder="make a new recipe"
+                        value={this.state.phrases[idx]}
+                        onChange={e => {this.handlePhraseChange(e, idx)}} 
+                    />
+                }
+            </div>
+            
+        )
+    }
+
     renderIntentCard() {
         return (
             <div className="intent-card">
                 <form className="intent-form">
                     <label className="label">
                         Intent Name:
-                        <input className="label-input" type="text" name="name" placeholder="create recipe"/>
+                        <input 
+                            className="label-input"
+                            type="text"
+                            name="intent"
+                            placeholder="create recipe"
+                            value={this.state.intent}
+                            onChange={e => this.handleIntentChange(e)}
+                        />
                     </label>
                     <label className="label">
                         Intent Phrases:
-                        {this.state.phrases.map(() => (<input className={this.state.highlightColorClass} type="text" name="phrases" id="phrases" placeholder="make a new recipe" onMouseUp={this.mouseUp}/>))}
+                        {this.state.phrases.map((_, idx) => (this.renderIntentPhrase(idx)))}
                     </label>
                 </form>
                 <div className="add-more-button" onClick={this.handleAddMorePhrases}>⊕</div>

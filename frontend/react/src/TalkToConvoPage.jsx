@@ -143,7 +143,7 @@ const TalkToConvoPage = (props) => {
     return (
         <Styles>
             <div className="experiment-container">
-                <ChatBox sid={props.sid} isUnconstrained={true} state={state} parentCallback={callbackFunction} socketNode={props.socketNode} socketFlask={props.socketFlask}/>
+                <ChatBox sid={props.sid} isUnconstrained={true} state={state} pageId={"talk"} parentCallback={callbackFunction} socketNode={props.socketNode} socketFlask={props.socketFlask}/>
             </div>
         </Styles>
     )

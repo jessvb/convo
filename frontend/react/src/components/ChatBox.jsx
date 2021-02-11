@@ -7,7 +7,8 @@ synth.cancel();
 const ChatBox = (props) => {
     const [isRecording, setIsRecording] = useState(false);
     const [userMessage, setUserMessage] = useState("");
-    const [chatMessages, setChatMessages] = useState([]); // list of chat messages with the label of either convo or the user
+    // list of chat messages with the label of either convo or the user, have messages persist
+    const [chatMessages, setChatMessages] = useState(localStorage.getItem(props.pageId) ? JSON.parse(localStorage.getItem(props.pageId)) : []);
 
     let context = useRef(null);
     let processor = useRef(null);
@@ -179,6 +180,10 @@ const ChatBox = (props) => {
             document.removeEventListener("keyup", handleKeyUp)
         }
     }, [isRecording, props.socketNode, startRecording, stopRecording]);
+
+    useEffect(() => {
+        localStorage.setItem(props.pageId, JSON.stringify(chatMessages));
+    }, [chatMessages, props.pageId]);
 
     useEffect(() => {
         document.querySelector('.conversation').scrollTop = document.querySelector('.conversation').scrollHeight;
