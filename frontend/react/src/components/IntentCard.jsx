@@ -90,6 +90,10 @@ const Styles = styled.div`
         cursor: pointer; 
     }
 
+    .delete-card-button {
+        cursor: pointer;
+    }
+
     .entities-button {
         display: flex;
         flex-direction: row;
@@ -204,7 +208,9 @@ class IntentCard extends Component {
             showEntities: false,
             highlightColor: '',
             highlightColorClass: 'label-input',
-            isHighlighting: false
+            isHighlighting: false,
+            // determines if this card should be shown (false only if it has been deleted)
+            showCard: localStorage.getItem(this.props.intentId + "showCard") ? JSON.parse(localStorage.getItem(this.props.intentId + "showCard")) : true
         };
     }
 
@@ -218,6 +224,13 @@ class IntentCard extends Component {
         if (prevState.entities !== this.state.entities) {
             localStorage.setItem(this.props.intentId + "entities", JSON.stringify(this.state.entities));
         }
+        if (prevState.showCard !== this.state.showCard) {
+            localStorage.setItem(this.props.intentId + "showCard", JSON.stringify(this.state.showCard));
+        }
+    }
+    
+    handleDeleteCard = () => {
+        this.setState({ showCard: false });
     }
 
     toggleShowEntities = () => {
@@ -411,6 +424,7 @@ class IntentCard extends Component {
     renderIntentCard() {
         return (
             <div className="intent-card">
+                <div className="delete-card-button" onClick={this.handleDeleteCard}>ⓧ</div>
                 <form className="intent-form">
                     <label className="label">
                         Intent Name:
@@ -434,25 +448,28 @@ class IntentCard extends Component {
     }
 
     render() {
-        if (this.state.showEntities) {
+        if (this.state.showCard) {
+            if (this.state.showEntities) {
+                return (
+                    <Styles>
+                        <Container className="card expanded-card">
+                            {this.renderIntentCard()}
+                            {this.renderEntitiesCard()}
+                            {this.renderEntitiesButton()}
+                        </Container>
+                    </Styles>
+                );
+            }
             return (
                 <Styles>
-                    <Container className="card expanded-card">
+                    <Container className="card">
                         {this.renderIntentCard()}
-                        {this.renderEntitiesCard()}
                         {this.renderEntitiesButton()}
                     </Container>
                 </Styles>
             );
         }
-        return (
-            <Styles>
-                <Container className="card">
-                    {this.renderIntentCard()}
-                    {this.renderEntitiesButton()}
-                </Container>
-            </Styles>
-        );
+        return null;
     }
 }
 
