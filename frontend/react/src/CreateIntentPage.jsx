@@ -45,7 +45,8 @@ const Styles = styled.div`
 `;
 
 const CreateIntentPage = props => {
-    const [intents, setIntents] = useState(['']);
+    const [intentId, setIntentId] = useState(localStorage.getItem("intentIndex") ? JSON.parse(localStorage.getItem("intentIndex")) : 1); // keep a unique id for each intent card
+    const [intents, setIntents] = useState(localStorage.getItem("intents") ? JSON.parse(localStorage.getItem("intents")) : ["intent0"]);
     const [isTraining, setIsTraining] = useState(false);
     const [finishedTraining, setFinishedTraining] = useState(false); // stays true if finished training even once
 
@@ -57,8 +58,16 @@ const CreateIntentPage = props => {
         }, [props.socketFlask]
     );
 
+    useEffect(() => {
+        localStorage.setItem("intentIndex", JSON.stringify(intentId));
+        localStorage.setItem("intents", JSON.stringify(intents));
+    }, [intentId, intents]);
+
     const handleAddMoreIntents = () => {
-        let oneMoreIntent = intents.concat([''])
+        var oneMoreIntentId = intentId + 1;
+        var newIntentId = 'intent' + oneMoreIntentId.toString();
+        setIntentId(oneMoreIntentId);
+        let oneMoreIntent = intents.concat([newIntentId])
         setIntents(oneMoreIntent);
     };
 
@@ -126,7 +135,7 @@ const CreateIntentPage = props => {
     return (     
         <Styles>
             <div className="intent-page">
-                {intents.map(() => (<IntentCard />))}
+                {intents.map((intentId) => (<IntentCard intentId={intentId} />))}
                 {renderIntentCardAddMoreButton()}
             </div>
             {renderTrainButton()}

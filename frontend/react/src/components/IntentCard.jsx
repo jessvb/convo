@@ -198,14 +198,26 @@ class IntentCard extends Component {
         super(props);
 
         this.state = {
-            intent: '',
-            phrases: [''],
-            entities: [''],
+            intent: localStorage.getItem(this.props.intentId) ? JSON.parse(localStorage.getItem(this.props.intentId)) : '',
+            phrases: localStorage.getItem(this.props.intentId + "phrases") ? JSON.parse(localStorage.getItem(this.props.intentId + "phrases")) : [''],
+            entities: localStorage.getItem(this.props.intentId + "entities") ? JSON.parse(localStorage.getItem(this.props.intentId + "entities")) : [''],
             showEntities: false,
             highlightColor: '',
             highlightColorClass: 'label-input',
             isHighlighting: false
         };
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.intent !== this.state.intent) {
+            localStorage.setItem(this.props.intentId, JSON.stringify(this.state.intent));
+        }
+        if (prevState.phrases !== this.state.phrases) {
+            localStorage.setItem(this.props.intentId + "phrases", JSON.stringify(this.state.phrases));
+        }
+        if (prevState.entities !== this.state.entities) {
+            localStorage.setItem(this.props.intentId + "entities", JSON.stringify(this.state.entities));
+        }
     }
 
     toggleShowEntities = () => {
