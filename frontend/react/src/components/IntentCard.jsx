@@ -37,7 +37,7 @@ synth.cancel();
 const Styles = styled.div`
     .card {
         color: #3d3d3d;
-        max-height: 80%;
+        max-height: 720px;
         min-height: 318px;
         width: 273px;
         border: 2px solid black;
@@ -203,7 +203,7 @@ class IntentCard extends Component {
 
         this.state = {
             intent: localStorage.getItem(this.props.intentId) ? JSON.parse(localStorage.getItem(this.props.intentId)) : '',
-            phrases: localStorage.getItem(this.props.intentId + "phrases") ? JSON.parse(localStorage.getItem(this.props.intentId + "phrases")) : [''],
+            phrases: localStorage.getItem(this.props.intentId + "phrases") ? JSON.parse(localStorage.getItem(this.props.intentId + "phrases")) : ['', '', ''],
             entities: localStorage.getItem(this.props.intentId + "entities") ? JSON.parse(localStorage.getItem(this.props.intentId + "entities")) : [''],
             showEntities: false,
             highlightColor: '',
@@ -355,7 +355,6 @@ class IntentCard extends Component {
                         className="label-input"
                         type="text"
                         name="entity-name"
-                        placeholder="city"
                         value={this.state.entities[index]}
                         onChange={e => {this.handleEntityChange(e, index)}}
                     />
@@ -411,7 +410,6 @@ class IntentCard extends Component {
                         style={{ marginTop: 8 }} 
                         type="text"
                         name={this.state.intent}
-                        placeholder="make a new recipe"
                         value={this.state.phrases[idx]}
                         onChange={e => {this.handlePhraseChange(e, idx)}} 
                     />
@@ -424,15 +422,13 @@ class IntentCard extends Component {
     renderIntentCard() {
         return (
             <div className="intent-card">
-                <div className="delete-card-button" onClick={this.handleDeleteCard}>ⓧ</div>
-                <form className="intent-form">
+                <div className="intent-form">
                     <label className="label">
                         Intent Name:
                         <input 
                             className="label-input"
                             type="text"
                             name="intent"
-                            placeholder="create recipe"
                             value={this.state.intent}
                             onChange={e => this.handleIntentChange(e)}
                         />
@@ -441,7 +437,7 @@ class IntentCard extends Component {
                         Intent Phrases:
                         {this.state.phrases.map((_, idx) => (this.renderIntentPhrase(idx)))}
                     </label>
-                </form>
+                </div>
                 <div className="add-more-button" onClick={this.handleAddMorePhrases}>⊕</div>
             </div>            
         )

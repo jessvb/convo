@@ -46,7 +46,7 @@ const Styles = styled.div`
 
 const CreateIntentPage = props => {
     const [intentId, setIntentId] = useState(localStorage.getItem("intentIndex") ? JSON.parse(localStorage.getItem("intentIndex")) : 1); // keep a unique id for each intent card
-    const [intents, setIntents] = useState(localStorage.getItem("intents") ? JSON.parse(localStorage.getItem("intents")) : ["intent0"]);
+    const [intents, setIntents] = useState(localStorage.getItem("intents") ? JSON.parse(localStorage.getItem("intents")) : ["intent0", "intent1"]);
     const [isTraining, setIsTraining] = useState(false);
     const [finishedTraining, setFinishedTraining] = useState(false); // stays true if finished training even once
 
