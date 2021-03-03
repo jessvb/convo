@@ -37,7 +37,7 @@ def join(data):
     
     socket_sessions[request.sid] = (sid, stage, part, rasa_port)
     logger.info(f"[{sid}][{stage},{part},{rasa_port}] Client connected.")
-    logger.info(f"Current connected SIDs: ", socket_sessions)
+    logger.info(f"Current connected SIDs: {socket_sessions}")
 
     # Join room with the SID as the name such that each "room" only contains a single user with the corresponding SID
     join_room(str(sid))
@@ -117,7 +117,7 @@ def train(data):
     training_data = format_training_data(intents, trainingData)
     res = None
     try:
-        rasa_url = "http://rasa:" + dm.rasa_port + "/model/train"
+        rasa_url = "http://rasa" + dm.rasa_port + ":" + dm.rasa_port + "/model/train"
         res = requests.post(rasa_url, json=training_data)
     except requests.ConnectionError as e:
         logger.info("Cannot connect to Rasa server.")
@@ -140,7 +140,7 @@ def train(data):
     payload = json.dumps(request)
     replace_res = None
     try:
-        rasa_url = "http://rasa:" + dm.rasa_port + "/model"
+        rasa_url = "http://rasa" + dm.rasa_port + ":" + dm.rasa_port + "/model"
         replace_res = requests.put(rasa_url, data=payload)
     except requests.ConnectionError as e:
         logger.info(f"Rasa server at port {rasa_port} is restarting.")

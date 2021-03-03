@@ -1,6 +1,6 @@
 version: '3.0'
 services:
-  rasa:
+  rasa5005:
     build: ./backend/rasa
     volumes:
       - ./backend/rasa:/app
