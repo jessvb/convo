@@ -11,8 +11,13 @@ import { Layout } from './components/Layout';
 import { NavigationBar } from './components/NavigationBar';
 import socketIOClient from 'socket.io-client';
 
-const NODE_ENDPOINT = "http://localhost:8080";
-const FLASK_ENDPOINT = "http://localhost:5000"; 
+// Connect to Convo server on production
+// const NODE_ENDPOINT = socketIOClient("http://userstudy.appinventor.mit.edu", { path: '/old/socket.io' });
+// const FLASK_ENDPOINT = socketIOClient("http://userstudy.appinventor.mit.edu", { path: '/api/socket.io' }); 
+
+// Connect to Convo server on local
+const NODE_ENDPOINT = socketIOClient("http://localhost:8080");
+const FLASK_ENDPOINT = socketIOClient("http://localhost:5000"); 
 
 // Parse user agent string by looking for recognized substring.
 const findFirstString = (str, choices) => {
@@ -47,8 +52,8 @@ class App extends Component {
 
       this.state = {
           sid: getUniqueId(),
-          socketNode: socketIOClient(NODE_ENDPOINT),
-          socketFlask: socketIOClient(FLASK_ENDPOINT)
+          socketNode: NODE_ENDPOINT,
+          socketFlask: FLASK_ENDPOINT
       }
   }
   componentDidMount() {
