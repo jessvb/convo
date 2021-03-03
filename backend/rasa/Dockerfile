@@ -10,4 +10,4 @@ COPY requirements.txt ./
 
 RUN pip install -r requirements.txt
 
-EXPOSE 5005
+EXPOSE 5005 5006
