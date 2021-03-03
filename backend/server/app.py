@@ -17,3 +17,6 @@ logger = app.logger
 
 socket_clients = {}
 socket_sessions = {}
+rasa_ports = ["5005", "5006"]
+rasa_available = {"5005": True, "5006": True}
+sid_to_rasa_port = {}
