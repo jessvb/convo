@@ -15,7 +15,7 @@ services:
       - ./backend/rasa:/app
     ports:
       - 5006:5006
-    command: run --enable-api --log-file out.log
+    command: run --enable-api --log-file out.log -p 5006
   server:
     build: ./backend/server
     restart: on-failure

@@ -26,15 +26,14 @@ def join(data):
     part = data.get("part", "sandbox")
 
     rasa_port = "5005" # default value
-
     # Keep track of all connected clients
     for port in rasa_ports:
         if rasa_available[port]:
             rasa_port = port
             rasa_available[port] = False
-            sid_to_rasa_port[sid] = port
             break
-    
+
+    sid_to_rasa_port[sid] = rasa_port    
     socket_sessions[request.sid] = (sid, stage, part, rasa_port)
     logger.info(f"[{sid}][{stage},{part},{rasa_port}] Client connected.")
     logger.info(f"Current connected SIDs: {socket_sessions}")
@@ -99,6 +98,7 @@ def disconnect():
             logger.info(f"[{sid}][{stage},{part},{rasa_port}] Conversation: {client.dm.context.conversation}")
         if rasa_port:
             rasa_available[rasa_port] = True
+            logger.info(f"[{sid}][{rasa_port}] Rasa port now available.")
 
 @sio.on("train")
 def train(data):
@@ -143,7 +143,7 @@ def train(data):
         rasa_url = "http://rasa" + dm.rasa_port + ":" + dm.rasa_port + "/model"
         replace_res = requests.put(rasa_url, data=payload)
     except requests.ConnectionError as e:
-        logger.info(f"Rasa server at port {rasa_port} is restarting.")
+        logger.info(f"Rasa server at port {dm.rasa_port} is restarting.")
         return None
 
     if (replace_res is None or replace_res.status_code != 204):
