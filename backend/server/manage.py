@@ -146,7 +146,6 @@ def train(data):
     sio.emit("trained", response, room=str(sid))
 
 def add_intents_and_entities(context, intents, trainingData):
-    context.add_intent("greet", [])
     for i in range(len(intents)):
         intent = intents[i]
         intent = intent.replace(" ", "_")
@@ -163,38 +162,7 @@ def add_intents_and_entities(context, intents, trainingData):
 
 
 def create_rasa_nlu_data(intents, trainingData):
-    common_examples = [
-                {
-                    "entities": [],
-                    "text": "hey",
-                    "intent": "greet"
-                },
-                {
-                    "entities": [],
-                    "text": "hello",
-                    "intent": "greet"
-                },
-                {
-                    "entities": [],
-                    "text": "hi",
-                    "intent": "greet"
-                },
-                {
-                    "entities": [],
-                    "text": "hello there",
-                    "intent": "greet"
-                },
-                {
-                    "entities": [],
-                    "text": "hey what's up",
-                    "intent": "greet"
-                },
-                {
-                    "entities": [],
-                    "text": "Hello",
-                    "intent": "greet"
-                },
-            ]
+    common_examples = []
     for i in range(len(intents)):
         intent = intents[i]
         intent = intent.replace(" ", "_")
