@@ -56,7 +56,8 @@ class RasaNLU(object):
         res = None
 
         try:
-            res = requests.post("http://rasa:5005/model/parse", data=payload)
+            rasa_url = "http://rasa" + dm.rasa_port + ":" + self.context.rasa_port + "/model/parse"
+            res = requests.post(rasa_url, data=payload)
         except requests.ConnectionError as e:
             logger.info("Cannot connect to Rasa server.")
             return None
@@ -67,6 +68,8 @@ class RasaNLU(object):
 
         intents = res.json()
         intent = intents["intent"]
+        logger.debug("intents")
+        logger.debug(intents)
 
         if intent["confidence"] < self.confidence_threshold:
             # If confidence is less than threshold, do not use intent

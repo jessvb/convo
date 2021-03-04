@@ -9,5 +9,3 @@ RUN pip install --no-cache-dir rasa[transformers]
 COPY requirements.txt ./
 
 RUN pip install -r requirements.txt
-
-EXPOSE 5005

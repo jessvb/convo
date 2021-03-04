@@ -1,6 +1,6 @@
 version: '3.0'
 services:
-  rasa:
+  rasa5005:
     build: ./backend/rasa
     restart: on-failure
     volumes:
@@ -8,6 +8,14 @@ services:
     ports:
       - 5005:5005
     command: run --enable-api --log-file out.log
+  rasa5006:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5006:5006
+    command: run --enable-api --log-file out.log -p 5006
   server:
     build: ./backend/server
     restart: on-failure
