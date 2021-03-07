@@ -16,6 +16,158 @@ services:
     ports:
       - 5006:5006
     command: run --enable-api --log-file out.log -p 5006
+  rasa5007:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5007:5007
+    command: run --enable-api --log-file out.log -p 5007
+  rasa5008:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5008:5008
+    command: run --enable-api --log-file out.log -p 5008
+  rasa5009:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5009:5009
+    command: run --enable-api --log-file out.log -p 5009
+  rasa5010:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5010:5010
+    command: run --enable-api --log-file out.log -p 5010
+  rasa5011:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5011:5011
+    command: run --enable-api --log-file out.log -p 5011
+  rasa5012:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5012:5012
+    command: run --enable-api --log-file out.log -p 5012
+  rasa5013:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5013:5013
+    command: run --enable-api --log-file out.log -p 5013
+  rasa5014:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5014:5014
+    command: run --enable-api --log-file out.log -p 5014
+  rasa5015:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5015:5015
+    command: run --enable-api --log-file out.log -p 5015
+  rasa5016:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5016:5016
+    command: run --enable-api --log-file out.log -p 5016
+  rasa5017:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5017:5017
+    command: run --enable-api --log-file out.log -p 5017
+  rasa5018:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5018:5018
+    command: run --enable-api --log-file out.log -p 5018
+  rasa5019:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5019:5019
+    command: run --enable-api --log-file out.log -p 5019
+  rasa5020:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5020:5020
+    command: run --enable-api --log-file out.log -p 5020
+  rasa5021:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5021:5021
+    command: run --enable-api --log-file out.log -p 5021
+  rasa5022:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5022:5022
+    command: run --enable-api --log-file out.log -p 5022
+  rasa5023:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5023:5023
+    command: run --enable-api --log-file out.log -p 5023
+  rasa5024:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5024:5024
+    command: run --enable-api --log-file out.log -p 5024
+  rasa5025:
+    build: ./backend/rasa
+    restart: on-failure
+    volumes:
+      - ./backend/rasa:/app
+    ports:
+      - 5025:5025
+    command: run --enable-api --log-file out.log -p 5025
   server:
     build: ./backend/server
     restart: on-failure
