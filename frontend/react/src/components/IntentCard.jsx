@@ -422,6 +422,7 @@ class IntentCard extends Component {
     renderIntentCard() {
         return (
             <div className="intent-card">
+                <div className="delete-card-button" onClick={this.handleDeleteCard}>ⓧ</div>
                 <div className="intent-form">
                     <label className="label">
                         Intent Name:
