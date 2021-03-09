@@ -4,7 +4,7 @@ import json
 from flask import request
 from flask_socketio import join_room
 
-from app import app, sio, logger, socket_clients, socket_sessions, rasa_ports, rasa_available, sid_to_rasa_port
+from app import app, sio, logger, socket_clients, socket_sessions, rasa_ports, sid_to_rasa_port
 from dialog import DialogManager
 from userstudy import *
 from client import *
@@ -25,17 +25,9 @@ def join(data):
     stage = data.get("stage", "sandbox")
     part = data.get("part", "sandbox")
 
-    rasa_port = "5005" # default value
-    # Keep track of all connected clients
-    for port in rasa_ports:
-        if rasa_available[port]:
-            rasa_port = port
-            rasa_available[port] = False
-            break
-
-    sid_to_rasa_port[sid] = rasa_port    
-    socket_sessions[request.sid] = (sid, stage, part, rasa_port)
-    logger.info(f"[{sid}][{stage},{part},{rasa_port}] Client connected.")
+    sid_to_rasa_port[sid] = "5005"
+    socket_sessions[request.sid] = (sid, stage, part)
+    logger.info(f"[{sid}][{stage},{part}] Client connected.")
     logger.info(f"Current connected SIDs: {socket_sessions}")
 
     # Join room with the SID as the name such that each "room" only contains a single user with the corresponding SID
@@ -66,7 +58,7 @@ def join(data):
             sio.emit("advancedInstructions", { "sounds": scenario[0], "iters": len(scenario[1]) }, room=str(sid))
     else:
         # Default client and dialog manager
-        client.dm = DialogManager(sid, rasa_port, get_procedures(sid))
+        client.dm = DialogManager(sid, get_procedures(sid))
         logger.debug(f"[{sid}] Created default dialog manager.")
 
     sio.emit("joined", sid, room=str(sid))
@@ -87,37 +79,41 @@ def join(data):
 def disconnect():
     """Disconnect from server"""
     if request.sid:
-        sid, stage, part, rasa_port = socket_sessions.get(request.sid)
+        sid, stage, part = socket_sessions.get(request.sid)
         if sid:
             # Remove client from the list of connected clients in socket_sessions but keep the client object in socket_clients
             # This way if client reconnects, no work is lost
             client = socket_clients.get(sid)
             del socket_sessions[request.sid]
             del sid_to_rasa_port[sid]
-            logger.info(f"[{sid}][{stage},{part},{rasa_port}] Client disconnected.")
-            logger.info(f"[{sid}][{stage},{part},{rasa_port}] Conversation: {client.dm.context.conversation}")
-        if rasa_port:
-            rasa_available[rasa_port] = True
-            logger.info(f"[{sid}][{rasa_port}] Rasa port now available.")
+            logger.info(f"[{sid}][{stage},{part}] Client disconnected.")
+            logger.info(f"[{sid}][{stage},{part}] Conversation: {client.dm.context.conversation}")
 
 @sio.on("train")
 def train(data):
     sid = data.get("sid")
     intents = data.get("intents")
     trainingData = data.get("trainingData")
+    rasaPort = data.get("port")
+    if rasaPort not in rasa_ports:
+        logger.info(f"Group ID {rasaPort} not a valid port.")
+        return
     # First, add all intents and respective entities to the context.
     client = socket_clients.get(sid)
     if client is None:
         return
     dm = client.dm
+    dm.context.rasa_port = rasaPort
+    sid_to_rasa_port[sid] = rasaPort
     add_intents_and_entities(dm.context, intents, trainingData)
-    logger.debug(f"finished adding all intents and entities at port {dm.rasa_port}")
+    logger.debug(f"Current sid to rasa: {sid_to_rasa_port}")
+    logger.debug(f"finished adding all intents and entities at port {dm.context.rasa_port}")
 
     # Then, train the NLU model using this new data.
     training_data = format_training_data(intents, trainingData)
     res = None
     try:
-        rasa_url = "http://rasa" + dm.rasa_port + ":" + dm.rasa_port + "/model/train"
+        rasa_url = "http://rasa" + dm.context.rasa_port + ":" + dm.context.rasa_port + "/model/train"
         res = requests.post(rasa_url, json=training_data)
     except requests.ConnectionError as e:
         logger.info("Cannot connect to Rasa server.")
@@ -140,17 +136,17 @@ def train(data):
     payload = json.dumps(request)
     replace_res = None
     try:
-        rasa_url = "http://rasa" + dm.rasa_port + ":" + dm.rasa_port + "/model"
+        rasa_url = "http://rasa" + dm.context.rasa_port + ":" + dm.context.rasa_port + "/model"
         replace_res = requests.put(rasa_url, data=payload)
     except requests.ConnectionError as e:
-        logger.info(f"Rasa server at port {dm.rasa_port} is restarting.")
+        logger.info(f"Rasa server at port {dm.context.rasa_port} is restarting.")
         return None
 
     if (replace_res is None or replace_res.status_code != 204):
         logger.info("No response from the Rasa server when replacing the model.")
         return None
 
-    logger.debug(f"Finished updating the trained model of Rasa at port {rasa_port}.")
+    logger.debug(f"Finished updating the trained model of Rasa at port {dm.context.rasa_port}.")
 
     res = dm.handle_train(intents)
     # If there is response message, log and send to client

@@ -49,6 +49,7 @@ const CreateIntentPage = props => {
     const [intents, setIntents] = useState(localStorage.getItem("intents") ? JSON.parse(localStorage.getItem("intents")) : ["intent0", "intent1"]);
     const [isTraining, setIsTraining] = useState(false);
     const [finishedTraining, setFinishedTraining] = useState(false); // stays true if finished training even once
+    const [rasaPort, setRasaPort] = useState("");
 
     useEffect(() => {
             props.socketFlask.on('trained', () => {
@@ -112,9 +113,32 @@ const CreateIntentPage = props => {
                 sid: localStorage.getItem('sid'),
                 intents: intents,
                 trainingData: phrases,
+                port: rasaPort,
             });
         }
         setIsTraining(true);
+    }
+    
+    const handleRasaPortChange = (e) => {
+        setRasaPort(e.target.value);
+        console.log(rasaPort);
+    }
+
+    const renderRasaPort = () => {
+        return (
+            <div style={{ padding: 25, }}>
+                <label style={{ fontWeight: 700 }}>
+                    Group ID:
+                    <input 
+                        style={{ marginLeft: 8 }}
+                        type="text"
+                        name="rasa-port"
+                        value={rasaPort}
+                        onChange={e => handleRasaPortChange(e)}
+                    />
+                </label>
+            </div>
+        )
     }
 
     const renderTrainButton = () => {
@@ -139,6 +163,7 @@ const CreateIntentPage = props => {
                 {renderIntentCardAddMoreButton()}
             </div>
             {renderTrainButton()}
+            {renderRasaPort()}
         </Styles>
     )
 }
