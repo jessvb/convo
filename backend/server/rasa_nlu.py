@@ -56,7 +56,7 @@ class RasaNLU(object):
         res = None
 
         try:
-            rasa_url = "http://rasa" + dm.rasa_port + ":" + self.context.rasa_port + "/model/parse"
+            rasa_url = "http://rasa" + self.context.rasa_port + ":" + self.context.rasa_port + "/model/parse"
             res = requests.post(rasa_url, data=payload)
         except requests.ConnectionError as e:
             logger.info("Cannot connect to Rasa server.")
