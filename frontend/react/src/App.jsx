@@ -12,8 +12,8 @@ import { NavigationBar } from './components/NavigationBar';
 import socketIOClient from 'socket.io-client';
 
 // Connect to Convo server on production
-// const NODE_ENDPOINT = socketIOClient("http://userstudy.appinventor.mit.edu", { path: '/old/socket.io' });
-// const FLASK_ENDPOINT = socketIOClient("http://userstudy.appinventor.mit.edu", { path: '/api/socket.io' }); 
+// const NODE_ENDPOINT = socketIOClient("https://userstudy.appinventor.mit.edu", { path: '/old/socket.io' });
+// const FLASK_ENDPOINT = socketIOClient("https://userstudy.appinventor.mit.edu", { path: '/api/socket.io' }); 
 
 // Connect to Convo server on local
 const NODE_ENDPOINT = socketIOClient("http://localhost:8080");

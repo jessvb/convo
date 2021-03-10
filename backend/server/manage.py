@@ -85,7 +85,6 @@ def disconnect():
             # This way if client reconnects, no work is lost
             client = socket_clients.get(sid)
             del socket_sessions[request.sid]
-            del sid_to_rasa_port[sid]
             logger.info(f"[{sid}][{stage},{part}] Client disconnected.")
             logger.info(f"[{sid}][{stage},{part}] Conversation: {client.dm.context.conversation}")
 
