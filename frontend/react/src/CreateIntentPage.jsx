@@ -49,7 +49,7 @@ const CreateIntentPage = props => {
     const [intents, setIntents] = useState(localStorage.getItem("intents") ? JSON.parse(localStorage.getItem("intents")) : ["intent0", "intent1"]);
     const [isTraining, setIsTraining] = useState(false);
     const [finishedTraining, setFinishedTraining] = useState(false); // stays true if finished training even once
-    const [rasaPort, setRasaPort] = useState("");
+    const [rasaPort, setRasaPort] = useState(localStorage.getItem("rasaPort") ? JSON.parse(localStorage.getItem("rasaPort")) : "");
 
     useEffect(() => {
             props.socketFlask.on('trained', () => {
@@ -62,7 +62,8 @@ const CreateIntentPage = props => {
     useEffect(() => {
         localStorage.setItem("intentIndex", JSON.stringify(intentId));
         localStorage.setItem("intents", JSON.stringify(intents));
-    }, [intentId, intents]);
+        localStorage.setItem("rasaPort", rasaPort);
+    }, [intentId, intents, rasaPort]);
 
     const handleAddMoreIntents = () => {
         var oneMoreIntentId = intentId + 1;
@@ -113,7 +114,6 @@ const CreateIntentPage = props => {
                 sid: localStorage.getItem('sid'),
                 intents: intents,
                 trainingData: phrases,
-                port: rasaPort,
             });
         }
         setIsTraining(true);
@@ -121,7 +121,13 @@ const CreateIntentPage = props => {
     
     const handleRasaPortChange = (e) => {
         setRasaPort(e.target.value);
-        console.log(rasaPort);
+    }
+
+    const handleRasaPortSubmit = () => {
+        props.socketFlask.emit('rasaPort', {
+            sid: localStorage.getItem('sid'),
+            port: rasaPort,
+        });
     }
 
     const renderRasaPort = () => {
@@ -137,6 +143,12 @@ const CreateIntentPage = props => {
                         onChange={e => handleRasaPortChange(e)}
                     />
                 </label>
+                <Button 
+                    variant="info"
+                    onClick={handleRasaPortSubmit}
+                    style={{ marginLeft: 8 }}>
+                    Submit
+                </Button>
             </div>
         )
     }
@@ -162,8 +174,8 @@ const CreateIntentPage = props => {
                 {intents.map((intentId) => (<IntentCard intentId={intentId} />))}
                 {renderIntentCardAddMoreButton()}
             </div>
-            {renderTrainButton()}
             {renderRasaPort()}
+            {renderTrainButton()}
         </Styles>
     )
 }

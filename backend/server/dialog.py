@@ -40,9 +40,10 @@ allowed_goals = {
 
 class DialogManager(object):
     """Represents a dialog manager for a client"""
-    def __init__(self, sid, procedures={}):
+    def __init__(self, sid, port="5005", procedures={}):
         self.sid = sid
-        self.context = DialogContext(sid, procedures)
+        self.port = port
+        self.context = DialogContext(sid, port, procedures)
         self.qa = QuestionAnswer(self.context)
         self.nlu = SemanticNLU(self.context)
         self.rasa = RasaNLU(self.context)
@@ -259,9 +260,9 @@ class DialogContext(object):
     More specifically, contains the classes, procedures, intents (and entities), state, conversation, goals
     and execution/editing subcontexts for the client
     """
-    def __init__(self, sid, procedures={}):
+    def __init__(self, sid, port, procedures={}):
         self.sid = sid
-        self.rasa_port = "5005"
+        self.rasa_port = port
         self.classes = {}
         self.procedures = procedures
         self.execution = None

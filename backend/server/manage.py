@@ -24,10 +24,11 @@ def join(data):
 
     stage = data.get("stage", "sandbox")
     part = data.get("part", "sandbox")
+    port = data.get("port")
 
-    sid_to_rasa_port[sid] = "5005"
-    socket_sessions[request.sid] = (sid, stage, part)
-    logger.info(f"[{sid}][{stage},{part}] Client connected.")
+    sid_to_rasa_port[sid] = port
+    socket_sessions[request.sid] = (sid, stage, part, port)
+    logger.info(f"[{sid}][{stage},{part},{port}] Client connected.")
     logger.info(f"Current connected SIDs: {socket_sessions}")
 
     # Join room with the SID as the name such that each "room" only contains a single user with the corresponding SID
@@ -58,7 +59,7 @@ def join(data):
             sio.emit("advancedInstructions", { "sounds": scenario[0], "iters": len(scenario[1]) }, room=str(sid))
     else:
         # Default client and dialog manager
-        client.dm = DialogManager(sid, get_procedures(sid))
+        client.dm = DialogManager(sid, port, get_procedures(sid))
         logger.debug(f"[{sid}] Created default dialog manager.")
 
     sio.emit("joined", sid, room=str(sid))
@@ -79,33 +80,42 @@ def join(data):
 def disconnect():
     """Disconnect from server"""
     if request.sid:
-        sid, stage, part = socket_sessions.get(request.sid)
+        sid, stage, part, port = socket_sessions.get(request.sid)
         if sid:
             # Remove client from the list of connected clients in socket_sessions but keep the client object in socket_clients
             # This way if client reconnects, no work is lost
             client = socket_clients.get(sid)
             del socket_sessions[request.sid]
-            logger.info(f"[{sid}][{stage},{part}] Client disconnected.")
-            logger.info(f"[{sid}][{stage},{part}] Conversation: {client.dm.context.conversation}")
+            del sid_to_rasa_port[sid]
+            logger.info(f"[{sid}][{stage},{part},{port}] Client disconnected.")
+            logger.info(f"[{sid}][{stage},{part},{port}] Conversation: {client.dm.context.conversation}")
 
-@sio.on("train")
-def train(data):
+@sio.on("rasaPort")
+def connectRasaPort(data):
     sid = data.get("sid")
-    intents = data.get("intents")
-    trainingData = data.get("trainingData")
     rasaPort = data.get("port")
     if rasaPort not in rasa_ports:
         logger.info(f"Group ID {rasaPort} not a valid port.")
         return
-    # First, add all intents and respective entities to the context.
     client = socket_clients.get(sid)
     if client is None:
         return
     dm = client.dm
     dm.context.rasa_port = rasaPort
     sid_to_rasa_port[sid] = rasaPort
-    add_intents_and_entities(dm.context, intents, trainingData)
     logger.debug(f"Current sid to rasa: {sid_to_rasa_port}")
+
+@sio.on("train")
+def train(data):
+    sid = data.get("sid")
+    intents = data.get("intents")
+    trainingData = data.get("trainingData")
+    # First, add all intents and respective entities to the context.
+    client = socket_clients.get(sid)
+    if client is None:
+        return
+    dm = client.dm
+    add_intents_and_entities(dm.context, intents, trainingData)
     logger.debug(f"finished adding all intents and entities at port {dm.context.rasa_port}")
 
     # Then, train the NLU model using this new data.

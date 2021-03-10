@@ -46,12 +46,20 @@ const getUniqueId = () => {
   return localStorage.getItem('sid');
 };
 
+const getRasaPort = () => {
+  if (!('rasaPort' in localStorage)) {
+    return "5005";
+  }
+  return localStorage.getItem('rasaPort');
+}
+
 class App extends Component {
   constructor(props) {
       super(props);
 
       this.state = {
           sid: getUniqueId(),
+          port: getRasaPort(),
           socketNode: NODE_ENDPOINT,
           socketFlask: FLASK_ENDPOINT
       }
@@ -72,7 +80,8 @@ class App extends Component {
         this.state.socketFlask.emit('join', {
             "sid": this.state.sid,
             "stage": localStorage.getItem('currStage'),
-            "part": localStorage.getItem('currPart')
+            "part": localStorage.getItem('currPart'),
+            "port": this.state.port
         });
     });
 
