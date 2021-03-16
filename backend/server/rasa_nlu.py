@@ -1,4 +1,5 @@
 from goals import *
+from helpers import *
 from app import logger
 import requests
 import json
@@ -78,7 +79,7 @@ class RasaNLU(object):
         original_intent = intent["name"].replace("_", " ")
         if original_intent in self.context.intents:
             for e in intents["entities"]:
-                self.context.add_entity(e["entity"], e["value"])
+                self.context.add_entity(e["entity"], parse_number(e["value"]))
             return RunIntentGoal(self.context, original_intent)
         else:
             goal = intent_goal[intent["name"]]
