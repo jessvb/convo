@@ -151,9 +151,9 @@ class Execution(object):
             if action.variable in self.variables:
                 old = self.variables[action.variable]
                 factor = 1 if isinstance(action, AddToVariableAction) else -1
-                if isinstance(value, float) or isinstance(value, int):
+                if isinstance(action.value, float) or isinstance(action.value, int):
                     self.variables[action.variable] += factor * action.value
-                elif isinstance(value, ValueOf):
+                elif isinstance(action.value, ValueOf):
                     self.variables[action.variable] += factor * self.variables[action.value.variable]
                 new = self.variables[action.variable]
                 if isinstance(action, AddToVariableAction):
