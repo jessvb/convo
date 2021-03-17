@@ -29,10 +29,28 @@ const HIGHLIGHT_SPAN_TAGS =
      `<span style="background-color: rgb(255, 227, 199);">`
     ];
 
-    const ORDERED_COLORS = [COLORS.yellow, COLORS.blue, COLORS.red, COLORS.green, COLORS.purple, COLORS.orange];
+const ORDERED_COLORS = [COLORS.yellow, COLORS.blue, COLORS.red, COLORS.green, COLORS.purple, COLORS.orange];
 
 const synth = window.speechSynthesis;
 synth.cancel();
+
+const INTENT_PLACEHOLDERS = {
+    "intent0": "say the weather",
+    "intent1": "make robot dance",
+    "intent2": "echo"
+}
+
+const INTENT_PHRASES_PLACEHOLDERS = {
+    "intent0": ["get the weather for Boston", "say the weather in Vancouver", "get the temperature", "what's the weather?", "what's the weather in Madrid?"],
+    "intent1": ["make my robot dance", "make the robot spin around", "turn the robot around", "turn the robot 180 degrees around", "get my robot moving"],
+    "intent2": ["repeat something", "echo hi", "repeat the variable hellp", "repeat the word thing", "echo the variable random"]
+}
+
+const ENTITIES_PLACEHOLDERS = {
+    "intent0": ["Boston", "Vancouver", "Madrid"],
+    "intent1": [""],
+    "intent2": ["something", "hi", "hellp", "thing", "andom"]
+}
 
 const Styles = styled.div`
     .card {
@@ -231,6 +249,8 @@ class IntentCard extends Component {
     
     handleDeleteCard = () => {
         this.setState({ showCard: false });
+        localStorage.setItem("intentIndex", 0)
+        
     }
 
     toggleShowEntities = () => {
@@ -346,7 +366,7 @@ class IntentCard extends Component {
         this.setState({ phrases: newPhrases });
     }
 
-    renderEntity = (index) => {
+    renderEntity = (index, placeholders) => {
         return (
             <div className="entity" style={{ background: ORDERED_COLORS[index] }}>
                 <label className="label">
@@ -356,6 +376,7 @@ class IntentCard extends Component {
                         type="text"
                         name="entity-name"
                         value={this.state.entities[index]}
+                        placeholder={placeholders[index]}
                         onChange={e => {this.handleEntityChange(e, index)}}
                     />
                 </label>
@@ -367,6 +388,8 @@ class IntentCard extends Component {
     renderEntitiesCard() {
         // cap the number of entities for one intent to be 6 by removing the 
         // add more entities button when there are 6 or more entities
+
+        const theEntities = this.state.entities.length >= ENTITIES_PLACEHOLDERS[this.props.intentId].length ? this.state.entities : ENTITIES_PLACEHOLDERS[this.props.intentId]
         return (
             <div className="intent-card grey-color" style={{width: 207}}>
                 { this.state.isHighlighting &&
@@ -374,7 +397,7 @@ class IntentCard extends Component {
                         <div className="highlight-entities-button" onClick={() => this.doneHighlighting()}>Done Highlighting</div>
                     </div> }
                 <Container className="entities-entry" style={{padding: 8}}>
-                    {this.state.entities.map((val, index) => (this.renderEntity(index)))}
+                    {theEntities.map((i, index) => (this.renderEntity(index, ENTITIES_PLACEHOLDERS[this.props.intentId])))}
                 </Container>
                 { this.state.entities.length < 6 &&
                     <div className="add-more-button" onClick={this.handleAddMoreEntities}>⊕</div> }
@@ -391,7 +414,7 @@ class IntentCard extends Component {
         )
     }
 
-    renderIntentPhrase(idx) {
+    renderIntentPhrase(phrases, idx, placeholders) {
         return (
             <div>
                 { this.state.isHighlighting ?
@@ -402,7 +425,7 @@ class IntentCard extends Component {
                             onMouseUp={this.mouseUp}
                             style={{ fontWeight: "normal", cursor: "text" }}
                         >
-                                {this.state.phrases[idx]}
+                                {phrases[idx]}
                         </span>
                     </div>
                 :
@@ -410,18 +433,45 @@ class IntentCard extends Component {
                         style={{ marginTop: 8 }} 
                         type="text"
                         name={this.state.intent}
-                        value={this.state.phrases[idx]}
+                        value={phrases[idx]}
+                        placeholder={placeholders ? placeholders[idx] : ""}
                         onChange={e => {this.handlePhraseChange(e, idx)}} 
                     />
                 }
-            </div>
-            
+            </div>   
         )
     }
 
-    renderIntentCard() {
+    placeholderIntentRenderer(intentID){
         return (
             <div className="intent-card">
+                <div className="delete-card-button" onClick={this.handleDeleteCard}>ⓧ</div>
+                <div className="intent-form">
+                    <label className="label">
+                        Intent Name:
+                        <input 
+                            className="label-input"
+                            type="text"
+                            name="intent"
+                            placeholder={INTENT_PLACEHOLDERS[intentID]}
+                            value={this.state.intent}
+                            onChange={e => this.handleIntentChange(e)}
+                        />
+                    </label>
+                    <label className="label">
+                        Intent Phrases:
+                        {INTENT_PHRASES_PLACEHOLDERS[intentID].map((_, idx) => (this.renderIntentPhrase(this.state.phrases, idx, INTENT_PHRASES_PLACEHOLDERS[this.props.intentId])))}
+                    </label>
+                </div>
+                <div className="add-more-button" onClick={this.handleAddMorePhrases}>⊕</div>
+            </div>            
+        )
+    }
+
+    normalIntentRenderer(){
+        return (
+            <div className="intent-card">
+                <div className="delete-card-button" onClick={this.handleDeleteCard}>ⓧ</div>
                 <div className="intent-form">
                     <label className="label">
                         Intent Name:
@@ -435,12 +485,24 @@ class IntentCard extends Component {
                     </label>
                     <label className="label">
                         Intent Phrases:
-                        {this.state.phrases.map((_, idx) => (this.renderIntentPhrase(idx)))}
+                        {this.state.phrases.map((_, idx) => (this.renderIntentPhrase(this.state.phrases, idx)))}
                     </label>
                 </div>
                 <div className="add-more-button" onClick={this.handleAddMorePhrases}>⊕</div>
             </div>            
         )
+    }
+
+    renderIntentCard() {
+        if (this.props.intentId === "intent0" || this.props.intentId === "intent1" || this.props.intentId === "intent2") {
+            return (
+                this.placeholderIntentRenderer(this.props.intentId)
+            )
+        } else {
+            return (
+                this.normalIntentRenderer()
+            )
+        }
     }
 
     render() {
