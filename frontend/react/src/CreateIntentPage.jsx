@@ -109,6 +109,10 @@ const CreateIntentPage = props => {
             }
         }
 
+        // Store training data in localStorage so it persists after a refresh
+        localStorage.setItem("trainingIntents", JSON.stringify(intents));
+        localStorage.setItem("trainingPhrases", JSON.stringify(phrases));
+        
         if (intents !== []) {
             props.socketFlask.emit('train', {
                 sid: localStorage.getItem('sid'),

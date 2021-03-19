@@ -25,6 +25,8 @@ def join(data):
     stage = data.get("stage", "sandbox")
     part = data.get("part", "sandbox")
     port = data.get("port")
+    intents = data.get("intents")
+    phrases = data.get("phrases")
 
     sid_to_rasa_port[sid] = port
     socket_sessions[request.sid] = (sid, stage, part, port)
@@ -61,6 +63,8 @@ def join(data):
         # Default client and dialog manager
         client.dm = DialogManager(sid, port, get_procedures(sid))
         logger.debug(f"[{sid}] Created default dialog manager.")
+        add_intents_and_entities(client.dm.context, intents, phrases)
+        logger.debug(f"[{sid}] Finish adding intents {intents} to context.")
 
     sio.emit("joined", sid, room=str(sid))
 
