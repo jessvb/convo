@@ -63,8 +63,9 @@ def join(data):
         # Default client and dialog manager
         client.dm = DialogManager(sid, port, get_procedures(sid))
         logger.debug(f"[{sid}] Created default dialog manager.")
-        add_intents_and_entities(client.dm.context, intents, phrases)
-        logger.debug(f"[{sid}] Finish adding intents {intents} to context.")
+        if intents and phrases:
+            add_intents_and_entities(client.dm.context, intents, phrases)
+            logger.debug(f"[{sid}] Finish adding intents {intents} to context.")
 
     sio.emit("joined", sid, room=str(sid))
 
