@@ -81,7 +81,9 @@ class App extends Component {
             "sid": this.state.sid,
             "stage": localStorage.getItem('currStage'),
             "part": localStorage.getItem('currPart'),
-            "port": this.state.port
+            "port": this.state.port,
+            "intents": localStorage.getItem("trainingIntents") ? JSON.parse(localStorage.getItem("trainingIntents")) : [],
+            "phrases": localStorage.getItem("trainingPhrases") ? JSON.parse(localStorage.getItem("trainingPhrases")) : []
         });
     });
 
